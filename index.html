@@ -41,7 +41,7 @@
     let scroll = false;
     function scrollList(direction) {
       if(scroll)
-        universalSmoothScroll.scrollXby(direction * 200, document.getElementById("scrollableYList"), () => scrollList(direction));
+        universalSmoothScroll.scrollXby(direction * 200, document.getElementById("scrollableYList"), () => scrollList(direction), false);
     }
     document.getElementById("scrollableYListLeft").addEventListener("mousedown",  () => {scroll = true; scrollList(-1);}, {passive: false});
     document.getElementById("scrollableYListRight").addEventListener("mousedown", () => {scroll = true; scrollList(+1);}, {passive: false});

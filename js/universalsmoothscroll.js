@@ -30,6 +30,8 @@ const DEFAULTMINANIMATIONFRAMES = 5;//Default lowest possible number of pixel sc
  * containerScrollingYFunction: function, takes in a container and returns a function that returns:
  *                              1) the scrollTop property of the container if it's a DOM element
  *                              2) the scrollY property of the container if it's the window element
+ * containerMaxScrollX: function, takes in a scroll container and returns its highest scroll-reachable x-value
+ * containerMaxScrollY: function, takes in a scroll container and returns its highest scroll-reachable y-value
  * scrollXto: function, takes in a number which indicates the position that window.scrollX has to reach and performs a scroll-animation on the x-axis,
  *            after the animation has finished a callback function can be invoked
  * scrollYto: function, takes in a number which indicates the position that window.scrollY has to reach and performs a scroll-animation on the y-axis,
@@ -69,25 +71,64 @@ var universalSmoothScroll = {
   calcStepYLenght: function (deltaY) {return (deltaY >= (this._minAnimationFrame - 1) * this._scrollStepY) ? this._scrollStepY : Math.round(deltaY / this._minAnimationFrame);},
   containerScrollingXFunction: function (container) { return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
   containerScrollingYFunction: function (container) { return (container instanceof HTMLElement) ? () => {return container.scrollTop}  : () => {return container.scrollY};},
+  containerMaxScrollX: function (container) {
+    let body = document.body;
+    let html = document.documentElement;
+    return (container instanceof HTMLElement) ?
+      container.scrollWidth - container.offsetWidth :
+      Math.max(
+        body.scrollWidth,
+        body.offsetWidth,
+        body.clientWidth,
+        html.clientWidth,
+        html.scrollWidth,
+        html.offsetWidth
+      ) - window.innerWidth; // Subtract viewport width because the x-scroll is done starting by the left
+  },
+  containerMaxScrollY: function (container) {
+    let body = document.body;
+    let html = document.documentElement;
+    return (container instanceof HTMLElement) ?
+      container.scrollHeight - container.offsetHeight :
+      Math.max(
+        body.scrollHeight,
+        body.offsetHeight,
+        body.clientHeight,
+        html.clientHeight,
+        html.scrollHeight,
+        html.offsetHeight
+      ) - window.innerHeight; // Subtract viewport height because the y-scroll is done starting by the top
+  },
   scrollXto: function (finalXPosition, container = window, callback = () => {}, canOverlay = false) {
     if (finalXPosition === undefined) return;
-    finalXPosition = (finalXPosition < 0) ? 0 : finalXPosition;
 
-    //If a scroll-animation on the x-axis was being performed and the current one cannot be overlayed
-    //the the former one gets cancelled in order to make the new one play
-    if(this._xScrolling && canOverlay === false) {this.stopScrollingX(() => this.scrollXto(finalXPosition, container, callback, canOverlay)); return;}
+
+    //If the finalXPosition is a non-reachable value it gets sets to closest reachable value
+    //If the scroll-limit has already been reached, no scroll-animation is performed
+    let _maxScrollX = this.containerMaxScrollX(container);
+    if(finalXPosition < 0) finalXPosition = 0;
+    else if(finalXPosition > _maxScrollX) finalXPosition = _maxScrollX;
+
 
     const scrollingXFunction = this.containerScrollingXFunction(container);
     const scrollingYFunction = this.containerScrollingYFunction(container);
     let _totalScrollAmmount = finalXPosition - scrollingXFunction();
     const _direction = Math.sign(_totalScrollAmmount);
-    const _scrollStepLenght = this.calcStepXLenght(_totalScrollAmmount * _direction) * _direction;
+    _totalScrollAmmount *= _direction;
+    if(_totalScrollAmmount <= 0) return;
+
+    const _scrollStepLenght = this.calcStepXLenght(_totalScrollAmmount) * _direction;
     let _scrolledAmmount = 0;
 
-    _totalScrollAmmount *= _direction;
-
-    this._xScrolling = true;
-    this._lastScrollXID = window.requestAnimationFrame(_stepX);
+    //If a scroll-animation on the x-axis was being performed and the current one cannot be overlayed
+    //the the former one gets cancelled in order to make the new one play
+    if(universalSmoothScroll._xScrolling && canOverlay === false) {
+      universalSmoothScroll.stopScrollingX(() => this._lastScrollXID = window.requestAnimationFrame(_stepX));
+      return;
+    } else {
+      universalSmoothScroll._xScrolling = true;
+      this._lastScrollXID = window.requestAnimationFrame(_stepX);
+    }
 
     function _stepX () {
       if(universalSmoothScroll._scrollingXstopped === true) {
@@ -107,33 +148,38 @@ var universalSmoothScroll = {
                              window.requestAnimationFrame(() => {
                                container.scroll(scrollingXFunction() + _remaningScrollAmmount * _direction, scrollingYFunction());
                                universalSmoothScroll._xScrolling = false;
-                               if(typeof callback === "function") callback();
+                               if(typeof callback === "function") window.requestAnimationFrame(callback);
                              });
-      else {
-        universalSmoothScroll._xScrolling = false;
-        if(typeof callback === "function") callback();
-      }
     }
   },
   scrollYto: function (finalYPosition, container = window, callback = () => {}, canOverlay = false) {
     if (finalYPosition === undefined) return;
-    finalYPosition = (finalYPosition < 0) ? 0 : finalYPosition;
 
-    //If a scroll-animation on the y-axis was being performed and the current one cannot be overlayed
-    //the the former one gets cancelled in order to make the new one play
-    if(this._yScrolling && canOverlay === false) {this.stopScrollingY(() => this.scrollYto(finalYPosition, container, callback, canOverlay)); return;}
+    //If the finalYPosition is a non-reachable value it gets sets to closest reachable value
+    //If the scroll-limit has already been reached, no scroll-animation is performed
+    let _maxScrollY = this.containerMaxScrollY(container);
+    if(finalYPosition < 0) finalYPosition = 0;
+    else if(finalYPosition > _maxScrollY) finalYPosition = _maxScrollY;
 
     const scrollingXFunction = this.containerScrollingXFunction(container);
     const scrollingYFunction = this.containerScrollingYFunction(container);
     let _totalScrollAmmount = finalYPosition - scrollingYFunction();
     const _direction = Math.sign(_totalScrollAmmount);
-    const _scrollStepLenght = this.calcStepYLenght(_totalScrollAmmount * _direction) * _direction;
+    _totalScrollAmmount *= _direction;
+    if(_totalScrollAmmount <= 0) return;
+
+    const _scrollStepLenght = this.calcStepYLenght(_totalScrollAmmount) * _direction;
     let _scrolledAmmount = 0;
 
-    _totalScrollAmmount *= _direction;
-
-    this._yScrolling = true;
-    this._lastScrollYID = window.requestAnimationFrame(_stepY);
+    //If a scroll-animation on the y-axis was being performed and the current one cannot be overlayed
+    //the the former one gets cancelled in order to make the new one play
+    if(universalSmoothScroll._yScrolling && canOverlay === false) {
+      universalSmoothScroll.stopScrollingY(() => this._lastScrollYID = window.requestAnimationFrame(_stepY));
+      return;
+    } else {
+      universalSmoothScroll._yScrolling = true;
+      this._lastScrollYID = window.requestAnimationFrame(_stepY);
+    }
 
     function _stepY () {
       if(universalSmoothScroll._scrollingYstopped === true) {
@@ -153,12 +199,8 @@ var universalSmoothScroll = {
                              window.requestAnimationFrame(() => {
                                container.scroll(scrollingXFunction(), scrollingYFunction() + _remaningScrollAmmount * _direction);
                                universalSmoothScroll._yScrolling = false;
-                               if(typeof callback === "function") callback();
+                               if(typeof callback === "function") window.requestAnimationFrame(callback);
                              });
-      else {
-        universalSmoothScroll._yScrolling = false;
-        if(typeof callback === "function") callback();
-      }
     }
   },
   scrollXby: function (deltaX, container = window, callback = () => {}, canOverlay = false) {
