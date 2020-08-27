@@ -1,6 +1,9 @@
-const DEFAULTSCROLLSTEPX = window.innerWidth * 50 / 1920;//Default number of pixel scrolled in a single scroll-on-X-axis-animation step: 50px steps for a 1920px screen width
-const DEFAULTSCROLLSTEPY = window.innerHeight * 50 / 937;//Default number of pixel scrolled in a single scroll-on-Y-axis-animation step: 50px steps for a 937px(1080px - urlbar) screen height
-const DEFAULTMINANIMATIONFRAMES = 5;//Default lowest possible number of pixel scrolled in a scroll-animation
+//Default number of pixel scrolled in a single scroll-on-Y-axis-animation step
+const DEFAULTSCROLLSTEPX = (window.innerHeight > window.innerWidth) ? window.innerHeight * 50 / 937 : window.innerWidth * 50 / 1920;
+//Default number of pixel scrolled in a single scroll-on-X-axis-animation step
+const DEFAULTSCROLLSTEPY = (window.innerHeight < window.innerWidth) ? window.innerHeight * 50 / 937 : window.innerWidth * 50 / 1920;
+//Default lowest possible number of pixel scrolled in a scroll-animation
+const DEFAULTMINANIMATIONFRAMES = 5;
 
 /*
  * _xMapContainerAnimationID: Map(Container, Array[idNumber]), a map in which:
