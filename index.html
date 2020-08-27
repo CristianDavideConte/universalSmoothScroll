@@ -21,13 +21,13 @@
       </ul>
     </nav>
     <div id = "section1" class = "page">
-      <section id = "scrollableYList">
-        <button id = "scrollableYListLeft">&lt-</button>
+      <section id = "xScroller">
+        <button id = "xScrollerLeft">&lt-</button>
         <div id = "section11" class = "listItem"></div>
         <div id = "section21" class = "listItem"></div>
         <div id = "section31" class = "listItem"></div>
         <div id = "section41" class = "listItem"></div>
-        <button id = "scrollableYListRight">-&gt</button>
+        <button id = "xScrollerRight">-&gt</button>
       </section>
     </div>
     <div id = "section2" class = "page"></div>
@@ -41,13 +41,13 @@
     let scroll = false;
     function scrollList(direction) {
       if(scroll)
-        universalSmoothScroll.scrollXby(direction * 200, document.getElementById("scrollableYList"), () => scrollList(direction), false);
+        universalSmoothScroll.scrollXby(direction * 200, document.getElementById("xScroller"), () => scrollList(direction));
     }
-    document.getElementById("scrollableYListLeft").addEventListener("mousedown",  () => {scroll = true; scrollList(-1);}, {passive: false});
-    document.getElementById("scrollableYListRight").addEventListener("mousedown", () => {scroll = true; scrollList(+1);}, {passive: false});
-    document.getElementById("scrollableYListLeft").addEventListener("mouseup",  () => scroll = false, {passive:false});
-    document.getElementById("scrollableYListRight").addEventListener("mouseup", () => scroll = false, {passive:false});
-    document.getElementById("stopScrollingX").addEventListener("click", () => universalSmoothScroll.stopScrollingX(() => console.log("scrollX stopped")), {passive:false});
-    document.getElementById("stopScrollingY").addEventListener("click", () => universalSmoothScroll.stopScrollingY(() => console.log("scrollY stopped")), {passive:false});
+    document.getElementById("xScrollerLeft").addEventListener("mousedown",  () => {scroll = true; scrollList(-1);}, {passive: false});
+    document.getElementById("xScrollerRight").addEventListener("mousedown", () => {scroll = true; scrollList(+1);}, {passive: false});
+    document.getElementById("xScrollerLeft").addEventListener("mouseup",  () => scroll = false, {passive:false});
+    document.getElementById("xScrollerRight").addEventListener("mouseup", () => scroll = false, {passive:false});
+    document.getElementById("stopScrollingX").addEventListener("click", () => universalSmoothScroll.stopScrollingX(document.getElementById("xScroller"), () => console.log("scrollX stopped")), {passive:false});
+    document.getElementById("stopScrollingY").addEventListener("click", () => universalSmoothScroll.stopScrollingY(window, () => console.log("scrollY stopped")), {passive:false});
   }
 </script>

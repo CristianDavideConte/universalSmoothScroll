@@ -75,7 +75,7 @@ li > a {
   background: linear-gradient(45deg, rgba(228,255,0,1) 0%, rgba(255,132,0,1) 100%);
 }
 
-#scrollableYList {
+#xScroller {
   display: flex;
   width: 50vmin;
   overflow-x: scroll;
@@ -88,7 +88,7 @@ li > a {
 }
 
 
-#scrollableYList > button {
+#xScroller > button {
   z-index: 0;
   color:black;
   position: absolute;
@@ -99,11 +99,11 @@ li > a {
   backdrop-filter: blur(10px);
 }
 
-#scrollableYListLeft {
+#xScrollerLeft {
   margin-right: 50vmin;
 }
 
-#scrollableYListRight {
+#xScrollerRight {
   margin-left: 50vmin;
   -webkit-transform: translateX(-100%);
   transform: translateX(-100%);
