@@ -130,17 +130,18 @@ var universalSmoothScroll = {
 
     function _stepX () {
       _scheduledAnimations = universalSmoothScroll._xMapContainerAnimationID.get(container);
+      _scheduledAnimations.shift(); //The first _stepX to be executed is the first one which set an id
       _remaningScrollAmmount = Math.abs(finalXPosition - scrollingXFunction());
 
       if(_remaningScrollAmmount < _scrollStepLenght) {
         container.scroll(scrollingXFunction() + _remaningScrollAmmount * _direction, scrollingYFunction());
+        universalSmoothScroll._xMapContainerAnimationID.set(container, _scheduledAnimations);
         if(typeof callback === "function") window.requestAnimationFrame(callback);
         return;
       }
 
       container.scroll(scrollingXFunction() + _scrollStepLenght * _direction, scrollingYFunction());
 
-      _scheduledAnimations.shift(); //The first _stepX to be executed is the first one which set an id
       _scheduledAnimations.push(window.requestAnimationFrame(_stepX));
       universalSmoothScroll._xMapContainerAnimationID.set(container, _scheduledAnimations);
     }
@@ -178,17 +179,18 @@ var universalSmoothScroll = {
 
     function _stepY () {
       _scheduledAnimations = universalSmoothScroll._yMapContainerAnimationID.get(container);
+      _scheduledAnimations.shift(); //The first _stepY to be executed is the first one which set an id
       _remaningScrollAmmount = Math.abs(finalYPosition - scrollingYFunction());
 
       if(_remaningScrollAmmount < _scrollStepLenght) {
         container.scroll(scrollingXFunction(), scrollingYFunction() + _remaningScrollAmmount * _direction);
+        universalSmoothScroll._yMapContainerAnimationID.set(container, _scheduledAnimations);
         if(typeof callback === "function") window.requestAnimationFrame(callback);
         return;
       }
 
       container.scroll(scrollingXFunction(), scrollingYFunction() + _scrollStepLenght * _direction);
 
-      _scheduledAnimations.shift(); //The first _stepY to be executed is the first one which set an id
       _scheduledAnimations.push(window.requestAnimationFrame(_stepY));
       universalSmoothScroll._yMapContainerAnimationID.set(container, _scheduledAnimations);
     }
