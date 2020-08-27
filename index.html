@@ -37,19 +37,25 @@
 </html>
 <script>
   function init() {
-    universalSmoothScroll.hrefSetup();
     let xScroller = document.getElementById("xScroller");
+    let xScrollerLeftButton = document.getElementById("xScrollerLeft");
+    let xScrollerRightButton = document.getElementById("xScrollerRight");
+
+    universalSmoothScroll.hrefSetup();
+
     function scrollList(direction) {
       let finalXPosition = (direction === -1) ? 0 : xScroller.scrollWidth;
       universalSmoothScroll.scrollXto(finalXPosition, xScroller, null, true);
     }
-    document.getElementById("xScrollerLeft").addEventListener("mousedown",  () => scrollList(-1), {passive: false});
-    document.getElementById("xScrollerRight").addEventListener("mousedown", () => scrollList(+1), {passive: false});
-    document.getElementById("xScrollerLeft").addEventListener("mouseup",  () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
-    document.getElementById("xScrollerLeft").addEventListener("mouseout",  () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
-    document.getElementById("xScrollerRight").addEventListener("mouseup", () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
-    document.getElementById("xScrollerRight").addEventListener("mouseout",  () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
-    document.getElementById("stopScrollingX").addEventListener("click", () => universalSmoothScroll.stopScrollingX(document.getElementById("xScroller"), () => console.log("scrollX stopped")), {passive:false});
+    xScrollerLeftButton.addEventListener("mousedown",  () => scrollList(-1), {passive: false});
+    xScrollerRightButton.addEventListener("mousedown", () => scrollList(+1), {passive: false});
+    xScrollerLeftButton.addEventListener("touchstart",  () => scrollList(-1), {passive: false});
+    xScrollerRightButton.addEventListener("touchstart", () => scrollList(+1), {passive: false});
+    xScrollerLeftButton.addEventListener("mouseup",  () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
+    xScrollerRightButton.addEventListener("mouseup", () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
+    xScrollerLeftButton.addEventListener("mouseout",  () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
+    xScrollerRightButton.addEventListener("mouseout", () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
+    document.getElementById("stopScrollingX").addEventListener("click", () => universalSmoothScroll.stopScrollingX(xScroller, () => console.log("scrollX stopped")), {passive:false});
     document.getElementById("stopScrollingY").addEventListener("click", () => universalSmoothScroll.stopScrollingY(window, () => console.log("scrollY stopped")), {passive:false});
   }
 </script>
