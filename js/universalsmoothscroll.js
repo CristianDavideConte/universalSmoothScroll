@@ -111,7 +111,7 @@ var universalSmoothScroll = {
     let _remaningScrollAmmount = finalXPosition - scrollingXFunction();
     const _direction = Math.sign(_remaningScrollAmmount);
     _remaningScrollAmmount *= _direction;
-    if(_remaningScrollAmmount <= 0) {if(typeof callback === "function") window.requestAnimationFrame(callback);return;}
+    if(_remaningScrollAmmount <= 0) {if(typeof callback === "function") setTimeout(callback, 0);return;}
 
     const _scrollStepLenght = this.calcStepXLenght(_remaningScrollAmmount);
 
@@ -136,7 +136,7 @@ var universalSmoothScroll = {
       if(_remaningScrollAmmount < _scrollStepLenght) {
         container.scroll(scrollingXFunction() + _remaningScrollAmmount * _direction, scrollingYFunction());
         universalSmoothScroll._xMapContainerAnimationID.set(container, _scheduledAnimations);
-        if(typeof callback === "function") window.requestAnimationFrame(callback);
+        if(typeof callback === "function") setTimeout(callback, 0);
         return;
       }
 
@@ -160,7 +160,7 @@ var universalSmoothScroll = {
     let _remaningScrollAmmount = finalYPosition - scrollingYFunction();
     const _direction = Math.sign(_remaningScrollAmmount);
     _remaningScrollAmmount *= _direction;
-    if(_remaningScrollAmmount <= 0) {if(typeof callback === "function") window.requestAnimationFrame(callback);return;}
+    if(_remaningScrollAmmount <= 0) {if(typeof callback === "function") setTimeout(callback, 0); return;}
 
     const _scrollStepLenght = this.calcStepYLenght(_remaningScrollAmmount);
 
@@ -185,7 +185,7 @@ var universalSmoothScroll = {
       if(_remaningScrollAmmount < _scrollStepLenght) {
         container.scroll(scrollingXFunction(), scrollingYFunction() + _remaningScrollAmmount * _direction);
         universalSmoothScroll._yMapContainerAnimationID.set(container, _scheduledAnimations);
-        if(typeof callback === "function") window.requestAnimationFrame(callback);
+        if(typeof callback === "function") setTimeout(callback, 0);
         return;
       }
 
@@ -218,14 +218,14 @@ var universalSmoothScroll = {
     if(_scheduledAnimations === undefined || _scheduledAnimations === []) return;
     _scheduledAnimations.forEach(animationID => window.cancelAnimationFrame(animationID));
     universalSmoothScroll._xMapContainerAnimationID.set(container, []);
-    if(typeof callback === "function") window.requestAnimationFrame(callback);
+    if(typeof callback === "function") setTimeout(callback, 0);
   },
   stopScrollingY: function (container = window, callback = () => {}) {
     let _scheduledAnimations = universalSmoothScroll._yMapContainerAnimationID.get(container);
     if(_scheduledAnimations === undefined || _scheduledAnimations === []) return;
     _scheduledAnimations.forEach(animationID => window.cancelAnimationFrame(animationID));
     universalSmoothScroll._yMapContainerAnimationID.set(container, []);
-    if(typeof callback === "function") window.requestAnimationFrame(callback);
+    if(typeof callback === "function") setTimeout(callback, 0);
   },
   hrefSetup: function () {
     const pageLinks = document.getElementsByTagName("a");
