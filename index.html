@@ -76,7 +76,6 @@
       let finalYPosition = (direction === -1) ? 0 : yScroller.scrollHeight;
       universalSmoothScroll.scrollYto(finalYPosition, yScroller, null, true);
     }
-
     yScrollerUpButton.addEventListener("mousedown",  () => scrollListY(-1), {passive: false});
     yScrollerDownButton.addEventListener("mousedown", () => scrollListY(+1), {passive: false});
     yScrollerUpButton.addEventListener("touchstart",  () => scrollListY(-1), {passive: false});
