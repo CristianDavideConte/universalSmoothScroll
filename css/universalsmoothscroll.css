@@ -73,7 +73,8 @@ li > a {
 
 
 #section1,
-#section11 {
+#section11,
+#section12 {
   background: linear-gradient(45deg, rgba(228,255,0,1) 0%, rgba(255,132,0,1) 100%);
 }
 
@@ -95,6 +96,7 @@ li > a {
   z-index: 0;
   color:black;
   position: absolute;
+  font-size: 3rem;
   height: 70vmin;
   width: 20vmin;
   background: rgba(255,255,255,0.4);
@@ -113,16 +115,49 @@ li > a {
 }
 
 #section2,
-#section21 {
+#section21,
+#section22 {
   background: linear-gradient(45deg, rgba(0,56,255,1) 0%, rgba(0,249,255,1) 100%);
 }
 
+#yScroller {
+  display: flex;
+  flex-direction: column;
+  width: 70vmin;
+  height: 70vmin;
+  overflow-y: scroll;
+}
+
+#yScroller > button {
+  z-index: 0;
+  color:black;
+  position: absolute;
+  font-size: 3rem;
+  height: 20vmin;
+  width: 70vmin;
+  background: rgba(255,255,255,0.4);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+#yScrollerUp {
+  margin-bottom: 70vmin;
+}
+
+#yScrollerDown {
+  margin-top: 70vmin;
+  -webkit-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+
 #section3,
-#section31 {
+#section31,
+#section32 {
   background: linear-gradient(45deg, rgba(201,0,255,1) 0%, rgba(255,0,44,1) 100%);
 }
 
 #section4,
-#section41 {
+#section41,
+#section42 {
   background: linear-gradient(45deg, rgba(0,255,244,1) 0%, rgba(0,255,29,1) 100%);
 }

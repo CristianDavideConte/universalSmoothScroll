@@ -7,7 +7,7 @@
     <link rel = "stylesheet" type = "text/css" href = "./css/universalsmoothscroll.css">
     <script async src = "./js/universalsmoothscroll.js"></script>
   </head>
-  <body onload = "init()">
+  <body onload = "init()" oncontextmenu = "return false">
     <nav id = "header">
       <ul>
         <li><a href = "#section1">SECTION 1</a></li>
@@ -22,15 +22,24 @@
     </nav>
     <div id = "section1" class = "page">
       <section id = "xScroller">
-        <button id = "xScrollerLeft">&lt-</button>
+        <button id = "xScrollerLeft">&larr;</button>
         <div id = "section11" class = "listItem"></div>
         <div id = "section21" class = "listItem"></div>
         <div id = "section31" class = "listItem"></div>
         <div id = "section41" class = "listItem"></div>
-        <button id = "xScrollerRight">-&gt</button>
+        <button id = "xScrollerRight">&rarr;</button>
       </section>
     </div>
-    <div id = "section2" class = "page"></div>
+    <div id = "section2" class = "page">
+      <section id = "yScroller">
+        <button id = "yScrollerUp">&uarr;</button>
+        <div id = "section12" class = "listItem"></div>
+        <div id = "section22" class = "listItem"></div>
+        <div id = "section32" class = "listItem"></div>
+        <div id = "section42" class = "listItem"></div>
+        <button id = "yScrollerDown">&darr;</button>
+      </section>
+    </div>
     <div id = "section3" class = "page"></div>
     <div id = "section4" class = "page"></div>
   <body>
@@ -41,25 +50,44 @@
     let xScrollerLeftButton = document.getElementById("xScrollerLeft");
     let xScrollerRightButton = document.getElementById("xScrollerRight");
 
+    let yScroller = document.getElementById("yScroller");
+    let yScrollerUpButton = document.getElementById("yScrollerUp");
+    let yScrollerDownButton = document.getElementById("yScrollerDown");
+
     universalSmoothScroll.hrefSetup();
 
-    function scrollList(direction) {
+    function scrollListX(direction) {
       let finalXPosition = (direction === -1) ? 0 : xScroller.scrollWidth;
       universalSmoothScroll.scrollXto(finalXPosition, xScroller, null, true);
     }
-    xScrollerLeftButton.addEventListener("mousedown",  () => scrollList(-1), {passive: false});
-    xScrollerRightButton.addEventListener("mousedown", () => scrollList(+1), {passive: false});
-    xScrollerLeftButton.addEventListener("touchstart",  () => scrollList(-1), {passive: false});
-    xScrollerRightButton.addEventListener("touchstart", () => scrollList(+1), {passive: false});
+    xScrollerLeftButton.addEventListener("mousedown",  () => scrollListX(-1), {passive: false});
+    xScrollerRightButton.addEventListener("mousedown", () => scrollListX(+1), {passive: false});
+    xScrollerLeftButton.addEventListener("touchstart",  () => scrollListX(-1), {passive: false});
+    xScrollerRightButton.addEventListener("touchstart", () => scrollListX(+1), {passive: false});
 
-    //xScrollerLeftButton.addEventListener("touchmove",  () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
-    //xScrollerRightButton.addEventListener("touchmove", () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
     xScrollerLeftButton.addEventListener("touchend",  () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
     xScrollerRightButton.addEventListener("touchend", () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
     xScrollerLeftButton.addEventListener("mouseup",  () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
     xScrollerRightButton.addEventListener("mouseup", () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
     xScrollerLeftButton.addEventListener("mouseout",  () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
     xScrollerRightButton.addEventListener("mouseout", () => universalSmoothScroll.stopScrollingX(xScroller), {passive:false});
+
+    function scrollListY(direction) {
+      let finalYPosition = (direction === -1) ? 0 : yScroller.scrollHeight;
+      universalSmoothScroll.scrollYto(finalYPosition, yScroller, null, true);
+    }
+
+    yScrollerUpButton.addEventListener("mousedown",  () => scrollListY(-1), {passive: false});
+    yScrollerDownButton.addEventListener("mousedown", () => scrollListY(+1), {passive: false});
+    yScrollerUpButton.addEventListener("touchstart",  () => scrollListY(-1), {passive: false});
+    yScrollerDownButton.addEventListener("touchstart", () => scrollListY(+1), {passive: false});
+
+    yScrollerUpButton.addEventListener("touchend",  () => universalSmoothScroll.stopScrollingY(yScroller), {passive:false});
+    yScrollerDownButton.addEventListener("touchend", () => universalSmoothScroll.stopScrollingY(yScroller), {passive:false});
+    yScrollerUpButton.addEventListener("mouseup",  () => universalSmoothScroll.stopScrollingY(yScroller), {passive:false});
+    yScrollerDownButton.addEventListener("mouseup", () => universalSmoothScroll.stopScrollingY(yScroller), {passive:false});
+    yScrollerUpButton.addEventListener("mouseout",  () => universalSmoothScroll.stopScrollingY(yScroller), {passive:false});
+    yScrollerDownButton.addEventListener("mouseout", () => universalSmoothScroll.stopScrollingY(yScroller), {passive:false});
 
     document.getElementById("stopScrollingX").addEventListener("click", () => universalSmoothScroll.stopScrollingX(xScroller, () => console.log("scrollX stopped")), {passive:false});
     document.getElementById("stopScrollingY").addEventListener("click", () => universalSmoothScroll.stopScrollingY(window, () => console.log("scrollY stopped")), {passive:false});

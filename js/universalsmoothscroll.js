@@ -4,23 +4,27 @@ const DEFAULTMINANIMATIONFRAMES = 5;//Default lowest possible number of pixel sc
 
 /*
  * _xMapContainerAnimationID: Map(Container, Array[idNumber]), a map in which:
- *                            1) The keys are the container on which a scroll-animation on the x-axis has been requested
+ *                            1) The keys are the containers on which a scroll-animation on the x-axis has been requested
  *                            2) The values are lists of ids. This ids are provided by the requestAnimationFrame() calls and
  *                               are used by the stopScrollingX() function any scroll-animation on the x-axis for the passed component
  * _yMapContainerAnimationID: Map(Container, Array[idNumber]), a map in which:
  *                            1) The keys are the container on which a scroll-animation on the y-axis has been requested
  *                            2) The values are lists of ids. This ids are provided by the requestAnimationFrame() calls and
  *                               are used by the stopScrollingY() function any scroll-animation on the y-axis for the passed component
- * _xStepLengthCalculator: function, a user-defined function that can modify the step's length at each _stepX call of a scroll-animation on the x-axis
- * _yStepLengthCalculator: function, a user-defined function that can modify the step's length at each _stepY call of a scroll-animation on the y-axis
+ * _xStepLengthCalculator: Map(Container, stepCalculatorFunction), a map in which:
+ *                         1) The keys are the container on which a scroll-animation on the x-axis has been requested
+ *                         2) The values are user-defined functions that can modify the step's length at each _stepX call of a scroll-animation on the x-axis
+ * _yStepLengthCalculator: Map(Container, stepCalculatorFunction), a map in which:
+ *                         1) The keys are the container on which a scroll-animation on the y-axis has been requested
+ *                         2) The values are user-defined functions that can modify the step's length at each _stepY call of a scroll-animation on the y-axis
  * _scrollStepX: number, the number of pixel scrolled in a single scroll-on-X-axis-animation step
  * _scrollStepY: number, the number of pixel scrolled in a single scroll-on-Y-axis-animation step
  * _minAnimationFrame: number, minimum number of frames any scroll-animation should last
  *
  * isXscrolling: function, return true if a scroll-animation on the x-axis of the passed container is currently being performed, false otherwise
  * isYscrolling: function, return true if a scroll-animation on the y-axis of the passed container is currently being performed, false otherwise
- * getXStepLengthCalculator: function, return the value of _xStepLengthCalculator
- * getYStepLengthCalculator: function, return the value of _yStepLengthCalculator
+ * getXStepLengthCalculator: function, return the _xStepLengthCalculator function for the passed container
+ * getYStepLengthCalculator: function, return the _yStepLengthCalculator function for the passed container
  * getScrollStepX: function, return the value of _scrollStepX
  * getScrollStepY: function, return the value of _scrollStepY
  * setScrollStepX: function, sets the _scrollStepX to the passed value if compatible
@@ -58,27 +62,27 @@ const DEFAULTMINANIMATIONFRAMES = 5;//Default lowest possible number of pixel sc
 var universalSmoothScroll = {
   _xMapContainerAnimationID: new Map(),
   _yMapContainerAnimationID: new Map(),
-  _xStepLengthCalculator: undefined,
-  _yStepLengthCalculator: undefined,
+  _xStepLengthCalculator: new Map(),
+  _yStepLengthCalculator: new Map(),
   _scrollStepX: DEFAULTSCROLLSTEPX,
   _scrollStepY: DEFAULTSCROLLSTEPY,
   _minAnimationFrame: DEFAULTMINANIMATIONFRAMES,
   isXscrolling: function (container = window) {const _scheduledAnimations = universalSmoothScroll._xMapContainerAnimationID.get(container); return typeof _scheduledAnimations !== "undefined" && _scheduledAnimations.length > 0;},
   isYscrolling: function (container = window) {const _scheduledAnimations = universalSmoothScroll._yMapContainerAnimationID.get(container); return typeof _scheduledAnimations !== "undefined" && _scheduledAnimations.length > 0;},
-  getXStepLengthCalculator: function () {return this._xStepLengthCalculator},
-  getYStepLengthCalculator: function () {return this._yStepLengthCalculator},
+  getXStepLengthCalculator: function (container = window) {return this._xStepLengthCalculator.get(container)},
+  getYStepLengthCalculator: function (container = window) {return this._yStepLengthCalculator.get(container)},
   getScrollStepX: function () {return this._scrollStepX;},
   getScrollStepY: function () {return this._scrollStepY;},
   getMinAnimationFrame: function () {return this._minAnimationFrame;},
-  setXStepLengthCalculator: function (newCalculator) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerWidth;  if(typeof newCalculator(remaning) !== "number") return; this._xStepLengthCalculator = newCalculator},
-  setYStepLengthCalculator: function (newCalculator) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerHeight; if(typeof newCalculator(remaning) !== "number") return; this._yStepLengthCalculator = newCalculator},
+  setXStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerWidth;  if(typeof newCalculator(remaning) !== "number") return; this._xStepLengthCalculator.set(container, newCalculator)},
+  setYStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerHeight; if(typeof newCalculator(remaning) !== "number") return; this._yStepLengthCalculator.set(container, newCalculator)},
   setScrollStepX: function (newScrollStepX) {if(typeof newScrollStepX === typeof this._scrollStepX) if(newScrollStepX <= 0) return; this._scrollStepX = newScrollStepX;},
   setScrollStepY: function (newScrollStepY) {if(typeof newScrollStepY === typeof this._scrollStepY) if(newScrollStepY <= 0) return; this._scrollStepY = newScrollStepY;},
   setMinAnimationFrame: function (newMinAnimationFrame) {if(typeof newMinAnimationFrame === typeof this._minAnimationFrame) if(newMinAnimationFrame <= 0) return; this._minAnimationFrame = newMinAnimationFrame;},
   calcStepXLenght: function (deltaX) {return (deltaX >= (this._minAnimationFrame - 1) * this._scrollStepX) ? this._scrollStepX : Math.round(deltaX / this._minAnimationFrame);},
   calcStepYLenght: function (deltaY) {return (deltaY >= (this._minAnimationFrame - 1) * this._scrollStepY) ? this._scrollStepY : Math.round(deltaY / this._minAnimationFrame);},
-  containerScrollingXFunction: function (container) { return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
-  containerScrollingYFunction: function (container) { return (container instanceof HTMLElement) ? () => {return container.scrollTop}  : () => {return container.scrollY};},
+  containerScrollingXFunction: function (container = window) { return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
+  containerScrollingYFunction: function (container = window) { return (container instanceof HTMLElement) ? () => {return container.scrollTop}  : () => {return container.scrollY};},
   containerMaxScrollX: function (container) {
     let body = document.body;
     let html = document.documentElement;
@@ -141,9 +145,9 @@ var universalSmoothScroll = {
 
       _remaningScrollAmmount = Math.abs(finalXPosition - scrollingXFunction());
       let _calculatedScrollStepLenght;
-      if (universalSmoothScroll._xStepLengthCalculator === undefined) _calculatedScrollStepLenght = _scrollStepLenght;
+      if (universalSmoothScroll._xStepLengthCalculator.get(container) === undefined) _calculatedScrollStepLenght = _scrollStepLenght;
       else {
-        _calculatedScrollStepLenght = universalSmoothScroll._xStepLengthCalculator(_remaningScrollAmmount);
+        _calculatedScrollStepLenght = universalSmoothScroll._xStepLengthCalculator.get(container)(_remaningScrollAmmount);
         if(_calculatedScrollStepLenght < 0) _calculatedScrollStepLenght = _scrollStepLenght;
       }
 
@@ -194,9 +198,9 @@ var universalSmoothScroll = {
 
       _remaningScrollAmmount = Math.abs(finalYPosition - scrollingYFunction());
       let _calculatedScrollStepLenght;
-      if (universalSmoothScroll._yStepLengthCalculator === undefined) _calculatedScrollStepLenght = _scrollStepLenght;
+      if (universalSmoothScroll._yStepLengthCalculator.get(container) === undefined) _calculatedScrollStepLenght = _scrollStepLenght;
       else {
-        _calculatedScrollStepLenght = universalSmoothScroll._yStepLengthCalculator(_remaningScrollAmmount);
+        _calculatedScrollStepLenght = universalSmoothScroll._yStepLengthCalculator.get(container)(_remaningScrollAmmount);
         if(_calculatedScrollStepLenght < 0) _calculatedScrollStepLenght = _scrollStepLenght;
       }
 
