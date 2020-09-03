@@ -1,5 +1,5 @@
-const DEFAULTXSTEPLENGTH = window.innerWidth  * 50 / 1920; //Default number of pixel scrolled in a single scroll-on-X-axis-animation step: 50px steps for a 1920px screen width
-const DEFAULTYSTEPLENGTH = window.innerHeight * 50 / 937; //Default number of pixel scrolled in a single scroll-on-Y-axis-animation step: 50px steps for a 937px(1080px - urlbar) screen height
+const DEFAULTXSTEPLENGTH = window.innerWidth  * 50 / 1920; //Default number of pixel scrolled in a single scroll-animation's (on the x-axis) step: 50px steps for a 1920px screen width.
+const DEFAULTYSTEPLENGTH = window.innerHeight * 50 / 937; //Default number of pixel scrolled in a single scroll-animation's (on the y-axis) step: 50px steps for a 937px(1080px - urlbar) screen height.
 const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of frames any scroll-animation should last.
 
 /*
@@ -38,14 +38,14 @@ const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of frames 
  * calcYStepLength: function, takes in the total ammount of a scroll-animation on the y-axis and
  *                 calculates the how long each animation-step must be in order to target the _minAnimationFrame.
  * getScrollXCalculator: function, takes in a container and returns a function that returns:
- *                       1) the scrollLeft property of the container if it's a DOM element.
- *                       2) the scrollX property of the container if it's the window element.
+ *                       1) The scrollLeft property of the container if it's a DOM element.
+ *                       2) The scrollX property of the container if it's the window element.
  * getScrollYCalculator: function, takes in a container and returns a function that returns:
- *                       1) the scrollTop property of the container if it's a DOM element.
- *                       2) the scrollY property of the container if it's the window element.
+ *                       1) The scrollTop property of the container if it's a DOM element.
+ *                       2) The scrollY property of the container if it's the window element.
  * getMaxScrollX: function, takes in a scroll container and returns its highest scroll-reachable x-value.
  * getMaxScrollY: function, takes in a scroll container and returns its highest scroll-reachable y-value.
- * getScrollableParent: function, returns the first scrollable container of the passed element, works with "overflow('',X,Y): hidden" if specified
+ * getScrollableParent: function, returns the first scrollable container of the passed element, works with "overflow('',X,Y): hidden" if specified.
  * scrollXTo: function, takes in a number which indicates the position that window.scrollX has to reach and performs a scroll-animation on the x-axis,
  *            after the animation has finished a callback function can be invoked.
  * scrollYTo: function, takes in a number which indicates the position that window.scrollY has to reach and performs a scroll-animation on the y-axis,
@@ -62,8 +62,8 @@ const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of frames 
  *                 make it visible on the screen. There are 3 possible allignments: top, bottom, center.
  *                 The allignments can be changed by passing different values of alignToTop and alignToLeft.
  *                 Works with "overflow('',X,Y): hidden" if specified.
- * stopScrollingX: function, stops all the current scroll-animation on the x-axis for the passed component.
- * stopScrollingY: function, stops all the current scroll-animation on the y-axis for the passed component.
+ * stopScrollingX: function, stops all the current scroll-animation on the x-axis for the passed container.
+ * stopScrollingY: function, stops all the current scroll-animation on the y-axis for the passed container.
  * hrefSetup: function, looks for every <a> DOM element with a href attribute linked to an element on the same page (anchor) and
  *            attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element.
  */
@@ -84,14 +84,14 @@ var uss = {
   getMinAnimationFrame: function () {return uss._minAnimationFrame;},
   setXStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerWidth;  if(typeof newCalculator(remaning, remaning) !== "number") return; uss._xStepLengthCalculator.set(container, newCalculator)},
   setYStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerHeight; if(typeof newCalculator(remaning, remaning) !== "number") return; uss._yStepLengthCalculator.set(container, newCalculator)},
-  setXStepLength: function (newXStepLength) {if(typeof newXStepLength === typeof uss._xStepLength) if(newXStepLength <= 0) return; uss._xStepLength = newXStepLength;},
-  setYStepLength: function (newYStepLength) {if(typeof newYStepLength === typeof uss._yStepLength) if(newYStepLength <= 0) return; uss._yStepLength = newYStepLength;},
+  setXStepLength: function (newXStepLength) {if(typeof newXStepLength !== "number") return; if(newXStepLength <= 0) return; uss._xStepLength = newXStepLength;},
+  setYStepLength: function (newYStepLength) {if(typeof newYStepLength !== "number") return; if(newYStepLength <= 0) return; uss._yStepLength = newYStepLength;},
   setMinAnimationFrame: function (newMinAnimationFrame) {if(typeof newMinAnimationFrame !== "number") return; if(newMinAnimationFrame <= 0) return; uss._minAnimationFrame = newMinAnimationFrame;},
   calcXStepLength: function (deltaX) {return (deltaX >= (uss._minAnimationFrame - 1) * uss._xStepLength) ? uss._xStepLength : Math.round(deltaX / uss._minAnimationFrame);},
   calcYStepLength: function (deltaY) {return (deltaY >= (uss._minAnimationFrame - 1) * uss._yStepLength) ? uss._yStepLength : Math.round(deltaY / uss._minAnimationFrame);},
   getScrollXCalculator: function (container = window) { return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
   getScrollYCalculator: function (container = window) { return (container instanceof HTMLElement) ? () => {return container.scrollTop}  : () => {return container.scrollY};},
-  getMaxScrollX: function (container) {
+  getMaxScrollX: function (container = window) {
     let body = document.body;
     let html = document.documentElement;
     return (container instanceof HTMLElement) ?
@@ -105,7 +105,7 @@ var uss = {
         html.offsetWidth
       ) - window.innerWidth; // Subtract viewport width because the x-scroll is done starting by the left
   },
-  getMaxScrollY: function (container) {
+  getMaxScrollY: function (container = window) {
     let body = document.body;
     let html = document.documentElement;
     return (container instanceof HTMLElement) ?
