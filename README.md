@@ -379,7 +379,7 @@ You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/request
 More coming soon...
 
 # Browser Compatibility
-* IE (not tested)
+* IE (doesn't support ES6 js default parameters values)
 * Edge 
 * Firefox (not tested)
 * Chrome
