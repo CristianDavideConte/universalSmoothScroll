@@ -366,7 +366,7 @@ You can try out some of the API functionalities [HERE](https://cristiandavidecon
 ## Q: Do i need to have _scroll-behavior: smooth_ in my CSS ? 
 A: No, it's not needed.<br>
 ## Q: How do I invoke the API methods ?  
-A: Any API function call has this structure: `uss.NAME_OF_THE_METHOD (ARGUMENTS);`.<br>
+A: Any Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD (ARGUMENTS);`.<br>
 ## Q: Why is it allowed to directly modify internal variables ?
 A: It is allowed (but not suggested) because there may be a bug (rare cases) that prevents you from setting a variable to a right value. If this is the case: you just found a bug so don't hesitate to contact me !
 ## Q: Can i modify the way scroll-animation steps are calculated to a non-linear behavior ?
