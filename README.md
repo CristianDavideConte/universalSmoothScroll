@@ -43,6 +43,13 @@ Variable name | Purpose
 `_yStepLength` | The number of pixel scrolled in a single scroll-animation's (on the y-axis) step.
 `_minAnimationFrame` | The minimum number of frames any scroll-animation  (on any axis) should last.
 
+# Constants for internal-use variables defaults
+Constant name | Purpose
+------------- | -------
+`DEFAULTXSTEPLENGTH` | Default number of pixel scrolled in a single scroll-on-X-axis-animation step: 50px steps for a 1920px screen width.
+`DEFAULTYSTEPLENGTH` | Default number of pixel scrolled in a single scroll-on-Y-axis-animation step: 50px steps for a 937px(1080px - urlbar) screen height.
+`DEFAULTMINANIMATIONFRAMES` | Default lowest possible number of frames any scroll-animation should last.
+
 # Methods List
 Method Name | Purpose
 ----------- | -------
@@ -75,4 +82,6 @@ Method Name | Purpose
 `stopScrollingX` | Stops all the current scroll-animation on the x-axis for the passed container.
 `stopScrollingY` | Stops all the current scroll-animation on the y-axis for the passed container.
 `hrefSetup` | Looks for every <a> DOM element with a href attribute linked to an element on the same page (anchor) and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element.
+  
+# Methods' sintaxes
 
