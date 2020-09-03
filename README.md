@@ -368,7 +368,7 @@ A: No, it's not needed.<br>
 ## Q: How do I invoke the API methods ?  
 A: Any Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD (ARGUMENTS);`.<br>
 ## Q: Why is it allowed to directly modify internal variables ?
-A: It is allowed (but not suggested) because there may be a bug (rare cases) that prevents you from setting a variable to a right value. If this is the case: you just found a bug so don't hesitate to contact me !
+A: It is allowed (but not suggested) because there may be a bug (rare cases) that prevents you from setting a variable to a right value. If that's the case don't hesitate to contact me !
 ## Q: Can i modify the way scroll-animation steps are calculated to a non-linear behavior ?
 A: YES! Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_STEP_CALCULATOR_FUNCTION, THE_TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br>
 For example `uss.setYStepLengthCalculator((remaning, timestamp) => {return remaning / 10 + 1;});`. 
