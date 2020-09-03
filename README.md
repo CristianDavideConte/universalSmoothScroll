@@ -14,7 +14,7 @@ Add this in your project's `<head>` tag:<br>
 #### Latest beta version:<br>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>`
 ## Local file: 
-Copy & paste the script's minified version in your project's js directory & add the `<script>`. For example:<br>
+Copy & paste the script's minified version that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/) in your project's js directory & add the `<script>`. For example:<br>
 `<script src = "./js/universalsmoothscroll-min.js"></script>`
 
 # How does it work ? 
