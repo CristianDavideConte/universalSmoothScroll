@@ -24,7 +24,7 @@ The `uss` object has some internal variables which **SHOULD NOT** be directly ma
 You will be able to recognize those internal properties because their names begin with and `_` (underscore). <br>
 For istance: 
 * `uss._xStepLength` is the name of the internal property used by the `uss` objects' methods.
-* `uss.getXStepLength()` & `uss.setXStepLength` are the getter and setter's names for the `uss._sStepLength` variable.<br>
+* `uss.getXStepLength()` & `uss.setXStepLength` are the getter and setter's names for the `uss._xStepLength` variable.<br>
 
 There are 3 main scrolling-methods + 1 handy auto-initializer for anchor links and they are:
 * `uss.scrollTo()`
@@ -46,4 +46,33 @@ Variable name | Purpose
 # Methods List
 Method Name | Purpose
 ----------- | -------
+`isXscrolling` | Return true if a scroll-animation on the x-axis of the passed container is currently being performed, false otherwise.
+`isYscrolling` | Return true if a scroll-animation on the y-axis of the passed container is currently being performed, false otherwise.
+`getXStepLengthCalculator` | Return the _xStepLengthCalculator function for the passed container.
+`getYStepLengthCalculator` | Return the _yStepLengthCalculator function for the passed container.
+`getXStepLength` | Return the value of _xStepLength.
+`getYStepLength` | Return the value of _yStepLength.
+`getMinAnimationFrame` | Return the value of _minAnimationFrame.
+`setXStepLengthCalculator` | Sets the _xStepLengthCalculator for the requested container to the passed function if compatible.
+`setYStepLengthCalculator` | Sets the _yStepLengthCalculator for the requested container to the passed function if compatible.
+`setXStepLength` | Sets the _xStepLength to the passed value if compatible.
+`setYStepLength` | Sets the _yStepLength to the passed value if compatible.
+`setMinAnimationFrame` | Sets the _minAnimationFrame to the passed value if compatible.
+`calcXStepLength` | Takes in the total ammount of a scroll-animation on the x-axis and calculates the how long each animation-step must be in order to target the _minAnimationFrame.
+`calcYStepLength` | Takes in the total ammount of a scroll-animation on the y-axis and calculates the how long each animation-step must be in order to target the _minAnimationFrame.
+`getScrollXCalculator` | Takes in a container and returns a function that returns:<br> 1) The scrollLeft property of the container if it's a DOM element.<br> 2) The scrollX property of the container if it's the window element.
+`getScrollYCalculator` | Takes in a container and returns a function that returns:<br> 1) The scrollTop property of the container if it's a DOM element.<br> 2) The scrollY property of the container if it's the window element.
+`getMaxScrollX` | Takes in a scroll container and returns its highest scroll-reachable x-value.
+`getMaxScrollY` | Takes in a scroll container and returns its highest scroll-reachable y-value.
+`getScrollableParent` | Returns the first scrollable container of the passed element, works with "overflow('',X,Y): hidden" if specified.
+`scrollXTo` | Takes in a number which indicates the position that window.scrollX has to reach and performs a scroll-animation on the x-axis, after the animation has finished a callback function can be invoked.
+`scrollYTo` | Takes in a number which indicates the position that window.scrollY has to reach and performs a scroll-animation on the y-axis, after the animation has finished a callback function can be invoked.
+`scrollXBy` | Takes in a number which indicates the number of pixel on the x-axis the passed container has to be scrolled by and performs a scroll-animation on that axis.
+`scrollYBy` | Takes in a number which indicates the number of pixel on the y-axis the passed container has to be scrolled by and performs a scroll-animation on that axis.
+`scrollTo` | A shorthand for calling scrollXTo() and scrollYTo one after another, performs 2 scroll-animation on the x and y axises based on the passed parameters.
+`scrollBy` | A shorthand for calling scrollXBy() and scrollYBy one after another, performs 2 scroll-animation on the x and y axises based on the passed parameters.
+`scrollIntoView` | Scrolls the window and if necessary the container of the passed element in order to make it visible on the screen.<br> There are 3 possible allignments: top, bottom, center.<br> The allignments can be changed by passing different values of alignToTop and alignToLeft.<br> Works with "overflow('',X,Y): hidden" if specified.
+`stopScrollingX` | Stops all the current scroll-animation on the x-axis for the passed container.
+`stopScrollingY` | Stops all the current scroll-animation on the y-axis for the passed container.
+`hrefSetup` | Looks for every <a> DOM element with a href attribute linked to an element on the same page (anchor) and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element.
 
