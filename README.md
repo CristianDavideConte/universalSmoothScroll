@@ -382,3 +382,7 @@ coming soon...
 * QQ Browser (not tested)
 * Baidu Browser (not tested)
 * KaiOS Browser (not tested)
+
+# Contact Me 
+For any bug you found or if you simply need to contact me, [this is my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br>
+Feel free to reach out !
