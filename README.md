@@ -10,7 +10,7 @@ coming soon...
 ## HTML meta tag:
 Add this in your project's `<head>` tag:<br>
 #### Stable versions:<br>
-`<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/306bdef1839a405e4c2a7d776a82b7500bc537e8/js/universalsmoothscroll-min.js"></script>`<br>
+`<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/a03bda31a3a42513baf33ee90eae78a573f7b21e/js/universalsmoothscroll-min.js"></script>`<br>
 #### Latest beta version:<br>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>`
 ## Local file: 
