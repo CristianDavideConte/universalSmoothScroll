@@ -83,7 +83,7 @@ Method Name | Purpose
 `stopScrollingY` | Stops all the current scroll-animation on the y-axis for the passed container.
 `hrefSetup` | Looks for every <a> DOM element with a href attribute linked to an element on the same page (anchor) and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element.
   
-# Methods' sintaxes
+# Methods' syntaxes
 #### isXscrolling
 ```javascript
 /*
