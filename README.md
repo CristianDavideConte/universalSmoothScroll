@@ -374,12 +374,12 @@ A: YES! Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_STEP_CALCULATOR_FUNCT
 For example `uss.setYStepLengthCalculator((remaning, timestamp) => {return remaning / 10 + 1;});`. 
 ## Q: Can I make my scroll-animation last a certain ammount of time? 
 A: Yes, infact while setting a custom stepLengthCalculator you will notice your function will be passed the timestamp of the window.requestAnimationFrame call as the second argument !
-You may find [this](https://developer.mozilla.org/it/docs/Web/API/Window/requestAnimationFrame) useful.
+You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) useful.
 
 More coming soon...
 
 # Browser Compatibility
-* IE (needs the window.requestAnimationFrame polifyll)
+* IE (not tested)
 * Edge 
 * Firefox (not tested)
 * Chrome
