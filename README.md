@@ -361,8 +361,22 @@ Method Name | Purpose
 ```
 # DEMO 
 You can try out some of the API functionalities [HERE](https://cristiandavideconte.github.io/universalSmoothScroll/) !
+
 # FAQ
-coming soon...
+## Q: Do i need to have _scroll-behavior: smooth_ in my CSS ? 
+A: No, it's not needed.<br>
+## Q: How do I invoke the API methods ?  
+A: Any API function call has this structure: `uss.NAME_OF_THE_METHOD (ARGUMENTS);`.<br>
+## Q: Why is it allowed to directly modify internal variables ?
+A: It is allowed (but not suggested) because there may be a bug (rare cases) that prevents you from setting a variable to a right value. If this is the case: you just found a bug so don't hesitate to contact me !
+## Q: Can i modify the way scroll-animation steps are calculated to a non-linear behavior ?
+A: YES! Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_STEP_CALCULATOR_FUNCTION, THE_TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br>
+For example `uss.setYStepLengthCalculator((remaning, timestamp) => {return remaning / 10 + 1;});`. 
+## Q: Can I make my scroll-animation last a certain ammount of time? 
+A: Yes, infact while setting a custom stepLengthCalculator you will notice your function will be passed the timestamp of the window.requestAnimationFrame call as the second argument !
+You may find [this](https://developer.mozilla.org/it/docs/Web/API/Window/requestAnimationFrame) useful.
+
+More coming soon...
 
 # Browser Compatibility
 * IE (needs the window.requestAnimationFrame polifyll)
