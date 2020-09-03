@@ -359,3 +359,26 @@ Method Name | Purpose
  */
  function hrefSetup (includeHidden = false);
 ```
+# DEMO 
+You can try out some of the API functionalities [HERE](https://cristiandavideconte.github.io/universalSmoothScroll/) !
+# FAQ
+coming soon...
+
+# Browser Compatibility
+* IE (needs the window.requestAnimationFrame polifyll)
+* Edge 
+* Firefox (not tested)
+* Chrome
+* Safari
+* Opera (not tested)
+* Safari for iOS
+* Opera mini (not tested)
+* Android browser (not tested)
+* Opera mobile (not tested)
+* Chrome for Android 
+* Firefox for Android (not tested)
+* UC Browser for Android (not tested)
+* Samsung Internet (not tested)
+* QQ Browser (not tested)
+* Baidu Browser (not tested)
+* KaiOS Browser (not tested)
