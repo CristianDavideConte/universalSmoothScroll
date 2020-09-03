@@ -1,15 +1,15 @@
 const DEFAULTXSTEPLENGTH = window.innerWidth  * 50 / 1920; //Default number of pixel scrolled in a single scroll-on-X-axis-animation step: 50px steps for a 1920px screen width
 const DEFAULTYSTEPLENGTH = window.innerHeight * 50 / 937; //Default number of pixel scrolled in a single scroll-on-Y-axis-animation step: 50px steps for a 937px(1080px - urlbar) screen height
-const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of pixel scrolled in a scroll-animation
+const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of frames any scroll-animation should last.
 
 /*
  * _xMapContainerAnimationID: Map(Container, Array[idNumber]), a map in which:
  *                            1) The keys are the containers on which a scroll-animation on the x-axis has been requested.
- *                            2) The values are lists of ids. This ids are provided by the requestAnimationFrame() calls and
+ *                            2) The values are Array of ids. This ids are provided by the requestAnimationFrame() calls and
  *                               are used by the stopScrollingX() function any scroll-animation on the x-axis for the passed component.
  * _yMapContainerAnimationID: Map(Container, Array[idNumber]), a map in which:
- *                            1) The keys are the container on which a scroll-animation on the y-axis has been requested.
- *                            2) The values are lists of ids. This ids are provided by the requestAnimationFrame() calls and
+ *                            1) The keys are the containers on which a scroll-animation on the y-axis has been requested.
+ *                            2) The values are Array of ids. This ids are provided by the requestAnimationFrame() calls and
  *                               are used by the stopScrollingY() function any scroll-animation on the y-axis for the passed component.
  * _xStepLengthCalculator: Map(Container, stepCalculatorFunction), a map in which:
  *                         1) The keys are the container on which a scroll-animation on the x-axis has been requested.
@@ -17,9 +17,9 @@ const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of pixel s
  * _yStepLengthCalculator: Map(Container, stepCalculatorFunction), a map in which:
  *                         1) The keys are the container on which a scroll-animation on the y-axis has been requested.
  *                         2) The values are user-defined functions that can modify the step's length at each _stepY call of a scroll-animation on the y-axis.
- * _xStepLength: number, the number of pixel scrolled in a single scroll-on-X-axis-animation step.
- * _yStepLength: number, the number of pixel scrolled in a single scroll-on-Y-axis-animation step.
- * _minAnimationFrame: number, minimum number of frames any scroll-animation should last.
+ * _xStepLength: number, the number of pixel scrolled in a single scroll-animation's (on the x-axis) step.
+ * _yStepLength: number, the number of pixel scrolled in a single scroll-animation's (on the y-axis) step.
+ * _minAnimationFrame: number, the minimum number of frames any scroll-animation (on any axis) should last.
  *
  * isXscrolling: function, return true if a scroll-animation on the x-axis of the passed container is currently being performed, false otherwise.
  * isYscrolling: function, return true if a scroll-animation on the y-axis of the passed container is currently being performed, false otherwise.
