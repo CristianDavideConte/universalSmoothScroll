@@ -43,11 +43,11 @@ Variable name | Purpose
 `_yStepLength` | The number of pixel scrolled in a single scroll-animation's (on the y-axis) step.
 `_minAnimationFrame` | The minimum number of frames any scroll-animation  (on any axis) should last.
 
-# Constants for internal-use variables defaults
+# Constants list
 Constant name | Purpose
 ------------- | -------
-`DEFAULTXSTEPLENGTH` | Default number of pixel scrolled in a single scroll-on-X-axis-animation step: 50px steps for a 1920px screen width.
-`DEFAULTYSTEPLENGTH` | Default number of pixel scrolled in a single scroll-on-Y-axis-animation step: 50px steps for a 937px(1080px - urlbar) screen height.
+`DEFAULTXSTEPLENGTH` | Default number of pixel scrolled in a single scroll-animation's (on the x-axis) step: 50px steps for a 1920px screen width.
+`DEFAULTYSTEPLENGTH` | Default number of pixel scrolled in a single scroll-animation's (on the y-axis) step: 50px steps for a 937px(1080px - urlbar) screen height.
 `DEFAULTMINANIMATIONFRAMES` | Default lowest possible number of frames any scroll-animation should last.
 
 # Methods List
@@ -84,4 +84,278 @@ Method Name | Purpose
 `hrefSetup` | Looks for every <a> DOM element with a href attribute linked to an element on the same page (anchor) and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element.
   
 # Methods' sintaxes
-
+#### isXscrolling
+```javascript
+/*
+ * @param container window or HTML element
+ */
+ function isXscrolling (container = window);
+```
+#### isYscrolling
+```javascript
+/*
+ * @param container window or HTML element
+ */
+ function isYscrolling (container = window);
+```
+#### getXStepLengthCalculator
+```javascript
+/*
+ * @param container window or HTML element
+ */
+ function getXStepLengthCalculator (container = window);
+```
+#### getYStepLengthCalculator
+```javascript
+/*
+ * @param container window or HTML element
+ */
+ function getYStepLengthCalculator (container = window);
+```
+#### getXStepLength
+```javascript
+/* No input parameters required */
+ function getXStepLength ();
+```
+#### getYStepLength
+```javascript
+/* No input parameters required */
+ function getYStepLength ();
+```
+#### getMinAnimationFrame
+```javascript
+/* No input parameters required */
+ function getMinAnimationFrame ();
+```
+#### setXStepLengthCalculator
+```javascript
+/*
+ * @param newCalculator function that defines the length of each step of every scroll-animation on the x-axis for the passed container.
+ *        In order for it to work, it has to follow this rules:
+ *        1) Has to take in 2 parameters (remaningScrollAmmount, requestAnimationFrame-call's timestamp) 
+ *        2) Has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._xStepLength)
+ *        3) Can use other variables but it will be passed only the 2 mentioned above 
+ * @param container window or HTML element
+ */
+ function setXStepLengthCalculator (newCalculator = undefined, container = window);
+```
+#### setYStepLengthCalculator
+```javascript
+/*
+ * @param newCalculator function that defines the length of each step of every scroll-animation on the y-axis for the passed container.
+ *        In order for it to work, it has to follow this rules:
+ *        1) Has to take in 2 parameters (remaningScrollAmmount, requestAnimationFrame-call's timestamp) 
+ *        2) Has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._yStepLength)
+ *        3) Can use other variables but it will be passed only the 2 mentioned above 
+ * @param container window or HTML element
+ */
+ function setYStepLengthCalculator (newCalculator = undefined, container = window);
+```
+#### setXStepLength
+```javascript
+/*
+ * @param newXStepLength A number > 0 
+ */
+ function setXStepLength (newXStepLength);
+```
+#### setYStepLength
+```javascript
+/*
+ * @param newYStepLength A number > 0 
+ */
+ function setYStepLength (newYStepLength);
+```
+#### setMinAnimationFrame
+```javascript
+/*
+ * @param newMinAnimationFrame A number > 0 
+ */
+ function setMinAnimationFrame (newMinAnimationFrame);
+```
+#### calcXStepLength
+```javascript
+/*
+ * USED INTERNALLY
+ * @param deltaX A number > 0 
+ */
+ function calcXStepLength (deltaX);
+```
+#### calcYStepLength
+```javascript
+/*
+ * USED INTERNALLY
+ * @param deltaY A number > 0 
+ */
+ function calcYStepLength (deltaY);
+```
+#### getScrollXCalculator
+```javascript
+/*
+ * @param container window or HTML element
+ */
+ function getScrollXCalculator (container = window);
+```
+#### getScrollYCalculator
+```javascript
+/*
+ * @param container window or HTML element
+ */
+ function getScrollYCalculator (container = window);
+```
+#### getMaxScrollX
+```javascript
+/*
+ * @param container window or HTML element
+ */
+ function getMaxScrollX (container = window);
+```
+#### getMaxScrollY
+```javascript
+/*
+ * @param container window or HTML element
+ */
+ function getMaxScrollY (container = window);
+```
+#### getScrollableParent
+```javascript
+/*
+ * @param element window or HTML element
+ * @param includeHidden true if the element's first scrollable parent may have the 
+ *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden.
+ *        False otherwise.
+ */
+ function getScrollableParent (element = window, includeHidden = false);
+```
+#### scrollXTo
+```javascript
+/*
+ * @param finalXPosition the "scroll-width" you want the top of your container to be, at the end of the scroll-animation.
+ * @param container window or HTML element
+ * @callback callback the function you want to be executed after the scroll-animation is ended.
+ * @param canOverlay true if the animation on the passed container can overlay with other scroll-animations
+ *        on the x-axis of the same container, false otherwise.
+ *        Passing false will always result in a call to stopScrollingX() for the passed container before the animation takes place.
+ */
+ function scrollXTo (finalXPosition, container = window, callback = () => {}, canOverlay = false);
+```
+#### scrollYTo
+```javascript
+/*
+ * @param finalYPosition the "scroll-height" you want the top of your container to be, at the end of the scroll-animation.
+ * @param container window or HTML element
+ * @callback callback the function you want to be executed after the scroll-animation is ended.
+ * @param canOverlay true if the animation on the passed container can overlay with other scroll-animations
+ *        on the y-axis of the same container, false otherwise.
+ *        Passing false will always result in a call to stopScrollingY() for the passed container before the animation takes place.
+ */
+ function scrollYTo (finalYPosition, container = window, callback = () => {}, canOverlay = false);
+```
+#### scrollXBy
+```javascript
+/*
+ * @param deltaX the number of pixels you want the left of your container to scroll.
+ * @param container window or HTML element
+ * @callback callback the function you want to be executed after the scroll-animation is ended.
+ * @param canOverlay true if the animation on the passed container can overlay with other scroll-animations
+ *        on the x-axis of the same container, false otherwise.
+ *        Passing false will always result in a call to stopScrollingX() for the passed container before the animation takes place.
+ */
+ function scrollXBy (deltaX, container = window, callback = () => {}, canOverlay = false);
+```
+#### scrollYBy
+```javascript
+/*
+ * @param deltaY the number of pixels you want the top of your container to scroll.
+ * @param container window or HTML element
+ * @callback callback the function you want to be executed after the scroll-animation is ended.
+ * @param canOverlay true if the animation on the passed container can overlay with other scroll-animations
+ *        on the y-axis of the same container, false otherwise.
+ *        Passing false will always result in a call to stopScrollingY() for the passed container before the animation takes place.
+ */
+ function scrollYBy (deltaY, container = window, callback = () => {}, canOverlay = false);
+```
+#### scrollTo
+```javascript
+/*
+ * @param finalXPosition the "scroll-width" you want the top of your container to be, at the end of the scroll-animation.
+ * @param finalYPosition the "scroll-height" you want the top of your container to be, at the end of the scroll-animation.
+ * @param xContainer window or HTML element
+ * @param yContainer window or HTML element
+ * @callback xCallback the function you want to be executed after the scroll-animation on the x-axis is ended.
+ * @callback yCallback the function you want to be executed after the scroll-animation on the y-axis is ended.
+ * @param xCanOverlay true if the animation on the passed container can overlay with other scroll-animations
+ *        on the x-axis of the same container, false otherwise.
+ *        Passing false will always result in a call to stopScrollingX() for the passed container before the animation takes place.
+ * @param yCanOverlay true if the animation on the passed container can overlay with other scroll-animations
+ *        on the y-axis of the same container, false otherwise.
+ *        Passing false will always result in a call to stopScrollingY() for the passed container before the animation takes place.
+ */
+ function scrollTo (finalXPosition, finalYPosition, xContainer = window, yContainer = window, xCallback = () => {}, yCallback = () => {}, xCanOverlay = false, yCanOverlay = false);
+```
+#### scrollBy
+```javascript
+/*
+ * @param deltaX the number of pixels you want the left of your container to scroll.
+ * @param deltaY the number of pixels you want the top of your container to scroll.
+ * @param xContainer window or HTML element
+ * @param yContainer window or HTML element
+ * @callback xCallback the function you want to be executed after the scroll-animation on the x-axis is ended.
+ * @callback yCallback the function you want to be executed after the scroll-animation on the y-axis is ended.
+ * @param xCanOverlay true if the animation on the passed container can overlay with other scroll-animations
+ *        on the x-axis of the same container, false otherwise.
+ *        Passing false will always result in a call to stopScrollingX() for the passed container before the animation takes place.
+ * @param yCanOverlay true if the animation on the passed container can overlay with other scroll-animations
+ *        on the y-axis of the same container, false otherwise.
+ *        Passing false will always result in a call to stopScrollingY() for the passed container before the animation takes place.
+ */
+ function scrollBy (deltaX, deltaY, xContainer = window, yContainer = window, xCallback = () => {}, yCallback = () => {}, xCanOverlay = false, yCanOverlay = false);
+```
+#### scrollIntoView
+```javascript
+/*
+ * @param element window or HTML element
+ * @param alignToLeft true if you want both the passed element and it's container (if available) to be alligned to the left 
+ *                    of the container (for the passed element) and of the window (for the element's container);
+ *                    false if you want both the passed element and it's container (if available) to be alligned to the right 
+ *                    of the container (for the passed element) and of the window (for the element's container);
+ *                    anything else if you want both the passed element and it's container (if available) to be alligned to the center 
+ *                    of the container (for the passed element) and of the window (for the element's container).
+ * @param alignToTop true if you want both the passed element and it's container (if available) to be alligned to the top 
+ *                    of the container (for the passed element) and of the window (for the element's container);
+ *                    false if you want both the passed element and it's container (if available) to be alligned to the bottom 
+ *                    of the container (for the passed element) and of the window (for the element's container);
+ *                    anything else if you want both the passed element and it's container (if available) to be alligned to the center 
+ *                    of the container (for the passed element) and of the window (for the element's container).
+ * @param includeHidden true if the element's first scrollable parent may have the 
+ *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden.
+ *        False otherwise.
+ */
+ function scrollIntoView (element = window, alignToLeft = true, alignToTop = true, includeHidden = false);
+```
+#### stopScrollingX
+```javascript
+/*
+ * @param container window or HTML element
+ * @callback callback the function you want to be executed after 
+ *           all the scroll-animations on the x-axis of the passed container have been stopped.
+ */
+ function stopScrollingX (container = window, callback = () => {});
+```
+#### stopScrollingY
+```javascript
+/*
+ * @param container window or HTML element
+ * @callback callback the function you want to be executed after 
+ *           all the scroll-animations on the y-axis of the passed container have been stopped.
+ */
+ function stopScrollingY (container = window, callback = () => {});
+```
+#### hrefSetup
+```javascript
+/*
+ * @param includeHidden true if the element's first scrollable parent may have the 
+ *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden.
+ *        False otherwise.
+ */
+ function hrefSetup (includeHidden = false);
+```
