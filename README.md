@@ -381,24 +381,24 @@ A: The **_latest_** version gets updated every time a change is made which means
 More coming soon...
 
 # Browser Compatibility
-* IE (doesn't support ES6 js default parameters values)
-* Edge (YES)
-* Firefox (YES)
-* Chrome (YES)
-* Safari (YES)
-* Opera (not tested)
-* Safari for iOS (YES)
-* Opera mini (not tested)
-* Android browser (not tested)
-* Opera mobile (not tested)
-* Chrome for Android 
-* Firefox for Android (not tested)
-* UC Browser for Android (not tested)
-* Samsung Internet (not tested)
-* QQ Browser (not tested)
-* Baidu Browser (not tested)
-* KaiOS Browser (not tested)
+* ❌ IE (doesn't support ES6 js default parameters values)
+* ✔️ Edge (from version ❔)
+* ✔️ Firefox (from version ❔)
+* ✔️ Chrome (from version ❔)
+* ✔️ Safari (from version ❔)
+* ❔  Opera (not tested)
+* ✔️ Safari for iOS (from version ❔)
+* ❔  Opera mini (not tested)
+* ❔  Android browser (not tested)
+* ❔  Opera mobile (not tested)
+* ✔️ Chrome for Android (from version ❔)
+* ❔  Firefox for Android (not tested)
+* ❔  UC Browser for Android (not tested)
+* ❔  Samsung Internet (not tested)
+* ❔  QQ Browser (not tested)
+* ❔  Baidu Browser (not tested)
+* ❔  KaiOS Browser (not tested)
 
 # Contact Me 
-For any bug you found or if you simply need to contact me, [this is my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br>
+For any bug  you found, improvement suggestion, feature request, or if you simply need to contact me, [this is my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br>
 Feel free to reach out !
