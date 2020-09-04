@@ -375,6 +375,8 @@ For example `uss.setYStepLengthCalculator((remaning, timestamp) => {return reman
 ## Q: Can I make my scroll-animation last a certain ammount of time? 
 A: Yes, infact while setting a custom stepLengthCalculator you will notice your function will be passed the timestamp of the window.requestAnimationFrame call as the second argument !
 You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) useful.
+## Q: What's the difference between the _stable_ and the _latest_ `<script>` version ?
+A: The **_latest_** version gets updated every time a change is made which means that you have all the lastest features and fixes but that some functionality may have some bugs or code leftovers.<br> The **_stable_** version gets updated only when a feature is completly stable and the code is cleaned which lowers the probability of encountering bugs but the newest features may take a while to arrive here.  
 
 More coming soon...
 
