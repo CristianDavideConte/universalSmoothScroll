@@ -379,13 +379,13 @@ You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/request
 More coming soon...
 
 # Browser Compatibility
-* IE (not tested)
-* Edge 
-* Firefox (not tested)
-* Chrome
-* Safari
+* IE (doesn't support ES6 js default parameters values)
+* Edge (YES)
+* Firefox (YES)
+* Chrome (YES)
+* Safari (YES)
 * Opera (not tested)
-* Safari for iOS
+* Safari for iOS (YES)
 * Opera mini (not tested)
 * Android browser (not tested)
 * Opera mobile (not tested)
