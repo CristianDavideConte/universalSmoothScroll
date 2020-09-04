@@ -381,7 +381,7 @@ A: The **_latest_** version gets updated every time a change is made which means
 More coming soon...
 
 # Browser Compatibility
-* ❌ IE (doesn't support ES6 js default parameters values)
+* ❌ IE (doesn't support ES6 js default parameters values nor `() => {}` sintax)
 * ✔️ Edge (from version ❔)
 * ✔️ Firefox (from version ❔)
 * ✔️ Chrome (from version ❔)
