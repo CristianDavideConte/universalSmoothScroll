@@ -265,21 +265,23 @@ var uss = {
   scrollIntoView: function (element = window, alignToLeft = true, alignToTop = true, includeHidden = false) {
     if(element === window) return;
     const container = uss.getScrollableParent(element, includeHidden);
+    const elementBoundingClientRect = element.getBoundingClientRect();
     let elementOffsetLeft;
     let elementOffsetTop;
     if(container !== window) {
-      const containerOffsetLeft = (alignToLeft === true) ? container.offsetLeft : (alignToLeft === false) ? container.offsetLeft - window.innerWidth  + container.offsetWidth  : container.offsetLeft - window.innerWidth  / 2 + container.offsetWidth  / 2;
-      const containerOffsetTop  = (alignToTop  === true) ? container.offsetTop  : (alignToTop  === false) ? container.offsetTop  - window.innerHeight + container.offsetHeight : container.offsetTop  - window.innerHeight / 2 + container.offsetHeight / 2;
-      elementOffsetLeft   = (alignToLeft === true) ? element.offsetLeft - containerOffsetLeft : (alignToLeft === false) ? element.offsetLeft - container.offsetLeft - container.offsetWidth  + element.offsetWidth  : element.offsetLeft - container.offsetLeft - container.offsetWidth  / 2 + element.offsetWidth  / 2;
-      elementOffsetTop    = (alignToTop  === true) ? element.offsetTop  - containerOffsetTop  : (alignToTop  === false) ? element.offsetTop  - container.offsetTop  - container.offsetHeight + element.offsetHeight : element.offsetTop  - container.offsetTop  - container.offsetHeight / 2 + element.offsetHeight / 2;
-      setTimeout(() => uss.scrollXTo(containerOffsetLeft, window, null, false), 0); //Async so that the browser can paint
-      setTimeout(() => uss.scrollYTo(containerOffsetTop,  window, null, false), 0); //Async so that the browser can paint
+      const containerBoundingClientRect = container.getBoundingClientRect();
+      const containerOffsetLeft = (alignToLeft === true) ? containerBoundingClientRect.left : (alignToLeft === false) ? containerBoundingClientRect.left - window.innerWidth  + containerBoundingClientRect.width  : containerBoundingClientRect.left - window.innerWidth  / 2 + containerBoundingClientRect.width  / 2;
+      const containerOffsetTop  = (alignToTop  === true) ? containerBoundingClientRect.top  : (alignToTop  === false) ? containerBoundingClientRect.top  - window.innerHeight + containerBoundingClientRect.height : containerBoundingClientRect.top  - window.innerHeight / 2 + containerBoundingClientRect.height / 2;
+      elementOffsetLeft   = (alignToLeft === true) ? elementBoundingClientRect.left - containerBoundingClientRect.left : (alignToLeft === false) ? elementBoundingClientRect.left - containerBoundingClientRect.left - containerBoundingClientRect.width  + elementBoundingClientRect.width  : elementBoundingClientRect.left - containerBoundingClientRect.left - containerBoundingClientRect.width  / 2 + elementBoundingClientRect.width  / 2;
+      elementOffsetTop    = (alignToTop  === true) ? elementBoundingClientRect.top  - containerBoundingClientRect.top  : (alignToTop  === false) ? elementBoundingClientRect.top  - containerBoundingClientRect.top  - containerBoundingClientRect.height + elementBoundingClientRect.height : elementBoundingClientRect.top  - containerBoundingClientRect.top  - containerBoundingClientRect.height / 2 + elementBoundingClientRect.height / 2;
+      setTimeout(() => uss.scrollXBy(containerOffsetLeft, window, null, false), 0); //Async so that the browser can paint
+      setTimeout(() => uss.scrollYBy(containerOffsetTop,  window, null, false), 0); //Async so that the browser can paint
     } else {
-      elementOffsetLeft = (alignToLeft === true) ? element.offsetLeft : (alignToLeft === false) ? element.offsetLeft - container.innerWidth  + element.offsetWidth  : element.offsetLeft - container.innerWidth  / 2 + element.offsetWidth  / 2;
-      elementOffsetTop  = (alignToTop  === true) ? element.offsetTop  : (alignToTop  === false) ? element.offsetTop  - container.innerHeight + element.offsetHeight : element.offsetTop  - container.innerHeight / 2 + element.offsetHeight / 2;
+      elementOffsetLeft = (alignToLeft === true) ? elementBoundingClientRect.left : (alignToLeft === false) ? elementBoundingClientRect.left - window.innerWidth  + elementBoundingClientRect.width  : elementBoundingClientRect.left - window.innerWidth  / 2 + elementBoundingClientRect.width  / 2;
+      elementOffsetTop  = (alignToTop  === true) ? elementBoundingClientRect.top  : (alignToTop  === false) ? elementBoundingClientRect.top  - window.innerHeight + elementBoundingClientRect.height : elementBoundingClientRect.top  - window.innerHeight / 2 + elementBoundingClientRect.height / 2;
     }
-    setTimeout(() => uss.scrollXTo(elementOffsetLeft, container, null, false), 0); //Async so that the browser can paint
-    setTimeout(() => uss.scrollYTo(elementOffsetTop,  container, null, false), 0); //Async so that the browser can paint
+    setTimeout(() => uss.scrollXBy(elementOffsetLeft, container, null, false), 0); //Async so that the browser can paint
+    setTimeout(() => uss.scrollYBy(elementOffsetTop,  container, null, false), 0); //Async so that the browser can paint
   },
   stopScrollingX: function (container = window, callback = () => {}) {
     let _scheduledAnimations = uss._xMapContainerAnimationID.get(container);
