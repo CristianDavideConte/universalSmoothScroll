@@ -21,7 +21,7 @@ Copy & paste the script's minified version that you can find [here](https://gith
 All the API's properties are methods of the `uss` object which gets automatically initialized when you import the script in your project.<br>
 The `uss` object is initialized in the global scope of you project so be aware of that !<br>
 The `uss` object has some internal variables which **SHOULD NOT** be directly manipulated: it's suggested to always use the provided getters and setters.<br>
-You will be able to recognize those internal properties because their names begin with and `_` (underscore). <br>
+You will be able to recognize those internal properties because their names begin with an `_` (underscore). <br>
 For istance: 
 * `uss._xStepLength` is the name of the internal property used by the `uss` objects' methods.
 * `uss.getXStepLength()` & `uss.setXStepLength` are the getter and setter's names for the `uss._xStepLength` variable.<br>
