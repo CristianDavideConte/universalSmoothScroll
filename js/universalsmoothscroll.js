@@ -298,9 +298,12 @@ var uss = {
     if(typeof callback === "function") setTimeout(callback, 0);
   },
   hrefSetup: function (includeHidden = false) {
-    const pageLinks = document.getElementsByTagName("a");
+    const pageLinks = document.links;
+    const pageURL = document.URL.split("#")[0];
     for(pageLink of pageLinks) {
-      const elementToReach = document.getElementById(pageLink.href.split("#")[1]);
+      const pageLinkParts = pageLink.href.split("#"); //PageLink.href = OptionalURL#Section
+      if(pageLinkParts[0] !== pageURL) continue;
+      const elementToReach = document.getElementById(pageLinkParts[1]);
       if(elementToReach instanceof HTMLElement)
         pageLink.addEventListener("click", event => {event.preventDefault(); uss.scrollIntoView(elementToReach, true, true, includeHidden);},{passive:false});
     }
