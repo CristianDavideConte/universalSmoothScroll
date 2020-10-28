@@ -364,7 +364,7 @@ Method Name | Purpose
 You can try out some of the API functionalities [HERE](https://cristiandavideconte.github.io/universalSmoothScroll/) !
 
 # FAQ
-## Q: Do i need to have _scroll-behavior: smooth_ in my CSS ? 
+## Q: Do i need to have _`scroll-behavior: smooth`_ in my CSS ? 
 A: No, it's not needed.<br>
 ## Q: How do I invoke the API methods ?  
 A: Any Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD (ARGUMENTS);`.<br>
