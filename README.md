@@ -9,9 +9,9 @@ This scroll API is based on and improves upon the 3 main ways to scroll an eleme
 ## NPM:
 coming soon...
 ## HTML meta tag:
-Add this in your project's `<head>` tag:<br>
+Add one of this `<script>` in your project's `<head>` tag:<br>
 #### Stable versions:<br>
-`<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/4e43f4ef2dd5002cc5b3e067f34e7aa4424fd1d3/js/universalsmoothscroll-min.js"></script>`<br>
+`<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/48301bab372eda67aa5fda95aa5e559520b55497/js/universalsmoothscroll-min.js"></script>`<br>
 #### Latest version:<br>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>`
 ## Local file: 
