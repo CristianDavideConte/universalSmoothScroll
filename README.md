@@ -16,8 +16,13 @@ Add one of this `<script>` in your project's `<head>` tag:<br>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>`
 ## Local file: 
 Copy & paste the script's minified version that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/) in your project's js directory & add the `<script>`. For example:<br>
-`<script src = "./js/universalsmoothscroll-min.js"></script>`
-
+```
+<head>
+    ...
+  <script src = "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-min.js"></script>
+    ...
+</head>
+```
 # How does it work ? 
 All the API's properties are methods of the `uss` object which gets automatically initialized when you import the script in your project.<br>
 The `uss` object is initialized in the global scope of you project so be aware of that !<br>
