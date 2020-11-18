@@ -69,7 +69,7 @@ Method Name | Purpose
 `getYStepLengthCalculator` | Returns the _yStepLengthCalculator function for the passed container.
 `getXStepLength` | Returns the value of _xStepLength.
 `getYStepLength` | Returns the value of _yStepLength.
-`getMinAnimationFrame` | Return the value of _minAnimationFrame.
+`getMinAnimationFrame` | Returns the value of _minAnimationFrame.
 `setXStepLengthCalculator` | Sets the _xStepLengthCalculator for the requested container to the passed function if compatible.
 `setYStepLengthCalculator` | Sets the _yStepLengthCalculator for the requested container to the passed function if compatible.
 `setXStepLength` | Sets the _xStepLength to the passed value if compatible.
