@@ -4,6 +4,9 @@ This scroll API is based on and improves upon the 3 main ways to scroll an eleme
 **Every scroll-animation** triggered by the API **can be interrupted** at any moment and **supports custom ease functions.**<br>
 **Multiple scroll-animations** can be played **at the same time** on 1 or more DOM's elements.<br>
 
+# Demo 
+You can try out some of the API functionalities [HERE](https://cristiandavideconte.github.io/universalSmoothScroll/) !
+
 # How to install
 ## NPM:
 coming soon...
@@ -46,9 +49,9 @@ Variable name | Purpose
 `_yMapContainerAnimationID` | A Map (key, value) in which: <br> 1) The keys are the containers on which a scroll-animation on the y-axis has been requested.<br> 2) The values are Array of ids. This ids are provided by the requestAnimationFrame() calls and are used by the stopScrollingY() function any scroll-animation on the y-axis for the passed component.
 `_xStepLengthCalculator` | A Map (key, value) in which: <br> 1) The keys are the container on which a scroll-animation on the x-axis has been requested.<br> 2) The values are user-defined functions that can modify the step's length at each _stepX call of a scroll-animation on the x-axis.
 `_yStepLengthCalculator` | A Map (key, value) in which: <br> 1) The keys are the container on which a scroll-animation on the y-axis has been requested.<br> 2) The values are user-defined functions that can modify the step's length at each _stepY call of a scroll-animation on the y-axis.
-`_xStepLength` | The number of pixel scrolled in a single scroll-animation's (on the x-axis) step.
-`_yStepLength` | The number of pixel scrolled in a single scroll-animation's (on the y-axis) step.
-`_minAnimationFrame` | The minimum number of frames any scroll-animation  (on any axis) should last.
+`_xStepLength` | The number of pixel scrolled on the x-axis in a single scroll-animation's step.
+`_yStepLength` | The number of pixel scrolled on the y-axis in a single scroll-animation's step.
+`_minAnimationFrame` | The minimum number of frames any scroll-animation, on any axis, should last.
 
 # Constants list
 Constant name | Purpose
@@ -60,12 +63,12 @@ Constant name | Purpose
 # Methods List
 Method Name | Purpose
 ----------- | -------
-`isXscrolling` | Return true if a scroll-animation on the x-axis of the passed container is currently being performed, false otherwise.
-`isYscrolling` | Return true if a scroll-animation on the y-axis of the passed container is currently being performed, false otherwise.
-`getXStepLengthCalculator` | Return the _xStepLengthCalculator function for the passed container.
-`getYStepLengthCalculator` | Return the _yStepLengthCalculator function for the passed container.
-`getXStepLength` | Return the value of _xStepLength.
-`getYStepLength` | Return the value of _yStepLength.
+`isXscrolling` | Returns true if a scroll-animation on the x-axis of the passed container is currently being performed, false otherwise.
+`isYscrolling` | Returns true if a scroll-animation on the y-axis of the passed container is currently being performed, false otherwise.
+`getXStepLengthCalculator` | Returns the _xStepLengthCalculator function for the passed container.
+`getYStepLengthCalculator` | Returns the _yStepLengthCalculator function for the passed container.
+`getXStepLength` | Returns the value of _xStepLength.
+`getYStepLength` | Returns the value of _yStepLength.
 `getMinAnimationFrame` | Return the value of _minAnimationFrame.
 `setXStepLengthCalculator` | Sets the _xStepLengthCalculator for the requested container to the passed function if compatible.
 `setYStepLengthCalculator` | Sets the _yStepLengthCalculator for the requested container to the passed function if compatible.
@@ -79,16 +82,16 @@ Method Name | Purpose
 `getMaxScrollX` | Takes in a scroll container and returns its highest scroll-reachable x-value.
 `getMaxScrollY` | Takes in a scroll container and returns its highest scroll-reachable y-value.
 `getScrollableParent` | Returns the first scrollable container of the passed element, works with "overflow('',X,Y): hidden" if specified.
-`scrollXTo` | Takes in a number which indicates the position that window.scrollX has to reach and performs a scroll-animation on the x-axis, after the animation has finished a callback function can be invoked.
-`scrollYTo` | Takes in a number which indicates the position that window.scrollY has to reach and performs a scroll-animation on the y-axis, after the animation has finished a callback function can be invoked.
-`scrollXBy` | Takes in a number which indicates the number of pixel on the x-axis the passed container has to be scrolled by and performs a scroll-animation on that axis.
-`scrollYBy` | Takes in a number which indicates the number of pixel on the y-axis the passed container has to be scrolled by and performs a scroll-animation on that axis.
-`scrollTo` | A shorthand for calling scrollXTo() and scrollYTo one after another, performs 2 scroll-animation on the x and y axises based on the passed parameters.
-`scrollBy` | A shorthand for calling scrollXBy() and scrollYBy one after another, performs 2 scroll-animation on the x and y axises based on the passed parameters.
-`scrollIntoView` | Scrolls the window and if necessary the container of the passed element in order to make it visible on the screen.<br> There are 3 possible allignments: top, bottom, center.<br> The allignments can be changed by passing different values of alignToTop and alignToLeft.<br> Works with "overflow('',X,Y): hidden" if specified.
-`stopScrollingX` | Stops all the current scroll-animation on the x-axis for the passed container.
-`stopScrollingY` | Stops all the current scroll-animation on the y-axis for the passed container.
-`hrefSetup` | Looks for every <a> DOM element with a href attribute linked to an element on the same page (anchor) and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element.
+`scrollXTo` | Takes in a number which indicates the position that container's "scrollX" (the left border's x-coordinate of the container) has to reach and performs a scroll-animation on the x-axis.<br>After the animation has finished a callback function can be invoked.
+`scrollYTo` | Takes in a number which indicates the position that container's "scrollY" (the top border's y-coordinate of the container) has to reach and performs a scroll-animation on the y-axis.<br>After the animation has finished a callback function can be invoked.
+`scrollXBy` | Takes in a number which indicates the number of pixel on the x-axis the passed container has to be scrolled by and performs a scroll-animation on that axis.<br>After the animation has finished a callback function can be invoked.
+`scrollYBy` | Takes in a number which indicates the number of pixel on the y-axis the passed container has to be scrolled by and performs a scroll-animation on that axis.<br>After the animation has finished a callback function can be invoked.
+`scrollTo` | A shorthand for calling scrollXTo() and scrollYTo() one after another (the 2 animations are performed at the same time), performs 2 scroll-animation on the x and y axises based on the passed parameters.
+`scrollBy` | A shorthand for calling scrollXBy() and scrollYBy() one after another (the 2 animations are performed at the same time), performs 2 scroll-animation on the x and y axises based on the passed parameters.
+`scrollIntoView` | Scrolls the window and, if necessary, the container of the passed element in order to make it visible on the screen.<br> There are 3 possible allignments for both the passed element and it's closest scrollable container: top, bottom, center.<br> The allignments can be changed by passing different values of alignToTop and alignToLeft.<br> Works with "overflow('',X,Y): hidden" if specified.
+`stopScrollingX` | Stops all the current scroll-animation on the x-axis for the passed container.<br>After the animations are stopped a callback function can be invoked.
+`stopScrollingY` | Stops all the current scroll-animation on the y-axis for the passed container.<br>After the animations are stopped a callback function can be invoked.
+`hrefSetup` | Looks for every anchor element with a href attribute linked to an element on the same page and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element (internally uses scrollIntoView).
   
 # Methods' syntaxes
 #### isXscrolling
@@ -236,7 +239,7 @@ Method Name | Purpose
 #### scrollXTo
 ```javascript
 /*
- * @param finalXPosition the "scroll-width" you want the top of your container to be, at the end of the scroll-animation.
+ * @param finalXPosition the "scroll-width" you want the left border of your container to be at the end of the scroll-animation.
  * @param container window or HTML element
  * @callback callback the function you want to be executed after the scroll-animation is ended.
  * @param canOverlay true if the animation on the passed container can overlay with other scroll-animations
@@ -248,7 +251,7 @@ Method Name | Purpose
 #### scrollYTo
 ```javascript
 /*
- * @param finalYPosition the "scroll-height" you want the top of your container to be, at the end of the scroll-animation.
+ * @param finalYPosition the "scroll-height" you want the top border of your container to be at the end of the scroll-animation.
  * @param container window or HTML element
  * @callback callback the function you want to be executed after the scroll-animation is ended.
  * @param canOverlay true if the animation on the passed container can overlay with other scroll-animations
@@ -260,7 +263,7 @@ Method Name | Purpose
 #### scrollXBy
 ```javascript
 /*
- * @param deltaX the number of pixels you want the left of your container to scroll.
+ * @param deltaX the number of pixels on the x-axis you want your container to scroll by.
  * @param container window or HTML element
  * @callback callback the function you want to be executed after the scroll-animation is ended.
  * @param canOverlay true if the animation on the passed container can overlay with other scroll-animations
@@ -272,7 +275,7 @@ Method Name | Purpose
 #### scrollYBy
 ```javascript
 /*
- * @param deltaY the number of pixels you want the top of your container to scroll.
+ * @param deltaY the number of pixels on the y-axis you want your container to scroll by.
  * @param container window or HTML element
  * @callback callback the function you want to be executed after the scroll-animation is ended.
  * @param canOverlay true if the animation on the passed container can overlay with other scroll-animations
@@ -284,8 +287,8 @@ Method Name | Purpose
 #### scrollTo
 ```javascript
 /*
- * @param finalXPosition the "scroll-width" you want the top of your container to be, at the end of the scroll-animation.
- * @param finalYPosition the "scroll-height" you want the top of your container to be, at the end of the scroll-animation.
+ * @param finalXPosition the "scroll-width" you want the left border of your container to be at the end of the scroll-animation.
+ * @param finalYPosition the "scroll-height" you want the top border of your container to be at the end of the scroll-animation.
  * @param xContainer window or HTML element
  * @param yContainer window or HTML element
  * @callback xCallback the function you want to be executed after the scroll-animation on the x-axis is ended.
@@ -302,8 +305,8 @@ Method Name | Purpose
 #### scrollBy
 ```javascript
 /*
- * @param deltaX the number of pixels you want the left of your container to scroll.
- * @param deltaY the number of pixels you want the top of your container to scroll.
+ * @param deltaX the number of pixels on the x-axis you want your container to scroll.
+ * @param deltaY the number of pixels on the y-axis you want your container to scroll.
  * @param xContainer window or HTML element
  * @param yContainer window or HTML element
  * @callback xCallback the function you want to be executed after the scroll-animation on the x-axis is ended.
@@ -361,13 +364,10 @@ Method Name | Purpose
 ```javascript
 /*
  * @param includeHidden true if the element's first scrollable parent may have the 
- *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden.
- *        False otherwise.
+ *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden, false otherwise.
  */
  function hrefSetup (includeHidden = false);
 ```
-# DEMO 
-You can try out some of the API functionalities [HERE](https://cristiandavideconte.github.io/universalSmoothScroll/) !
 
 # FAQ
 ## Q: Do i need to have _`scroll-behavior: smooth`_ in my CSS ? 
