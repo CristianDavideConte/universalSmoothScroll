@@ -9,7 +9,7 @@ You can try out some of the API functionalities [HERE](https://cristiandavidecon
 
 # How to install
 ## NPM:
-coming soon...
+`npm i universalsmoothscroll`
 ## HTML meta tag:
 Add one of this `<script>` in your project's `<head>` tag:<br>
 #### Stable versions:<br>
