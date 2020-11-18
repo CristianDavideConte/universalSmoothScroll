@@ -31,10 +31,12 @@ For istance:
 * `uss._xStepLength` is the name of the internal property used by the `uss` objects' methods.
 * `uss.getXStepLength()` & `uss.setXStepLength()` are the getter and setter's names for the `uss._xStepLength` variable.<br>
 
-There are 3 main scrolling-methods + 1 handy auto-initializer for anchor links and they are:
+There are 3 main scrolling-methods:
 * `uss.scrollTo()`
 * `uss.scrollBy()`
-* `uss.scrollIntoView()`
+* `uss.scrollIntoView()`<br>
+
+There's also 1 handy auto-initializer for anchor links:
 * `uss.hrefSetup()`<br>
 
 # Internal-Use variables list 
