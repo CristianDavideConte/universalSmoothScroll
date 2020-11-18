@@ -29,7 +29,7 @@ The `uss` object has some internal variables which **SHOULD NOT** be directly ma
 You will be able to recognize those internal properties because their names begin with an `_` (underscore). <br>
 For istance: 
 * `uss._xStepLength` is the name of the internal property used by the `uss` objects' methods.
-* `uss.getXStepLength()` & `uss.setXStepLength` are the getter and setter's names for the `uss._xStepLength` variable.<br>
+* `uss.getXStepLength()` & `uss.setXStepLength()` are the getter and setter's names for the `uss._xStepLength` variable.<br>
 
 There are 3 main scrolling-methods + 1 handy auto-initializer for anchor links and they are:
 * `uss.scrollTo()`
