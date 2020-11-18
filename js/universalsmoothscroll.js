@@ -17,17 +17,17 @@ const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of frames 
  * _yStepLengthCalculator: Map(Container, stepCalculatorFunction), a map in which:
  *                         1) The keys are the container on which a scroll-animation on the y-axis has been requested.
  *                         2) The values are user-defined functions that can modify the step's length at each _stepY call of a scroll-animation on the y-axis.
- * _xStepLength: number, the number of pixel scrolled in a single scroll-animation's (on the x-axis) step.
- * _yStepLength: number, the number of pixel scrolled in a single scroll-animation's (on the y-axis) step.
- * _minAnimationFrame: number, the minimum number of frames any scroll-animation (on any axis) should last.
+ * _xStepLength: number, the number of pixel scrolled on the x-axis in a single scroll-animation's step.
+ * _yStepLength: number, the number of pixel scrolled on the y-axis in a single scroll-animation's step.
+ * _minAnimationFrame: number, the minimum number of frames any scroll-animation, on any axis, should last.
  *
- * isXscrolling: function, return true if a scroll-animation on the x-axis of the passed container is currently being performed, false otherwise.
- * isYscrolling: function, return true if a scroll-animation on the y-axis of the passed container is currently being performed, false otherwise.
- * getXStepLengthCalculator: function, return the _xStepLengthCalculator function for the passed container.
- * getYStepLengthCalculator: function, return the _yStepLengthCalculator function for the passed container.
- * getXStepLength: function, return the value of _xStepLength.
- * getYStepLength: function, return the value of _yStepLength.
- * getMinAnimationFrame: function, return the value of _minAnimationFrame.
+ * isXscrolling: function, returns true if a scroll-animation on the x-axis of the passed container is currently being performed, false otherwise.
+ * isYscrolling: function, returns true if a scroll-animation on the y-axis of the passed container is currently being performed, false otherwise.
+ * getXStepLengthCalculator: function, returns the _xStepLengthCalculator function for the passed container.
+ * getYStepLengthCalculator: function, returns the _yStepLengthCalculator function for the passed container.
+ * getXStepLength: function, returns the value of _xStepLength.
+ * getYStepLength: function, returns the value of _yStepLength.
+ * getMinAnimationFrame: function, returns the value of _minAnimationFrame.
  * setXStepLengthCalculator: function, sets the _xStepLengthCalculator for the requested container to the passed function if compatible.
  * setYStepLengthCalculator: function, sets the _yStepLengthCalculator for the requested container to the passed function if compatible.
  * setXStepLength: function, sets the _xStepLength to the passed value if compatible.
@@ -46,26 +46,34 @@ const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of frames 
  * getMaxScrollX: function, takes in a scroll container and returns its highest scroll-reachable x-value.
  * getMaxScrollY: function, takes in a scroll container and returns its highest scroll-reachable y-value.
  * getScrollableParent: function, returns the first scrollable container of the passed element, works with "overflow('',X,Y): hidden" if specified.
- * scrollXTo: function, takes in a number which indicates the position that window.scrollX has to reach and performs a scroll-animation on the x-axis,
- *            after the animation has finished a callback function can be invoked.
- * scrollYTo: function, takes in a number which indicates the position that window.scrollY has to reach and performs a scroll-animation on the y-axis,
- *            after the animation has finished a callback function can be invoked.
+ * scrollXTo: function, takes in a number which indicates the position that the passed container's "scrollX" (the left border's x-coordinate)
+ *            has to reach and performs a scroll-animation on the x-axis.
+ *            After the animation has finished a callback function can be invoked.
+ * scrollYTo: function, takes in a number which indicates the position that tha passed container's "scrollY" (the top border's y-coordinate)
+ *            has to reach and performs a scroll-animation on the y-axis,
+ *            After the animation has finished a callback function can be invoked.
  * scrollXBy: function, takes in a number which indicates the number of pixel on the x-axis the passed container has to be scrolled by and
  *            performs a scroll-animation on that axis.
+ *            After the animation has finished a callback function can be invoked.
  * scrollYBy: function, takes in a number which indicates the number of pixel on the y-axis the passed container has to be scrolled by and
  *            performs a scroll-animation on that axis.
- * scrollTo: function, a shorthand for calling scrollXTo() and scrollYTo one after another,
+ *            After the animation has finished a callback function can be invoked.
+ * scrollTo: function, a shorthand for calling scrollXTo() and scrollYTo() one after another (the 2 animations are performed at the same time),
  *           performs 2 scroll-animation on the x and y axises based on the passed parameters.
- * scrollBy: function, a shorthand for calling scrollXBy() and scrollYBy one after another,
+ * scrollBy: function, a shorthand for calling scrollXBy() and scrollYBy() one after another (the 2 animations are performed at the same time),
  *           performs 2 scroll-animation on the x and y axises based on the passed parameters.
  * scrollIntoView: function, scrolls the window and if necessary the container of the passed element in order to
- *                 make it visible on the screen. There are 3 possible allignments: top, bottom, center.
+ *                 make it visible on the screen.
+ *                 There are 3 possible allignments for both the passed element and it's closest scollable parent: top, bottom, center.
  *                 The allignments can be changed by passing different values of alignToTop and alignToLeft.
  *                 Works with "overflow('',X,Y): hidden" if specified.
  * stopScrollingX: function, stops all the current scroll-animation on the x-axis for the passed container.
+ *                 After the animation has finished a callback function can be invoked.
  * stopScrollingY: function, stops all the current scroll-animation on the y-axis for the passed container.
- * hrefSetup: function, looks for every <a> DOM element with a href attribute linked to an element on the same page (anchor) and
- *            attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element.
+ *                 After the animation has finished a callback function can be invoked.
+ * hrefSetup: function, looks for every anchor element with a href attribute linked to an element on the same page and
+ *            attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation
+ *            to reach the linked element (internally uses scrollIntoView).
  */
 var uss = {
   _xMapContainerAnimationID: new Map(),
@@ -82,11 +90,11 @@ var uss = {
   getXStepLength: function () {return uss._xStepLength;},
   getYStepLength: function () {return uss._yStepLength;},
   getMinAnimationFrame: function () {return uss._minAnimationFrame;},
-  setXStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerWidth;  if(typeof newCalculator(remaning, remaning) !== "number") return; uss._xStepLengthCalculator.set(container, newCalculator)},
-  setYStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerHeight; if(typeof newCalculator(remaning, remaning) !== "number") return; uss._yStepLengthCalculator.set(container, newCalculator)},
-  setXStepLength: function (newXStepLength) {if(typeof newXStepLength !== "number") return; if(newXStepLength <= 0) return; uss._xStepLength = newXStepLength;},
-  setYStepLength: function (newYStepLength) {if(typeof newYStepLength !== "number") return; if(newYStepLength <= 0) return; uss._yStepLength = newYStepLength;},
-  setMinAnimationFrame: function (newMinAnimationFrame) {if(typeof newMinAnimationFrame !== "number") return; if(newMinAnimationFrame <= 0) return; uss._minAnimationFrame = newMinAnimationFrame;},
+  setXStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerWidth;  if(typeof newCalculator(remaning, remaning) !== "number" || window.isNan(newCalculator(remaning, remaning))) return; uss._xStepLengthCalculator.set(container, newCalculator)},
+  setYStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerHeight; if(typeof newCalculator(remaning, remaning) !== "number" || window.isNan(newCalculator(remaning, remaning))) return; uss._yStepLengthCalculator.set(container, newCalculator)},
+  setXStepLength: function (newXStepLength) {if(typeof newXStepLength !== "number" || window.isNaN(newXStepLength)) return; if(newXStepLength <= 0) return; uss._xStepLength = newXStepLength;},
+  setYStepLength: function (newYStepLength) {if(typeof newYStepLength !== "number" || window.isNaN(newYStepLength)) return; if(newYStepLength <= 0) return; uss._yStepLength = newYStepLength;},
+  setMinAnimationFrame: function (newMinAnimationFrame) {if(typeof newMinAnimationFrame !== "number" || window.isNaN(newMinAnimationFrame)) return; if(newMinAnimationFrame <= 0) return; uss._minAnimationFrame = newMinAnimationFrame;},
   calcXStepLength: function (deltaX) {return (deltaX >= (uss._minAnimationFrame - 1) * uss._xStepLength) ? uss._xStepLength : Math.round(deltaX / uss._minAnimationFrame);},
   calcYStepLength: function (deltaY) {return (deltaY >= (uss._minAnimationFrame - 1) * uss._yStepLength) ? uss._yStepLength : Math.round(deltaY / uss._minAnimationFrame);},
   getScrollXCalculator: function (container = window) { return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
@@ -135,7 +143,7 @@ var uss = {
     } catch(exception) {console.log("USS error: Couldn't get the container of the passed element");}
   },
   scrollXTo: function (finalXPosition, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof finalXPosition !== "number") return;
+    if (typeof finalXPosition !== "number" || window.isNaN(finalXPosition)) return;
 
     //If the container cannot be scrolled on the x-axis _maxScrollX will be <= 0 and the function returns.
     //If the finalXPosition is a non-reachable value it gets sets to closest reachable value.
@@ -191,7 +199,7 @@ var uss = {
     }
   },
   scrollYTo: function (finalYPosition, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof finalYPosition !== "number") return;
+    if (typeof finalYPosition !== "number" || window.isNaN(finalYPosition)) return;
 
     //If the container cannot be scrolled on the y-axis _maxScrollY will be <= 0 and the function returns.
     //If the finalYPosition is a non-reachable value it gets sets to closest reachable value.
@@ -247,11 +255,11 @@ var uss = {
     }
   },
   scrollXBy: function (deltaX, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof deltaX !== "number" || deltaX === 0) return;
+    if (typeof deltaX !== "number" || window.isNaN(deltaX) || deltaX === 0) return;
     uss.scrollXTo(uss.getScrollXCalculator(container)() + deltaX, container, callback, canOverlay);
   },
   scrollYBy: function (deltaY, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof deltaY !== "number" || deltaY === 0) return;
+    if (typeof deltaY !== "number" || window.isNaN(deltaY) || deltaY === 0) return;
     uss.scrollYTo(uss.getScrollYCalculator(container)() + deltaY, container, callback, canOverlay);
   },
   scrollTo: function (finalXPosition, finalYPosition, xContainer = window, yContainer = window, xCallback = () => {}, yCallback = () => {}, xCanOverlay = false, yCanOverlay = false) {
