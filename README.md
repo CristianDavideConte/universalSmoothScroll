@@ -69,7 +69,7 @@ Method Name | Purpose
 `getYStepLengthCalculator` | Returns the _yStepLengthCalculator function for the passed container.
 `getXStepLength` | Returns the value of _xStepLength.
 `getYStepLength` | Returns the value of _yStepLength.
-`getMinAnimationFrame` | Return the value of _minAnimationFrame.
+`getMinAnimationFrame` | Returns the value of _minAnimationFrame.
 `setXStepLengthCalculator` | Sets the _xStepLengthCalculator for the requested container to the passed function if compatible.
 `setYStepLengthCalculator` | Sets the _yStepLengthCalculator for the requested container to the passed function if compatible.
 `setXStepLength` | Sets the _xStepLength to the passed value if compatible.
@@ -82,8 +82,8 @@ Method Name | Purpose
 `getMaxScrollX` | Takes in a scroll container and returns its highest scroll-reachable x-value.
 `getMaxScrollY` | Takes in a scroll container and returns its highest scroll-reachable y-value.
 `getScrollableParent` | Returns the first scrollable container of the passed element, works with "overflow('',X,Y): hidden" if specified.
-`scrollXTo` | Takes in a number which indicates the position that container's "scrollX" (the left border's x-coordinate of the container) has to reach and performs a scroll-animation on the x-axis.<br>After the animation has finished a callback function can be invoked.
-`scrollYTo` | Takes in a number which indicates the position that container's "scrollY" (the top border's y-coordinate of the container) has to reach and performs a scroll-animation on the y-axis.<br>After the animation has finished a callback function can be invoked.
+`scrollXTo` | Takes in a number which indicates the position that the passed container's "scrollX" (the left border's x-coordinate) has to reach and performs a scroll-animation on the x-axis.<br>After the animation has finished a callback function can be invoked.
+`scrollYTo` | Takes in a number which indicates the position that the passed container's "scrollY" (the top border's y-coordinate) has to reach and performs a scroll-animation on the y-axis.<br>After the animation has finished a callback function can be invoked.
 `scrollXBy` | Takes in a number which indicates the number of pixel on the x-axis the passed container has to be scrolled by and performs a scroll-animation on that axis.<br>After the animation has finished a callback function can be invoked.
 `scrollYBy` | Takes in a number which indicates the number of pixel on the y-axis the passed container has to be scrolled by and performs a scroll-animation on that axis.<br>After the animation has finished a callback function can be invoked.
 `scrollTo` | A shorthand for calling scrollXTo() and scrollYTo() one after another (the 2 animations are performed at the same time), performs 2 scroll-animation on the x and y axises based on the passed parameters.
