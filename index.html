@@ -6,7 +6,7 @@
     <title>Universal Smooth Scroll</title>
     <link rel = "icon" type = "image/png" href = "./images/favicon.png">
     <link rel = "stylesheet" type = "text/css" href = "./css/universalsmoothscroll.css">
-    <!--<script async src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/48301bab372eda67aa5fda95aa5e559520b55497/js/universalsmoothscroll-min.js"></script>
+    <!--<script async src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/48301bab372eda67aa5fda95aa5e559520b55497/js/universalsmoothscroll-min.js"></script>-->
     <!--<script async src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>-->
     <script async src = "./js/universalsmoothscroll.js"></script>
   </head>
@@ -57,7 +57,22 @@
     let yScrollerUpButton = document.getElementById("yScrollerUp");
     let yScrollerDownButton = document.getElementById("yScrollerDown");
 
+    let previousWindowScrollDirection = undefined;
+    let currentWindowScrollDirection = undefined;
+
     uss.hrefSetup();
+
+    uss.setYStepLengthCalculator(remaning => {return remaning / 15 + 1;}, window);
+    window.addEventListener("wheel", event => {
+      event.preventDefault();
+      currentWindowScrollDirection = Math.sign(event.deltaY);
+      if(currentWindowScrollDirection !== previousWindowScrollDirection) {
+        previousWindowScrollDirection = currentWindowScrollDirection;
+        uss.stopScrollingY(window);
+      }
+
+      uss.scrollYBy(Math.sign(event.deltaY) * window.innerHeight / 3, window, null, true);
+    }, {passive: false});
 
     function scrollListX(direction) {
       let finalXPosition = (direction === -1) ? 0 : xScroller.scrollWidth;

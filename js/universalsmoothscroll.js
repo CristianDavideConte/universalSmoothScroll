@@ -162,7 +162,7 @@ var uss = {
 
     const _scrollStepLength = uss.calcXStepLength(_remaningScrollAmmount); //Default value for the step length
 
-    //If one or more scroll-animation on the x-axis of the passed component has being scheduled
+    //If one or more scroll-animation on the x-axis of the passed component have being scheduled
     //and the current requested scroll-animation cannot be overlayed,
     //all the already-scheduled ones gets cancelled in order to make the new one play.
     if(canOverlay === false) uss.stopScrollingX(container);
@@ -177,7 +177,14 @@ var uss = {
       _scheduledAnimations = uss._xMapContainerAnimationID.get(container);
       _scheduledAnimations.shift(); //The first _stepX to be executed is the first one which set an id
 
-      _remaningScrollAmmount = Math.abs(finalXPosition - scrollXCalculator());
+      const _currentXPosition = scrollXCalculator();
+      _remaningScrollAmmount = (finalXPosition - _currentXPosition) * _direction;
+      if(_remaningScrollAmmount <= 0) {
+        uss._xMapContainerAnimationID.set(container, _scheduledAnimations);
+        if(typeof callback === "function") setTimeout(callback, 0);
+        return;
+      }
+
       let _calculatedScrollStepLength;
       if (typeof stepCalculator !== "function") _calculatedScrollStepLength = _scrollStepLength;
       else {
@@ -186,13 +193,13 @@ var uss = {
       }
 
       if(_remaningScrollAmmount <= _calculatedScrollStepLength) {
-        container.scroll(scrollXCalculator() + _remaningScrollAmmount * _direction, scrollYCalculator());
+        container.scroll(finalXPosition, scrollYCalculator());
         uss._xMapContainerAnimationID.set(container, _scheduledAnimations);
         if(typeof callback === "function") setTimeout(callback, 0);
         return;
       }
 
-      container.scroll(scrollXCalculator() + _calculatedScrollStepLength * _direction, scrollYCalculator());
+      container.scroll(_currentXPosition + _calculatedScrollStepLength * _direction, scrollYCalculator());
 
       _scheduledAnimations.push(window.requestAnimationFrame(_stepX));
       uss._xMapContainerAnimationID.set(container, _scheduledAnimations);
@@ -218,7 +225,7 @@ var uss = {
 
     const _scrollStepLength = uss.calcYStepLength(_remaningScrollAmmount); //Default value for the step length
 
-    //If one or more scroll-animation on the y-axis of the passed component has being scheduled
+    //If one or more scroll-animation on the y-axis of the passed component have being scheduled
     //and the current requested scroll-animation cannot be overlayed,
     //all the already-scheduled ones gets cancelled in order to make the new one play.
     if(canOverlay === false) uss.stopScrollingY(container);
@@ -233,7 +240,14 @@ var uss = {
       _scheduledAnimations = uss._yMapContainerAnimationID.get(container);
       _scheduledAnimations.shift(); //The first _stepY to be executed is the first one which set an id
 
-      _remaningScrollAmmount = Math.abs(finalYPosition - scrollYCalculator());
+      const _currentYPosition = scrollYCalculator();
+      _remaningScrollAmmount = (finalYPosition - _currentYPosition) * _direction;
+      if(_remaningScrollAmmount <= 0) {
+        uss._yMapContainerAnimationID.set(container, _scheduledAnimations);
+        if(typeof callback === "function") setTimeout(callback, 0);
+        return;
+      }
+
       let _calculatedScrollStepLength;
       if (typeof stepCalculator !== "function") _calculatedScrollStepLength = _scrollStepLength;
       else {
@@ -242,13 +256,13 @@ var uss = {
       }
 
       if(_remaningScrollAmmount <= _calculatedScrollStepLength) {
-        container.scroll(scrollXCalculator(), scrollYCalculator() + _remaningScrollAmmount * _direction);
+        container.scroll(scrollXCalculator(), finalYPosition);
         uss._yMapContainerAnimationID.set(container, _scheduledAnimations);
         if(typeof callback === "function") setTimeout(callback, 0);
         return;
       }
 
-      container.scroll(scrollXCalculator(), scrollYCalculator() + _calculatedScrollStepLength * _direction);
+      container.scroll(scrollXCalculator(), _currentYPosition + _calculatedScrollStepLength * _direction);
 
       _scheduledAnimations.push(window.requestAnimationFrame(_stepY));
       uss._yMapContainerAnimationID.set(container, _scheduledAnimations);
