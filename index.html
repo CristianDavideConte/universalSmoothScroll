@@ -71,7 +71,7 @@
         uss.stopScrollingY(window);
       }
 
-      uss.scrollYBy(Math.sign(event.deltaY) * window.innerHeight / 3, window, null, true);
+      uss.scrollYBy(event.deltaY / 100 * window.innerHeight / 4, window, null, true);
     }, {passive: false});
 
     function scrollListX(direction) {
