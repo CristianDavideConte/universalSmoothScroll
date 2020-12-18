@@ -382,7 +382,7 @@ _`canOverlay = true`_ means that even if other scroll-animations on the same axi
 This is an example of how different these two kind of scroll-animations are:<br>
 ```javascript
 const totalScrollAmmount = wheelEvent => {
-  const deltaY = (wheelEvent.deltaY >= 100) ? wheelEvent.deltaY / 100 : wheelEvent.deltaY;
+  const deltaY = (Math.abs(wheelEvent.deltaY) >= 100) ? wheelEvent.deltaY / 100 : wheelEvent.deltaY;
   return deltaY * window.innerHeight / 3;
 }
 const ourEaseFunction = (remaning, timestamp) => {return remaning / 10 + 1;};
