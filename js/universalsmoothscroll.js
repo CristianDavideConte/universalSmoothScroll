@@ -1,28 +1,32 @@
-const DEFAULTXSTEPLENGTH = window.innerWidth  * 50 / 1920; //Default number of pixel scrolled in a single scroll-animation's (on the x-axis) step: 50px steps for a 1920px screen width.
-const DEFAULTYSTEPLENGTH = window.innerHeight * 50 / 937; //Default number of pixel scrolled in a single scroll-animation's (on the y-axis) step: 50px steps for a 937px(1080px - urlbar) screen height.
-const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of frames any scroll-animation should last.
+const DEFAULTXSTEPLENGTH = window.innerWidth  * 50 / 1920; //Default number of pixel scrolled in a single scroll-animation's step on the x-axis: 50px steps for a 1920px screen width.
+const DEFAULTYSTEPLENGTH = window.innerHeight * 50 / 937;  //Default number of pixel scrolled in a single scroll-animation's step on the y-axis: 50px steps for a 937px(1080px - urlbar) screen height.
+const DEFAULTMINANIMATIONFRAMES = 5;                       //Default lowest possible number of frames any scroll-animation should last.
 
 /*
  * _xMapContainerAnimationID: Map(Container, Array[idNumber]), a map in which:
  *                            1) The keys are the containers on which a scroll-animation on the x-axis has been requested.
- *                            2) The values are Array of ids. This ids are provided by the requestAnimationFrame() calls and
- *                               are used by the stopScrollingX() function any scroll-animation on the x-axis for the passed component.
+ *                            2) The values are Array of IDs. This IDs are provided by the requestAnimationFrame() calls and
+ *                               are used internally to keep track of the next scroll-animation's step function call and also
+ *                               by the stopScrollingX() function to stop any scroll-animation on the x-axis for the passed container.
  * _yMapContainerAnimationID: Map(Container, Array[idNumber]), a map in which:
  *                            1) The keys are the containers on which a scroll-animation on the y-axis has been requested.
- *                            2) The values are Array of ids. This ids are provided by the requestAnimationFrame() calls and
- *                               are used by the stopScrollingY() function any scroll-animation on the y-axis for the passed component.
+ *                            2) The values are Array of IDs. This IDs are provided by the requestAnimationFrame() calls and
+ *                               are used internally to keep track of the next scroll-animation's step function call and also
+ *                               by the stopScrollingY() function to stop any scroll-animation on the x-axis for the passed container.
  * _xStepLengthCalculator: Map(Container, stepCalculatorFunction), a map in which:
  *                         1) The keys are the container on which a scroll-animation on the x-axis has been requested.
- *                         2) The values are user-defined functions that can modify the step's length at each _stepX call of a scroll-animation on the x-axis.
+ *                         2) The values are user-defined functions that can modify the step's length at each
+ *                            _stepX (internal function that executes the instructions for a single scroll-animation's step on the x-axis) call of a scroll-animation.
  * _yStepLengthCalculator: Map(Container, stepCalculatorFunction), a map in which:
  *                         1) The keys are the container on which a scroll-animation on the y-axis has been requested.
- *                         2) The values are user-defined functions that can modify the step's length at each _stepY call of a scroll-animation on the y-axis.
+ *                         2) The values are user-defined functions that can modify the step's length at each
+ *                            _stepY (internal function that executes the instructions for a single scroll-animation's step on the y-axis) call of a scroll-animation.
  * _xStepLength: number, the number of pixel scrolled on the x-axis in a single scroll-animation's step.
  * _yStepLength: number, the number of pixel scrolled on the y-axis in a single scroll-animation's step.
  * _minAnimationFrame: number, the minimum number of frames any scroll-animation, on any axis, should last.
  *
- * isXscrolling: function, returns true if a scroll-animation on the x-axis of the passed container is currently being performed, false otherwise.
- * isYscrolling: function, returns true if a scroll-animation on the y-axis of the passed container is currently being performed, false otherwise.
+ * isXscrolling: function, returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
+ * isYscrolling: function, returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
  * getXStepLengthCalculator: function, returns the _xStepLengthCalculator function for the passed container.
  * getYStepLengthCalculator: function, returns the _yStepLengthCalculator function for the passed container.
  * getXStepLength: function, returns the value of _xStepLength.
@@ -33,9 +37,9 @@ const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of frames 
  * setXStepLength: function, sets the _xStepLength to the passed value if compatible.
  * setYStepLength: function, sets the _yStepLength to the passed value if compatible.
  * setMinAnimationFrame: function, sets the _minAnimationFrame to the passed value if compatible.
- * calcXStepLength: function, takes in the total ammount of a scroll-animation on the x-axis and
+ * calcXStepLength: function, takes in the remaning scroll ammount of a scroll-animation on the x-axis and
  *                 calculates the how long each animation-step must be in order to target the _minAnimationFrame.
- * calcYStepLength: function, takes in the total ammount of a scroll-animation on the y-axis and
+ * calcYStepLength: function, takes in the remaning scroll ammount of a scroll-animation on the y-axis and
  *                 calculates the how long each animation-step must be in order to target the _minAnimationFrame.
  * getScrollXCalculator: function, takes in a container and returns a function that returns:
  *                       1) The scrollLeft property of the container if it's a DOM element.
@@ -67,9 +71,9 @@ const DEFAULTMINANIMATIONFRAMES = 5; //Default lowest possible number of frames 
  *                 There are 3 possible allignments for both the passed element and it's closest scollable parent: top, bottom, center.
  *                 The allignments can be changed by passing different values of alignToTop and alignToLeft.
  *                 Works with "overflow('',X,Y): hidden" if specified.
- * stopScrollingX: function, stops all the current scroll-animation on the x-axis for the passed container.
+ * stopScrollingX: function, stops all the current scroll-animation on the x-axis of the passed container.
  *                 After the animation has finished a callback function can be invoked.
- * stopScrollingY: function, stops all the current scroll-animation on the y-axis for the passed container.
+ * stopScrollingY: function, stops all the current scroll-animation on the y-axis of the passed container.
  *                 After the animation has finished a callback function can be invoked.
  * hrefSetup: function, looks for every anchor element with a href attribute linked to an element on the same page and
  *            attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation
