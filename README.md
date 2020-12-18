@@ -4,7 +4,7 @@ This scroll API is based on and improves upon the 3 main ways to scroll an eleme
 **Every scroll-animation** triggered by the API **can be interrupted** at any moment and **supports custom ease functions.**<br>
 **Multiple scroll-animations** can be played **at the same time** on 1 or more DOM's elements.<br>
 
-# Demo 
+# Demo
 You can try most of the API functionalities on [my personal website](https://cristiandavideconte.github.io/myPersonalWebPage/).<br>
 You can also take a look at how the single features are implemented on [this playground](https://cristiandavideconte.github.io/universalSmoothScroll/).
 
@@ -17,7 +17,7 @@ Add one of this `<script>` in your project's `<head>` tag:<br>
 `<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/7b0ccdcd10abc65094d611695775ef5b9981d261/js/universalsmoothscroll-min.js"></script>`<br>
 #### Latest version:<br>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>`
-## Local file: 
+## Local file:
 Copy & paste the script's minified version that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-min.js) in your project's js directory & add the `<script>`. For example:<br>
 ```
 <head>
@@ -26,12 +26,12 @@ Copy & paste the script's minified version that you can find [here](https://gith
     ...
 </head>
 ```
-# How does it work ? 
+# How does it work ?
 All the API's properties are methods of the `uss` object which gets automatically initialized when you import the script in your project.<br>
 The `uss` object is initialized in the global scope of you project so be aware of that !<br>
 The `uss` object has some internal variables which **SHOULD NOT** be directly manipulated: it's suggested to always use the provided getters and setters.<br>
 You will be able to recognize those internal properties because their names begin with an `_` (underscore). <br>
-For istance: 
+For istance:
 * `uss._xStepLength` is the name of the internal property used by the `uss` objects' methods.
 * `uss.getXStepLength()` & `uss.setXStepLength()` are the getter and setter's names for the `uss._xStepLength` variable.<br>
 
@@ -43,7 +43,7 @@ There are 3 main scrolling-methods:
 There's also 1 handy auto-initializer for anchor links:
 * `uss.hrefSetup()`<br>
 
-# Internal-Use variables list 
+# Internal-Use variables list
 Variable name | Purpose
 ------------- | -------
 `_xMapContainerAnimationID` | A Map <key, value> in which: <br> 1) The keys are the containers on which a scroll-animation on the x-axis has been requested.<br> 2) The values are Array of IDs. This IDs are provided by the requestAnimationFrame() calls and are used internally to keep track of the next scroll-animation's step function call and also by the stopScrollingX() function to stop any scroll-animation on the x-axis for the passed container.
@@ -93,7 +93,7 @@ Method Name | Purpose
 `stopScrollingX` | Stops all the current scroll-animation on the x-axis of the passed container.<br>After the animations are stopped a callback function can be invoked.
 `stopScrollingY` | Stops all the current scroll-animation on the y-axis of the passed container.<br>After the animations are stopped a callback function can be invoked.
 `hrefSetup` | Looks for every anchor element (`<a>` && `<area>`) with a value for the href attribute linked to an element on the same page and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element (internally uses scrollIntoView).
-  
+
 # Methods' syntaxes
 #### isXscrolling
 ```javascript
@@ -143,9 +143,9 @@ Method Name | Purpose
 /*
  * @param newCalculator function that defines the length of each step of every scroll-animation on the x-axis for the passed container.
  *        In order for it to work, it has to follow this rules:
- *        1) Has to take in 2 parameters (remaningScrollAmmount, requestAnimationFrame-call's timestamp) 
+ *        1) Has to take in 2 parameters (remaningScrollAmmount, requestAnimationFrame-call's timestamp)
  *        2) Has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._xStepLength)
- *        3) Can use other variables but it will be passed only the 2 mentioned above 
+ *        3) Can use other variables but it will be passed only the 2 mentioned above
  * @param container window or HTML element
  */
  function setXStepLengthCalculator (newCalculator = undefined, container = window);
@@ -155,9 +155,9 @@ Method Name | Purpose
 /*
  * @param newCalculator function that defines the length of each step of every scroll-animation on the y-axis for the passed container.
  *        In order for it to work, it has to follow this rules:
- *        1) Has to take in 2 parameters (remaningScrollAmmount, requestAnimationFrame-call's timestamp) 
+ *        1) Has to take in 2 parameters (remaningScrollAmmount, requestAnimationFrame-call's timestamp)
  *        2) Has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._yStepLength)
- *        3) Can use other variables but it will be passed only the 2 mentioned above 
+ *        3) Can use other variables but it will be passed only the 2 mentioned above
  * @param container window or HTML element
  */
  function setYStepLengthCalculator (newCalculator = undefined, container = window);
@@ -165,21 +165,21 @@ Method Name | Purpose
 #### setXStepLength
 ```javascript
 /*
- * @param newXStepLength A number > 0 
+ * @param newXStepLength A number > 0
  */
  function setXStepLength (newXStepLength);
 ```
 #### setYStepLength
 ```javascript
 /*
- * @param newYStepLength A number > 0 
+ * @param newYStepLength A number > 0
  */
  function setYStepLength (newYStepLength);
 ```
 #### setMinAnimationFrame
 ```javascript
 /*
- * @param newMinAnimationFrame A number > 0 
+ * @param newMinAnimationFrame A number > 0
  */
  function setMinAnimationFrame (newMinAnimationFrame);
 ```
@@ -187,7 +187,7 @@ Method Name | Purpose
 ```javascript
 /*
  * USED INTERNALLY
- * @param deltaX A number > 0 
+ * @param deltaX A number > 0
  */
  function calcXStepLength (deltaX);
 ```
@@ -195,7 +195,7 @@ Method Name | Purpose
 ```javascript
 /*
  * USED INTERNALLY
- * @param deltaY A number > 0 
+ * @param deltaY A number > 0
  */
  function calcYStepLength (deltaY);
 ```
@@ -231,7 +231,7 @@ Method Name | Purpose
 ```javascript
 /*
  * @param element window or HTML element
- * @param includeHidden true if the element's first scrollable parent may have the 
+ * @param includeHidden true if the element's first scrollable parent may have the
  *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden.
  *        False otherwise.
  */
@@ -325,19 +325,19 @@ Method Name | Purpose
 ```javascript
 /*
  * @param element window or HTML element
- * @param alignToLeft true if you want both the passed element and it's container (if available) to be alligned to the left 
+ * @param alignToLeft true if you want both the passed element and it's container (if available) to be alligned to the left
  *                    of the container (for the passed element) and of the window (for the element's container);
- *                    false if you want both the passed element and it's container (if available) to be alligned to the right 
+ *                    false if you want both the passed element and it's container (if available) to be alligned to the right
  *                    of the container (for the passed element) and of the window (for the element's container);
- *                    anything else if you want both the passed element and it's container (if available) to be alligned to the center 
+ *                    anything else if you want both the passed element and it's container (if available) to be alligned to the center
  *                    of the container (for the passed element) and of the window (for the element's container).
- * @param alignToTop true if you want both the passed element and it's container (if available) to be alligned to the top 
+ * @param alignToTop true if you want both the passed element and it's container (if available) to be alligned to the top
  *                    of the container (for the passed element) and of the window (for the element's container);
- *                    false if you want both the passed element and it's container (if available) to be alligned to the bottom 
+ *                    false if you want both the passed element and it's container (if available) to be alligned to the bottom
  *                    of the container (for the passed element) and of the window (for the element's container);
- *                    anything else if you want both the passed element and it's container (if available) to be alligned to the center 
+ *                    anything else if you want both the passed element and it's container (if available) to be alligned to the center
  *                    of the container (for the passed element) and of the window (for the element's container).
- * @param includeHidden true if the element's first scrollable parent may have the 
+ * @param includeHidden true if the element's first scrollable parent may have the
  *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden.
  *        False otherwise.
  */
@@ -347,7 +347,7 @@ Method Name | Purpose
 ```javascript
 /*
  * @param container window or HTML element
- * @callback callback the function you want to be executed after 
+ * @callback callback the function you want to be executed after
  *           all the scroll-animations on the x-axis of the passed container have been stopped.
  */
  function stopScrollingX (container = window, callback = () => {});
@@ -356,7 +356,7 @@ Method Name | Purpose
 ```javascript
 /*
  * @param container window or HTML element
- * @callback callback the function you want to be executed after 
+ * @callback callback the function you want to be executed after
  *           all the scroll-animations on the y-axis of the passed container have been stopped.
  */
  function stopScrollingY (container = window, callback = () => {});
@@ -364,14 +364,14 @@ Method Name | Purpose
 #### hrefSetup
 ```javascript
 /*
- * @param includeHidden true if the element's first scrollable parent may have the 
+ * @param includeHidden true if the element's first scrollable parent may have the
  *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden, false otherwise.
  */
  function hrefSetup (includeHidden = false);
 ```
 
 # FAQ
-## Q: Do i need to have _`scroll-behavior: smooth`_ in my CSS ? 
+## Q: Do i need to have _`scroll-behavior: smooth`_ in my CSS ?
 A: NO! It will break the API.
 ## Q: How do I invoke the API methods ?  
 A: Any Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD (ARGUMENTS);`
@@ -381,7 +381,10 @@ _`canOverlay = false`_ means that before the scroll-animation you requested can 
 _`canOverlay = true`_ means that even if other scroll-animations on the same axis of the requested scroll-animation's container are currently being played they won't be cancelled by default and the new animation will be executed meanwhile the others are still playing.<br>
 This is an example of how different these two kind of scroll-animations are:<br>
 ```javascript
-const totalScrollAmmount = wheelEvent => wheelEvent.deltaY / 100 * window.innerHeight / 3;
+const totalScrollAmmount = wheelEvent => {
+  const deltaY = (wheelEvent.deltaY >= 100) ? wheelEvent.deltaY / 100 : wheelEvent.deltaY;
+  return deltaY * window.innerHeight / 3;
+}
 const ourEaseFunction = (remaning, timestamp) => {return remaning / 10 + 1;};
 uss.setYStepLengthCalculator(ourEaseFunction, window);
 
@@ -395,8 +398,8 @@ const canOverlayFalseBehaviour = wheelEvent => {
 //CASE B: canOverlay = true
 /*
  * Because canOverlay = true now, we keep track of the scrolling direction
- * otherwise multiple scroll-animation may "fight" against each other if 
- * the scrolling directions are different. 
+ * otherwise multiple scroll-animation may "fight" against each other if
+ * the scrolling directions are different.
  */
 let previousWindowScrollDirection = undefined;
 let currentWindowScrollDirection = undefined;
@@ -422,12 +425,12 @@ For example:<br>
 ```javascript
 uss.setYStepLengthCalculator((remaning, timestamp) => {return remaning / 10 + 1;});
 ```
-## Q: Can I make my scroll-animation last a certain ammount of time? 
+## Q: Can I make my scroll-animation last a certain ammount of time?
 A: YES!<br>
 While setting a custom stepLengthCalculator you will notice your function will be passed the timestamp of the window.requestAnimationFrame call as the second argument !<br>
 You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) useful.
 ## Q: What's the difference between the _stable_ and the _latest_ API version ?
-A: The **_latest_** version gets updated every time a change is made which means that you have all the lastest features and fixes but that some functionality may have some bugs or code leftovers.<br> The **_stable_** version gets updated only when a feature is completly stable and the code is cleaned which lowers the probability of encountering bugs but the newest features may take a while to arrive here. 
+A: The **_latest_** version gets updated every time a change is made which means that you have all the lastest features and fixes but that some functionality may have some bugs or code leftovers.<br> The **_stable_** version gets updated only when a feature is completly stable and the code is cleaned which lowers the probability of encountering bugs but the newest features may take a while to arrive here.
 ## Q: Why is it allowed to directly modify internal variables ?
 A: It is allowed (but not suggested) because there may be a bug (rare cases) that prevents you from setting a variable to a right value. If that's the case don't hesitate to contact me !
 
@@ -452,6 +455,6 @@ More coming soon...
 * ✔️ Baidu Browser (from version ❔)
 * ❔  KaiOS Browser (not tested)
 
-# Contact Me 
+# Contact Me
 For any bug  you found, improvement suggestion, feature request, or if you simply need to contact me, use [my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br>
 Feel free to reach out !

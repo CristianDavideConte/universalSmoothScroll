@@ -65,13 +65,18 @@
     uss.setYStepLengthCalculator(remaning => {return remaning / 15 + 1;}, window);
     window.addEventListener("wheel", event => {
       event.preventDefault();
-      currentWindowScrollDirection = Math.sign(event.deltaY);
+      const deltaY = event.deltaY;
+      
+      currentWindowScrollDirection = Math.sign(deltaY);
       if(currentWindowScrollDirection !== previousWindowScrollDirection) {
         previousWindowScrollDirection = currentWindowScrollDirection;
         uss.stopScrollingY(window);
       }
 
-      uss.scrollYBy(event.deltaY / 100 * window.innerHeight / 4, window, null, true);
+      if(Math.abs(deltaY) >= 100) //For browsers that use multiples of 100 as deltaY
+          uss.scrollYBy(deltaY / 100 * window.innerHeight / 4, window, null, true);
+      else //For the browsers that use the raw scroll input as deltaY
+          uss.scrollYBy(deltaY * window.innerHeight / 4, window, null, true);
     }, {passive: false});
 
     function scrollListX(direction) {
