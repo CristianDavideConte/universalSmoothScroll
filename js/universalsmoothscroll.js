@@ -37,10 +37,10 @@ const DEFAULTMINANIMATIONFRAMES = 5;                       //Default lowest poss
  * setXStepLength: function, sets the _xStepLength to the passed value if compatible.
  * setYStepLength: function, sets the _yStepLength to the passed value if compatible.
  * setMinAnimationFrame: function, sets the _minAnimationFrame to the passed value if compatible.
- * calcXStepLength: function, takes in the remaning scroll ammount of a scroll-animation on the x-axis and
- *                 calculates the how long each animation-step must be in order to target the _minAnimationFrame.
- * calcYStepLength: function, takes in the remaning scroll ammount of a scroll-animation on the y-axis and
- *                 calculates the how long each animation-step must be in order to target the _minAnimationFrame.
+ * calcXStepLength: function, takes in the remaning scroll amount of a scroll-animation on the x-axis and
+ *                 calculates how long each animation-step must be in order to target the _minAnimationFrame.
+ * calcYStepLength: function, takes in the remaning scroll amount of a scroll-animation on the y-axis and
+ *                 calculates how long each animation-step must be in order to target the _minAnimationFrame.
  * getScrollXCalculator: function, takes in a container and returns a function that returns:
  *                       1) The scrollLeft property of the container if it's a DOM element.
  *                       2) The scrollX property of the container if it's the window element.
@@ -94,18 +94,42 @@ var uss = {
   getXStepLength: function () {return uss._xStepLength;},
   getYStepLength: function () {return uss._yStepLength;},
   getMinAnimationFrame: function () {return uss._minAnimationFrame;},
-  setXStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerWidth;  if(typeof newCalculator(remaning, remaning) !== "number" || window.isNaN(newCalculator(remaning, remaning))) return; uss._xStepLengthCalculator.set(container, newCalculator)},
-  setYStepLengthCalculator: function (newCalculator = undefined, container = window) {if(typeof newCalculator !== "function") return; let remaning = Math.random() * window.innerHeight; if(typeof newCalculator(remaning, remaning) !== "number" || window.isNaN(newCalculator(remaning, remaning))) return; uss._yStepLengthCalculator.set(container, newCalculator)},
-  setXStepLength: function (newXStepLength) {if(typeof newXStepLength !== "number" || window.isNaN(newXStepLength)) return; if(newXStepLength <= 0) return; uss._xStepLength = newXStepLength;},
-  setYStepLength: function (newYStepLength) {if(typeof newYStepLength !== "number" || window.isNaN(newYStepLength)) return; if(newYStepLength <= 0) return; uss._yStepLength = newYStepLength;},
-  setMinAnimationFrame: function (newMinAnimationFrame) {if(typeof newMinAnimationFrame !== "number" || window.isNaN(newMinAnimationFrame)) return; if(newMinAnimationFrame <= 0) return; uss._minAnimationFrame = newMinAnimationFrame;},
+  setXStepLengthCalculator: function (newCalculator = undefined, container = window) {
+    if(typeof newCalculator !== "function") {console.log("USS error: ", newCalculator, " is not a function"); return;}
+    const _remaning = uss.getMaxScrollX(container);
+    const _testValue = newCalculator(_remaning, 0, _remaning, 0, _remaning); //remaningScrollAmount, timestamp, totalScrollAmount, currentXPosition, finalXPosition
+    if(typeof _testValue !== "number" || window.isNaN(_testValue)) {console.log("USS error: ", newCalculator, " didn't return a valid step value"); return;}
+    uss._xStepLengthCalculator.set(container, newCalculator)
+  },
+  setYStepLengthCalculator: function (newCalculator = undefined, container = window) {
+    if(typeof newCalculator !== "function") {console.log("USS error: ", newCalculator, " is not a function"); return;}
+    const _remaning = uss.getMaxScrollY(container);
+    const _testValue = newCalculator(_remaning, 0, _remaning, 0, _remaning); //remaningScrollAmount, timestamp, totalScrollAmount, currentXPosition, finalXPosition
+    if(typeof _testValue !== "number" || window.isNaN(_testValue)) {console.log("USS error: ", newCalculator, " didn't return a valid step value"); return;}
+    uss._yStepLengthCalculator.set(container, newCalculator)
+  },
+  setXStepLength: function (newXStepLength) {
+    if(typeof newXStepLength !== "number" || window.isNaN(newXStepLength)) {console.log("USS error: ", newXStepLength, " is not a number"); return;}
+    if(newXStepLength <= 0) {console.log("USS error: ", newXStepLength, " must be a positive number"); return;}
+    uss._xStepLength = newXStepLength;
+  },
+  setYStepLength: function (newYStepLength) {
+    if(typeof newYStepLength !== "number" || window.isNaN(newYStepLength)) {console.log("USS error: ", newYStepLength, " is not a number"); return;}
+    if(newYStepLength <= 0) {console.log("USS error: ", newYStepLength, " must be a positive number"); return;}
+    uss._yStepLength = newYStepLength;
+  },
+  setMinAnimationFrame: function (newMinAnimationFrame) {
+    if(typeof newMinAnimationFrame !== "number" || window.isNaN(newMinAnimationFrame)) {console.log("USS error: ", newMinAnimationFrame, " is not a number"); return;}
+    if(newMinAnimationFrame <= 0) {console.log("USS error: ", newMinAnimationFrame, " must be a positive number"); return;}
+    uss._minAnimationFrame = newMinAnimationFrame;
+  },
   calcXStepLength: function (deltaX) {return (deltaX >= (uss._minAnimationFrame - 1) * uss._xStepLength) ? uss._xStepLength : Math.round(deltaX / uss._minAnimationFrame);},
   calcYStepLength: function (deltaY) {return (deltaY >= (uss._minAnimationFrame - 1) * uss._yStepLength) ? uss._yStepLength : Math.round(deltaY / uss._minAnimationFrame);},
   getScrollXCalculator: function (container = window) { return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
   getScrollYCalculator: function (container = window) { return (container instanceof HTMLElement) ? () => {return container.scrollTop}  : () => {return container.scrollY};},
   getMaxScrollX: function (container = window) {
-    let body = document.body;
-    let html = document.documentElement;
+    const body = document.body;
+    const html = document.documentElement;
     return (container instanceof HTMLElement) ?
       container.scrollWidth - container.offsetWidth :
       Math.max(
@@ -118,8 +142,8 @@ var uss = {
       ) - window.innerWidth; // Subtract viewport width because the x-scroll is done starting by the left
   },
   getMaxScrollY: function (container = window) {
-    let body = document.body;
-    let html = document.documentElement;
+    const body = document.body;
+    const html = document.documentElement;
     return (container instanceof HTMLElement) ?
       container.scrollHeight - container.offsetHeight :
       Math.max(
@@ -144,10 +168,10 @@ var uss = {
           if (overflowRegex.test(style.overflow + style.overflowY + style.overflowX)) return container;
       }
       return window;
-    } catch(exception) {console.log("USS error: Couldn't get the container of the passed element");}
+    } catch(exception) {console.log("USS error: Couldn't get the parent container of the element:\n", element);}
   },
   scrollXTo: function (finalXPosition, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof finalXPosition !== "number" || window.isNaN(finalXPosition)) return;
+    if (typeof finalXPosition !== "number" || window.isNaN(finalXPosition)) {console.log("USS error: ", finalXPosition, " is not a number"); return;}
 
     //If the container cannot be scrolled on the x-axis _maxScrollX will be <= 0 and the function returns.
     //If the finalXPosition is a non-reachable value it gets sets to closest reachable value.
@@ -159,12 +183,12 @@ var uss = {
 
     const scrollXCalculator = uss.getScrollXCalculator(container);
     const scrollYCalculator = uss.getScrollYCalculator(container);
-    let _remaningScrollAmmount = finalXPosition - scrollXCalculator();
-    const _direction = Math.sign(_remaningScrollAmmount);
-    _remaningScrollAmmount *= _direction;
-    if(_remaningScrollAmmount <= 0) {if(typeof callback === "function") setTimeout(callback, 0);return;}
+    let _totalScrollAmount = finalXPosition - scrollXCalculator();
+    const _direction = Math.sign(_totalScrollAmount);
+    _totalScrollAmount *= _direction;
+    if(_totalScrollAmount <= 0) {if(typeof callback === "function") setTimeout(callback, 0);return;}
 
-    const _scrollStepLength = uss.calcXStepLength(_remaningScrollAmmount); //Default value for the step length
+    const _scrollStepLength = uss.calcXStepLength(_totalScrollAmount); //Default value for the step length
 
     //If one or more scroll-animation on the x-axis of the passed component have being scheduled
     //and the current requested scroll-animation cannot be overlayed,
@@ -182,8 +206,8 @@ var uss = {
       _scheduledAnimations.shift(); //The first _stepX to be executed is the first one which set an id
 
       const _currentXPosition = scrollXCalculator();
-      _remaningScrollAmmount = (finalXPosition - _currentXPosition) * _direction;
-      if(_remaningScrollAmmount <= 0) {
+      const _remaningScrollAmount = (finalXPosition - _currentXPosition) * _direction;
+      if(_remaningScrollAmount <= 0) {
         uss._xMapContainerAnimationID.set(container, _scheduledAnimations);
         if(typeof callback === "function") setTimeout(callback, 0);
         return;
@@ -192,11 +216,11 @@ var uss = {
       let _calculatedScrollStepLength;
       if (typeof stepCalculator !== "function") _calculatedScrollStepLength = _scrollStepLength;
       else {
-        _calculatedScrollStepLength = stepCalculator(_remaningScrollAmmount, timestamp);
+        _calculatedScrollStepLength = stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentXPosition, finalXPosition);
         if(_calculatedScrollStepLength < 0) _calculatedScrollStepLength = _scrollStepLength;
       }
 
-      if(_remaningScrollAmmount <= _calculatedScrollStepLength) {
+      if(_remaningScrollAmount <= _calculatedScrollStepLength) {
         container.scroll(finalXPosition, scrollYCalculator());
         uss._xMapContainerAnimationID.set(container, _scheduledAnimations);
         if(typeof callback === "function") setTimeout(callback, 0);
@@ -210,7 +234,7 @@ var uss = {
     }
   },
   scrollYTo: function (finalYPosition, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof finalYPosition !== "number" || window.isNaN(finalYPosition)) return;
+    if (typeof finalYPosition !== "number" || window.isNaN(finalYPosition)) {console.log("USS error: ", finalYPosition, " is not a number"); return;}
 
     //If the container cannot be scrolled on the y-axis _maxScrollY will be <= 0 and the function returns.
     //If the finalYPosition is a non-reachable value it gets sets to closest reachable value.
@@ -222,12 +246,12 @@ var uss = {
 
     const scrollXCalculator = uss.getScrollXCalculator(container);
     const scrollYCalculator = uss.getScrollYCalculator(container);
-    let _remaningScrollAmmount = finalYPosition - scrollYCalculator();
-    const _direction = Math.sign(_remaningScrollAmmount);
-    _remaningScrollAmmount *= _direction;
-    if(_remaningScrollAmmount <= 0) {if(typeof callback === "function") setTimeout(callback, 0); return;}
+    let _totalScrollAmount = finalYPosition - scrollYCalculator();
+    const _direction = Math.sign(_totalScrollAmount);
+    _totalScrollAmount *= _direction;
+    if(_totalScrollAmount <= 0) {if(typeof callback === "function") setTimeout(callback, 0); return;}
 
-    const _scrollStepLength = uss.calcYStepLength(_remaningScrollAmmount); //Default value for the step length
+    const _scrollStepLength = uss.calcYStepLength(_totalScrollAmount); //Default value for the step length
 
     //If one or more scroll-animation on the y-axis of the passed component have being scheduled
     //and the current requested scroll-animation cannot be overlayed,
@@ -245,8 +269,8 @@ var uss = {
       _scheduledAnimations.shift(); //The first _stepY to be executed is the first one which set an id
 
       const _currentYPosition = scrollYCalculator();
-      _remaningScrollAmmount = (finalYPosition - _currentYPosition) * _direction;
-      if(_remaningScrollAmmount <= 0) {
+      const _remaningScrollAmount = (finalYPosition - _currentYPosition) * _direction;
+      if(_remaningScrollAmount <= 0) {
         uss._yMapContainerAnimationID.set(container, _scheduledAnimations);
         if(typeof callback === "function") setTimeout(callback, 0);
         return;
@@ -255,11 +279,11 @@ var uss = {
       let _calculatedScrollStepLength;
       if (typeof stepCalculator !== "function") _calculatedScrollStepLength = _scrollStepLength;
       else {
-        _calculatedScrollStepLength = stepCalculator(_remaningScrollAmmount, timestamp);
+        _calculatedScrollStepLength = stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentYPosition, finalYPosition);
         if(_calculatedScrollStepLength < 0) _calculatedScrollStepLength = _scrollStepLength;
       }
 
-      if(_remaningScrollAmmount <= _calculatedScrollStepLength) {
+      if(_remaningScrollAmount <= _calculatedScrollStepLength) {
         container.scroll(scrollXCalculator(), finalYPosition);
         uss._yMapContainerAnimationID.set(container, _scheduledAnimations);
         if(typeof callback === "function") setTimeout(callback, 0);
@@ -273,11 +297,13 @@ var uss = {
     }
   },
   scrollXBy: function (deltaX, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof deltaX !== "number" || window.isNaN(deltaX) || deltaX === 0) return;
+    if (typeof deltaX !== "number" || window.isNaN(deltaX)) {console.log("USS error: ", deltaX, " is not a number"); return;}
+    if(deltaX === 0) return;
     uss.scrollXTo(uss.getScrollXCalculator(container)() + deltaX, container, callback, canOverlay);
   },
   scrollYBy: function (deltaY, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof deltaY !== "number" || window.isNaN(deltaY) || deltaY === 0) return;
+    if (typeof deltaY !== "number" || window.isNaN(deltaY)) {console.log("USS error: ", deltaY, " is not a number"); return;}
+    if(deltaY === 0) return;
     uss.scrollYTo(uss.getScrollYCalculator(container)() + deltaY, container, callback, canOverlay);
   },
   scrollTo: function (finalXPosition, finalYPosition, xContainer = window, yContainer = window, xCallback = () => {}, yCallback = () => {}, xCanOverlay = false, yCanOverlay = false) {

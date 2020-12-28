@@ -62,11 +62,34 @@
 
     uss.hrefSetup();
 
+  /*  let prevOutput = undefined;
+    let resetPrevOutput = () => prevOutput = undefined;
+    function easeInOutCirc(remaning, time, total, currentPos, finalPos) {
+      const x = (total - remaning + 1) / total;
+      let output = x < 0.5
+        ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2
+        : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2;
+
+      output *= 100;
+      if(prevOutput === undefined || prevOutput === output || prevOutput > output) {
+        prevOutput = output;
+        return Math.ceil(output);
+      }
+
+      const step = Math.ceil(output * 100 - prevOutput * 100) / 100;
+      //console.log(prevOutput, output);
+      console.log(step);
+      prevOutput = output;
+      return step;
+    }*/
+
+    //uss.setYStepLengthCalculator((remaning, time, total, currentPos, finalPos) => easeInOutCirc(remaning, time, total, currentPos, finalPos), window);
+    //prevOutput = undefined;
     uss.setYStepLengthCalculator(remaning => {return remaning / 15 + 1;}, window);
     window.addEventListener("wheel", event => {
       event.preventDefault();
       const deltaY = event.deltaY;
-      
+
       currentWindowScrollDirection = Math.sign(deltaY);
       if(currentWindowScrollDirection !== previousWindowScrollDirection) {
         previousWindowScrollDirection = currentWindowScrollDirection;

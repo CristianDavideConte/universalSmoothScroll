@@ -76,8 +76,8 @@ Method Name | Purpose
 `setXStepLength` | Sets the _xStepLength to the passed value if compatible.
 `setYStepLength` | Sets the _yStepLength to the passed value if compatible.
 `setMinAnimationFrame` | Sets the _minAnimationFrame to the passed value if compatible.
-`calcXStepLength` | Takes in the remaning scroll ammount of a scroll-animation on the x-axis and calculates the how long each animation-step must be in order to target the _minAnimationFrame.
-`calcYStepLength` | Takes in the remaning scroll ammount of a scroll-animation on the y-axis and calculates the how long each animation-step must be in order to target the _minAnimationFrame.
+`calcXStepLength` | Takes in the remaning scroll amount of a scroll-animation on the x-axis and calculates how long each animation-step must be in order to target the _minAnimationFrame.
+`calcYStepLength` | Takes in the remaning scroll amount of a scroll-animation on the y-axis and calculates how long each animation-step must be in order to target the _minAnimationFrame.
 `getScrollXCalculator` | Takes in a container and returns a function that returns:<br> 1) The scrollLeft property of the container if it's a DOM element.<br> 2) The scrollX property of the container if it's the window element.
 `getScrollYCalculator` | Takes in a container and returns a function that returns:<br> 1) The scrollTop property of the container if it's a DOM element.<br> 2) The scrollY property of the container if it's the window element.
 `getMaxScrollX` | Takes in a scroll container and returns its highest scroll-reachable x-value.
@@ -142,10 +142,13 @@ Method Name | Purpose
 ```javascript
 /*
  * @param newCalculator function that defines the length of each step of every scroll-animation on the x-axis for the passed container.
- *        In order for it to work, it has to follow this rules:
- *        1) Has to take in 2 parameters (remaningScrollAmmount, requestAnimationFrame-call's timestamp)
- *        2) Has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._xStepLength)
- *        3) Can use other variables but it will be passed only the 2 mentioned above
+ *        In order for it to work, it has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._xStepLength)
+ *        It will be passed 5 readonly input parameters that can be used to do calculations:
+ *        1) remaningScrollAmount
+ *        2) requestAnimationFrame call's timestamp
+ *        3) totalScrollAmount
+ *        4) currentXPosition of the container's left side
+ *        5) finalXPosition the container's left side has to reach
  * @param container window or HTML element
  */
  function setXStepLengthCalculator (newCalculator = undefined, container = window);
@@ -154,10 +157,13 @@ Method Name | Purpose
 ```javascript
 /*
  * @param newCalculator function that defines the length of each step of every scroll-animation on the y-axis for the passed container.
- *        In order for it to work, it has to follow this rules:
- *        1) Has to take in 2 parameters (remaningScrollAmmount, requestAnimationFrame-call's timestamp)
- *        2) Has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._yStepLength)
- *        3) Can use other variables but it will be passed only the 2 mentioned above
+ *        In order for it to work, it has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._yStepLength)
+ *        It will be passed 5 readonly input parameters that can be used to do calculations:
+ *        1) remaningScrollAmount
+ *        2) requestAnimationFrame call's timestamp
+ *        3) totalScrollAmount
+ *        4) currentYPosition of the container's top side
+ *        5) finalYPosition the container's top side has to reach
  * @param container window or HTML element
  */
  function setYStepLengthCalculator (newCalculator = undefined, container = window);
@@ -381,18 +387,18 @@ _`canOverlay = false`_ means that before the scroll-animation you requested can 
 _`canOverlay = true`_ means that even if other scroll-animations on the same axis of the requested scroll-animation's container are currently being played they won't be cancelled by default and the new animation will be executed meanwhile the others are still playing.<br>
 This is an example of how different these two kind of scroll-animations are:<br>
 ```javascript
-const totalScrollAmmount = wheelEvent => {
+const totalScrollAmount = wheelEvent => {
   const deltaY = (Math.abs(wheelEvent.deltaY) >= 100) ? wheelEvent.deltaY / 100 : wheelEvent.deltaY;
   return deltaY * window.innerHeight / 3;
 }
-const ourEaseFunction = (remaning, timestamp) => {return remaning / 10 + 1;};
+const ourEaseFunction = (remaning, timestamp, total, currentY, finalY) => {return remaning / 10 + 1;};
 uss.setYStepLengthCalculator(ourEaseFunction, window);
 
 //CASE A: canOverlay = false
 const canOverlayFalseBehaviour = wheelEvent => {
     wheelEvent.preventDefault();
     wheelEvent.stopPropagation();
-    uss.scrollYBy(totalScrollAmmount(wheelEvent), window, null, false);
+    uss.scrollYBy(totalScrollAmount(wheelEvent), window, null, false);
 }
 
 //CASE B: canOverlay = true
@@ -411,7 +417,7 @@ const canOverlayTrueBehaviour = wheelEvent => {
         previousWindowScrollDirection = currentWindowScrollDirection;
         uss.stopScrollingY(window);
     }
-    uss.scrollYBy(totalScrollAmmount(wheelEvent), window, null, true);
+    uss.scrollYBy(totalScrollAmount(wheelEvent), window, null, true);
 }
 
 //Uncomment one or the other and look at the difference
@@ -423,9 +429,9 @@ A: YES! <br>
 Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_STEP_CALCULATOR_FUNCTION, THE_TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br>
 For example:<br>
 ```javascript
-uss.setYStepLengthCalculator((remaning, timestamp) => {return remaning / 10 + 1;});
+uss.setYStepLengthCalculator((remaning, timestamp, total, currentY, finalY) => {return remaning / 10 + 1;});
 ```
-## Q: Can I make my scroll-animation last a certain ammount of time?
+## Q: Can I make my scroll-animation last a certain amount of time?
 A: YES!<br>
 While setting a custom stepLengthCalculator you will notice your function will be passed the timestamp of the window.requestAnimationFrame call as the second argument !<br>
 You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) useful.
