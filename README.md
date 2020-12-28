@@ -147,8 +147,8 @@ Method Name | Purpose
  *        1) remaningScrollAmount
  *        2) requestAnimationFrame call's timestamp
  *        3) totalScrollAmount
- *        4) currentXPosition of the container's left side
- *        5) finalXPosition the container's left side has to reach
+ *        4) currentXPosition of the container's left border
+ *        5) finalXPosition the container's left border has to reach
  * @param container window or HTML element
  */
  function setXStepLengthCalculator (newCalculator = undefined, container = window);
@@ -162,8 +162,8 @@ Method Name | Purpose
  *        1) remaningScrollAmount
  *        2) requestAnimationFrame call's timestamp
  *        3) totalScrollAmount
- *        4) currentYPosition of the container's top side
- *        5) finalYPosition the container's top side has to reach
+ *        4) currentYPosition of the container's top border
+ *        5) finalYPosition the container's top border has to reach
  * @param container window or HTML element
  */
  function setYStepLengthCalculator (newCalculator = undefined, container = window);
