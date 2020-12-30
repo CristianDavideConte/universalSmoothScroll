@@ -14,7 +14,7 @@ You can also take a look at how the single features are implemented on [this pla
 ## HTML meta tag:
 Add one of this `<script>` in your project's `<head>` tag:<br>
 #### Stable versions:<br>
-`<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/ee5e5b9633205e3489b4fa9c5b1395c0fa9d249e/js/universalsmoothscroll-min.js"></script>`<br>
+`<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/3ed4511f60dd5e29973f5f32f7bd520fafbd61dd/js/universalsmoothscroll-min.js"></script>`<br>
 #### Latest version:<br>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>`
 ## Local file:
