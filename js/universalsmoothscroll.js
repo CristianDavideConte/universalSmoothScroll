@@ -125,8 +125,8 @@ var uss = {
   },
   calcXStepLength: function (deltaX) {return (deltaX >= (uss._minAnimationFrame - 1) * uss._xStepLength) ? uss._xStepLength : Math.round(deltaX / uss._minAnimationFrame);},
   calcYStepLength: function (deltaY) {return (deltaY >= (uss._minAnimationFrame - 1) * uss._yStepLength) ? uss._yStepLength : Math.round(deltaY / uss._minAnimationFrame);},
-  getScrollXCalculator: function (container = window) { return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
-  getScrollYCalculator: function (container = window) { return (container instanceof HTMLElement) ? () => {return container.scrollTop}  : () => {return container.scrollY};},
+  getScrollXCalculator: function (container = window) {return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
+  getScrollYCalculator: function (container = window) {return (container instanceof HTMLElement) ? () => {return container.scrollTop}  : () => {return container.scrollY};},
   getMaxScrollX: function (container = window) {
     const body = document.body;
     const html = document.documentElement;
@@ -186,7 +186,7 @@ var uss = {
     let _totalScrollAmount = finalXPosition - scrollXCalculator();
     const _direction = Math.sign(_totalScrollAmount);
     _totalScrollAmount *= _direction;
-    if(_totalScrollAmount <= 0) {if(typeof callback === "function") setTimeout(callback, 0);return;}
+    if(_totalScrollAmount <= 0) {if(typeof callback === "function") setTimeout(callback, 0); return;}
 
     const _scrollStepLength = uss.calcXStepLength(_totalScrollAmount); //Default value for the step length
 
@@ -199,7 +199,8 @@ var uss = {
     if(typeof _scheduledAnimations === "undefined") _scheduledAnimations = [];
     _scheduledAnimations.push(window.requestAnimationFrame(_stepX));
     uss._xMapContainerAnimationID.set(container, _scheduledAnimations);
-    const stepCalculator = uss._xStepLengthCalculator.get(container);
+    const _stepCalculator = uss._xStepLengthCalculator.get(container);
+    const _usesCustomStepCalculator = typeof _stepCalculator === "function";
 
     function _stepX (timestamp) {
       _scheduledAnimations = uss._xMapContainerAnimationID.get(container);
@@ -214,11 +215,10 @@ var uss = {
       }
 
       let _calculatedScrollStepLength;
-      if (typeof stepCalculator !== "function") _calculatedScrollStepLength = _scrollStepLength;
-      else {
-        _calculatedScrollStepLength = stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentXPosition, finalXPosition);
+      if (_usesCustomStepCalculator) {
+        _calculatedScrollStepLength = _stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentXPosition, finalXPosition);
         if(_calculatedScrollStepLength < 0) _calculatedScrollStepLength = _scrollStepLength;
-      }
+      } else _calculatedScrollStepLength = _scrollStepLength;
 
       if(_remaningScrollAmount <= _calculatedScrollStepLength) {
         container.scroll(finalXPosition, scrollYCalculator());
@@ -262,7 +262,8 @@ var uss = {
     if(typeof _scheduledAnimations === "undefined") _scheduledAnimations = [];
     _scheduledAnimations.push(window.requestAnimationFrame(_stepY));
     uss._yMapContainerAnimationID.set(container, _scheduledAnimations);
-    const stepCalculator = uss._yStepLengthCalculator.get(container);
+    const _stepCalculator = uss._yStepLengthCalculator.get(container);
+    const _usesCustomStepCalculator = typeof _stepCalculator === "function";
 
     function _stepY (timestamp) {
       _scheduledAnimations = uss._yMapContainerAnimationID.get(container);
@@ -277,11 +278,10 @@ var uss = {
       }
 
       let _calculatedScrollStepLength;
-      if (typeof stepCalculator !== "function") _calculatedScrollStepLength = _scrollStepLength;
-      else {
-        _calculatedScrollStepLength = stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentYPosition, finalYPosition);
+      if (_usesCustomStepCalculator) {
+        _calculatedScrollStepLength = _stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentYPosition, finalYPosition);
         if(_calculatedScrollStepLength < 0) _calculatedScrollStepLength = _scrollStepLength;
-      }
+      } else _calculatedScrollStepLength = _scrollStepLength;
 
       if(_remaningScrollAmount <= _calculatedScrollStepLength) {
         container.scroll(scrollXCalculator(), finalYPosition);
@@ -324,8 +324,8 @@ var uss = {
       const containerBoundingClientRect = container.getBoundingClientRect();
       const containerOffsetLeft = (alignToLeft === true) ? containerBoundingClientRect.left : (alignToLeft === false) ? containerBoundingClientRect.left - window.innerWidth  + containerBoundingClientRect.width  : containerBoundingClientRect.left - window.innerWidth  / 2 + containerBoundingClientRect.width  / 2;
       const containerOffsetTop  = (alignToTop  === true) ? containerBoundingClientRect.top  : (alignToTop  === false) ? containerBoundingClientRect.top  - window.innerHeight + containerBoundingClientRect.height : containerBoundingClientRect.top  - window.innerHeight / 2 + containerBoundingClientRect.height / 2;
-      elementOffsetLeft   = (alignToLeft === true) ? elementBoundingClientRect.left - containerBoundingClientRect.left : (alignToLeft === false) ? elementBoundingClientRect.left - containerBoundingClientRect.left - containerBoundingClientRect.width  + elementBoundingClientRect.width  : elementBoundingClientRect.left - containerBoundingClientRect.left - containerBoundingClientRect.width  / 2 + elementBoundingClientRect.width  / 2;
-      elementOffsetTop    = (alignToTop  === true) ? elementBoundingClientRect.top  - containerBoundingClientRect.top  : (alignToTop  === false) ? elementBoundingClientRect.top  - containerBoundingClientRect.top  - containerBoundingClientRect.height + elementBoundingClientRect.height : elementBoundingClientRect.top  - containerBoundingClientRect.top  - containerBoundingClientRect.height / 2 + elementBoundingClientRect.height / 2;
+      elementOffsetLeft = (alignToLeft === true) ? elementBoundingClientRect.left - containerBoundingClientRect.left : (alignToLeft === false) ? elementBoundingClientRect.left - containerBoundingClientRect.left - containerBoundingClientRect.width  + elementBoundingClientRect.width  : elementBoundingClientRect.left - containerBoundingClientRect.left - containerBoundingClientRect.width  / 2 + elementBoundingClientRect.width  / 2;
+      elementOffsetTop  = (alignToTop  === true) ? elementBoundingClientRect.top  - containerBoundingClientRect.top  : (alignToTop  === false) ? elementBoundingClientRect.top  - containerBoundingClientRect.top  - containerBoundingClientRect.height + elementBoundingClientRect.height : elementBoundingClientRect.top  - containerBoundingClientRect.top  - containerBoundingClientRect.height / 2 + elementBoundingClientRect.height / 2;
       setTimeout(() => uss.scrollXBy(containerOffsetLeft, window, null, false), 0); //Async so that the browser can paint
       setTimeout(() => uss.scrollYBy(containerOffsetTop,  window, null, false), 0); //Async so that the browser can paint
     } else {
