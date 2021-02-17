@@ -395,7 +395,7 @@ const ourEaseFunction = (remaning, timestamp, total, currentY, finalY) => {retur
 uss.setYStepLengthCalculator(ourEaseFunction, window);
 
 //CASE A: canOverlay = false
-const canOverlayFalseBehaviour = wheelEvent => {
+const canOverlayFalseBehavior = wheelEvent => {
     wheelEvent.preventDefault();
     wheelEvent.stopPropagation();
     uss.scrollYBy(totalScrollAmount(wheelEvent), window, null, false);
@@ -409,7 +409,7 @@ const canOverlayFalseBehaviour = wheelEvent => {
  */
 let previousWindowScrollDirection = undefined;
 let currentWindowScrollDirection = undefined;
-const canOverlayTrueBehaviour = wheelEvent => {
+const canOverlayTrueBehavior = wheelEvent => {
     wheelEvent.preventDefault();
     wheelEvent.stopPropagation();
     currentWindowScrollDirection = Math.sign(wheelEvent.deltaY);
@@ -421,8 +421,8 @@ const canOverlayTrueBehaviour = wheelEvent => {
 }
 
 //Uncomment one or the other and look at the difference
-//window.addEventListener("wheel", canOverlayFalseBehaviour, {passive: false});
-//window.addEventListener("wheel", canOverlayTrueBehaviour,  {passive: false});
+//window.addEventListener("wheel", canOverlayFalseBehavior, {passive: false});
+//window.addEventListener("wheel", canOverlayTrueBehavior,  {passive: false});
 ```
 ## Q: Can I modify the way scroll-animation steps are calculated to a non-linear behavior ?
 A: YES! <br>
