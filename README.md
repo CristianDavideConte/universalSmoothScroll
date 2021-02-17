@@ -6,7 +6,7 @@ This scroll API is based on and improves upon the 3 main ways to scroll an eleme
 
 # Demo
 You can try most of the API functionalities on [my personal website](https://cristiandavideconte.github.io/myPersonalWebPage/).<br>
-You can also take a look at how the single features are implemented on [this playground](https://cristiandavideconte.github.io/universalSmoothScroll/).
+You can also take a look at how single features are implemented on [this playground](https://cristiandavideconte.github.io/universalSmoothScroll/).
 
 # How to install
 ## NPM:
@@ -377,7 +377,7 @@ Method Name | Purpose
 ```
 
 # FAQ
-## Q: Do i need to have _`scroll-behavior: smooth`_ in my CSS ?
+## Q: Do I need to have _`scroll-behavior: smooth`_ in my CSS ?
 A: NO! It will break the API.
 ## Q: How do I invoke the API methods ?  
 A: Any Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD (ARGUMENTS);`
@@ -424,7 +424,7 @@ const canOverlayTrueBehaviour = wheelEvent => {
 //window.addEventListener("wheel", canOverlayFalseBehaviour, {passive: false});
 //window.addEventListener("wheel", canOverlayTrueBehaviour,  {passive: false});
 ```
-## Q: Can i modify the way scroll-animation steps are calculated to a non-linear behavior ?
+## Q: Can I modify the way scroll-animation steps are calculated to a non-linear behavior ?
 A: YES! <br>
 Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_STEP_CALCULATOR_FUNCTION, THE_TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br>
 For example:<br>
