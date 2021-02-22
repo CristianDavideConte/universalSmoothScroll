@@ -11,96 +11,166 @@
     <script async src = "./js/universalsmoothscroll.js"></script>
   </head>
   <body onload = "init()" oncontextmenu = "return false">
+    <section id = "stopScrollingButtonsSection">
+      <button id = "stopScrollingX">STOP X</button>
+      <button id = "stopScrollingY">STOP Y</button>
+    </section>
     <nav id = "header">
       <ul>
-        <li><a href = "#section1">SECTION 1</a></li>
-        <li><a href = "#section2">SECTION 2</a></li>
-        <li><a href = "#section3">SECTION 3</a></li>
-        <li><a href = "#section4">SECTION 4</a></li>
-        <section id = "buttonSection">
-          <button id = "stopScrollingX">STOP X</button>
-          <button id = "stopScrollingY">STOP Y</button>
-        </section>
+        <li><a href = "#section1">YELLOW</a></li>
+        <li><a href = "#section2">BLUE</a></li>
+        <li><a href = "#section4">GREEN</a></li>
+        <li><a href = "#section3">RED</a></li>
       </ul>
     </nav>
-    <div id = "section1" class = "page"></div>
-    <div id = "section2" class = "page">
-      <section id = "yScroller">
-        <button id = "yScrollerUp">&uarr;</button>
-        <div id = "section12" class = "listItem"></div>
-        <div id = "section22" class = "listItem"></div>
-        <div id = "section32" class = "listItem"></div>
-        <div id = "section42" class = "listItem"></div>
-        <button id = "yScrollerDown">&darr;</button>
-      </section>
+
+    <!--SECTION 1 AND 2 -->
+    <div class = "sections-container">
+      <div id = "section1" class = "page"></div>
+      <div id = "section2" class = "page">
+        <section id = "yScroller">
+          <button id = "yScrollerUp">&uarr;</button>
+          <div class = "scrollerSections">
+            <div id = "section12" class = "listItem"></div>
+            <div id = "section22" class = "listItem"></div>
+            <div id = "section32" class = "listItem"></div>
+            <div id = "section42" class = "listItem"></div>
+          </div>
+          <button id = "yScrollerDown">&darr;</button>
+        </section>
+      </div>
     </div>
-    <div id = "section3" class = "page">
-      <section id = "xScroller">
-        <button id = "xScrollerLeft">&larr;</button>
-        <div id = "section11" class = "listItem"></div>
-        <div id = "section21" class = "listItem"></div>
-        <div id = "section31" class = "listItem"></div>
-        <div id = "section41" class = "listItem"></div>
-        <button id = "xScrollerRight">&rarr;</button>
-      </section>
+
+    <!--SECTION 3 AND 4 -->
+    <div class = "sections-container">
+      <div id = "section3" class = "page">
+        <section id = "xScroller">
+          <button id = "xScrollerLeft">&larr;</button>
+          <div id = "xScrollerSection" class = "scrollerSections">
+            <div id = "section11" class = "listItem"></div>
+            <div id = "section21" class = "listItem"></div>
+            <div id = "section31" class = "listItem"></div>
+            <div id = "section41" class = "listItem"></div>
+          </div>
+          <button id = "xScrollerRight">&rarr;</button>
+        </section>
+      </div>
+      <div id = "section4" class = "page"></div>
     </div>
-    <div id = "section4" class = "page"></div>
   </body>
 </html>
 <script>
   function init() {
-    let xScroller = document.getElementById("xScroller");
-    let xScrollerLeftButton = document.getElementById("xScrollerLeft");
-    let xScrollerRightButton = document.getElementById("xScrollerRight");
+    const body = document.body;
 
-    let yScroller = document.getElementById("yScroller");
+    let yScroller = document.getElementsByClassName("scrollerSections")[0];
     let yScrollerUpButton = document.getElementById("yScrollerUp");
     let yScrollerDownButton = document.getElementById("yScrollerDown");
 
-    let previousWindowScrollDirection = undefined;
-    let currentWindowScrollDirection = undefined;
+    let xScroller = document.getElementsByClassName("scrollerSections")[1];
+    let xScrollerLeftButton = document.getElementById("xScrollerLeft");
+    let xScrollerRightButton = document.getElementById("xScrollerRight");
 
-    uss.hrefSetup();
+    //Create a map to keep track of each scroll-animation's previous easeValue for every container
+    let containersXAnimationsProgressesMap = new Map();
+    let containersYAnimationsProgressesMap = new Map();
+    let animationStepNumber = 25;
+    let animationStepIncrease = 100 / animationStepNumber * 0.01;
 
-  /*  let prevOutput = undefined;
-    let resetPrevOutput = () => prevOutput = undefined;
-    function easeInOutCirc(remaning, time, total, currentPos, finalPos) {
-      const x = (total - remaning + 1) / total;
-      let output = x < 0.5
-        ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2
-        : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2;
+    //Initially set all the containers previous <xProgress, xEaseValue> and <yProgress, yEaseValue> to 0
+    containersXAnimationsProgressesMap.set(body, [0, 0]);
+    containersYAnimationsProgressesMap.set(body, [0, 0]);
 
-      output *= 100;
-      if(prevOutput === undefined || prevOutput === output || prevOutput > output) {
-        prevOutput = output;
-        return Math.ceil(output);
+    function bezierCurve(x) {
+      //return x * x * x * x; //easeInQuart
+      //return x * x * x * x * x; //easeInQuint
+
+      //return Math.sqrt(1 - Math.pow(x - 1, 2)); //easeOutCirc
+      //return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); //easeOutExpo
+
+      return x === 0
+             ? 0
+             : x === 1
+             ? 1
+             : x < 0.5 ? Math.pow(2, 20 * x - 10) / 2
+             : (2 - Math.pow(2, -20 * x + 10)) / 2; //easeInOutExpo
+
+      /*
+      return x < 0.5
+             ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2
+             : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2; //easeInOutCirc
+      */
+      //return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2; //easeInOutQuint
+    }
+
+    function easeFunction(remaning, time, total, currentPos, finalPos, container, axisNumber) {
+      let previousAnimationProgresses;
+      let previousAxisAnimationProgress, previousEaseValue;
+      let currentAxisAnimationProgress, currentEaseValue;
+
+      if(axisNumber === 0) {
+        previousAnimationProgresses = containersXAnimationsProgressesMap.get(container);
+      } else {
+        previousAnimationProgresses = containersYAnimationsProgressesMap.get(container);
       }
 
-      const step = Math.ceil(output * 100 - prevOutput * 100) / 100;
-      //console.log(prevOutput, output);
-      console.log(step);
-      prevOutput = output;
-      return step;
-    }*/
+      //Calculate the current scroll-animation's easeValue in range [0..1]
+      previousAxisAnimationProgress = previousAnimationProgresses[0];
+      previousEaseValue = previousAnimationProgresses[1];
+      currentEaseValue = bezierCurve(previousAxisAnimationProgress + animationStepIncrease);
 
-    //uss.setYStepLengthCalculator((remaning, time, total, currentPos, finalPos) => easeInOutCirc(remaning, time, total, currentPos, finalPos), window);
-    //prevOutput = undefined;
-    uss.setYStepLengthCalculator(remaning => {return remaning / 15 + 1;}, window);
-    window.addEventListener("wheel", event => {
-      event.preventDefault();
-      const deltaY = event.deltaY;
+      //Calculate the scroll-animation's speed increase by using the current and the previous easeValue for the current container
+      const deltaProgress = Math.abs(currentEaseValue - previousEaseValue); //How much we've progressed in the scroll-animation
+      const stepLength = deltaProgress * total + 1; //Around deltaProgress% of the totalScrollAmount
 
-      currentWindowScrollDirection = Math.sign(deltaY);
-      if(currentWindowScrollDirection !== previousWindowScrollDirection) {
-        previousWindowScrollDirection = currentWindowScrollDirection;
-        uss.stopScrollingY(window);
+      //Update the easeValues for the current container
+      if(axisNumber === 0) {//The scroll animation is being performed on the x-axis
+        containersXAnimationsProgressesMap.set(container, [previousAxisAnimationProgress + animationStepIncrease, currentEaseValue]);
+      } else { //The scroll animation is being performed on the y-axis
+        containersYAnimationsProgressesMap.set(container, [previousAxisAnimationProgress + animationStepIncrease, currentEaseValue]);
       }
 
-      if(Math.abs(deltaY) >= 100) //For browsers that use multiples of 100 as deltaY
-          uss.scrollYBy(deltaY / 100 * window.innerHeight / 4, window, null, true);
-      else //For the browsers that use the raw scroll input as deltaY
-          uss.scrollYBy(deltaY * window.innerHeight / 4, window, null, true);
-    }, {passive: false});
+      return stepLength;
+    }
+
+    function resetEaseValue(container, axisNumber) {
+      if(!axisNumber) {//The scroll animation is being performed on the x-axis
+        const previousEaseValues = containersXAnimationsProgressesMap.get(container);
+        containersXAnimationsProgressesMap.set(container, [0, previousEaseValues[1]]);
+      } else { //The scroll animation is being performed on the y-axis
+        const previousEaseValues = containersYAnimationsProgressesMap.get(container);
+        containersYAnimationsProgressesMap.set(container, [previousEaseValues[1], 0]);
+      }
+    }
+
+    function resetEaseValues(container) {
+      containersXAnimationsProgressesMap.set(container, [0,0]);
+      containersYAnimationsProgressesMap.set(container, [0,0]);
+    }
+
+    function myHrefSetup (includeHidden = false) {
+      const pageLinks = document.links;
+      const pageURL = document.URL.split("#")[0];
+      for(pageLink of pageLinks) {
+        const pageLinkParts = pageLink.href.split("#"); //PageLink.href = OptionalURL#Section
+        if(pageLinkParts[0] !== pageURL) continue;
+        const elementToReach = document.getElementById(pageLinkParts[1]);
+        if(elementToReach instanceof HTMLElement)
+          pageLink.addEventListener("click", event => {
+            event.preventDefault();
+            resetEaseValues(body);
+            uss.scrollIntoView(elementToReach, true, true, includeHidden);
+          }, {passive:false});
+      }
+    }
+
+    uss.setXStepLengthCalculator((remaning, time, total, currentPos, finalPos, container) => easeFunction(remaning, time, total, currentPos, finalPos, container, 0), body);
+    uss.setYStepLengthCalculator((remaning, time, total, currentPos, finalPos, container) => easeFunction(remaning, time, total, currentPos, finalPos, container, 1), body);
+    //uss.setYStepLengthCalculator(remaning => {return remaning / 15 + 1;}, body);
+    //uss.setXStepLengthCalculator(remaning => {return remaning / 15 + 1;}, body);
+
+    uss.setYStepLength(uss.getXStepLength());
+    myHrefSetup();
 
     function scrollListX(direction) {
       let finalXPosition = (direction === -1) ? 0 : xScroller.scrollWidth;
@@ -134,7 +204,7 @@
     yScrollerUpButton.addEventListener("mouseout",  () => uss.stopScrollingY(yScroller), {passive:false});
     yScrollerDownButton.addEventListener("mouseout", () => uss.stopScrollingY(yScroller), {passive:false});
 
-    document.getElementById("stopScrollingX").addEventListener("click", () => uss.stopScrollingX(xScroller, () => console.log("scrollX stopped")), {passive:false});
-    document.getElementById("stopScrollingY").addEventListener("click", () => uss.stopScrollingY(window, () => console.log("scrollY stopped")), {passive:false});
+    document.getElementById("stopScrollingX").addEventListener("click", () => uss.stopScrollingX(body, () => console.log("scrollX stopped")), {passive:false});
+    document.getElementById("stopScrollingY").addEventListener("click", () => uss.stopScrollingY(body, () => console.log("scrollY stopped")), {passive:false});
   }
 </script>

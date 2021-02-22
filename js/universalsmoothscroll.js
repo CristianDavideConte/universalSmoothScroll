@@ -97,14 +97,14 @@ var uss = {
   setXStepLengthCalculator: function (newCalculator = undefined, container = window) {
     if(typeof newCalculator !== "function") {console.log("USS error: ", newCalculator, " is not a function"); return;}
     const _remaning = uss.getMaxScrollX(container);
-    const _testValue = newCalculator(_remaning, 0, _remaning, 0, _remaning); //remaningScrollAmount, timestamp, totalScrollAmount, currentXPosition, finalXPosition
+    const _testValue = newCalculator(_remaning, 0, _remaning, 0, _remaning, container); //remaningScrollAmount, timestamp, totalScrollAmount, currentXPosition, finalXPosition, container
     if(typeof _testValue !== "number" || window.isNaN(_testValue)) {console.log("USS error: ", newCalculator, " didn't return a valid step value"); return;}
     uss._xStepLengthCalculator.set(container, newCalculator)
   },
   setYStepLengthCalculator: function (newCalculator = undefined, container = window) {
     if(typeof newCalculator !== "function") {console.log("USS error: ", newCalculator, " is not a function"); return;}
     const _remaning = uss.getMaxScrollY(container);
-    const _testValue = newCalculator(_remaning, 0, _remaning, 0, _remaning); //remaningScrollAmount, timestamp, totalScrollAmount, currentXPosition, finalXPosition
+    const _testValue = newCalculator(_remaning, 0, _remaning, 0, _remaning, container); //remaningScrollAmount, timestamp, totalScrollAmount, currentXPosition, finalXPosition, container
     if(typeof _testValue !== "number" || window.isNaN(_testValue)) {console.log("USS error: ", newCalculator, " didn't return a valid step value"); return;}
     uss._yStepLengthCalculator.set(container, newCalculator)
   },
@@ -128,10 +128,10 @@ var uss = {
   getScrollXCalculator: function (container = window) {return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
   getScrollYCalculator: function (container = window) {return (container instanceof HTMLElement) ? () => {return container.scrollTop}  : () => {return container.scrollY};},
   getMaxScrollX: function (container = window) {
-    const body = document.body;
     const html = document.documentElement;
+    const body = document.body;
     return (container instanceof HTMLElement) ?
-      container.scrollWidth - container.offsetWidth :
+      container.scrollWidth - container.clientWidth :
       Math.max(
         body.scrollWidth,
         body.offsetWidth,
@@ -139,13 +139,13 @@ var uss = {
         html.clientWidth,
         html.scrollWidth,
         html.offsetWidth
-      ) - window.innerWidth; // Subtract viewport width because the x-scroll is done starting by the left
+      ) - html.clientWidth; //Subtract document width because the scroll-animations on the x-axis always starts from the left of the container
   },
   getMaxScrollY: function (container = window) {
-    const body = document.body;
     const html = document.documentElement;
+    const body = document.body;
     return (container instanceof HTMLElement) ?
-      container.scrollHeight - container.offsetHeight :
+      container.scrollHeight - container.clientHeight :
       Math.max(
         body.scrollHeight,
         body.offsetHeight,
@@ -153,7 +153,7 @@ var uss = {
         html.clientHeight,
         html.scrollHeight,
         html.offsetHeight
-      ) - window.innerHeight; // Subtract viewport height because the y-scroll is done starting by the top
+      ) - html.clientHeight; //Subtract document height because the scroll-animations on the y-axis always starts from the top of the container
   },
   getScrollableParent: function (element = window, includeHidden = false) {
     try {
@@ -174,12 +174,10 @@ var uss = {
     if (typeof finalXPosition !== "number" || window.isNaN(finalXPosition)) {console.log("USS error: ", finalXPosition, " is not a number"); return;}
 
     //If the container cannot be scrolled on the x-axis _maxScrollX will be <= 0 and the function returns.
-    //If the finalXPosition is a non-reachable value it gets sets to closest reachable value.
     //If the scroll-limit has already been reached, no scroll-animation is performed.
     const _maxScrollX = uss.getMaxScrollX(container);
     if(_maxScrollX <= 0) return;
     if(finalXPosition < 0) finalXPosition = 0;
-    else if(finalXPosition > _maxScrollX) finalXPosition = _maxScrollX;
 
     const scrollXCalculator = uss.getScrollXCalculator(container);
     const scrollYCalculator = uss.getScrollYCalculator(container);
@@ -216,7 +214,7 @@ var uss = {
 
       let _calculatedScrollStepLength;
       if (_usesCustomStepCalculator) {
-        _calculatedScrollStepLength = _stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentXPosition, finalXPosition);
+        _calculatedScrollStepLength = _stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentXPosition, finalXPosition, container);
         if(_calculatedScrollStepLength < 0) _calculatedScrollStepLength = _scrollStepLength;
       } else _calculatedScrollStepLength = _scrollStepLength;
 
@@ -229,6 +227,12 @@ var uss = {
 
       container.scroll(_currentXPosition + _calculatedScrollStepLength * _direction, scrollYCalculator());
 
+      if(_currentXPosition === scrollXCalculator()) { //The finalXPosition was beyond the scroll limit of the container
+        uss._xMapContainerAnimationID.set(container, _scheduledAnimations);
+        if(typeof callback === "function") setTimeout(callback, 0);
+        return;
+      }
+
       _scheduledAnimations.push(window.requestAnimationFrame(_stepX));
       uss._xMapContainerAnimationID.set(container, _scheduledAnimations);
     }
@@ -237,12 +241,10 @@ var uss = {
     if (typeof finalYPosition !== "number" || window.isNaN(finalYPosition)) {console.log("USS error: ", finalYPosition, " is not a number"); return;}
 
     //If the container cannot be scrolled on the y-axis _maxScrollY will be <= 0 and the function returns.
-    //If the finalYPosition is a non-reachable value it gets sets to closest reachable value.
     //If the scroll-limit has already been reached, no scroll-animation is performed.
     const _maxScrollY = uss.getMaxScrollY(container);
     if(_maxScrollY <= 0) return;
     if(finalYPosition < 0) finalYPosition = 0;
-    else if(finalYPosition > _maxScrollY) finalYPosition = _maxScrollY;
 
     const scrollXCalculator = uss.getScrollXCalculator(container);
     const scrollYCalculator = uss.getScrollYCalculator(container);
@@ -279,7 +281,7 @@ var uss = {
 
       let _calculatedScrollStepLength;
       if (_usesCustomStepCalculator) {
-        _calculatedScrollStepLength = _stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentYPosition, finalYPosition);
+        _calculatedScrollStepLength = _stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentYPosition, finalYPosition, container);
         if(_calculatedScrollStepLength < 0) _calculatedScrollStepLength = _scrollStepLength;
       } else _calculatedScrollStepLength = _scrollStepLength;
 
@@ -291,6 +293,12 @@ var uss = {
       }
 
       container.scroll(scrollXCalculator(), _currentYPosition + _calculatedScrollStepLength * _direction);
+
+      if(_currentYPosition === scrollYCalculator()) { //The finalYPosition was beyond the scroll limit of the container
+        uss._yMapContainerAnimationID.set(container, _scheduledAnimations);
+        if(typeof callback === "function") setTimeout(callback, 0);
+        return;
+      }
 
       _scheduledAnimations.push(window.requestAnimationFrame(_stepY));
       uss._yMapContainerAnimationID.set(container, _scheduledAnimations);
@@ -307,12 +315,12 @@ var uss = {
     uss.scrollYTo(uss.getScrollYCalculator(container)() + deltaY, container, callback, canOverlay);
   },
   scrollTo: function (finalXPosition, finalYPosition, xContainer = window, yContainer = window, xCallback = () => {}, yCallback = () => {}, xCanOverlay = false, yCanOverlay = false) {
-    setTimeout(() => uss.scrollXTo(finalXPosition, xContainer, xCallback, xCanOverlay), 0);//Async so that the browser can paint
-    setTimeout(() => uss.scrollYTo(finalYPosition, yContainer, yCallback, yCanOverlay), 0);//Async so that the browser can paint
+    setTimeout(() => uss.scrollXTo(finalXPosition, xContainer, xCallback, xCanOverlay), 0);//Async so that the browser can repaint
+    setTimeout(() => uss.scrollYTo(finalYPosition, yContainer, yCallback, yCanOverlay), 0);//Async so that the browser can repaint
   },
   scrollBy: function (deltaX, deltaY, xContainer = window, yContainer = window, xCallback = () => {}, yCallback = () => {}, xCanOverlay = false, yCanOverlay = false) {
-    setTimeout(() => uss.scrollXBy(deltaX, xContainer, xCallback, xCanOverlay), 0);//Async so that the browser can paint
-    setTimeout(() => uss.scrollYBy(deltaY, yContainer, yCallback, yCanOverlay), 0);//Async so that the browser can paint
+    setTimeout(() => uss.scrollXBy(deltaX, xContainer, xCallback, xCanOverlay), 0);//Async so that the browser can repaint
+    setTimeout(() => uss.scrollYBy(deltaY, yContainer, yCallback, yCanOverlay), 0);//Async so that the browser can repaint
   },
   scrollIntoView: function (element = window, alignToLeft = true, alignToTop = true, includeHidden = false) {
     if(element === window) return;
@@ -326,14 +334,14 @@ var uss = {
       const containerOffsetTop  = (alignToTop  === true) ? containerBoundingClientRect.top  : (alignToTop  === false) ? containerBoundingClientRect.top  - window.innerHeight + containerBoundingClientRect.height : containerBoundingClientRect.top  - window.innerHeight / 2 + containerBoundingClientRect.height / 2;
       elementOffsetLeft = (alignToLeft === true) ? elementBoundingClientRect.left - containerBoundingClientRect.left : (alignToLeft === false) ? elementBoundingClientRect.left - containerBoundingClientRect.left - containerBoundingClientRect.width  + elementBoundingClientRect.width  : elementBoundingClientRect.left - containerBoundingClientRect.left - containerBoundingClientRect.width  / 2 + elementBoundingClientRect.width  / 2;
       elementOffsetTop  = (alignToTop  === true) ? elementBoundingClientRect.top  - containerBoundingClientRect.top  : (alignToTop  === false) ? elementBoundingClientRect.top  - containerBoundingClientRect.top  - containerBoundingClientRect.height + elementBoundingClientRect.height : elementBoundingClientRect.top  - containerBoundingClientRect.top  - containerBoundingClientRect.height / 2 + elementBoundingClientRect.height / 2;
-      setTimeout(() => uss.scrollXBy(containerOffsetLeft, window, null, false), 0); //Async so that the browser can paint
-      setTimeout(() => uss.scrollYBy(containerOffsetTop,  window, null, false), 0); //Async so that the browser can paint
+      setTimeout(() => uss.scrollXBy(containerOffsetLeft, window, null, false), 0); //Async so that the browser can repaint
+      setTimeout(() => uss.scrollYBy(containerOffsetTop,  window, null, false), 0); //Async so that the browser can repaint
     } else {
       elementOffsetLeft = (alignToLeft === true) ? elementBoundingClientRect.left : (alignToLeft === false) ? elementBoundingClientRect.left - window.innerWidth  + elementBoundingClientRect.width  : elementBoundingClientRect.left - window.innerWidth  / 2 + elementBoundingClientRect.width  / 2;
       elementOffsetTop  = (alignToTop  === true) ? elementBoundingClientRect.top  : (alignToTop  === false) ? elementBoundingClientRect.top  - window.innerHeight + elementBoundingClientRect.height : elementBoundingClientRect.top  - window.innerHeight / 2 + elementBoundingClientRect.height / 2;
     }
-    setTimeout(() => uss.scrollXBy(elementOffsetLeft, container, null, false), 0); //Async so that the browser can paint
-    setTimeout(() => uss.scrollYBy(elementOffsetTop,  container, null, false), 0); //Async so that the browser can paint
+    setTimeout(() => uss.scrollXBy(elementOffsetLeft, container, null, false), 0); //Async so that the browser can repaint
+    setTimeout(() => uss.scrollYBy(elementOffsetTop,  container, null, false), 0); //Async so that the browser can repaint
   },
   stopScrollingX: function (container = window, callback = () => {}) {
     let _scheduledAnimations = uss._xMapContainerAnimationID.get(container);
@@ -357,7 +365,7 @@ var uss = {
       if(pageLinkParts[0] !== pageURL) continue;
       const elementToReach = document.getElementById(pageLinkParts[1]);
       if(elementToReach instanceof HTMLElement)
-        pageLink.addEventListener("click", event => {event.preventDefault(); uss.scrollIntoView(elementToReach, true, true, includeHidden);},{passive:false});
+        pageLink.addEventListener("click", event => {event.preventDefault(); uss.scrollIntoView(elementToReach, true, true, includeHidden);}, {passive:false});
     }
   }
 };

@@ -143,12 +143,13 @@ Method Name | Purpose
 /*
  * @param newCalculator function that defines the length of each step of every scroll-animation on the x-axis for the passed container.
  *        In order for it to work, it has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._xStepLength)
- *        It will be passed 5 readonly input parameters that can be used to do calculations:
- *        1) remaningScrollAmount
+ *        It will be passed the following readonly input parameters:
+ *        1) remaningScrollAmount of current the scroll-animation
  *        2) requestAnimationFrame call's timestamp
- *        3) totalScrollAmount
+ *        3) totalScrollAmount of current the scroll-animation
  *        4) currentXPosition of the container's left border
  *        5) finalXPosition the container's left border has to reach
+ *        6) container on which the scroll-animation is currently being performed
  * @param container window or HTML element
  */
  function setXStepLengthCalculator (newCalculator = undefined, container = window);
@@ -158,12 +159,13 @@ Method Name | Purpose
 /*
  * @param newCalculator function that defines the length of each step of every scroll-animation on the y-axis for the passed container.
  *        In order for it to work, it has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._yStepLength)
- *        It will be passed 5 readonly input parameters that can be used to do calculations:
- *        1) remaningScrollAmount
+ *        It will be passed the following readonly input parameters:
+ *        1) remaningScrollAmount of current the scroll-animation
  *        2) requestAnimationFrame call's timestamp
- *        3) totalScrollAmount
+ *        3) totalScrollAmount of current the scroll-animation
  *        4) currentYPosition of the container's top border
  *        5) finalYPosition the container's top border has to reach
+ *        6) container on which the scroll-animation is currently being performed
  * @param container window or HTML element
  */
  function setYStepLengthCalculator (newCalculator = undefined, container = window);
