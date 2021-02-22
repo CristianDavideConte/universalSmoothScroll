@@ -14,7 +14,7 @@ You can also take a look at how single features are implemented on [this playgro
 ## HTML meta tag:
 Add one of this `<script>` in your project's `<head>` tag:<br>
 #### Stable versions:<br>
-`<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/3ed4511f60dd5e29973f5f32f7bd520fafbd61dd/js/universalsmoothscroll-min.js"></script>`<br>
+`<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/91ef4cbd454f563ac8cd73cab91962f23e6429ce/js/universalsmoothscroll-min.js"></script>`<br>
 #### Latest version:<br>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>`
 ## Local file:
