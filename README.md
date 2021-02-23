@@ -382,11 +382,11 @@ Method Name | Purpose
 ## Q: Do I need to have _`scroll-behavior: smooth`_ in my CSS ?
 A: NO! It will break the API.
 ## Q: How do I invoke the API methods ?  
-A: Any Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD (ARGUMENTS);`
+A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD (ARGUMENTS);`
 ## Q: What is the difference between _`canOverlay = false`_ and _`canOverlay = true`_ ?
 A: They produce two completly different kind of scroll-animations.<br>
-_`canOverlay = false`_ means that before the scroll-animation you requested can be played any other scroll-animation on the same axis of the passed container is cancelled so this kind of scroll-animations always start from a no movement situation in order to be played.<br>  
-_`canOverlay = true`_ means that even if other scroll-animations on the same axis of the requested scroll-animation's container are currently being played they won't be cancelled by default and the new animation will be executed meanwhile the others are still playing.<br>
+_`canOverlay = false`_ means that before the scroll-animation you requested can be played any other scroll-animation on the same axis of the passed container is cancelled so this kind of scroll-animations always start from a no-movement situation in order to be played.<br>  
+_`canOverlay = true`_ means that even if other scroll-animations on the same axis of the passed container are currently being played they won't be cancelled by default and the new animation will be executed meanwhile the others are still playing.<br>
 This is an example of how different these two kind of scroll-animations are:<br>
 ```javascript
 const totalScrollAmount = wheelEvent => {
@@ -435,12 +435,12 @@ uss.setYStepLengthCalculator((remaning, timestamp, total, currentY, finalY) => {
 ```
 ## Q: Can I make my scroll-animation last a certain amount of time?
 A: YES!<br>
-While setting a custom stepLengthCalculator you will notice your function will be passed the timestamp of the window.requestAnimationFrame call as the second argument !<br>
+While setting a custom stepLengthCalculator you will notice your function will be passed the timestamp of the `window.requestAnimationFrame()` call as the second argument that you can use to make the scroll-animations last any amount of time you want.<br>
 You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) useful.
 ## Q: What's the difference between the _stable_ and the _latest_ API version ?
 A: The **_latest_** version gets updated every time a change is made which means that you have all the lastest features and fixes but that some functionality may have some bugs or code leftovers.<br> The **_stable_** version gets updated only when a feature is completly stable and the code is cleaned which lowers the probability of encountering bugs but the newest features may take a while to arrive here.
 ## Q: Why is it allowed to directly modify internal variables ?
-A: It is allowed (but not suggested) because there may be a bug (rare cases) that prevents you from setting a variable to a right value. If that's the case don't hesitate to contact me !
+A: It is allowed (but not suggested) because there may be a bug (rare case) that prevents you from setting a variable to a right value. If that's the case don't hesitate to contact me !
 
 More coming soon...
 
