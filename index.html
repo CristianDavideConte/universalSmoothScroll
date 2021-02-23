@@ -144,8 +144,8 @@
     }
 
     function resetEaseValues(container) {
-      containersXAnimationsProgressesMap.set(container, [0,0]);
-      containersYAnimationsProgressesMap.set(container, [0,0]);
+      containersXAnimationsProgressesMap.set(container, [0, 0]);
+      containersYAnimationsProgressesMap.set(container, [0, 0]);
     }
 
     function myHrefSetup (includeHidden = false) {
@@ -204,6 +204,7 @@
     yScrollerUpButton.addEventListener("mouseout",  () => uss.stopScrollingY(yScroller), {passive:false});
     yScrollerDownButton.addEventListener("mouseout", () => uss.stopScrollingY(yScroller), {passive:false});
 
+    body.addEventListener("wheel", () => {uss.stopScrollingY(body); uss.stopScrollingX(body, () => console.log("User Interacted: every scroll has been stopped"));}, {passive:false});
     document.getElementById("stopScrollingX").addEventListener("click", () => uss.stopScrollingX(body, () => console.log("scrollX stopped")), {passive:false});
     document.getElementById("stopScrollingY").addEventListener("click", () => uss.stopScrollingY(body, () => console.log("scrollY stopped")), {passive:false});
   }
