@@ -26,7 +26,21 @@
 
     <!--SECTION 1 AND 2 -->
     <div class = "sections-container">
-      <div id = "section1" class = "page"></div>
+      <div id = "section1" class = "page">
+        <div id = "easeFunctionSelector">
+          <h2>Change Ease Function</h2>
+          <ul>
+            <li><a id = "linear"        >linear</a></li>
+            <li><a id = "easeInQuart"   >easeInQuart</a></li>
+            <li><a id = "easeInQuint"   >easeInQuint</a></li>
+            <li><a id = "easeOutCirc"   >easeOutCirc</a></li>
+            <li><a id = "easeOutExpo"   >easeOutExpo</a></li>
+            <li><a id = "easeInOutQuint">easeInOutQuint</a></li>
+            <li><a id = "easeInOutCirc" >easeInOutCirc</a></li>
+            <li><a id = "easeInOutExpo" >easeInOutExpo</a></li>
+          </ul>
+        </div>
+      </div>
       <div id = "section2" class = "page">
         <section id = "yScroller">
           <button id = "yScrollerUp">&uarr;</button>
@@ -81,27 +95,46 @@
     containersXAnimationsProgressesMap.set(body, [0, 0]);
     containersYAnimationsProgressesMap.set(body, [0, 0]);
 
-    function bezierCurve(x) {
-      //return x * x * x * x; //easeInQuart
-      //return x * x * x * x * x; //easeInQuint
+    function linear(x) {
+      return x + 0.01;
+    }
 
-      //return Math.sqrt(1 - Math.pow(x - 1, 2)); //easeOutCirc
-      //return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); //easeOutExpo
+    function easeInQuart(x) {
+      return x * x * x * x; //easeInQuart
+    }
 
+    function easeInQuint(x) {
+      return x * x * x * x * x; //easeInQuint
+    }
+
+    function easeOutCirc(x) {
+      return Math.sqrt(1 - Math.pow(x - 1, 2)); //easeOutCirc
+    }
+
+    function easeOutExpo(x) {
+      return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); //easeOutExpo
+    }
+
+    function easeInOutQuint(x) {
+      return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2; //easeInOutQuint
+    }
+
+    function easeInOutCirc(x) {
+      return x < 0.5
+             ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2
+             : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2; //easeInOutCirc
+    }
+
+    function easeInOutExpo(x) {
       return x === 0
              ? 0
              : x === 1
              ? 1
              : x < 0.5 ? Math.pow(2, 20 * x - 10) / 2
              : (2 - Math.pow(2, -20 * x + 10)) / 2; //easeInOutExpo
-
-      /*
-      return x < 0.5
-             ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2
-             : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2; //easeInOutCirc
-      */
-      //return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2; //easeInOutQuint
     }
+
+    let bezierCurve = easeInOutExpo;
 
     function easeFunction(remaning, time, total, currentPos, finalPos, container, axisNumber) {
       let previousAnimationProgresses;
@@ -117,7 +150,7 @@
       //Calculate the current scroll-animation's easeValue in range [0..1]
       previousAxisAnimationProgress = previousAnimationProgresses[0];
       previousEaseValue = previousAnimationProgresses[1];
-      currentEaseValue = bezierCurve(previousAxisAnimationProgress + animationStepIncrease);
+      currentEaseValue = bezierCurve(previousAxisAnimationProgress + animationStepIncrease, total);
 
       //Calculate the scroll-animation's speed increase by using the current and the previous easeValue for the current container
       const deltaProgress = Math.abs(currentEaseValue - previousEaseValue); //How much we've progressed in the scroll-animation
@@ -171,6 +204,18 @@
 
     uss.setYStepLength(uss.getXStepLength());
     myHrefSetup();
+
+
+    document.getElementById("linear").addEventListener("click", () => bezierCurve = linear);
+    document.getElementById("easeInQuart").addEventListener("click", () => bezierCurve = easeInQuart);
+    document.getElementById("easeInQuint").addEventListener("click", () => bezierCurve = easeInQuint);
+    document.getElementById("easeOutCirc").addEventListener("click", () => bezierCurve = easeOutCirc);
+    document.getElementById("easeOutExpo").addEventListener("click", () => bezierCurve = easeOutExpo);
+    document.getElementById("easeInOutQuint").addEventListener("click", () => bezierCurve = easeInOutQuint);
+    document.getElementById("easeInOutCirc").addEventListener("click", () => bezierCurve = easeInOutCirc);
+    document.getElementById("easeInOutExpo").addEventListener("click", () => bezierCurve = easeInOutExpo);
+
+
 
     function scrollListX(direction) {
       let finalXPosition = (direction === -1) ? 0 : xScroller.scrollWidth;

@@ -96,6 +96,7 @@ Method Name | Purpose
 `scrollIntoView` | Scrolls the window and, if necessary, the container of the passed element in order to make it visible on the screen.<br> There are 3 possible allignments for both the passed element and it's closest scrollable container: top, bottom, center.<br> The allignments can be changed by passing different values of alignToTop and alignToLeft.<br> Works with "overflow('',X,Y): hidden" if specified.
 `stopScrollingX` | Stops all the current scroll-animation on the x-axis of the passed container.<br>After the animations are stopped a callback function can be invoked.
 `stopScrollingY` | Stops all the current scroll-animation on the y-axis of the passed container.<br>After the animations are stopped a callback function can be invoked.
+`stopScrolling` | Stops all the current scroll-animation on both the x-axis and the y-axis of the passed container.<br>After the animations are stopped a callback function can be invoked.
 `hrefSetup` | Looks for every anchor element (`<a>` && `<area>`) with a value for the href attribute linked to an element on the same page and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element (internally uses scrollIntoView).
 
 # Methods' syntaxes
@@ -372,6 +373,15 @@ Method Name | Purpose
  *           all the scroll-animations on the y-axis of the passed container have been stopped.
  */
  function stopScrollingY (container = window, callback = () => {});
+```
+#### stopScrolling
+```javascript
+/*
+ * @param container window or HTML element
+ * @callback callback the function you want to be executed after
+ *           all the scroll-animations on both the x-axis and the y-axis of the passed container have been stopped.
+ */
+ function stopScrolling (container = window, callback = () => {});
 ```
 #### hrefSetup
 ```javascript

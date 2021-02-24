@@ -191,7 +191,7 @@ var uss = {
     //If one or more scroll-animation on the x-axis of the passed component have being scheduled
     //and the current requested scroll-animation cannot be overlayed,
     //all the already-scheduled ones gets cancelled in order to make the new one play.
-    if(canOverlay === false) uss.stopScrollingX(container);
+    if(canOverlay === false) uss.stopScrollingX(container, null);
 
     let _scheduledAnimations = uss._xMapContainerAnimationID.get(container);  //List of already scheduled animations' IDs
     if(typeof _scheduledAnimations === "undefined") _scheduledAnimations = [];
@@ -258,7 +258,7 @@ var uss = {
     //If one or more scroll-animation on the y-axis of the passed component have being scheduled
     //and the current requested scroll-animation cannot be overlayed,
     //all the already-scheduled ones gets cancelled in order to make the new one play.
-    if(canOverlay === false) uss.stopScrollingY(container);
+    if(canOverlay === false) uss.stopScrollingY(container, null);
 
     let _scheduledAnimations = uss._yMapContainerAnimationID.get(container);  //List of already scheduled animations' IDs
     if(typeof _scheduledAnimations === "undefined") _scheduledAnimations = [];
@@ -356,6 +356,10 @@ var uss = {
     _scheduledAnimations.forEach(animationID => window.cancelAnimationFrame(animationID));
     uss._yMapContainerAnimationID.set(container, []);
     if(typeof callback === "function") setTimeout(callback, 0);
+  },
+  stopScrolling: function (container = window, callback = () => {}) {
+    uss.stopScrollingX(container, null);
+    uss.stopScrollingY(container, callback);
   },
   hrefSetup: function (includeHidden = false) {
     const pageLinks = document.links;
