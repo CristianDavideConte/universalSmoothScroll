@@ -218,7 +218,7 @@
 
 
     function scrollListX(direction) {
-      let finalXPosition = (direction === -1) ? 0 : xScroller.scrollWidth;
+      let finalXPosition = (direction === -1) ? 0 : (xScroller.scrollWidth - xScroller.clientWidth);
       uss.scrollXTo(finalXPosition, xScroller, null, true);
     }
     xScrollerLeftButton.addEventListener("mousedown",  () => scrollListX(-1), {passive: false});
@@ -234,7 +234,7 @@
     xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScroller), {passive:false});
 
     function scrollListY(direction) {
-      let finalYPosition = (direction === -1) ? 0 : yScroller.scrollHeight;
+      let finalYPosition = (direction === -1) ? 0 : (yScroller.scrollHeight - yScroller.clientHeight);
       uss.scrollYTo(finalYPosition, yScroller, null, true);
     }
     yScrollerUpButton.addEventListener("mousedown",  () => scrollListY(-1), {passive: false});

@@ -75,6 +75,8 @@ const DEFAULTMINANIMATIONFRAMES = 5;                       //Default lowest poss
  *                 After the animation has finished a callback function can be invoked.
  * stopScrollingY: function, stops all the current scroll-animation on the y-axis of the passed container.
  *                 After the animation has finished a callback function can be invoked.
+ * stopScrolling: function, stops all the current scroll-animation on both the x-axis and the y-axis of the passed container.
+ *                After the animation has finished a callback function can be invoked.
  * hrefSetup: function, looks for every anchor element with a href attribute linked to an element on the same page and
  *            attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation
  *            to reach the linked element (internally uses scrollIntoView).
