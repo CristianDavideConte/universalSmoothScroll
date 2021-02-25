@@ -203,14 +203,14 @@
     myHrefSetup();
 
 
-    document.getElementById("linear").addEventListener("click", () => bezierCurve = linear);
-    document.getElementById("easeInQuart").addEventListener("click", () => bezierCurve = easeInQuart);
-    document.getElementById("easeInQuint").addEventListener("click", () => bezierCurve = easeInQuint);
-    document.getElementById("easeOutCirc").addEventListener("click", () => bezierCurve = easeOutCirc);
-    document.getElementById("easeOutExpo").addEventListener("click", () => bezierCurve = easeOutExpo);
+    document.getElementById("linear").addEventListener("click",         () => bezierCurve = linear);
+    document.getElementById("easeInQuart").addEventListener("click",    () => bezierCurve = easeInQuart);
+    document.getElementById("easeInQuint").addEventListener("click",    () => bezierCurve = easeInQuint);
+    document.getElementById("easeOutCirc").addEventListener("click",    () => bezierCurve = easeOutCirc);
+    document.getElementById("easeOutExpo").addEventListener("click",    () => bezierCurve = easeOutExpo);
     document.getElementById("easeInOutQuint").addEventListener("click", () => bezierCurve = easeInOutQuint);
-    document.getElementById("easeInOutCirc").addEventListener("click", () => bezierCurve = easeInOutCirc);
-    document.getElementById("easeInOutExpo").addEventListener("click", () => bezierCurve = easeInOutExpo);
+    document.getElementById("easeInOutCirc").addEventListener("click",  () => bezierCurve = easeInOutCirc);
+    document.getElementById("easeInOutExpo").addEventListener("click",  () => bezierCurve = easeInOutExpo);
 
 
 
@@ -219,15 +219,15 @@
       uss.scrollXTo(finalXPosition, xScroller, null, true);
     }
 
-    xScrollerLeftButton.addEventListener("mousedown",  () => scrollListX(-1), {passive: false});
-    xScrollerRightButton.addEventListener("mousedown", () => scrollListX(+1), {passive: false});
+    xScrollerLeftButton.addEventListener("mousedown",   () => scrollListX(-1), {passive: false});
+    xScrollerRightButton.addEventListener("mousedown",  () => scrollListX(+1), {passive: false});
     xScrollerLeftButton.addEventListener("touchstart",  () => scrollListX(-1), {passive: false});
     xScrollerRightButton.addEventListener("touchstart", () => scrollListX(+1), {passive: false});
 
     xScrollerLeftButton.addEventListener("touchend",  () => uss.stopScrollingX(xScroller), {passive:false});
     xScrollerRightButton.addEventListener("touchend", () => uss.stopScrollingX(xScroller), {passive:false});
-    xScrollerLeftButton.addEventListener("mouseup",  () => uss.stopScrollingX(xScroller), {passive:false});
-    xScrollerRightButton.addEventListener("mouseup", () => uss.stopScrollingX(xScroller), {passive:false});
+    xScrollerLeftButton.addEventListener("mouseup",   () => uss.stopScrollingX(xScroller), {passive:false});
+    xScrollerRightButton.addEventListener("mouseup",  () => uss.stopScrollingX(xScroller), {passive:false});
     xScrollerLeftButton.addEventListener("mouseout",  () => uss.stopScrollingX(xScroller), {passive:false});
     xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScroller), {passive:false});
 
@@ -235,16 +235,16 @@
       let finalYPosition = (direction === -1) ? 0 : uss.getMaxScrollY(yScroller);
       uss.scrollYTo(finalYPosition, yScroller, null, true);
     }
-    yScrollerUpButton.addEventListener("mousedown",  () => scrollListY(-1), {passive: false});
-    yScrollerDownButton.addEventListener("mousedown", () => scrollListY(+1), {passive: false});
-    yScrollerUpButton.addEventListener("touchstart",  () => scrollListY(-1), {passive: false});
+    yScrollerUpButton.addEventListener("mousedown",    () => scrollListY(-1), {passive: false});
+    yScrollerDownButton.addEventListener("mousedown",  () => scrollListY(+1), {passive: false});
+    yScrollerUpButton.addEventListener("touchstart",   () => scrollListY(-1), {passive: false});
     yScrollerDownButton.addEventListener("touchstart", () => scrollListY(+1), {passive: false});
 
-    yScrollerUpButton.addEventListener("touchend",  () => uss.stopScrollingY(yScroller), {passive:false});
+    yScrollerUpButton.addEventListener("touchend",   () => uss.stopScrollingY(yScroller), {passive:false});
     yScrollerDownButton.addEventListener("touchend", () => uss.stopScrollingY(yScroller), {passive:false});
-    yScrollerUpButton.addEventListener("mouseup",  () => uss.stopScrollingY(yScroller), {passive:false});
-    yScrollerDownButton.addEventListener("mouseup", () => uss.stopScrollingY(yScroller), {passive:false});
-    yScrollerUpButton.addEventListener("mouseout",  () => uss.stopScrollingY(yScroller), {passive:false});
+    yScrollerUpButton.addEventListener("mouseup",    () => uss.stopScrollingY(yScroller), {passive:false});
+    yScrollerDownButton.addEventListener("mouseup",  () => uss.stopScrollingY(yScroller), {passive:false});
+    yScrollerUpButton.addEventListener("mouseout",   () => uss.stopScrollingY(yScroller), {passive:false});
     yScrollerDownButton.addEventListener("mouseout", () => uss.stopScrollingY(yScroller), {passive:false});
 
     body.addEventListener("wheel", () => {uss.stopScrollingY(body); uss.stopScrollingX(body, () => console.log("User Interacted: every scroll has been stopped"));}, {passive:false});
