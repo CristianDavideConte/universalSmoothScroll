@@ -88,7 +88,7 @@
     //Create a map to keep track of each scroll-animation's previous easeValue for every container
     let containersXAnimationsProgressesMap = new Map();
     let containersYAnimationsProgressesMap = new Map();
-    let animationStepNumber = 25;
+    let animationStepNumber = 30;
     let animationStepIncrease = 100 / animationStepNumber * 0.01;
 
     //Initially set all the containers previous <xProgress, xEaseValue> and <yProgress, yEaseValue> to 0
@@ -199,9 +199,6 @@
 
     uss.setXStepLengthCalculator((remaning, time, total, currentPos, finalPos, container) => easeFunction(remaning, time, total, currentPos, finalPos, container, 0), body);
     uss.setYStepLengthCalculator((remaning, time, total, currentPos, finalPos, container) => easeFunction(remaning, time, total, currentPos, finalPos, container, 1), body);
-    //uss.setYStepLengthCalculator(remaning => {return remaning / 15 + 1;}, body);
-    //uss.setXStepLengthCalculator(remaning => {return remaning / 15 + 1;}, body);
-
     uss.setYStepLength(uss.getXStepLength());
     myHrefSetup();
 
@@ -218,9 +215,10 @@
 
 
     function scrollListX(direction) {
-      let finalXPosition = (direction === -1) ? 0 : (xScroller.scrollWidth - xScroller.clientWidth);
+      let finalXPosition = (direction === -1) ? 0 : uss.getMaxScrollX(xScroller);
       uss.scrollXTo(finalXPosition, xScroller, null, true);
     }
+
     xScrollerLeftButton.addEventListener("mousedown",  () => scrollListX(-1), {passive: false});
     xScrollerRightButton.addEventListener("mousedown", () => scrollListX(+1), {passive: false});
     xScrollerLeftButton.addEventListener("touchstart",  () => scrollListX(-1), {passive: false});
@@ -234,7 +232,7 @@
     xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScroller), {passive:false});
 
     function scrollListY(direction) {
-      let finalYPosition = (direction === -1) ? 0 : (yScroller.scrollHeight - yScroller.clientHeight);
+      let finalYPosition = (direction === -1) ? 0 : uss.getMaxScrollY(yScroller);
       uss.scrollYTo(finalYPosition, yScroller, null, true);
     }
     yScrollerUpButton.addEventListener("mousedown",  () => scrollListY(-1), {passive: false});
