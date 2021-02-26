@@ -88,12 +88,11 @@
     //Create a map to keep track of each scroll-animation's previous easeValue for every container
     let containersXAnimationsProgressesMap = new Map();
     let containersYAnimationsProgressesMap = new Map();
-    let animationStepNumber = 30;
-    let animationStepIncrease = 100 / animationStepNumber * 0.01;
 
-    //Initially set all the containers previous <xProgress, xEaseValue> and <yProgress, yEaseValue> to 0
-    containersXAnimationsProgressesMap.set(body, [0, 0]);
-    containersYAnimationsProgressesMap.set(body, [0, 0]);
+    function resetEaseValues(container) {
+      containersXAnimationsProgressesMap.set(container, [0, 0]);
+      containersYAnimationsProgressesMap.set(container, [0, 0]);
+    }
 
     function linear(x) {
       return x + 0.01;
@@ -134,6 +133,8 @@
              : (2 - Math.pow(2, -20 * x + 10)) / 2; //easeInOutExpo
     }
 
+    const animationStepNumber = 30;
+    const animationStepIncrease = 100 / animationStepNumber * 0.01;
     let bezierCurve = easeInOutExpo;
 
     function easeFunction(remaning, time, total, currentPos, finalPos, container, axisNumber) {
@@ -166,41 +167,11 @@
       return stepLength;
     }
 
-    function resetEaseValue(container, axisNumber) {
-      if(!axisNumber) {//The scroll animation is being performed on the x-axis
-        const previousEaseValues = containersXAnimationsProgressesMap.get(container);
-        containersXAnimationsProgressesMap.set(container, [0, previousEaseValues[1]]);
-      } else { //The scroll animation is being performed on the y-axis
-        const previousEaseValues = containersYAnimationsProgressesMap.get(container);
-        containersYAnimationsProgressesMap.set(container, [previousEaseValues[1], 0]);
-      }
-    }
-
-    function resetEaseValues(container) {
-      containersXAnimationsProgressesMap.set(container, [0, 0]);
-      containersYAnimationsProgressesMap.set(container, [0, 0]);
-    }
-
-    function myHrefSetup (includeHidden = false) {
-      const pageLinks = document.links;
-      const pageURL = document.URL.split("#")[0];
-      for(pageLink of pageLinks) {
-        const pageLinkParts = pageLink.href.split("#"); //PageLink.href = OptionalURL#Section
-        if(pageLinkParts[0] !== pageURL) continue;
-        const elementToReach = document.getElementById(pageLinkParts[1]);
-        if(elementToReach instanceof HTMLElement)
-          pageLink.addEventListener("click", event => {
-            event.preventDefault();
-            resetEaseValues(body);
-            uss.scrollIntoView(elementToReach, true, true, includeHidden);
-          }, {passive:false});
-      }
-    }
-
+    uss.hrefSetup(() => resetEaseValues(body), false);
+    uss.setYStepLength(uss.getXStepLength());
+    resetEaseValues(body); //Initially set all the containers previous <xProgress, xEaseValue> and <yProgress, yEaseValue> to 0
     uss.setXStepLengthCalculator((remaning, time, total, currentPos, finalPos, container) => easeFunction(remaning, time, total, currentPos, finalPos, container, 0), body);
     uss.setYStepLengthCalculator((remaning, time, total, currentPos, finalPos, container) => easeFunction(remaning, time, total, currentPos, finalPos, container, 1), body);
-    uss.setYStepLength(uss.getXStepLength());
-    myHrefSetup();
 
 
     document.getElementById("linear").addEventListener("click",         () => bezierCurve = linear);
@@ -215,7 +186,7 @@
 
 
     function scrollListX(direction) {
-      let finalXPosition = (direction === -1) ? 0 : uss.getMaxScrollX(xScroller);
+      const finalXPosition = (direction === -1) ? 0 : uss.getMaxScrollX(xScroller);
       uss.scrollXTo(finalXPosition, xScroller, null, true);
     }
 
@@ -232,7 +203,7 @@
     xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScroller), {passive:false});
 
     function scrollListY(direction) {
-      let finalYPosition = (direction === -1) ? 0 : uss.getMaxScrollY(yScroller);
+      const finalYPosition = (direction === -1) ? 0 : uss.getMaxScrollY(yScroller);
       uss.scrollYTo(finalYPosition, yScroller, null, true);
     }
     yScrollerUpButton.addEventListener("mousedown",    () => scrollListY(-1), {passive: false});

@@ -70,6 +70,7 @@ Method Name | Purpose
 ----------- | -------
 `isXscrolling` | Returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
 `isYscrolling` | Returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
+`isScrolling` | Returns true if a scroll-animation on any axis of the passed container is currently being performed by this API, false otherwise.
 `getXStepLengthCalculator` | Returns the _xStepLengthCalculator function for the passed container.
 `getYStepLengthCalculator` | Returns the _yStepLengthCalculator function for the passed container.
 `getXStepLength` | Returns the value of _xStepLength.
@@ -97,7 +98,7 @@ Method Name | Purpose
 `stopScrollingX` | Stops all the current scroll-animation on the x-axis of the passed container.<br>After the animations are stopped a callback function can be invoked.
 `stopScrollingY` | Stops all the current scroll-animation on the y-axis of the passed container.<br>After the animations are stopped a callback function can be invoked.
 `stopScrolling` | Stops all the current scroll-animation on both the x-axis and the y-axis of the passed container.<br>After the animations are stopped a callback function can be invoked.
-`hrefSetup` | Looks for every anchor element (`<a>` && `<area>`) with a value for the href attribute linked to an element on the same page and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element (internally uses scrollIntoView).
+`hrefSetup` | Looks for every anchor element (`<a>` && `<area>`) with a value for the href attribute linked to an element on the same page and attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation to reach the linked element (internally uses `scrollIntoView`).<br> Before the scroll-animations (`scrollIntoView`) are performed a callback function can be invoked.
 
 # Methods' syntaxes
 #### isXscrolling
@@ -113,6 +114,13 @@ Method Name | Purpose
  * @param container window or HTML element
  */
  function isYscrolling (container = window);
+```
+#### isScrolling
+```javascript
+/*
+ * @param container window or HTML element
+ */
+ function isScrolling (container = window);
 ```
 #### getXStepLengthCalculator
 ```javascript
@@ -386,10 +394,12 @@ Method Name | Purpose
 #### hrefSetup
 ```javascript
 /*
- * @param includeHidden true if the element's first scrollable parent may have the
- *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden, false otherwise.
+ * @callback callback the function you want to be executed before
+ *           any scroll-animation of any of the valid anchor link found by this function is performed.
+ * @param includeHidden true if the first scrollable parent of any valid anchor link found by this function's destination element
+ *        may have the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden, false otherwise.
  */
- function hrefSetup (includeHidden = false);
+ function hrefSetup (callback = () => {}, includeHidden = false);
 ```
 
 # FAQ
@@ -451,6 +461,14 @@ uss.setYStepLengthCalculator((remaning, timestamp, total, currentY, finalY) => {
 A: YES!<br>
 While setting a custom stepLengthCalculator you will notice your function will be passed the timestamp of the `window.requestAnimationFrame()` call as the second argument that you can use to make the scroll-animations last any amount of time you want.<br>
 You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) useful.
+## Q: What is the `hrefSetup` callback parameter ?
+A: Unlike every other callback parameter of this API, this is a function that gets executed right before any scroll-animation happens.<br>
+You may want to use this function to perform action that must happen after an anchor link is clicked but before the scroll-animation is performed.<br>
+For example:<br>
+```javascript
+let changeBackgroundColor = () => document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")";
+uss.hrefSetup(changeBackgroundColor); //Every time an anchor link is clicked our body.backgroundColor is randomly changed
+```
 ## Q: What's the difference between the _stable_ and the _latest_ API version ?
 A: The **_latest_** version gets updated every time a change is made which means that you have all the lastest features and fixes but that some functionality may have some bugs or code leftovers.<br> The **_stable_** version gets updated only when a feature is completly stable and the code is cleaned which lowers the probability of encountering bugs but the newest features may take a while to arrive here.
 ## Q: Why is it allowed to directly modify internal variables ?

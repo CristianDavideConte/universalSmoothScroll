@@ -27,6 +27,7 @@ const DEFAULTMINANIMATIONFRAMES = 5;                       //Default lowest poss
  *
  * isXscrolling: function, returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
  * isYscrolling: function, returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
+ * isScrolling:  function, returns true if a scroll-animation on any axis of the passed container is currently being performed by this API, false otherwise.
  * getXStepLengthCalculator: function, returns the _xStepLengthCalculator function for the passed container.
  * getYStepLengthCalculator: function, returns the _yStepLengthCalculator function for the passed container.
  * getXStepLength: function, returns the value of _xStepLength.
@@ -80,6 +81,7 @@ const DEFAULTMINANIMATIONFRAMES = 5;                       //Default lowest poss
  * hrefSetup: function, looks for every anchor element with a href attribute linked to an element on the same page and
  *            attaches an eventListener(onclick) to it in order to trigger a smooth-scroll-animation
  *            to reach the linked element (internally uses scrollIntoView).
+ *            Before the scroll-animations (scrollIntoView) are performed a callback function can be invoked.
  */
 var uss = {
   _xMapContainerAnimationID: new Map(),
@@ -91,6 +93,7 @@ var uss = {
   _minAnimationFrame: DEFAULTMINANIMATIONFRAMES,
   isXscrolling: function (container = window) {const _scheduledAnimations = uss._xMapContainerAnimationID.get(container); return typeof _scheduledAnimations !== "undefined" && _scheduledAnimations.length > 0;},
   isYscrolling: function (container = window) {const _scheduledAnimations = uss._yMapContainerAnimationID.get(container); return typeof _scheduledAnimations !== "undefined" && _scheduledAnimations.length > 0;},
+  isScrolling:  function (container = window) {return uss.isXscrolling(container) || uss.isYscrolling(container);},
   getXStepLengthCalculator: function (container = window) {return uss._xStepLengthCalculator.get(container)},
   getYStepLengthCalculator: function (container = window) {return uss._yStepLengthCalculator.get(container)},
   getXStepLength: function () {return uss._xStepLength;},
@@ -363,15 +366,20 @@ var uss = {
     uss.stopScrollingX(container, null);
     uss.stopScrollingY(container, callback);
   },
-  hrefSetup: function (includeHidden = false) {
+  hrefSetup: function (callback = () => {}, includeHidden = false) {
     const pageLinks = document.links;
     const pageURL = document.URL.split("#")[0];
+    const _isCallbackAFunction = typeof callback === "function";
+
     for(pageLink of pageLinks) {
       const pageLinkParts = pageLink.href.split("#"); //PageLink.href = OptionalURL#Section
       if(pageLinkParts[0] !== pageURL) continue;
       const elementToReach = document.getElementById(pageLinkParts[1]);
       if(elementToReach instanceof HTMLElement)
-        pageLink.addEventListener("click", event => {event.preventDefault(); uss.scrollIntoView(elementToReach, true, true, includeHidden);}, {passive:false});
+        if(_isCallbackAFunction)
+          pageLink.addEventListener("click", event => {event.preventDefault(); callback(); uss.scrollIntoView(elementToReach, true, true, includeHidden);}, {passive:false});
+        else
+          pageLink.addEventListener("click", event => {event.preventDefault(); uss.scrollIntoView(elementToReach, true, true, includeHidden);}, {passive:false});
     }
   }
 };
