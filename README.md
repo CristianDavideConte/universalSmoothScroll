@@ -463,7 +463,7 @@ While setting a custom stepLengthCalculator you will notice your function will b
 You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) useful.
 ## Q: What is the `hrefSetup` callback parameter ?
 A: Unlike every other callback parameter of this API, this is a function that gets executed right before any scroll-animation happens.<br>
-You may want to use this function to perform action that must happen after an anchor link is clicked but before the scroll-animation is performed.<br>
+You may want to use this function to perform actions that must happen after an anchor link is clicked but before the scroll-animation is performed.<br>
 For example:<br>
 ```javascript
 let changeBackgroundColor = () => document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")";
