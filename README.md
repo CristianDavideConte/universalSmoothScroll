@@ -1,7 +1,7 @@
 # Universal Smooth Scroll API ![](https://raw.githubusercontent.com/CristianDavideConte/universalSmoothScroll/master/images/favicon.png)
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgb%280%2C200%2C70%29&label=Version&logo=GitHub)
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgba%28255%2C40%2C0%2C1%29&label=Version&logo=NPM)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgba%2850%2C200%2C80%29&label=Version&logo=github)
+![npm](https://img.shields.io/npm/v/universalsmoothscroll?color=rgb%28255%2C50%2C50%29&label=%20Version&logo=npm)
 
 The Universal Smooth Scroll API is a **lightweight javascript piece of code** that enables an enriched version of the standard `scroll-behavior: smooth` CSS property.<br>
 This scroll API is based on and improves upon the 3 main ways to scroll an element in plain js: `scrollTo`, `scrollBy`, `scrollIntoView`.<br>
@@ -16,10 +16,7 @@ You can also take a look at how single features are implemented on [this playgro
 ## NPM:
 `npm i universalsmoothscroll`
 ## HTML meta tag:
-Add one of this `<script>` in your project's `<head>` tag:<br>
-#### Stable versions:<br>
-`<script src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/41d6bbb80203a81e4dab942fe0328b9c237d823f/js/universalsmoothscroll-min.js"></script>`<br>
-#### Latest version:<br>
+Add this `<script>` in your project's `<head>` tag: <br>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>`
 ## Local file:
 Download the script's minified version that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/releases), move it into your project's js directory & add the `<script>`. For example:<br>
@@ -469,8 +466,6 @@ For example:<br>
 let changeBackgroundColor = () => document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")";
 uss.hrefSetup(changeBackgroundColor); //Every time an anchor link is clicked our body.backgroundColor is randomly changed
 ```
-## Q: What's the difference between the _stable_ and the _latest_ API version ?
-A: The **_latest_** version gets updated every time a change is made which means that you have all the lastest features and fixes but that some functionality may have some bugs or code leftovers.<br> The **_stable_** version gets updated only when a feature is completly stable and the code is cleaned which lowers the probability of encountering bugs but the newest features may take a while to arrive here.
 ## Q: Why is it allowed to directly modify internal variables ?
 A: It is allowed (but not suggested) because there may be a bug (rare case) that prevents you from setting a variable to a right value. If that's the case don't hesitate to contact me !
 
