@@ -100,32 +100,32 @@ var uss = {
   getYStepLength: function () {return uss._yStepLength;},
   getMinAnimationFrame: function () {return uss._minAnimationFrame;},
   setXStepLengthCalculator: function (newCalculator = undefined, container = window) {
-    if(typeof newCalculator !== "function") {console.log("USS error: ", newCalculator, " is not a function"); return;}
+    if(typeof newCalculator !== "function") {console.error("USS Error:", newCalculator, "is not a function"); return;}
     const _remaning = uss.getMaxScrollX(container);
     const _testValue = newCalculator(_remaning, 0, _remaning, 0, _remaning, container); //remaningScrollAmount, timestamp, totalScrollAmount, currentXPosition, finalXPosition, container
-    if(typeof _testValue !== "number" || window.isNaN(_testValue)) {console.log("USS error: ", newCalculator, " didn't return a valid step value"); return;}
+    if(typeof _testValue !== "number" || window.isNaN(_testValue)) {console.error("USS Error:", newCalculator.name || "Anonymous function", "didn't return a valid step value"); return;}
     uss._xStepLengthCalculator.set(container, newCalculator)
   },
   setYStepLengthCalculator: function (newCalculator = undefined, container = window) {
-    if(typeof newCalculator !== "function") {console.log("USS error: ", newCalculator, " is not a function"); return;}
+    if(typeof newCalculator !== "function") {console.error("USS Error:", newCalculator, "is not a function"); return;}
     const _remaning = uss.getMaxScrollY(container);
     const _testValue = newCalculator(_remaning, 0, _remaning, 0, _remaning, container); //remaningScrollAmount, timestamp, totalScrollAmount, currentXPosition, finalXPosition, container
-    if(typeof _testValue !== "number" || window.isNaN(_testValue)) {console.log("USS error: ", newCalculator, " didn't return a valid step value"); return;}
+    if(typeof _testValue !== "number" || window.isNaN(_testValue)) {console.error("USS Error:", newCalculator.name || "Anonymous function", "didn't return a valid step value"); return;}
     uss._yStepLengthCalculator.set(container, newCalculator)
   },
   setXStepLength: function (newXStepLength) {
-    if(typeof newXStepLength !== "number" || window.isNaN(newXStepLength)) {console.log("USS error: ", newXStepLength, " is not a number"); return;}
-    if(newXStepLength <= 0) {console.log("USS error: ", newXStepLength, " must be a positive number"); return;}
+    if(typeof newXStepLength !== "number" || window.isNaN(newXStepLength)) {console.error("USS Error:", newXStepLength, "is not a number"); return;}
+    if(newXStepLength <= 0) {console.error("USS Error:", newXStepLength, "must be a positive number"); return;}
     uss._xStepLength = newXStepLength;
   },
   setYStepLength: function (newYStepLength) {
-    if(typeof newYStepLength !== "number" || window.isNaN(newYStepLength)) {console.log("USS error: ", newYStepLength, " is not a number"); return;}
-    if(newYStepLength <= 0) {console.log("USS error: ", newYStepLength, " must be a positive number"); return;}
+    if(typeof newYStepLength !== "number" || window.isNaN(newYStepLength)) {console.error("USS Error:", newYStepLength, "is not a number"); return;}
+    if(newYStepLength <= 0) {console.error("USS Error:", newYStepLength, "must be a positive number"); return;}
     uss._yStepLength = newYStepLength;
   },
   setMinAnimationFrame: function (newMinAnimationFrame) {
-    if(typeof newMinAnimationFrame !== "number" || window.isNaN(newMinAnimationFrame)) {console.log("USS error: ", newMinAnimationFrame, " is not a number"); return;}
-    if(newMinAnimationFrame <= 0) {console.log("USS error: ", newMinAnimationFrame, " must be a positive number"); return;}
+    if(typeof newMinAnimationFrame !== "number" || window.isNaN(newMinAnimationFrame)) {console.error("USS Error:", newMinAnimationFrame, "is not a number"); return;}
+    if(newMinAnimationFrame <= 0) {console.error("USS Error:", newMinAnimationFrame, "must be a positive number"); return;}
     uss._minAnimationFrame = newMinAnimationFrame;
   },
   calcXStepLength: function (deltaX) {return (deltaX >= (uss._minAnimationFrame - 1) * uss._xStepLength) ? uss._xStepLength : Math.round(deltaX / uss._minAnimationFrame);},
@@ -173,10 +173,10 @@ var uss = {
           if (overflowRegex.test(style.overflow + style.overflowY + style.overflowX)) return container;
       }
       return window;
-    } catch(exception) {console.log("USS error: Couldn't get the parent container of the element:\n", element);}
+    } catch(exception) {console.error("USS Error: Couldn't get the parent container of the element", element);}
   },
   scrollXTo: function (finalXPosition, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof finalXPosition !== "number" || window.isNaN(finalXPosition)) {console.log("USS error: ", finalXPosition, " is not a number"); return;}
+    if (typeof finalXPosition !== "number" || window.isNaN(finalXPosition)) {console.error("USS Error:", finalXPosition, "is not a number"); return;}
 
     //If the container cannot be scrolled on the x-axis _maxScrollX will be <= 0 and the function returns.
     //If the scroll-limit has already been reached, no scroll-animation is performed.
@@ -243,7 +243,7 @@ var uss = {
     }
   },
   scrollYTo: function (finalYPosition, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof finalYPosition !== "number" || window.isNaN(finalYPosition)) {console.log("USS error: ", finalYPosition, " is not a number"); return;}
+    if (typeof finalYPosition !== "number" || window.isNaN(finalYPosition)) {console.error("USS Error:", finalYPosition, "is not a number"); return;}
 
     //If the container cannot be scrolled on the y-axis _maxScrollY will be <= 0 and the function returns.
     //If the scroll-limit has already been reached, no scroll-animation is performed.
@@ -310,12 +310,12 @@ var uss = {
     }
   },
   scrollXBy: function (deltaX, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof deltaX !== "number" || window.isNaN(deltaX)) {console.log("USS error: ", deltaX, " is not a number"); return;}
+    if (typeof deltaX !== "number" || window.isNaN(deltaX)) {console.error("USS Error:", deltaX, "is not a number"); return;}
     if(deltaX === 0) return;
     uss.scrollXTo(uss.getScrollXCalculator(container)() + deltaX, container, callback, canOverlay);
   },
   scrollYBy: function (deltaY, container = window, callback = () => {}, canOverlay = false) {
-    if (typeof deltaY !== "number" || window.isNaN(deltaY)) {console.log("USS error: ", deltaY, " is not a number"); return;}
+    if (typeof deltaY !== "number" || window.isNaN(deltaY)) {console.error("USS Error:", deltaY, "is not a number"); return;}
     if(deltaY === 0) return;
     uss.scrollYTo(uss.getScrollYCalculator(container)() + deltaY, container, callback, canOverlay);
   },
