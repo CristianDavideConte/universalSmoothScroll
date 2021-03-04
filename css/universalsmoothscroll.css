@@ -257,6 +257,47 @@ li > a:hover {
   background: linear-gradient(45deg, rgba(0,255,244,1) 0%, rgba(0,255,29,1) 100%);
 }
 
+#customBezierParameterSection {
+    width: 75%;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#customBezierParameterSection > h2 {
+    color: black;
+    text-align: center;
+}
+
+#customBezierParameterSection > ul {
+  width: 75%;
+  height: 10vh;
+}
+
+input {
+  width: 100%;
+  height: 100%;
+  color: white;
+  text-align: center;
+  border: none;
+  outline: none;
+  background: rgba(0,0,0,0.5);
+  transition: 0.3s;
+}
+
+input:hover,
+input:focus,
+input:active {
+  background: rgba(0,0,0,0.6);
+}
+
+input[type = submit] {
+  width: 75%;
+  height: 10vh;
+  cursor: pointer;
+}
 
 @media only screen and (max-width: 1250px), (max-height: 870px)  {
 

@@ -69,7 +69,18 @@
           <button id = "xScrollerRight">&rarr;</button>
         </section>
       </div>
-      <div id = "section4" class = "page"></div>
+      <div id = "section4" class = "page">
+        <div id = "customBezierParameterSection">
+          <h2 id = "bezierTitle">Choose custom cubic-bezier parameters</h2>
+          <ul>
+            <li><input type = "text" class = "cubicBezierParameter" value = "0"/></li>
+            <li><input type = "text" class = "cubicBezierParameter" value = "0"/></li>
+            <li><input type = "text" class = "cubicBezierParameter" value = "1"/></li>
+            <li><input type = "text" class = "cubicBezierParameter" value = "1"/></li>
+          </ul>
+          <input type = "submit" value = "Customize"></input>
+        </div>
+      </div>
     </div>
   </body>
 </html>
@@ -85,103 +96,145 @@
     let xScrollerLeftButton = document.getElementById("xScrollerLeft");
     let xScrollerRightButton = document.getElementById("xScrollerRight");
 
-    //Create a map to keep track of each scroll-animation's previous easeValue for every container
-    let containersXAnimationsProgressesMap = new Map();
-    let containersYAnimationsProgressesMap = new Map();
+    let cubicBezierCustomInputParameters = document.getElementsByTagName("input");
 
-    function resetEaseValues(container) {
-      containersXAnimationsProgressesMap.set(container, [0, 0]);
-      containersYAnimationsProgressesMap.set(container, [0, 0]);
-    }
+    let uss_ext = {
+      _xMapContainerAnimationProgress: new Map(),
+      _yMapContainerAnimationProgress: new Map(),
+      _bezierStepLength: () => {return 1 / uss.getMinAnimationFrame();},
+      _bezierCalculator: function (p1x, p1y, p2x, p2y) {
+        if(typeof p1x !== "number" || typeof p1y !== "number" || typeof p2x !== "number" || typeof p2y !== "number") {
+          console.error("USSE Error: invalid cubic bezier parameters");
+          return;
+        }
 
-    function linear(x) {
-      return x + 0.01;
-    }
+        const _inputCheck = p1x > 1 || p1x < 0 || p1y > 1 || p1y < 0 || p2x > 1 || p2x < 0 || p2y > 1 || p2y < 0;
+        if(_inputCheck) {console.error("USSE Error: invalid cubic bezier parameters"); return;}
 
-    function easeInQuart(x) {
-      return x * x * x * x; //easeInQuart
-    }
+        // Calculate constants in parametric bezier formular
+        // http://www.moshplant.com/direct-or/bezier/math.html
+        const cX = 3 * p1x;
+        const bX = 3 * (p2x - p1x) - cX;
+        const aX = 1 - cX - bX;
+        const cY = 3 * p1y;
+        const bY = 3 * (p2y - p1y) - cY;
+        const aY = 1 - cY - bY;
 
-    function easeInQuint(x) {
-      return x * x * x * x * x; //easeInQuint
-    }
+        // Functions for calculating x, x', y for t
+        function bezierX(t) {
+          return t * (cX + t * (bX + t * aX)); //ax * t^3 + bx * t^2 + cx * t
+        }
 
-    function easeOutCirc(x) {
-      return Math.sqrt(1 - Math.pow(x - 1, 2)); //easeOutCirc
-    }
+        function bezierXDerivative(t) {
+          return cX + t * (2 * bX + 3 * aX * t); //ax * t^2 + bx * t + cx
+        }
 
-    function easeOutExpo(x) {
-      return x === 1 ? 1 : 1 - Math.pow(2, -10 * x); //easeOutExpo
-    }
+        // Use Newton-Raphson method to find t for a given x.
+        // Since x = a*t^3 + b*t^2 + c*t, we find the root for
+        // a*t^3 + b*t^2 + c*t - x = 0, and thus t.
+        function newtonRaphson(x) { //Tangent Method
+          if(x === 0) return 0;
+          let prev;
+          let t = x; // Initial estimation is linear
+          do {
+            prev = t;
+            t = t - ((bezierX(t) - x) / bezierXDerivative(t));
+          } while (Math.abs(t - prev) > 1e-4);
 
-    function easeInOutQuint(x) {
-      return x < 0.5 ? 16 * x * x * x * x * x : 1 - Math.pow(-2 * x + 2, 5) / 2; //easeInOutQuint
-    }
+          return t;
+        }
 
-    function easeInOutCirc(x) {
-      return x < 0.5
-             ? (1 - Math.sqrt(1 - Math.pow(2 * x, 2))) / 2
-             : (Math.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2; //easeInOutCirc
-    }
+        return (x) => {
+          const t = newtonRaphson(x);
+          return t * ( cY + t * ( bY + t * aY )); // This is y given t on the bezier curve
+        }
+      },
+      _ease: function (total, container, easeFunction) {
+        // 0 = scroll-animation requested by _stepX
+        // 1 = scroll-animation requested by _stepY
+        //-1 = scroll-animation requested by something else, no state saved
+        const _stack = (new Error()).stack;
+        const _axis = _stack.includes("_stepX") ? 0 : _stack.includes("_stepY") ? 1 : -1;
 
-    function easeInOutExpo(x) {
-      return x === 0
-             ? 0
-             : x === 1
-             ? 1
-             : x < 0.5 ? Math.pow(2, 20 * x - 10) / 2
-             : (2 - Math.pow(2, -20 * x + 10)) / 2; //easeInOutExpo
-    }
+        let _animationProgresses;
+        let currentXBezier;
+        let nextXBezier;
+        const _stepLength = uss_ext._bezierStepLength();
 
-    const animationStepNumber = 30;
-    const animationStepIncrease = 100 / animationStepNumber * 0.01;
-    let bezierCurve = easeInOutExpo;
+        if(_axis === 0) {
+          _animationProgresses = uss_ext._xMapContainerAnimationProgress.get(container) || [0];
+          currentXBezier = _animationProgresses[0];
+          nextXBezier = currentXBezier + _stepLength;
+          _animationProgresses.shift();
+          if(nextXBezier < 1) _animationProgresses.push(nextXBezier);
+          uss_ext._xMapContainerAnimationProgress.set(container, _animationProgresses);
+        } else if(_axis === 1) {
+          _animationProgresses = uss_ext._yMapContainerAnimationProgress.get(container) || [0];
+          currentXBezier = _animationProgresses[0];
+          nextXBezier = currentXBezier + _stepLength;
+          _animationProgresses.shift();
+          if(nextXBezier < 1) _animationProgresses.push(nextXBezier);
+          uss_ext._yMapContainerAnimationProgress.set(container, _animationProgresses);
+        } else {
+          currentXBezier = 0;
+          nextXBezier = currentXBezier + _stepLength;
+        }
 
-    function easeFunction(remaning, time, total, currentPos, finalPos, container, axisNumber) {
-      let previousAnimationProgresses;
-      let previousAxisAnimationProgress, previousEaseValue;
-      let currentAxisAnimationProgress, currentEaseValue;
-
-      if(axisNumber === 0) {
-        previousAnimationProgresses = containersXAnimationsProgressesMap.get(container);
-      } else {
-        previousAnimationProgresses = containersYAnimationsProgressesMap.get(container);
+        return Math.abs(easeFunction(currentXBezier) - easeFunction(nextXBezier)) * total + 1;
+      },
+      _resetXProgress: function (container = window) {
+        uss_ext._xMapContainerAnimationProgress.set(container, [0]);
+      },
+      _resetYProgress: function (container = window) {
+        uss_ext._yMapContainerAnimationProgress.set(container, [0]);
+      },
+      _resetProgress: function (container = window) {
+        uss_ext._xMapContainerAnimationProgress.set(container, [0]);
+        uss_ext._yMapContainerAnimationProgress.set(container, [0]);
+      },
+      cubicBezier: function (remaning, time, total, currentPos, finalPos, container, p1x, p1y, p2x, p2y) {
+        return uss_ext._ease(total, container, uss_ext._bezierCalculator(p1x, p1y, p2x, p2y));
+      },
+      linear: function (remaning, time, total, currentPos, finalPos, container) {
+        return uss_ext._ease(total, container, uss_ext._bezierCalculator(0, 0, 1, 1));
+      },
+      easeInQuart: function (remaning, time, total, currentPos, finalPos, container) {
+        return uss_ext._ease(total, container, uss_ext._bezierCalculator(0.5, 0, 0.75, 0));
+      },
+      easeInQuint: function (remaning, time, total, currentPos, finalPos, container) {
+        return uss_ext._ease(total, container, uss_ext._bezierCalculator(0.64, 0, 0.78, 0));
+      },
+      easeOutCirc: function (remaning, time, total, currentPos, finalPos, container) {
+        return uss_ext._ease(total, container, uss_ext._bezierCalculator(0, 0.55, 0.45, 1));
+      },
+      easeOutExpo: function (remaning, time, total, currentPos, finalPos, container) {
+        return uss_ext._ease(total, container, uss_ext._bezierCalculator(0.16, 1, 0.3, 1));
+      },
+      easeInOutQuint: function (remaning, time, total, currentPos, finalPos, container) {
+        return uss_ext._ease(total, container, uss_ext._bezierCalculator(0.83, 0, 0.17, 1));
+      },
+      easeInOutCirc: function (remaning, time, total, currentPos, finalPos, container) {
+        return uss_ext._ease(total, container, uss_ext._bezierCalculator(0.85, 0, 0.15, 1));
+      },
+      easeInOutExpo: function (remaning, time, total, currentPos, finalPos, container) {
+        return uss_ext._ease(total, container, uss_ext._bezierCalculator(0.87, 0, 0.13, 1));
       }
-
-      //Calculate the current scroll-animation's easeValue in range [0..1]
-      previousAxisAnimationProgress = previousAnimationProgresses[0];
-      previousEaseValue = previousAnimationProgresses[1];
-      currentEaseValue = bezierCurve(previousAxisAnimationProgress + animationStepIncrease, total);
-
-      //Calculate the scroll-animation's speed increase by using the current and the previous easeValue for the current container
-      const deltaProgress = Math.abs(currentEaseValue - previousEaseValue); //How much we've progressed in the scroll-animation
-      const stepLength = deltaProgress * total + 1; //Around deltaProgress% of the totalScrollAmount
-
-      //Update the easeValues for the current container
-      if(axisNumber === 0) {//The scroll animation is being performed on the x-axis
-        containersXAnimationsProgressesMap.set(container, [previousAxisAnimationProgress + animationStepIncrease, currentEaseValue]);
-      } else { //The scroll animation is being performed on the y-axis
-        containersYAnimationsProgressesMap.set(container, [previousAxisAnimationProgress + animationStepIncrease, currentEaseValue]);
-      }
-
-      return stepLength;
     }
 
-    uss.hrefSetup(() => resetEaseValues(body), false);
+
+    uss.hrefSetup(false, false, () => uss_ext._resetProgress(body), null, false);
     uss.setYStepLength(uss.getXStepLength());
-    resetEaseValues(body); //Initially set all the containers previous <xProgress, xEaseValue> and <yProgress, yEaseValue> to 0
-    uss.setXStepLengthCalculator((remaning, time, total, currentPos, finalPos, container) => easeFunction(remaning, time, total, currentPos, finalPos, container, 0), body);
-    uss.setYStepLengthCalculator((remaning, time, total, currentPos, finalPos, container) => easeFunction(remaning, time, total, currentPos, finalPos, container, 1), body);
+    uss.setMinAnimationFrame(30);
+    uss.setStepLengthCalculator(uss_ext.linear, body);
 
-
-    document.getElementById("linear").addEventListener("click",         () => bezierCurve = linear);
-    document.getElementById("easeInQuart").addEventListener("click",    () => bezierCurve = easeInQuart);
-    document.getElementById("easeInQuint").addEventListener("click",    () => bezierCurve = easeInQuint);
-    document.getElementById("easeOutCirc").addEventListener("click",    () => bezierCurve = easeOutCirc);
-    document.getElementById("easeOutExpo").addEventListener("click",    () => bezierCurve = easeOutExpo);
-    document.getElementById("easeInOutQuint").addEventListener("click", () => bezierCurve = easeInOutQuint);
-    document.getElementById("easeInOutCirc").addEventListener("click",  () => bezierCurve = easeInOutCirc);
-    document.getElementById("easeInOutExpo").addEventListener("click",  () => bezierCurve = easeInOutExpo);
+    document.getElementById("linear").addEventListener("click",         () => uss.setStepLengthCalculator(uss_ext.linear, body));
+    document.getElementById("easeInQuart").addEventListener("click",    () => uss.setStepLengthCalculator(uss_ext.easeInQuart, body));
+    document.getElementById("easeInQuint").addEventListener("click",    () => uss.setStepLengthCalculator(uss_ext.easeInQuint, body));
+    document.getElementById("easeOutCirc").addEventListener("click",    () => uss.setStepLengthCalculator(uss_ext.easeOutCirc, body));
+    document.getElementById("easeOutExpo").addEventListener("click",    () => uss.setStepLengthCalculator(uss_ext.easeOutExpo, body));
+    document.getElementById("easeInOutQuint").addEventListener("click", () => uss.setStepLengthCalculator(uss_ext.easeInOutQuint, body));
+    document.getElementById("easeInOutCirc").addEventListener("click",  () => uss.setStepLengthCalculator(uss_ext.easeInOutCirc, body));
+    document.getElementById("easeInOutExpo").addEventListener("click",  () => uss.setStepLengthCalculator(uss_ext.easeInOutExpo, body));
 
 
 
@@ -217,6 +270,35 @@
     yScrollerDownButton.addEventListener("mouseup",  () => uss.stopScrollingY(yScroller), {passive:false});
     yScrollerUpButton.addEventListener("mouseout",   () => uss.stopScrollingY(yScroller), {passive:false});
     yScrollerDownButton.addEventListener("mouseout", () => uss.stopScrollingY(yScroller), {passive:false});
+
+    let bezierTitleTimeout = 0;
+    cubicBezierCustomInputParameters[4].addEventListener("click", () => {
+      window.clearTimeout(bezierTitleTimeout);
+      let p1x, p1y, p2x, p2y;
+      const title = document.getElementById("bezierTitle");
+
+      p1x = Number.parseFloat(cubicBezierCustomInputParameters[0].value);
+      p1y = Number.parseFloat(cubicBezierCustomInputParameters[1].value);
+      p2x = Number.parseFloat(cubicBezierCustomInputParameters[2].value);
+      p2y = Number.parseFloat(cubicBezierCustomInputParameters[3].value);
+
+      if(isNaN(p1x) || isNaN(p1y) || isNaN(p2x) || isNaN(p2y)) {
+        title.innerHTML = "Parameters must be numbers from 0 to 1";
+        bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
+        return;
+      }
+
+      const _inputCheck = p1x > 1 || p1x < 0 || p1y > 1 || p1y < 0 || p2x > 1 || p2x < 0 || p2y > 1 || p2y < 0;
+      if(_inputCheck) {
+        title.innerHTML = "Parameters must be numbers from 0 to 1";
+        bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
+        return;
+      }
+
+      uss.setStepLengthCalculator((remaning, time, total, currentPos, finalPos, container) => uss_ext.cubicBezier(remaning, time, total, currentPos, finalPos, container, p1x, p1y, p2x, p2y), body);
+      title.innerHTML = "All set, try it out !";
+      bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
+    }, {passive:true});
 
     body.addEventListener("wheel", () => {uss.stopScrollingY(body); uss.stopScrollingX(body, () => console.log("User Interacted: every scroll has been stopped"));}, {passive:false});
     document.getElementById("stopScrollingX").addEventListener("click", () => uss.stopScrollingX(body, () => console.log("scrollX stopped")), {passive:false});
