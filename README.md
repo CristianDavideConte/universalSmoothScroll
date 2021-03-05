@@ -82,7 +82,7 @@ Method Name | Purpose
 `setStepLengthCalculator` | Sets both the _xStepLengthCalculator and the _yStepLengthCalculator for the requested container to the passed ease function if compatible.
 `setXStepLength` | Sets the _xStepLength to the passed value if compatible.
 `setYStepLength` | Sets the _yStepLength to the passed value if compatible.
-`setYStepLength` | Sets both the _xStepLength and the _yStepLength to the passed value if compatible.
+`setStepLength` | Sets both the _xStepLength and the _yStepLength to the passed value if compatible.
 `setMinAnimationFrame` | Sets the _minAnimationFrame to the passed value if compatible.
 `calcXStepLength` | Takes in the remaning scroll amount of a scroll-animation on the x-axis and returns how long each scroll-animation-step must be in order to target the _minAnimationFrame.
 `calcYStepLength` | Takes in the remaning scroll amount of a scroll-animation on the y-axis and returns how long each scroll-animation-step must be in order to target the _minAnimationFrame.
