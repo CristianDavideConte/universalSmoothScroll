@@ -462,7 +462,7 @@ A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME
 A: They are functions that can only be internally accessed by the API, you won't be able to invoke them. <br>
 They execute all the instructions needed for a single scroll-animation-step on respectively the x-axis and the y-axis.
 ## Q: What is the difference between _`canOverlay = false`_ and _`canOverlay = true`_ ?
-A: They produce 2 completly different kind of scroll-animations.<br>
+A: They produce 2 completly different kind of scroll-animations' behaviors.<br>
 _`canOverlay = false`_ means that before the scroll-animation you requested can be played any other scroll-animation on the same axis of the passed container is cancelled so this type of scroll-animations always start from a no-movement situation in order to be performed.<br>  
 _`canOverlay = true`_ means that even if other scroll-animations on the same axis of the passed container are currently being performed they won't be cancelled by default and the new scroll-animation will be executed meanwhile the others are still being performed.<br>
 This is an example of how different these 2 kind of scroll-animations are:<br>
