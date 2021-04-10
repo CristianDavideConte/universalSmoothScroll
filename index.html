@@ -222,7 +222,7 @@
     }
 
 
-    uss.hrefSetup(false, false, () => uss_ext._resetProgress(body), null, false);
+    uss.hrefSetup(true, true, () => uss_ext._resetProgress(body), null, false);
     uss.setYStepLength(uss.getXStepLength());
     uss.setMinAnimationFrame(30);
     uss.setStepLengthCalculator(uss_ext.linear, body);

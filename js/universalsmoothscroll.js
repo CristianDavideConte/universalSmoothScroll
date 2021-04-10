@@ -156,8 +156,22 @@ var uss = {
   },
   calcXStepLength: function (deltaX) {return (deltaX >= (uss._minAnimationFrame - 1) * uss._xStepLength) ? uss._xStepLength : Math.round(deltaX / uss._minAnimationFrame);},
   calcYStepLength: function (deltaY) {return (deltaY >= (uss._minAnimationFrame - 1) * uss._yStepLength) ? uss._yStepLength : Math.round(deltaY / uss._minAnimationFrame);},
-  getScrollXCalculator: function (container = window) {return (container instanceof HTMLElement) ? () => {return container.scrollLeft} : () => {return container.scrollX};},
-  getScrollYCalculator: function (container = window) {return (container instanceof HTMLElement) ? () => {return container.scrollTop}  : () => {return container.scrollY};},
+  getScrollXCalculator: function (container = window) {
+    return (container instanceof HTMLElement) ? () => {return container.scrollLeft} :
+           (container === window) ? () => {return container.scrollX} :
+           () => {
+             console.error("USS Error: cannot determine the ScrollXCalculator of", container, "because it's neither an HTMLElement nor the window");
+             throw "USS error";
+          };
+  },
+  getScrollYCalculator: function (container = window) {
+    return (container instanceof HTMLElement) ? () => {return container.scrollTop}  :
+           (container === window) ? () => {return container.scrollY} :
+           () => {
+             console.error("USS Error: cannot determine the ScrollYCalculator of", container, "because it's neither an HTMLElement nor the window");
+             throw "USS error";
+           };
+  },
   getMaxScrollX: function (container = window) {
     const _html = document.documentElement;
     const _body = document.body;
@@ -187,6 +201,7 @@ var uss = {
       ) - _html.clientHeight; //Subtract document height because the scroll-animations on the y-axis always starts from the top of the container
   },
   getScrollableParent: function (element = window, includeHidden = false) {
+    if(element === window) return window;
     try {
       let _style = getComputedStyle(element);
       const _excludeStaticParent = _style.position === "absolute";
@@ -197,7 +212,9 @@ var uss = {
       for (_container = element; (_container = _container.parentElement);) {
           _style = getComputedStyle(_container);
           if (_excludeStaticParent && _style.position === "static") continue;
-          if (_overflowRegex.test(_style.overflow + _style.overflowY + _style.overflowX)) return _container;
+          if (_overflowRegex.test(_style.overflow + _style.overflowY + _style.overflowX))
+            if(_container.scrollWidth > _container.clientWidth || _container.scrollHeight > _container.clientHeight)
+              return _container;
       }
       return window;
     } catch(e) {console.error("USS Error: Couldn't get the parent container of the element", element); return window;}
@@ -208,13 +225,13 @@ var uss = {
     //If the container cannot be scrolled on the x-axis _maxScrollX will be <= 0 and the function returns.
     //If the scroll-limit has already been reached, no scroll-animation is performed.
     const _maxScrollX = uss.getMaxScrollX(container);
-    if(_maxScrollX <= 0) return;
+    if(_maxScrollX <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
     if(finalXPosition < 0) finalXPosition = 0;
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
     const _scrollYCalculator = uss.getScrollYCalculator(container);
     let _totalScrollAmount = finalXPosition - _scrollXCalculator();
-    const _direction = Math.sign(_totalScrollAmount);
+    const _direction = _totalScrollAmount > 0 ? 1 : -1;
     _totalScrollAmount *= _direction;
     if(_totalScrollAmount <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
 
@@ -283,13 +300,13 @@ var uss = {
     //If the container cannot be scrolled on the y-axis _maxScrollY will be <= 0 and the function returns.
     //If the scroll-limit has already been reached, no scroll-animation is performed.
     const _maxScrollY = uss.getMaxScrollY(container);
-    if(_maxScrollY <= 0) return;
+    if(_maxScrollY <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
     if(finalYPosition < 0) finalYPosition = 0;
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
     const _scrollYCalculator = uss.getScrollYCalculator(container);
     let _totalScrollAmount = finalYPosition - _scrollYCalculator();
-    const _direction = Math.sign(_totalScrollAmount);
+    const _direction = _totalScrollAmount > 0 ? 1 : -1;
     _totalScrollAmount *= _direction;
     if(_totalScrollAmount <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
 
@@ -389,15 +406,20 @@ var uss = {
     if(element === window) return;
     if(!(element instanceof HTMLElement)) {console.error("USS Error:", element, "is not an HTML element"); return;}
 
-    const _container = uss.getScrollableParent(element, includeHidden);
-    const _elementBoundingClientRect = element.getBoundingClientRect();
-    let _elementOffsetLeft;
-    let _elementOffsetTop;
+    const _container = uss.getScrollableParent(element, includeHidden); //First scrollable parent of the passed element
+
+    const _elementRect = element.getBoundingClientRect();
+    let _containerRect = (_container !== window) ? _container.getBoundingClientRect() : {left: 0, top: 0, width: window.innerWidth, height: window.innerHeight};
+
+    const _elementCurrentX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
+    const _elementCurrentY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
+    const _elementFinalX   = (alignToLeft === true) ? 0 : (alignToLeft === false) ? _containerRect.width  - _elementRect.width    : 0.5 * (_containerRect.width  - _elementRect.width);
+    const _elementFinalY   = (alignToTop  === true) ? 0 : (alignToTop  === false) ? _containerRect.height - _elementRect.height   : 0.5 * (_containerRect.height - _elementRect.height);
 
     //This object is used to make sure that the passed callback function is called only
     //once all the scroll-animations have been performed
     let _callback = {
-      __requiredSteps: 1, //Number of the _callback.__function's calls required to trigger the passed scrollIntoView's callback function
+      __requiredSteps: 0, //Number of the _callback.__function's calls altready made required to trigger the passed scrollIntoView's callback function
       __currentSteps: 0,  //Number of the current _callback.__function's calls
       __function: (typeof callback === "function") ? () => {
         if(_callback.__currentSteps < _callback.__requiredSteps) {
@@ -405,38 +427,73 @@ var uss = {
           return;
         }
         callback();
-      } : null //Null if no valid scrollIntoView's callback function is passed
+      } : () => {} //No function if no valid scrollIntoView's callback function is passed
     }
 
-    if(_container !== window) {
-      const _containerBoundingClientRect = _container.getBoundingClientRect();
-      const _containerOffsetLeft = (alignToLeft === true) ? _containerBoundingClientRect.left : (alignToLeft === false) ? _containerBoundingClientRect.left - window.innerWidth  + _containerBoundingClientRect.width  : _containerBoundingClientRect.left - window.innerWidth  / 2 + _containerBoundingClientRect.width  / 2;
-      const _containerOffsetTop  = (alignToTop  === true) ? _containerBoundingClientRect.top  : (alignToTop  === false) ? _containerBoundingClientRect.top  - window.innerHeight + _containerBoundingClientRect.height : _containerBoundingClientRect.top  - window.innerHeight / 2 + _containerBoundingClientRect.height / 2;
-      _elementOffsetLeft = (alignToLeft === true) ? _elementBoundingClientRect.left - _containerBoundingClientRect.left : (alignToLeft === false) ? _elementBoundingClientRect.left - _containerBoundingClientRect.left - _containerBoundingClientRect.width  + _elementBoundingClientRect.width  : _elementBoundingClientRect.left - _containerBoundingClientRect.left - _containerBoundingClientRect.width  / 2 + _elementBoundingClientRect.width  / 2;
-      _elementOffsetTop  = (alignToTop  === true) ? _elementBoundingClientRect.top  - _containerBoundingClientRect.top  : (alignToTop  === false) ? _elementBoundingClientRect.top  - _containerBoundingClientRect.top  - _containerBoundingClientRect.height + _elementBoundingClientRect.height : _elementBoundingClientRect.top  - _containerBoundingClientRect.top  - _containerBoundingClientRect.height / 2 + _elementBoundingClientRect.height / 2;
+    window.setTimeout(() => {uss.scrollBy(_elementCurrentX - _elementFinalX, _elementCurrentY - _elementFinalY, _container, _callback.__function)}, 0);
+    if(_container === window) return;
 
-      _callback.__requiredSteps += 2; //2 more scroll-animations (on the window) are needed to activate the scrollIntoView passed callback
-      window.setTimeout(() => uss.scrollXBy(_containerOffsetLeft, window, _callback.__function, false), 0); //Async so that the browser can repaint
-      window.setTimeout(() => uss.scrollYBy(_containerOffsetTop,  window, _callback.__function, false), 0); //Async so that the browser can repaint
-    } else {
-      _elementOffsetLeft = (alignToLeft === true) ? _elementBoundingClientRect.left : (alignToLeft === false) ? _elementBoundingClientRect.left - window.innerWidth  + _elementBoundingClientRect.width  : _elementBoundingClientRect.left - window.innerWidth  / 2 + _elementBoundingClientRect.width  / 2;
-      _elementOffsetTop  = (alignToTop  === true) ? _elementBoundingClientRect.top  : (alignToTop  === false) ? _elementBoundingClientRect.top  - window.innerHeight + _elementBoundingClientRect.height : _elementBoundingClientRect.top  - window.innerHeight / 2 + _elementBoundingClientRect.height / 2;
+    let _containerCurrentX = _containerRect.left;
+    let _containerCurrentY = _containerRect.top;
+    const _containerFinalX = (alignToLeft === true) ? 0 : (alignToLeft === false) ? window.innerWidth  - _containerRect.width  : 0.5 * (window.innerWidth  - _containerRect.width);
+    const _containerFinalY = (alignToTop  === true) ? 0 : (alignToTop  === false) ? window.innerHeight - _containerRect.height : 0.5 * (window.innerHeight - _containerRect.height);
+
+    let _deltaX = _containerCurrentX - _containerFinalX; //Passed element container's remaning scroll amount on the x-axis
+    let _deltaY = _containerCurrentY - _containerFinalY; //Passed element container's remaning scroll amount on the y-axis
+
+    const _directionX = _deltaX > 0 ? 1 : -1;
+    const _directionY = _deltaY > 0 ? 1 : -1;
+
+    let _containerParent = uss.getScrollableParent(_container, includeHidden); //First scrollable parent of the passed element's container
+
+    _callback.__requiredSteps++;
+    window.setTimeout(_scrollParents, 0);
+
+    function _scrollParents() {
+    	uss.scrollBy(_deltaX, _deltaY, _containerParent, () => {
+        //We won't be able to scroll any further even if we wanted
+        if(_containerParent === window) {
+          element.focus();
+          _callback.__function();
+          return;
+        }
+
+        //Recalculate the passed element container's current position
+    		_containerRect = _container.getBoundingClientRect();
+        _containerCurrentX = _containerRect.left;
+        _containerCurrentY = _containerRect.top;
+
+    		//Recalculate the remaning scroll amounts
+        _deltaX = _containerCurrentX - _containerFinalX;
+        _deltaY = _containerCurrentY - _containerFinalY;
+
+        if(_deltaX * _directionX > 0 || _deltaY * _directionY > 0) {
+      	  _containerParent = uss.getScrollableParent(_containerParent, includeHidden);
+    			window.setTimeout(_scrollParents, 0);
+    			return;
+    		}
+
+  	    element.focus();
+        _callback.__function();
+    	});
     }
-
-    window.setTimeout(() => uss.scrollXBy(_elementOffsetLeft, _container, _callback.__function, false), 0); //Async so that the browser can repaint
-    window.setTimeout(() => uss.scrollYBy(_elementOffsetTop,  _container, _callback.__function, false), 0); //Async so that the browser can repaint
-    element.focus();
   },
   stopScrollingX: function (container = window, callback = () => {}) {
     let _scheduledAnimations = uss._xMapContainerAnimationID.get(container);
-    if(typeof _scheduledAnimations === "undefined" || _scheduledAnimations.length === 0) return;
+    if(typeof _scheduledAnimations === "undefined" || _scheduledAnimations.length === 0) {
+      if(typeof callback === "function") window.setTimeout(callback, 0);
+      return;
+    }
     _scheduledAnimations.forEach(__animationID => window.cancelAnimationFrame(__animationID));
     uss._xMapContainerAnimationID.set(container, []);
     if(typeof callback === "function") window.setTimeout(callback, 0);
   },
   stopScrollingY: function (container = window, callback = () => {}) {
     let _scheduledAnimations = uss._yMapContainerAnimationID.get(container);
-    if(typeof _scheduledAnimations === "undefined" || _scheduledAnimations.length === 0) return;
+    if(typeof _scheduledAnimations === "undefined" || _scheduledAnimations.length === 0) {
+      if(typeof callback === "function") window.setTimeout(callback, 0);
+      return;
+    }
     _scheduledAnimations.forEach(__animationID => window.cancelAnimationFrame(__animationID));
     uss._yMapContainerAnimationID.set(container, []);
     if(typeof callback === "function") window.setTimeout(callback, 0);
@@ -454,13 +511,13 @@ var uss = {
       const _pageLinkParts = _pageLink.href.split("#"); //PageLink.href = OptionalURL#Section
       if(_pageLinkParts[0] !== _pageURL) continue;
       const _elementToReach = document.getElementById(_pageLinkParts[1]);
+      if(_elementToReach === null) {console.warn("USS Error:", _pageLink, "doesn't have a valid destination element"); continue;}
 
-      if(_elementToReach instanceof HTMLElement)
-        _pageLink.addEventListener("click", event => {
-          event.preventDefault();
-          _init(_pageLink, _elementToReach);
-          uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHidden);
-        }, {passive:false});
+      _pageLink.addEventListener("click", event => {
+        event.preventDefault();
+        _init(_pageLink, _elementToReach);
+        uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHidden);
+      }, {passive:false});
     }
   }
 }
