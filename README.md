@@ -456,6 +456,8 @@ Method Name | Purpose
 # F.A.Q.
 ## Q: Do I need to have _`scroll-behavior: smooth`_ in my CSS ?
 A: NO! It will break the API.
+## Q: Can I use the API scrolling methods on containers that have the _`scroll-snap-type`_ CSS property ?
+A: NO! They won't work.
 ## Q: How do I invoke the API methods ?  
 A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD(ARGUMENTS)`.
 ## Q: What are _`_scrollX()`_ and _`_scrollY()`_ ?
