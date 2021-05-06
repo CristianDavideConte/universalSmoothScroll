@@ -543,7 +543,7 @@ More coming soon...
 * ✔️ Opera (from version ❔)
 * ✔️ Safari for iOS (from version ❔)
 * ✔️ Opera mini (from version ❔)
-* ❔  Android browser (not tested)
+* ✔️ Android browser (from version ❔)
 * ✔️ Opera mobile (from version ❔)
 * ✔️ Chrome for Android (from version ❔)
 * ✔️ Firefox for Android (from version ❔)
