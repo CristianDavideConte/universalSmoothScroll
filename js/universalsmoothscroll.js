@@ -102,8 +102,8 @@ var uss = {
   isXscrolling: function (container = window) {const _scheduledAnimations = uss._xMapContainerAnimationID.get(container); return typeof _scheduledAnimations !== "undefined" && _scheduledAnimations.length > 0;},
   isYscrolling: function (container = window) {const _scheduledAnimations = uss._yMapContainerAnimationID.get(container); return typeof _scheduledAnimations !== "undefined" && _scheduledAnimations.length > 0;},
   isScrolling:  function (container = window) {return uss.isXscrolling(container) || uss.isYscrolling(container);},
-  getXStepLengthCalculator: function (container = window) {return uss._xStepLengthCalculator.get(container)},
-  getYStepLengthCalculator: function (container = window) {return uss._yStepLengthCalculator.get(container)},
+  getXStepLengthCalculator: function (container = window) {return uss._xStepLengthCalculator.get(container);},
+  getYStepLengthCalculator: function (container = window) {return uss._yStepLengthCalculator.get(container);},
   getXStepLength: function () {return uss._xStepLength;},
   getYStepLength: function () {return uss._yStepLength;},
   getMinAnimationFrame: function () {return uss._minAnimationFrame;},
@@ -157,16 +157,16 @@ var uss = {
   calcXStepLength: function (deltaX) {return (deltaX >= (uss._minAnimationFrame - 1) * uss._xStepLength) ? uss._xStepLength : Math.round(deltaX / uss._minAnimationFrame);},
   calcYStepLength: function (deltaY) {return (deltaY >= (uss._minAnimationFrame - 1) * uss._yStepLength) ? uss._yStepLength : Math.round(deltaY / uss._minAnimationFrame);},
   getScrollXCalculator: function (container = window) {
-    return (container instanceof HTMLElement) ? () => {return container.scrollLeft} :
-           (container === window) ? () => {return container.scrollX} :
+    return (container === window)             ? () => {return container.scrollX;}    :
+           (container instanceof HTMLElement) ? () => {return container.scrollLeft;} :
            () => {
              console.error("USS Error: cannot determine the ScrollXCalculator of", container, "because it's neither an HTMLElement nor the window");
              throw "USS error";
           };
   },
   getScrollYCalculator: function (container = window) {
-    return (container instanceof HTMLElement) ? () => {return container.scrollTop}  :
-           (container === window) ? () => {return container.scrollY} :
+    return (container === window)             ? () => {return container.scrollY;}    :
+           (container instanceof HTMLElement) ? () => {return container.scrollTop;}  :
            () => {
              console.error("USS Error: cannot determine the ScrollYCalculator of", container, "because it's neither an HTMLElement nor the window");
              throw "USS error";
@@ -204,15 +204,15 @@ var uss = {
     if(element === window) return window;
     try {
       let _style = getComputedStyle(element);
+      if(_style.position === "fixed") return window;
       const _excludeStaticParent = _style.position === "absolute";
       const _overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-      if (_style.position === "fixed") return window;
 
       let _container;
-      for (_container = element; (_container = _container.parentElement);) {
+      for(_container = element; (_container = _container.parentElement);) {
           _style = getComputedStyle(_container);
-          if (_excludeStaticParent && _style.position === "static") continue;
-          if (_overflowRegex.test(_style.overflow + _style.overflowY + _style.overflowX))
+          if(_excludeStaticParent && _style.position === "static") continue;
+          if(_overflowRegex.test(_style.overflow + _style.overflowY + _style.overflowX))
             if(_container.scrollWidth > _container.clientWidth || _container.scrollHeight > _container.clientHeight)
               return _container;
       }
@@ -220,10 +220,10 @@ var uss = {
     } catch(e) {console.error("USS Error: Couldn't get the parent container of the element", element); return window;}
   },
   scrollXTo: function (finalXPosition, container = window, callback = () => {}, canOverlay = false) {
-    if (!Number.isFinite(finalXPosition)) {console.error("USS Error:", finalXPosition, "is not a number"); return;}
+    if(!Number.isFinite(finalXPosition)) {console.error("USS Error:", finalXPosition, "is not a number"); return;}
 
-    //If the container cannot be scrolled on the x-axis _maxScrollX will be <= 0 and the function returns.
-    //If the scroll-limit has already been reached, no scroll-animation is performed.
+    //If the container cannot be scrolled on the x-axis, _maxScrollX will be <= 0 and the function returns.
+    //If the final position has already been reached, no scroll-animation is performed.
     const _maxScrollX = uss.getMaxScrollX(container);
     if(_maxScrollX <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
     if(finalXPosition < 0) finalXPosition = 0;
@@ -245,9 +245,9 @@ var uss = {
 
     const _scrollStepLength = uss.calcXStepLength(_totalScrollAmount); //Default value for the step length
 
-    //If one or more scroll-animation on the x-axis of the passed component have being scheduled
-    //and the current requested scroll-animation cannot be overlayed,
-    //all the already-scheduled ones gets cancelled in order to make the new one play.
+    //If one or more scroll-animation on the x-axis of the passed component have already been scheduled
+    //and the requested scroll-animation cannot be overlayed,
+    //all the already-scheduled ones are cancelled in order to make the new one play.
     if(canOverlay === false) uss.stopScrollingX(container, null);
 
     let _scheduledAnimations = uss._xMapContainerAnimationID.get(container);  //List of already scheduled scroll-animations' IDs
@@ -257,7 +257,7 @@ var uss = {
     const _stepCalculator = uss._xStepLengthCalculator.get(container);
     const _usesCustomStepCalculator = typeof _stepCalculator === "function";
 
-    function _stepX (timestamp) {
+    function _stepX(timestamp) {
       _scheduledAnimations = uss._xMapContainerAnimationID.get(container);
       _scheduledAnimations.shift(); //The first _stepX to be executed is the first one which set an id
 
@@ -270,7 +270,7 @@ var uss = {
       }
 
       let _calculatedScrollStepLength;
-      if (_usesCustomStepCalculator) {
+      if(_usesCustomStepCalculator) {
         _calculatedScrollStepLength = _stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentXPosition, finalXPosition, container);
         if(!Number.isFinite(_calculatedScrollStepLength) || _calculatedScrollStepLength < 0) _calculatedScrollStepLength = _scrollStepLength;
       } else _calculatedScrollStepLength = _scrollStepLength;
@@ -295,10 +295,10 @@ var uss = {
     }
   },
   scrollYTo: function (finalYPosition, container = window, callback = () => {}, canOverlay = false) {
-    if (!Number.isFinite(finalYPosition)) {console.error("USS Error:", finalYPosition, "is not a number"); return;}
+    if(!Number.isFinite(finalYPosition)) {console.error("USS Error:", finalYPosition, "is not a number"); return;}
 
-    //If the container cannot be scrolled on the y-axis _maxScrollY will be <= 0 and the function returns.
-    //If the scroll-limit has already been reached, no scroll-animation is performed.
+    //If the container cannot be scrolled on the y-axis, _maxScrollY will be <= 0 and the function returns.
+    //If the final position has already been reached, no scroll-animation is performed.
     const _maxScrollY = uss.getMaxScrollY(container);
     if(_maxScrollY <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
     if(finalYPosition < 0) finalYPosition = 0;
@@ -320,9 +320,9 @@ var uss = {
 
     const _scrollStepLength = uss.calcYStepLength(_totalScrollAmount); //Default value for the step length
 
-    //If one or more scroll-animation on the y-axis of the passed component have being scheduled
-    //and the current requested scroll-animation cannot be overlayed,
-    //all the already-scheduled ones gets cancelled in order to make the new one play.
+    //If one or more scroll-animation on the y-axis of the passed component have already been scheduled
+    //and the requested scroll-animation cannot be overlayed,
+    //all the already-scheduled ones are cancelled in order to make the new one play.
     if(canOverlay === false) uss.stopScrollingY(container, null);
 
     let _scheduledAnimations = uss._yMapContainerAnimationID.get(container);  //List of already scheduled scroll-animations' IDs
@@ -332,7 +332,7 @@ var uss = {
     const _stepCalculator = uss._yStepLengthCalculator.get(container);
     const _usesCustomStepCalculator = typeof _stepCalculator === "function";
 
-    function _stepY (timestamp) {
+    function _stepY(timestamp) {
       _scheduledAnimations = uss._yMapContainerAnimationID.get(container);
       _scheduledAnimations.shift(); //The first _stepY to be executed is the first one which set an id
 
@@ -345,7 +345,7 @@ var uss = {
       }
 
       let _calculatedScrollStepLength;
-      if (_usesCustomStepCalculator) {
+      if(_usesCustomStepCalculator) {
         _calculatedScrollStepLength = _stepCalculator(_remaningScrollAmount, timestamp, _totalScrollAmount, _currentYPosition, finalYPosition, container);
         if(!Number.isFinite(_calculatedScrollStepLength) || _calculatedScrollStepLength < 0) _calculatedScrollStepLength = _scrollStepLength;
       } else _calculatedScrollStepLength = _scrollStepLength;
@@ -370,12 +370,12 @@ var uss = {
     }
   },
   scrollXBy: function (deltaX, container = window, callback = () => {}, canOverlay = false) {
-    if (!Number.isFinite(deltaX)) {console.error("USS Error:", deltaX, "is not a number"); return;}
+    if(!Number.isFinite(deltaX)) {console.error("USS Error:", deltaX, "is not a number"); return;}
     if(deltaX === 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
     uss.scrollXTo(uss.getScrollXCalculator(container)() + deltaX, container, callback, canOverlay);
   },
   scrollYBy: function (deltaY, container = window, callback = () => {}, canOverlay = false) {
-    if (!Number.isFinite(deltaY)) {console.error("USS Error:", deltaY, "is not a number"); return;}
+    if(!Number.isFinite(deltaY)) {console.error("USS Error:", deltaY, "is not a number"); return;}
     if(deltaY === 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
     uss.scrollYTo(uss.getScrollYCalculator(container)() + deltaY, container, callback, canOverlay);
   },
@@ -391,15 +391,18 @@ var uss = {
           return;
         }
         callback();
-      } : null //Null if no valid scrollTo's callback function is passed
+      } : null //No action if no valid scrollTo's callback function is passed
     };
 
     uss.scrollXTo(finalXPosition, container, _callback.__function, canOverlay);
     uss.scrollYTo(finalYPosition, container, _callback.__function, canOverlay);
   },
   scrollBy: function (deltaX, deltaY, container = window, callback = () => {}, canOverlay = false) {
-    if (!Number.isFinite(deltaX)) {console.error("USS Error:", deltaX, "is not a number"); return;}
-    if (!Number.isFinite(deltaY)) {console.error("USS Error:", deltaY, "is not a number"); return;}
+    if(!Number.isFinite(deltaX)) {console.error("USS Error:", deltaX, "is not a number"); return;}
+    if(!Number.isFinite(deltaY)) {console.error("USS Error:", deltaY, "is not a number"); return;}
+    if(deltaX === 0 && deltaY === 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
+    if(deltaX === 0) {uss.scrollYBy(deltaY, container, callback, canOverlay); return;}
+    if(deltaY === 0) {uss.scrollXBy(deltaX, container, callback, canOverlay); return;}
     uss.scrollTo(uss.getScrollXCalculator(container)() + deltaX, uss.getScrollYCalculator(container)() + deltaY, container, callback, canOverlay);
   },
   scrollIntoView: function (element = window, alignToLeft = true, alignToTop = true, callback = () => {}, includeHidden = false) {
@@ -427,7 +430,7 @@ var uss = {
           return;
         }
         callback();
-      } : () => {} //No function if no valid scrollIntoView's callback function is passed
+      } : () => {} //No action if no valid scrollIntoView's callback function is passed
     }
 
     window.setTimeout(() => {uss.scrollBy(_elementCurrentX - _elementFinalX, _elementCurrentY - _elementFinalY, _container, _callback.__function)}, 0);
@@ -450,7 +453,7 @@ var uss = {
     window.setTimeout(_scrollParents, 0);
 
     function _scrollParents() {
-    	uss.scrollBy(_deltaX, _deltaY, _containerParent, () => {
+      uss.scrollBy(_deltaX, _deltaY, _containerParent, () => {
         //We won't be able to scroll any further even if we wanted
         if(_containerParent === window) {
           element.focus();
@@ -459,23 +462,23 @@ var uss = {
         }
 
         //Recalculate the passed element container's current position
-    		_containerRect = _container.getBoundingClientRect();
+        _containerRect = _container.getBoundingClientRect();
         _containerCurrentX = _containerRect.left;
         _containerCurrentY = _containerRect.top;
 
-    		//Recalculate the remaning scroll amounts
+        //Recalculate the remaning scroll amounts
         _deltaX = _containerCurrentX - _containerFinalX;
         _deltaY = _containerCurrentY - _containerFinalY;
 
         if(_deltaX * _directionX > 0 || _deltaY * _directionY > 0) {
-      	  _containerParent = uss.getScrollableParent(_containerParent, includeHidden);
-    			window.setTimeout(_scrollParents, 0);
-    			return;
-    		}
+          _containerParent = uss.getScrollableParent(_containerParent, includeHidden);
+          window.setTimeout(_scrollParents, 0);
+          return;
+        }
 
-  	    element.focus();
+        element.focus();
         _callback.__function();
-    	});
+      });
     }
   },
   stopScrollingX: function (container = window, callback = () => {}) {
@@ -484,7 +487,7 @@ var uss = {
       if(typeof callback === "function") window.setTimeout(callback, 0);
       return;
     }
-    _scheduledAnimations.forEach(__animationID => window.cancelAnimationFrame(__animationID));
+    for(let __animationID of _scheduledAnimations) window.cancelAnimationFrame(__animationID);
     uss._xMapContainerAnimationID.set(container, []);
     if(typeof callback === "function") window.setTimeout(callback, 0);
   },
@@ -494,7 +497,7 @@ var uss = {
       if(typeof callback === "function") window.setTimeout(callback, 0);
       return;
     }
-    _scheduledAnimations.forEach(__animationID => window.cancelAnimationFrame(__animationID));
+    for(let __animationID of _scheduledAnimations) window.cancelAnimationFrame(__animationID);
     uss._yMapContainerAnimationID.set(container, []);
     if(typeof callback === "function") window.setTimeout(callback, 0);
   },
