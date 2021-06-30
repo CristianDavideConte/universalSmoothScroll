@@ -1,8 +1,5 @@
 # Universal Smooth Scroll API ![](https://raw.githubusercontent.com/CristianDavideConte/universalSmoothScroll/master/images/favicon.png)
 
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgba%2850%2C200%2C80%29&label=Version&logo=github)
-![npm](https://img.shields.io/npm/v/universalsmoothscroll?color=rgb%28255%2C50%2C50%29&label=%20Version&logo=npm)
-
 The Universal Smooth Scroll API is a **lightweight javascript piece of code** that provides an enriched version of the standard `scroll-behavior: smooth` CSS property.<br>
 This scroll API is based on and improves upon the 3 main ways to scroll an element in plain js: `scrollTo()`, `scrollBy()`, `scrollIntoView()`.<br>
 **Every scroll-animation** triggered by the API **can be interrupted** at any moment and **supports custom ease functions.**<br>
