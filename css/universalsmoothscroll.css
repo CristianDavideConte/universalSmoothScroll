@@ -18,6 +18,14 @@ a {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
+button,
+input {
+  font-size: 2.3vh;
+}
+
+#easeFunctionSelectorList::-webkit-scrollbar {
+  //display: none;
+}
 body::-webkit-scrollbar {
   //display: none;
 }
@@ -54,8 +62,8 @@ button {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(1vw, 1fr));
   grid-template-rows: repeat(1, 100px);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
 }
 
 ul {
@@ -72,6 +80,7 @@ li {
 }
 
 li > a {
+  font-size: 2.3vh;
   height: 100%;
   color: white;
   text-decoration: none;
@@ -97,8 +106,8 @@ li > a:hover {
   justify-content: center;
   top: calc(50% - 200px / 2);
   right: 17px;
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
 }
 
 #stopScrollingButtonsSection > button {
@@ -135,8 +144,14 @@ li > a:hover {
   flex-direction: row;
 }
 
-.scrollerSections {
-  overflow: scroll;
+#xScrollerSection {
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+#yScrollerSection {
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 #section1 {
@@ -160,11 +175,20 @@ li > a:hover {
 }
 
 #easeFunctionSelector > ul {
-   display: grid;
-   grid-template-columns: repeat(auto-fit, minmax(300px, 2fr));
-   grid-template-rows: repeat(6, 100px);
-   grid-gap: 0.5rem;
- }
+   display: flex;
+   flex-direction: column;
+   height: 50vh;
+   overflow-y: scroll;
+}
+
+#easeFunctionSelector > ul > li {
+    height: 10vh;
+    flex-shrink: 0;
+}
+
+#easeFunctionSelector > ul > li.selected {
+    background: rgba(0,0,0,0.3);
+}
 
 #xScroller {
   position: relative;
@@ -184,13 +208,13 @@ li > a:hover {
   z-index: 0;
   position: absolute;
   color:white;
-  font-size: 3rem;
+  font-size: 10vmin;
   height: 70vmin;
   width: 20vmin;
   border: none;
   background: rgba(0,0,0,0.5);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
 }
 
 #xScrollerLeft {
@@ -204,7 +228,7 @@ li > a:hover {
 }
 
 #xScrollerSection {
-    display: flex;
+  display: flex;
 }
 
 #section2,
@@ -226,13 +250,13 @@ li > a:hover {
   position: absolute;
   color:white;
   text-align: center;
-  font-size: 3rem;
+  font-size: 10vmin;
   height: 20vmin;
   width: 70vmin;
   border: none;
   background: rgba(0,0,0,0.5);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
 }
 
 #yScrollerUp {
@@ -258,17 +282,17 @@ li > a:hover {
 }
 
 #customBezierParameterSection {
-    width: 75%;
-    height: 50%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    align-items: center;
+  width: 75%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
 }
 
 #customBezierParameterSection > h2 {
-    color: black;
-    text-align: center;
+  color: black;
+  text-align: center;
 }
 
 #customBezierParameterSection > ul {
@@ -300,18 +324,6 @@ input[type = submit] {
 }
 
 @media only screen and (max-width: 1250px), (max-height: 870px)  {
-
-  @media (hover: hover) { /* For Desktop Devices Only */
-    #easeFunctionSelector {
-      margin-top: 200px;
-    }
-  }
-
-  #easeFunctionSelector > ul {
-     grid-template-columns: repeat(auto-fit, minmax(100px, 2fr));
-     grid-template-rows: repeat(4, 100px);
-   }
-
   #stopScrollingButtonsSection {
     width: 200px;
     height: 12vmin;
