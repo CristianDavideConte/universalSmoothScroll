@@ -18,6 +18,7 @@ You can also take a look at how single features are implemented on [this playgro
 ## HTML tag:
 Add this `<script>` to your project's `<head>`: <br/>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>`<br/>
+
 To include the support for cubic-bezier ease functions, also add this `<script>` to your project's `<head>`:<br/>
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-ease-functions-min.js"></script>`
 
@@ -506,17 +507,17 @@ For example:<br/>
 ```javascript
 uss.setYStepLengthCalculator((remaning, original_timestamp, timestamp, total, currentY, finalY, container) => {return remaning / 10 + 1;});
 ```
-You can also use the standard cubic-bezier ease-functions included in the `universalsmooth-scroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js).<br/>
-For istance:<br>
+<br/>You can also use the standard cubic-bezier ease-functions included in the `universalsmooth-scroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js).<br/>
+For istance:<br/>
 ```javascript
 uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
 ```
 ## Q: Can I make my scroll-animation last a certain amount of time?
 A: YES!<br/>
 While setting a custom ease function you will notice it will be passed both the timestamp relative to the beginning of the scroll-animation and the current timestamp as the second and third arguments of your function.<br/>
-You can use them to make the scroll-animations last any amount of time you want.<br/>
-You can also use the standard cubic-bezier ease-functions included in the `universalsmooth-scroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) which can be used by specifing a duration as the first argument.<br>
-For istance:<br>
+You can use them to make the scroll-animations last any amount of time you want.<br/><br/>
+You can also use the standard cubic-bezier ease-functions included in the `universalsmooth-scroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) which can be used by specifing a duration as the first argument.<br/>
+For istance:<br/>
 ```javascript
 uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); //Every scroll-animation on our container will last 2 seconds
 ```
