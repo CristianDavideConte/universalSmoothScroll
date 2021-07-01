@@ -181,10 +181,10 @@ Method Name | Purpose
 ```javascript
 /*
  * @param newCalculator function that returns the length of each step of every scroll-animation on the x-axis for the passed container.
- *        In order for it to work, it has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._xStepLength)
- *        It will be passed the following readonly input parameters:
+ *        In order for it to work, it has to always return a number >= 0 (otherwise the return value at runtime will be defaulted to uss._xStepLength)
+ *        It will be passed the following input parameters:
  *          1) remaningScrollAmount of current the scroll-animation
- *          2) original_timestamp provided by the first _stepX function call
+ *          2) originalTimestamp provided by the first _stepX function call
  *          3) timestamp provided by each _stepX function call
  *          4) totalScrollAmount of the current scroll-animation
  *          5) currentXPosition of the container's left border
@@ -198,10 +198,10 @@ Method Name | Purpose
 ```javascript
 /*
  * @param newCalculator function that returns the length of each step of every scroll-animation on the y-axis for the passed container.
- *        In order for it to work, it has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._yStepLength)
- *        It will be passed the following readonly input parameters:
+ *        In order for it to work, it has to always return a number >= 0 (otherwise the return value at runtime will be defaulted to uss._yStepLength)
+ *        It will be passed the following input parameters:
  *          1) remaningScrollAmount of current the scroll-animation
- *          2) original_timestamp provided by the first _stepY function call
+ *          2) originalTimestamp provided by the first _stepY function call
  *          3) timestamp provided by each _stepY function call
  *          4) totalScrollAmount of the current scroll-animation
  *          5) currentYPosition of the container's top border
@@ -215,14 +215,14 @@ Method Name | Purpose
 ```javascript
 /*
  * @param newCalculator function that returns the length of each step of every scroll-animation on both the x-axis and the y-axis for the passed container.
- *        In order for it to work, it has to always return a number > 0 (otherwise the return value at runtime will be defaulted to uss._(x/y)StepLength)
- *        It will be passed the following readonly input parameters:
+ *        In order for it to work, it has to always return a number >= 0 (otherwise the return value at runtime will be defaulted to uss._(x/y)StepLength)
+ *        It will be passed the following input parameters:
  *          1) remaningScrollAmount of current the scroll-animation
- *          2) original_timestamp provided by the first _stepX/Y function call
+ *          2) originalTimestamp provided by the first _stepX/Y function call
  *          3) timestamp provided by each _stepX/Y function call
  *          4) totalScrollAmount of the current scroll-animation
- *          5) currentPosition of the container's top border
- *          6) finalPosition that the container's top border has to reach
+ *          5) currentPosition of the container's top/left border
+ *          6) finalPosition that the container's top/left border has to reach
  *          7) container on which the scroll-animation is currently being performed
  * @param container window or HTML element
  */
@@ -470,16 +470,58 @@ A: NO! It will break the API.
 A: NO! They won't work.
 ## Q: How do I invoke the API methods ?  
 A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD(ARGUMENTS)`.
-## Q: What are _`_scrollX()`_ and _`_scrollY()`_ ?
-A: They are functions that can only be internally accessed by the API, you won't be able to invoke them. <br/>
-They execute all the instructions needed for a single scroll-animation-step on respectively the x-axis and the y-axis.
+## Q: What is a _scrollCalculator_ ? 
+A: It's function that has to always return a number >= 0.<br/>
+
+This function will be invoked by the API every time it has to decide how many pixels should be scrolled on the x/y axis of a container.<br/>
+The way the API will invoke this function is by passing it the following input parameters (in this order):
+  - RemaningScrollAmount of current the scroll-animation
+  - OriginalTimestamp provided by the first \_stepX/Y function call (indicates the exact time in milliseconds at which the scroll-animation has started)
+  - Timestamp provided by each \_stepX/Y function call (indicates the time in milliseconds at which the scrollCalculator is invoked)
+  - TotalScrollAmount of the current scroll-animation
+  - CurrentPosition of the container's top/left border (top if the scroll-animation is on the y-axis, left otherwise)
+  - FinalPosition that the container's top/left border has to reach (top if the scroll-animation is on the y-axis, left otherwise)
+  - Container on which the scroll-animation is currently being performed (a DOM element that can be scrolled)<br/>
+
+Imagine that a scroll-animation is like a stair: you know where/when you started, how long the stair is and where/when you are right now.<br/>
+This stair could have many steps and you can decide if you want to rest (don't make any step) or go faster (do more than one step at once) by telling the API through a scrollCalculator.<br/>   
+So this function could be invoked by the API 1000s of times during a single scroll-animation and that's why it gets passed all the parameters described above.<br/>
+
+For istance:<br/>
+```javascript
+/*
+ * This particular scroll calculator will make the scroll-animation
+ * start slowly (total = remaning at the beginnig of the scroll-animation)
+ * ramp up the speed (remaning will decrease more and more)
+ * arriving at full speed (remaning = 0 at the end of the scroll-animation)   
+ */
+const myScrollCalculator = (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {
+    const traveledDistance = total - remaning; 
+    return traveledDistance + 1; //+1 because at first total = remaning and we wouldn't move at all without it
+};
+uss.setYStepLengthCalculator(myScrollCalculator, myContainer);
+```
+
+You don't have to write your own scrollCalculator if you don't want to, infact the API will still function even if you don't specify any.<br/>
+You can also use the functions of the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) to get a scrollCalculator.<br/>
+
+For example:<br/>
+```javascript
+/* 
+ * Make sure to have imported the universalsmoothscroll-ease-function library in your project 
+ * This scrollCalculator will make our scroll-animations always last 2 seconds and will make sure that
+ * they will start as fast as possible and finish as slow as they can. 
+ */
+uss.setXStepLengthCalculator(EASE_OUT_CUBIC(2000), myContainer);
+```
+
 ## Q: What is the difference between _`stillStart = true`_ and _`stillStart = false`_ ?
 A: They produce 2 completly different kind of scroll-animations' behaviors.<br/>
 _`stillStart = true`_ means that before the scroll-animation you requested can be played any other scroll-animation on the same axis of the passed container is cancelled so this type of scroll-animations always start from a no-movement situation in order to be performed.<br/>  
 _`stillStart = false`_ means that even if other scroll-animations on the same axis of the passed container are currently being performed they won't be cancelled by default, they will just be extended/reduced by the passed delta.<br/>
 This is an example of how different these 2 kind of scroll-animations are:<br/>
 ```javascript
-const ourEaseFunction = (remaning, original_timestamp, timestamp, total, currentY, finalY, container) => {return remaning / 15 + 1;};
+const ourEaseFunction = (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {return remaning / 15 + 1;};
 uss.setYStepLengthCalculator(ourEaseFunction, window);
 
 //CASE A: stillStart = true
@@ -505,9 +547,9 @@ A: YES! <br/>
 Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br/>
 For example:<br/>
 ```javascript
-uss.setYStepLengthCalculator((remaning, original_timestamp, timestamp, total, currentY, finalY, container) => {return remaning / 10 + 1;});
+uss.setYStepLengthCalculator((remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {return remaning / 10 + 1;});
 ```
-<br/>You can also use the standard cubic-bezier ease-functions included in the `universalsmooth-scroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js).<br/>
+<br/>You can also use the standard cubic-bezier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js).<br/>
 For istance:<br/>
 ```javascript
 uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
@@ -516,7 +558,7 @@ uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
 A: YES!<br/>
 While setting a custom ease function you will notice it will be passed both the timestamp relative to the beginning of the scroll-animation and the current timestamp as the second and third arguments of your function.<br/>
 You can use them to make the scroll-animations last any amount of time you want.<br/><br/>
-You can also use the standard cubic-bezier ease-functions included in the `universalsmooth-scroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) which can be used by specifing a duration as the first argument.<br/>
+You can also use the standard cubic-bezier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) which can be used by specifing a duration as the first argument.<br/>
 For istance:<br/>
 ```javascript
 uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); //Every scroll-animation on our container will last 2 seconds
@@ -530,6 +572,9 @@ For example: <br/>
 let changeBg = () => document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"; //No need to return anything in this case
 uss.hrefSetup(true, true, changeBg); //Every time an anchor link is clicked our body's backgroundColor is randomly changed
 ```
+## Q: What are _`_scrollX()`_ and _`_scrollY()`_ ?
+A: They are functions that can only be internally accessed by the API, you won't be able to invoke them. <br/>
+They execute all the instructions needed for a single scroll-animation-step on respectively the x-axis and the y-axis.
 ## Q: Why there's no setter for the _`_reducedMotion`_ variable ?
 A: Because it's up to the final users to decide which accessibility settings they want to enable. <br/>
 Ignoring user preferences is not suggested.   
