@@ -604,5 +604,5 @@ More coming soon...
 * ❔  KaiOS Browser (not tested)
 
 # Contact Me
-If you found a bug, have improvements' suggestions, features' request, or if you simply want to contact me, use [my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br/>
+If you found a bug, have improvements suggestions, features request, or if you simply want to contact me, use [my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br/>
 Feel free to reach out !
