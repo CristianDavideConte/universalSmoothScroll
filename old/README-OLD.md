@@ -197,8 +197,8 @@ Method Name | Purpose
  *          1) remaningScrollAmount of current the scroll-animation
  *          2) timestamp provided by the requestAnimationFrame() function call
  *          3) totalScrollAmount of the current scroll-animation
- *          4) currentPosition of the container's top border
- *          5) finalPosition that the container's top border has to reach
+ *          4) currentPosition of the container's top/left border
+ *          5) finalPosition that the container's top/left border has to reach
  *          6) container on which the scroll-animation is currently being performed
  * @param container window or HTML element
  */
