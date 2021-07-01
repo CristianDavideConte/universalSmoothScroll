@@ -470,21 +470,21 @@ A: NO! It will break the API.
 A: NO! They won't work.
 ## Q: How do I invoke the API methods ?  
 A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD(ARGUMENTS)`.
-## Q: What is a _scrollCalculator_ ? 
+## Q: What is a _StepLengthCalculator_ ? 
 A: It's function that has to always return a number >= 0.<br/>
 
 This function will be invoked by the API every time it has to decide how many pixels should be scrolled on the x/y axis of a container.<br/>
 The way the API will invoke this function is by passing it the following input parameters (in this order):
   - RemaningScrollAmount of current the scroll-animation
   - OriginalTimestamp provided by the first \_stepX/Y function call (indicates the exact time in milliseconds at which the scroll-animation has started)
-  - Timestamp provided by each \_stepX/Y function call (indicates the time in milliseconds at which the scrollCalculator is invoked)
+  - Timestamp provided by each \_stepX/Y function call (indicates the time in milliseconds at which the StepLengthCalculator is invoked)
   - TotalScrollAmount of the current scroll-animation
   - CurrentPosition of the container's top/left border (top if the scroll-animation is on the y-axis, left otherwise)
   - FinalPosition that the container's top/left border has to reach (top if the scroll-animation is on the y-axis, left otherwise)
   - Container on which the scroll-animation is currently being performed (a DOM element that can be scrolled)<br/>
 
 Imagine that a scroll-animation is like a stair: you know where/when you started, how long the stair is and where/when you are right now.<br/>
-This stair could have many steps and you can decide if you want to rest (don't make any step) or go faster (do more than one step at once) by telling the API through a scrollCalculator.<br/>   
+This stair could have many steps and you can decide if you want to rest (don't make any step) or go faster (do more than one step at once) by telling the API through a StepLengthCalculator.<br/>   
 So this function could be invoked by the API 1000s of times during a single scroll-animation and that's why it gets passed all the parameters described above.<br/>
 
 For istance:<br/>
@@ -502,19 +502,19 @@ const myScrollCalculator = (remaning, originalTimestamp, timestamp, total, curre
 uss.setYStepLengthCalculator(myScrollCalculator, myContainer);
 ```
 
-You don't have to write your own scrollCalculator if you don't want to, infact the API will still function even if you don't specify any.<br/>
-You can also use the functions of the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) to get a scrollCalculator.<br/>
+You don't have to write your own StepLengthCalculator if you don't want to, infact the API will still function even if you don't specify any.<br/>
+You can also use the functions of the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) to get a StepLengthCalculator.<br/>
 
 For example:<br/>
 ```javascript
 /* 
  * Make sure to have imported the universalsmoothscroll-ease-function library in your project 
- * This scrollCalculator will make our scroll-animations always last 2 seconds and will make sure that
+ * This StepLengthCalculator will make our scroll-animations always last 1 second and will make sure that
  * they will start as fast as possible and finish as slow as they can. 
  */
-uss.setXStepLengthCalculator(EASE_OUT_CUBIC(2000), myContainer);
+uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 ```
-
+[Here](https://easings.net/) you can find out more about the way the StepLengthCalculators provided by `universalsmoothscroll-ease-functions` [library](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) will affect your scroll-animations.
 ## Q: What is the difference between _`stillStart = true`_ and _`stillStart = false`_ ?
 A: They produce 2 completly different kind of scroll-animations' behaviors.<br/>
 _`stillStart = true`_ means that before the scroll-animation you requested can be played any other scroll-animation on the same axis of the passed container is cancelled so this type of scroll-animations always start from a no-movement situation in order to be performed.<br/>  
