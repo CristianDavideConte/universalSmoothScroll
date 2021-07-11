@@ -608,5 +608,5 @@ KaiOS Browser | ❔ | ❔
 ❓❓❓ IE doesn't support neither the ES6 functions' default parameters nor the `() => {}` sintax.
 
 # Contact Me
-If you found a bug, have improvements suggestions, features request, or if you simply want to contact me, use [my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br/>
+If you find a bug, have a suggestion, a feature request, or if you simply want to contact me, use [my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br/>
 Feel free to reach out !
