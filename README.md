@@ -519,6 +519,7 @@ uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 A: They produce 2 completly different kind of scroll-animations' behaviors.<br/>
 _`stillStart = true`_ means that before the scroll-animation you requested can be played any other scroll-animation on the same axis of the passed container is cancelled so this type of scroll-animations always start from a no-movement situation in order to be performed.<br/>  
 _`stillStart = false`_ means that even if other scroll-animations on the same axis of the passed container are currently being performed they won't be cancelled by default, they will just be extended/reduced by the passed delta.<br/>
+
 This is an example of how different these 2 kind of scroll-animations are:<br/>
 ```javascript
 const ourEaseFunction = (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {return remaning / 15 + 1;};
@@ -539,8 +540,8 @@ const stillStartFalseBehavior = wheelEvent => {
 }
 
 //Uncomment one or the other and look at the difference
-//window.addEventListener("wheel", stillStartTrueBehavior,   {passive: false});
-//window.addEventListener("wheel", stillStartFalseBehavior,  {passive: false});
+//window.addEventListener("wheel", stillStartTrueBehavior,  {passive:false});
+//window.addEventListener("wheel", stillStartFalseBehavior, {passive:false});
 ```
 ## Q: Can I modify the way scroll-animation steps are calculated to a non-linear behavior ?
 A: YES! <br/>
