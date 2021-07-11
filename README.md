@@ -528,14 +528,14 @@ uss.setYStepLengthCalculator(ourEaseFunction, window);
 const stillStartTrueBehavior = wheelEvent => {
     wheelEvent.preventDefault();
     wheelEvent.stopPropagation();
-    uss.scrollYBy(totalScrollAmount(wheelEvent.deltaY), window, null, true);
+    uss.scrollYBy(wheelEvent.deltaY, window, null, true);
 }
 
 //CASE B: stillStart = false
 const stillStartFalseBehavior = wheelEvent => {
     wheelEvent.preventDefault();
     wheelEvent.stopPropagation();
-    uss.scrollYBy(totalScrollAmount(wheelEvent.deltaY), window, null, false);
+    uss.scrollYBy(wheelEvent.deltaY, window, null, false);
 }
 
 //Uncomment one or the other and look at the difference
