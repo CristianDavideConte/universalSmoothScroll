@@ -470,6 +470,28 @@ A: NO! It will break the API.
 A: NO! They won't work.
 ## Q: How do I invoke the API methods ?  
 A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD(ARGUMENTS)`.
+## Q: Can I modify the way scroll-animation steps are calculated to a non-linear behavior ?
+A: YES! <br/>
+Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br/>
+For example:<br/>
+```javascript
+uss.setYStepLengthCalculator((remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {return remaning / 10 + 1;});
+```
+<br/>You can also use the standard cubic-bezier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js).<br/>
+For istance:<br/>
+```javascript
+uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
+```
+## Q: Can I make my scroll-animation last a certain amount of time?
+A: YES!<br/>
+While setting a custom ease function you will notice it will be passed both the timestamp relative to the beginning of the scroll-animation and the current timestamp as the second and third arguments of your function.<br/>
+You can use them to make the scroll-animations last any amount of time you want.<br/><br/>
+You can also use the standard cubic-bezier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) which can be used by specifing a duration as the first argument.<br/>
+For istance:<br/>
+```javascript
+uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); //Every scroll-animation on our container will last 2 seconds
+```
+You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) helpful.
 ## Q: What is a _StepLengthCalculator_ ? 
 A: It's function that has to always return a number >= 0.<br/>
 
@@ -483,9 +505,9 @@ The way the API will invoke this function is by passing it the following input p
   - FinalPosition that the container's top/left border has to reach (top if the scroll-animation is on the y-axis, left otherwise)
   - Container on which the scroll-animation is currently being performed (a DOM element that can be scrolled)<br/>
 
-Imagine that a scroll-animation is like a stair: you know where/when you started, how long the stair is and where/when you are right now.<br/>
+Imagine that a scroll-animation is like a stair: you know where/when you started, how long the stair is, how much time has passed and where you are right now.<br/>
 This stair could have many steps and you can decide if you want to rest (don't make any step) or go faster (do more than one step at once) by telling the API through a StepLengthCalculator.<br/>   
-So this function could be invoked by the API 1000s of times during a single scroll-animation and that's why it gets passed all the parameters described above.<br/>
+This function can be invoked by the API 1000s of times during a single scroll-animation and that's why it gets passed all the parameters described above.<br/>
 
 For istance:<br/>
 ```javascript
@@ -502,7 +524,7 @@ const myScrollCalculator = (remaning, originalTimestamp, timestamp, total, curre
 uss.setYStepLengthCalculator(myScrollCalculator, myContainer);
 ```
 
-You don't have to write your own StepLengthCalculator if you don't want to, infact the API will still function even if you don't specify any.<br/>
+You don't have to write your own StepLengthCalculator if you don't want to, infact the API will still function even if you don't specify any (the behavior will be linear).<br/>
 You can also use the functions of the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) to get a StepLengthCalculator.<br/>
 
 For example:<br/>
@@ -543,28 +565,6 @@ const stillStartFalseBehavior = wheelEvent => {
 //window.addEventListener("wheel", stillStartTrueBehavior,  {passive:false});
 //window.addEventListener("wheel", stillStartFalseBehavior, {passive:false});
 ```
-## Q: Can I modify the way scroll-animation steps are calculated to a non-linear behavior ?
-A: YES! <br/>
-Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br/>
-For example:<br/>
-```javascript
-uss.setYStepLengthCalculator((remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {return remaning / 10 + 1;});
-```
-<br/>You can also use the standard cubic-bezier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js).<br/>
-For istance:<br/>
-```javascript
-uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
-```
-## Q: Can I make my scroll-animation last a certain amount of time?
-A: YES!<br/>
-While setting a custom ease function you will notice it will be passed both the timestamp relative to the beginning of the scroll-animation and the current timestamp as the second and third arguments of your function.<br/>
-You can use them to make the scroll-animations last any amount of time you want.<br/><br/>
-You can also use the standard cubic-bezier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) which can be used by specifing a duration as the first argument.<br/>
-For istance:<br/>
-```javascript
-uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); //Every scroll-animation on our container will last 2 seconds
-```
-You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) helpful.
 ## Q: What is the _hrefSetup's_ `init` parameter ?
 A: Unlike every other callback parameter of this API, this is a function that gets executed right before any scroll-animation is performed. <br/>
 You may want to use this function to execute actions that must happen after an anchor link is clicked but before any scroll-animation is performed. <br/>
