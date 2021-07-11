@@ -585,23 +585,27 @@ If that's the case don't hesitate to contact me !
 More coming soon...
 
 # Browser Compatibility
-* ❌ IE (doesn't support ES6 js default parameters values nor `() => {}` sintax)
-* ✔️ Edge (from version ❔)
-* ✔️ Firefox (from version ❔)
-* ✔️ Chrome (from version ❔)
-* ✔️ Safari (from version ❔)
-* ✔️ Opera (from version ❔)
-* ✔️ Safari for iOS (from version ❔)
-* ✔️ Opera mini (from version ❔)
-* ✔️ Android browser (from version ❔)
-* ✔️ Opera mobile (from version ❔)
-* ✔️ Chrome for Android (from version ❔)
-* ✔️ Firefox for Android (from version ❔)
-* ✔️ UC Browser for Android (from version ❔)
-* ✔️ Samsung Internet (from version ❔)
-* ❔  QQ Browser (not tested)
-* ✔️ Baidu Browser (from version ❔)
-* ❔  KaiOS Browser (not tested)
+Browser | Support | From Version
+:-------: | :-------------: | :------------:
+IE | ❌ | ❓❓❓
+Edge | ✔️ | ❔
+Firefox | ✔️ | ❔
+Chrome | ✔️ | ❔
+Safari | ✔️ | ❔
+Opera | ✔️ | ❔
+Safari for iOS | ✔️ | ❔
+Opera mini | ✔️ | ❔
+Android browser | ✔️ | ❔
+Opera mobile | ✔️ | ❔
+Chrome for Android | ✔️ | ❔
+Firefox for Android | ✔️ | ❔
+UC Browser for Android | ✔️ | ❔
+Samsung Internet | ✔️ | ❔
+QQ Browser | ❔ | ❔
+Baidu Browser | ✔️ | ❔
+KaiOS Browser | ❔ | ❔
+
+❓❓❓ IE doesn't support neither the ES6 functions' default parameters nor the `() => {}` sintax.
 
 # Contact Me
 If you found a bug, have improvements suggestions, features request, or if you simply want to contact me, use [my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br/>
