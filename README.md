@@ -165,12 +165,12 @@ Method Name | Purpose
 #### getWindowHeight
 ```javascript
 /* No input parameters required */
- function getWindowHeight();
+ function getWindowHeight ();
 ```
 #### getWindowWidth
 ```javascript
 /* No input parameters required */
- function getWindowWidth();
+ function getWindowWidth ();
 ```
 #### getReducedMotionState
 ```javascript
