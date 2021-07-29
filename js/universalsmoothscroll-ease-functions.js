@@ -23,8 +23,8 @@ const CUSTOM_CUBIC_BEZIER = (u0 = 0, u1 = 0, u2 = 1, u3 = 1, duration = 500) => 
     return t * ( cY + t * ( bY + t * aY )); //This is y given t on the bezier curve
   }
 
-  return (remaning, original_timestamp, timestamp, total, currentPos, finalPos, container) => {
-    const _elapsed = timestamp - original_timestamp;
+  return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+    const _elapsed = timestamp - originalTimestamp;
     const _currentBezierX = _elapsed < 0 ? 0 : _elapsed / duration; // from 0 to 1
     const _nextPos = _currentBezierX === 0 ? 0 : newtonRapson(aX, bX, cX, aY, bY, cY, _currentBezierX) * total;
   	return Math.ceil(remaning - total + _nextPos);

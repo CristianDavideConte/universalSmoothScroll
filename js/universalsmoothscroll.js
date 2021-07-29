@@ -178,19 +178,19 @@ var uss = {
     if(newMinAnimationFrame <= 0) {console.error("USS Error:", newMinAnimationFrame, "must be a positive number"); return;}
     uss._minAnimationFrame = newMinAnimationFrame;
   },
-  calcXStepLength: function (deltaX) {return (deltaX >= (uss._minAnimationFrame - 1) * uss._xStepLength) ? uss._xStepLength : Math.round(deltaX / uss._minAnimationFrame);},
-  calcYStepLength: function (deltaY) {return (deltaY >= (uss._minAnimationFrame - 1) * uss._yStepLength) ? uss._yStepLength : Math.round(deltaY / uss._minAnimationFrame);},
+  calcXStepLength: function (deltaX) {return (deltaX >= (uss._minAnimationFrame - 1) * uss._xStepLength) ? uss._xStepLength : Math.ceil(deltaX / uss._minAnimationFrame);},
+  calcYStepLength: function (deltaY) {return (deltaY >= (uss._minAnimationFrame - 1) * uss._yStepLength) ? uss._yStepLength : Math.ceil(deltaY / uss._minAnimationFrame);},
   getScrollXCalculator: function (container = window) {
     return (container === window)             ? () => {return container.scrollX;}    :
            (container instanceof HTMLElement) ? () => {return container.scrollLeft;} :
            () => {
              console.error("USS Error: cannot determine the ScrollXCalculator of", container, "because it's neither an HTMLElement nor the window");
              throw "USS error";
-          };
+           };
   },
   getScrollYCalculator: function (container = window) {
-    return (container === window)             ? () => {return container.scrollY;}    :
-           (container instanceof HTMLElement) ? () => {return container.scrollTop;}  :
+    return (container === window)             ? () => {return container.scrollY;}   :
+           (container instanceof HTMLElement) ? () => {return container.scrollTop;} :
            () => {
              console.error("USS Error: cannot determine the ScrollYCalculator of", container, "because it's neither an HTMLElement nor the window");
              throw "USS error";
@@ -232,13 +232,14 @@ var uss = {
       const _excludeStaticParent = _style.position === "absolute";
       const _overflowRegex = includeHidden ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
 
-      let _container;
-      for(_container = element; (_container = _container.parentElement);) {
+      let _container = element.parentElement;
+      while(_container !== null) {
           _style = getComputedStyle(_container);
           if(_excludeStaticParent && _style.position === "static") continue;
           if(_overflowRegex.test(_style.overflow + _style.overflowY + _style.overflowX))
             if(_container.scrollWidth > _container.clientWidth || _container.scrollHeight > _container.clientHeight)
               return _container;
+          _container = _container.parentElement;
       }
       return window;
     } catch(e) {console.error("USS Error: Couldn't get the parent container of the element", element); return window;}
@@ -249,20 +250,20 @@ var uss = {
     //If the container cannot be scrolled on the x-axis, _maxScrollX will be <= 0 and the function returns.
     //If the final position has already been reached, no scroll-animation is performed.
     const _maxScrollX = uss.getMaxScrollX(container);
-    if(_maxScrollX <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
+    if(_maxScrollX <= 0) {if(typeof callback === "function") window.requestAnimationFrame(callback); return;}
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
     const _scrollYCalculator = uss.getScrollYCalculator(container);
     let _totalScrollAmount = finalXPosition - _scrollXCalculator();
     const _direction = _totalScrollAmount > 0 ? 1 : -1;
     _totalScrollAmount *= _direction;
-    if(_totalScrollAmount <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
+    if(_totalScrollAmount <= 0) {if(typeof callback === "function") window.requestAnimationFrame(callback); return;}
 
     //If user prefers reduced motion
-    //the API rolls back to the default "jump" behavior
+    //the API rolls back to the default "jump-to-position" behavior
     if(uss._reducedMotion) {
       container.scroll(finalXPosition, _scrollYCalculator());
-      if(typeof callback === "function") window.setTimeout(callback, 0);
+      if(typeof callback === "function") window.requestAnimationFrame(callback);
       return;
     }
 
@@ -295,7 +296,7 @@ var uss = {
       const _remaningScrollAmount = (finalXPosition - _currentXPosition) * _direction;
       if(_remaningScrollAmount <= 0) {
         _containerData[0] = null;
-        if(typeof _containerData[10] === "function") window.setTimeout(_containerData[10], 0);
+        if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
         return;
       }
 
@@ -308,15 +309,16 @@ var uss = {
       if(_remaningScrollAmount <= _calculatedScrollStepLength) {
         _containerData[0] = null;
         container.scroll(finalXPosition, _scrollYCalculator());
-        if(typeof _containerData[10] === "function") window.setTimeout(_containerData[10], 0);
+        if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
         return;
       }
 
       container.scroll(_currentXPosition + _calculatedScrollStepLength * _direction, _scrollYCalculator());
 
-      if(_calculatedScrollStepLength >= 1 && _currentXPosition === _scrollXCalculator()) { //The finalXPosition was beyond the scroll limit of the container
+      //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container
+      if(_calculatedScrollStepLength >= 1 && _currentXPosition === _scrollXCalculator()) {
         _containerData[0] = null;
-        if(typeof _containerData[10] === "function") window.setTimeout(_containerData[10], 0);
+        if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
         return;
       }
 
@@ -329,20 +331,20 @@ var uss = {
     //If the container cannot be scrolled on the y-axis, _maxScrollY will be <= 0 and the function returns.
     //If the final position has already been reached, no scroll-animation is performed.
     const _maxScrollY = uss.getMaxScrollY(container);
-    if(_maxScrollY <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
+    if(_maxScrollY <= 0) {if(typeof callback === "function") window.requestAnimationFrame(callback); return;}
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
     const _scrollYCalculator = uss.getScrollYCalculator(container);
     let _totalScrollAmount = finalYPosition - _scrollYCalculator();
     const _direction = _totalScrollAmount > 0 ? 1 : -1;
     _totalScrollAmount *= _direction;
-    if(_totalScrollAmount <= 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
+    if(_totalScrollAmount <= 0) {if(typeof callback === "function") window.requestAnimationFrame(callback); return;}
 
     //If user prefers reduced motion
-    //the API rolls back to the default "jump" behavior
+    //the API rolls back to the default "jump-to-position" behavior
     if(uss._reducedMotion) {
       container.scroll(_scrollXCalculator(), finalYPosition);
-      if(typeof callback === "function") window.setTimeout(callback, 0);
+      if(typeof callback === "function") window.requestAnimationFrame(callback);
       return;
     }
 
@@ -375,7 +377,7 @@ var uss = {
       const _remaningScrollAmount = (finalYPosition - _currentYPosition) * _direction;
       if(_remaningScrollAmount <= 0) {
         _containerData[1] = null;
-        if(typeof _containerData[11] === "function") window.setTimeout(_containerData[11], 0);
+        if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
         return;
       }
 
@@ -388,15 +390,16 @@ var uss = {
       if(_remaningScrollAmount <= _calculatedScrollStepLength) {
         _containerData[1] = null;
         container.scroll(_scrollXCalculator(), finalYPosition);
-        if(typeof _containerData[11] === "function") window.setTimeout(_containerData[11], 0);
+        if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
         return;
       }
 
       container.scroll(_scrollXCalculator(), _currentYPosition + _calculatedScrollStepLength * _direction);
 
-      if(_calculatedScrollStepLength >= 1 && _currentYPosition === _scrollYCalculator()) { //The finalYPosition was beyond the scroll limit of the container
+      //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container
+      if(_calculatedScrollStepLength >= 1 && _currentYPosition === _scrollYCalculator()) {
         _containerData[1] = null;
-        if(typeof _containerData[11] === "function") window.setTimeout(_containerData[11], 0);
+        if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
         return;
       }
 
@@ -405,7 +408,7 @@ var uss = {
   },
   scrollXBy: function (deltaX, container = window, callback = () => {}, stillStart = true) {
     if(!Number.isFinite(deltaX)) {console.error("USS Error:", deltaX, "is not a number"); return;}
-    if(deltaX === 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
+    if(deltaX === 0) {if(typeof callback === "function") window.requestAnimationFrame(callback); return;}
 
     if(!stillStart) {
       const _containerData = uss._containersData.get(container) || [];
@@ -424,7 +427,7 @@ var uss = {
   },
   scrollYBy: function (deltaY, container = window, callback = () => {}, stillStart = true) {
     if(!Number.isFinite(deltaY)) {console.error("USS Error:", deltaY, "is not a number"); return;}
-    if(deltaY === 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
+    if(deltaY === 0) {if(typeof callback === "function") window.requestAnimationFrame(callback); return;}
 
     if(!stillStart) {
       const _containerData = uss._containersData.get(container) || [];
@@ -462,7 +465,7 @@ var uss = {
   scrollBy: function (deltaX, deltaY, container = window, callback = () => {}, stillStart = true) {
     if(!Number.isFinite(deltaX)) {console.error("USS Error:", deltaX, "is not a number"); return;}
     if(!Number.isFinite(deltaY)) {console.error("USS Error:", deltaY, "is not a number"); return;}
-    if(deltaX === 0 && deltaY === 0) {if(typeof callback === "function") window.setTimeout(callback, 0); return;}
+    if(deltaX === 0 && deltaY === 0) {if(typeof callback === "function") window.requestAnimationFrame(callback); return;}
     if(deltaX === 0) {uss.scrollYBy(deltaY, container, callback, stillStart); return;}
     if(deltaY === 0) {uss.scrollXBy(deltaX, container, callback, stillStart); return;}
     uss.scrollTo(uss.getScrollXCalculator(container)() + deltaX, uss.getScrollYCalculator(container)() + deltaY, container, callback);
@@ -476,70 +479,57 @@ var uss = {
     const _elementRect = element.getBoundingClientRect();
     let _containerRect = (_container !== window) ? _container.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
 
-    const _elementCurrentX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
-    const _elementCurrentY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
+    const _elementInitialX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
+    const _elementInitialY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
     const _elementFinalX   = (alignToLeft === true) ? 0 : (alignToLeft === false) ? _containerRect.width  - _elementRect.width    : 0.5 * (_containerRect.width  - _elementRect.width);
     const _elementFinalY   = (alignToTop  === true) ? 0 : (alignToTop  === false) ? _containerRect.height - _elementRect.height   : 0.5 * (_containerRect.height - _elementRect.height);
 
-    //This object is used to make sure that the passed callback function is called only
-    //once all the scroll-animations have been performed
-    let _callback = {
-      __requiredSteps: 0, //Number of the _callback.__function's calls altready made required to trigger the passed scrollIntoView's callback function
-      __currentSteps: 0,  //Number of the current _callback.__function's calls
-      __function: (typeof callback === "function") ? () => {
-        if(_callback.__currentSteps < _callback.__requiredSteps) {
-          _callback.__currentSteps++;
-          return;
-        }
-        callback();
-      } : () => {} //No action if no valid scrollIntoView's callback function is passed
+    if(_container === window) {
+      element.focus();
+      window.requestAnimationFrame(() => uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _container, callback));
+      return;
     }
 
-    window.setTimeout(() => {uss.scrollBy(_elementCurrentX - _elementFinalX, _elementCurrentY - _elementFinalY, _container, _callback.__function)}, 0);
-    if(_container === window) return;
-
-    let _containerCurrentX = _containerRect.left;
-    let _containerCurrentY = _containerRect.top;
+    let _containerInitialX = _containerRect.left;
+    let _containerInitialY = _containerRect.top;
     const _containerFinalX = (alignToLeft === true) ? 0 : (alignToLeft === false) ? uss._windowWidth  - _containerRect.width  : 0.5 * (uss._windowWidth  - _containerRect.width);
     const _containerFinalY = (alignToTop  === true) ? 0 : (alignToTop  === false) ? uss._windowHeight - _containerRect.height : 0.5 * (uss._windowHeight - _containerRect.height);
 
-    let _deltaX = _containerCurrentX - _containerFinalX; //Passed element container's remaning scroll amount on the x-axis
-    let _deltaY = _containerCurrentY - _containerFinalY; //Passed element container's remaning scroll amount on the y-axis
+    let _deltaX = _containerInitialX - _containerFinalX; //Passed element containers' remaning scroll amount on the x-axis
+    let _deltaY = _containerInitialY - _containerFinalY; //Passed element containers' remaning scroll amount on the y-axis
 
     const _directionX = _deltaX > 0 ? 1 : -1;
     const _directionY = _deltaY > 0 ? 1 : -1;
 
     let _containerParent = uss.getScrollableParent(_container, includeHidden); //First scrollable parent of the passed element's container
-
-    _callback.__requiredSteps++;
-    window.setTimeout(_scrollParents, 0);
+    window.requestAnimationFrame(_scrollParents);
 
     function _scrollParents() {
       uss.scrollBy(_deltaX, _deltaY, _containerParent, () => {
         //We won't be able to scroll any further even if we wanted
         if(_containerParent === window) {
           element.focus();
-          _callback.__function();
+          uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _container, callback);
           return;
         }
 
         //Recalculate the passed element container's current position
         _containerRect = _container.getBoundingClientRect();
-        _containerCurrentX = _containerRect.left;
-        _containerCurrentY = _containerRect.top;
+        _containerInitialX = _containerRect.left;
+        _containerInitialY = _containerRect.top;
 
         //Recalculate the remaning scroll amounts
-        _deltaX = _containerCurrentX - _containerFinalX;
-        _deltaY = _containerCurrentY - _containerFinalY;
+        _deltaX = _containerInitialX - _containerFinalX;
+        _deltaY = _containerInitialY - _containerFinalY;
 
         if(_deltaX * _directionX > 0 || _deltaY * _directionY > 0) {
           _containerParent = uss.getScrollableParent(_containerParent, includeHidden);
-          window.setTimeout(_scrollParents, 0);
+          window.requestAnimationFrame(_scrollParents);
           return;
         }
 
         element.focus();
-        _callback.__function();
+        uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _container, callback);
       });
     }
   },
@@ -549,7 +539,7 @@ var uss = {
       window.cancelAnimationFrame(_containerData[0]);
       _containerData[0] = null;
     }
-    if(typeof callback === "function") window.setTimeout(callback, 0);
+    if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
   stopScrollingY: function (container = window, callback = () => {}) {
     let _containerData = uss._containersData.get(container);
@@ -557,7 +547,7 @@ var uss = {
       window.cancelAnimationFrame(_containerData[1]);
       _containerData[1] = null;
     }
-    if(typeof callback === "function") window.setTimeout(callback, 0);
+    if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
   stopScrolling: function (container = window, callback = () => {}) {
     let _containerData = uss._containersData.get(container);
@@ -567,7 +557,7 @@ var uss = {
       _containerData[0] = null;
       _containerData[1] = null;
     }
-    if(typeof callback === "function") window.setTimeout(callback, 0);
+    if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
   hrefSetup: function (alignToLeft = true, alignToTop = true, init = () => {}, callback = () => {}, includeHidden = false) {
     const _init = (typeof init === "function") ? init : () => {};
@@ -590,9 +580,9 @@ var uss = {
   }
 }
 
-window.addEventListener("resize", () => {uss._windowHeight = window.innerHeight; uss._windowWidth = window.innerWidth;} , {passive: true});
+window.addEventListener("resize", () => {uss._windowHeight = window.innerHeight; uss._windowWidth = window.innerWidth;} , {passive:true});
 window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
   uss._reducedMotion = !uss._reducedMotion;
   const _containers = uss._containersData.keys();
   for(const _container of _containers) uss.stopScrolling(_container);
-}, {passive: true});
+}, {passive:true});
