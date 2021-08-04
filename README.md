@@ -1,4 +1,4 @@
-# Universal Smooth Scroll API ![](https://raw.githubusercontent.com/CristianDavideConte/universalSmoothScroll/master/images/favicon.png)
+align# Universal Smooth Scroll API ![](https://raw.githubusercontent.com/CristianDavideConte/universalSmoothScroll/master/images/favicon.png)
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgba%2850%2C200%2C80%29&label=Version&logo=github) 
 ![npm](https://img.shields.io/npm/v/universalsmoothscroll?color=rgb%28255%2C50%2C50%29&label=%20Version&logo=npm) 
@@ -24,7 +24,7 @@ To include the support for cubic-bezier ease functions, also add this `<script>`
 `<script src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-ease-functions-min.js"></script>`
 
 ## Local file:
-Download the scripts' minified versions that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/releases), move it into your project's js directory & add it/them to your project's `<head>`. <br/>
+Download the scripts' minified versions that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/releases), move it into your project's js directory && add it/them to your project's `<head>`. <br/>
 For example:<br/>
 ```
 <head>
@@ -41,7 +41,7 @@ The `uss` object has some internal variables which **SHOULD NOT** be directly ma
 You will be able to recognize those internal properties because their names begin with an `_` (underscore). <br/>
 For istance:
 * `uss._xStepLength` is the name of the internal property used by the `uss` object's methods.
-* `uss.getXStepLength()` & `uss.setXStepLength()` are the getter and setter for the `uss._xStepLength` variable.<br/>
+* `uss.getXStepLength()` && `uss.setXStepLength()` are the getter and setter for the `uss._xStepLength` variable.<br/>
 
 There are 3 main scrolling-methods:
 * `uss.scrollTo()`
@@ -54,22 +54,22 @@ There's also 1 handy auto-initializer for anchor links:
 # Internal-Use variables list
 Variable name | Purpose
 ------------- | -------
-`_containersData` | A Map <key, value> in which: <br/> 1) A key is a DOM element internally called *"container"*.<br/> 2) A value is an array with 14 values, which are:<br/><ol>**[0]** contains the ID of a request scroll-animation on the x-axis provided by the `requestAnimationFrame` method.<br/>Null if no scroll-animation on the x-axis are currently being performed.<br/>**[1]** contains the ID of a request scroll-animation on the y-axis provided by the `requestAnimationFrame` method.<br/>Null if no scroll-animation on the y-axis are currently being performed.<br/>**[2]** contains the position in pixel at which the container will be at the end of the scroll-animation on the x-axis.<br/>**[3]** contains the position in pixel at which the container will be at the end of the scroll-animation on the y-axis.<br/>**[4]** contains the direction of the current scroll-animation on the x-axis.<br/>1 if the elements inside the container will go from right to left because of the scrolling, -1 otherwise.<br/>**[5]** contains the direction of the current scroll-animation on the y-axis.<br/>1 if the elements inside the container will go from bottom to top because of the scrolling, -1 otherwise.<br/>**[6]** contains the total amount of pixels that have to be scrolled from the start of the current scroll-animation on the x-axis to its end.<br/>**[7]** contains the total amount of pixels that have to be scrolled from the start of the current scroll-animation on the y-axis to its end.<br/>**[8]** contains the starting time in milliseconds (`DOMHighResTimeStamp`) of the current scroll-animation on the x-axis.<br/>**[9]** contains the starting time in milliseconds (`DOMHighResTimeStamp`) of the current scroll-animation on the y-axis.<br/>**[10]** contains a callback function that will be executed when the current scroll-animation on the x-axis has been performed.<br/>**[11]** contains a callback function that will be executed when the current scroll-animation on the y-axis has been performed.<br/>**[12]** contains a user-defined ease functions that will return the length of each individual step of a scroll-animation on the x-axis.<br/>**[13]** contains a user-defined ease functions that will return the length of each individual step of a scroll-animation on the y-axis.<br/></ol>
-`_xStepLength` | The number of pixel scrolled on the x-axis in a single scroll-animation's step.
-`_yStepLength` | The number of pixel scrolled on the y-axis in a single scroll-animation's step.
-`_minAnimationFrame` | The minimum number of frames any scroll-animation, on any axis, should last.
+`_containersData` | A Map <key, value> in which: <br/> 1) A key is a DOM element internally called *"container"*.<br/> 2) A value is an array with 14 values, which are:<br/><ol>**[0]** contains the ID of a requested scroll-animation on the x-axis provided by the `requestAnimationFrame` method.<br/>Null if no scroll-animation on the x-axis are currently being performed.<br/>**[1]** contains the ID of a requested scroll-animation on the y-axis provided by the `requestAnimationFrame` method.<br/>Null if no scroll-animation on the y-axis are currently being performed.<br/>**[2]** contains the position in pixel at which the container will be at the end of the current scroll-animation on the x-axis.<br/>**[3]** contains the position in pixel at which the container will be at the end of the current scroll-animation on the y-axis.<br/>**[4]** contains the direction of the current scroll-animation on the x-axis.<br/>1 if the elements inside the container will go from right to left as a consequence of the scrolling, -1 otherwise.<br/>**[5]** contains the direction of the current scroll-animation on the y-axis.<br/>1 if the elements inside the container will go from bottom to top as a consequence of the scrolling, -1 otherwise.<br/>**[6]** contains the total amount of pixels that have to be scrolled from the start of the current scroll-animation on the x-axis to its end.<br/>**[7]** contains the total amount of pixels that have to be scrolled from the start of the current scroll-animation on the y-axis to its end.<br/>**[8]** contains the starting time in milliseconds (as a `DOMHighResTimeStamp`) of the current scroll-animation on the x-axis.<br/>**[9]** contains the starting time in milliseconds (as a `DOMHighResTimeStamp`) of the current scroll-animation on the y-axis.<br/>**[10]** contains a callback function that will be executed when the current scroll-animation on the x-axis has been performed.<br/>**[11]** contains a callback function that will be executed when the current scroll-animation on the y-axis has been performed.<br/>**[12]** contains a user-defined ease functions that will return the length of every single step of all scroll-animations on the x-axis.<br/>**[13]** contains a user-defined ease functions that will return the length of every single step of all scroll-animations on the y-axis.<br/></ol>
+`_xStepLength` | The number of pixel scrolled on the x-axis during a single scroll-animation's step.
+`_yStepLength` | The number of pixel scrolled on the y-axis during a single scroll-animation's step.
+`_minAnimationFrame` | The minimum number of frames any scroll-animation, on any axis, should last if no custom StepLengthCalculator are set for a container.
 `_windowHeight` | The current window's inner height in pixels.
 `_windowWidth` | The current window's inner width in pixels.
-`_reducedMotion` | A boolean which is true if the user has enabled any "reduce-motion" setting devicewise, false otherwise. <br/> Internally used to follow the user's accessibility settings reverting back to the browser's default _jump behavior_.  
+`_reducedMotion` | True if the user has enabled any "reduce-motion" setting devicewise, false otherwise. <br/> Internally used to follow the user's accessibility preferences, reverting back to the browser's default _jump-to-position behavior_ if needed.  
 
 # Constants list
 Constant name | Purpose
 ------------- | -------
-`INITIAL_WINDOW_HEIGHT` | The window's inner height when first loaded.
-`INITIAL_WINDOW_WIDTH` | The window's inner width when first loaded.
+`INITIAL_WINDOW_HEIGHT` | The window's inner height in pixels when first loaded.
+`INITIAL_WINDOW_WIDTH` | The window's inner width in pixels when first loaded.
 `DEFAULT_XSTEP_LENGTH` | Default number of pixel scrolled in a single scroll-animation's step on the x-axis: 50px steps for a 1920px screen width.
 `DEFAULT_YSTEP_LENGTH` | Default number of pixel scrolled in a single scroll-animation's step on the y-axis: 50px steps for a 937px(1080px - urlbar) screen height.
-`DEFAULT_MIN_ANIMATION_FRAMES` | Default lowest possible number of frames any scroll-animation should last.
+`DEFAULT_MIN_ANIMATION_FRAMES` | Default lowest possible number of frames any scroll-animation should last if no custom StepLengthCalculator are set for a container.
 `DEFAULT_SCROLL_CALCULATOR_TEST_VALUE` | Default number of pixel scrolled when testing a newScrollCalculator.
 
 # Methods List
@@ -78,8 +78,8 @@ Method Name | Purpose
 `isXscrolling` | Returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
 `isYscrolling` | Returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
 `isScrolling` | Returns true if a scroll-animation on any axis of the passed container is currently being performed by this API, false otherwise.
-`getXStepLengthCalculator` | Returns the _xStepLengthCalculator ease function for the passed container.
-`getYStepLengthCalculator` | Returns the _yStepLengthCalculator ease function for the passed container.
+`getXStepLengthCalculator` | Returns the _xStepLengthCalculator ease function for the passed container if available.
+`getYStepLengthCalculator` | Returns the _yStepLengthCalculator ease function for the passed container if available.
 `getXStepLength` | Returns the value of _xStepLength.
 `getYStepLength` | Returns the value of _yStepLength.
 `getMinAnimationFrame` | Returns the value of _minAnimationFrame.
@@ -93,24 +93,24 @@ Method Name | Purpose
 `setYStepLength` | Sets the _yStepLength to the passed value if compatible.
 `setStepLength` | Sets both the _xStepLength and the _yStepLength to the passed value if compatible.
 `setMinAnimationFrame` | Sets the _minAnimationFrame to the passed value if compatible.
-`calcXStepLength` | Takes in the remaning scroll amount of a scroll-animation on the x-axis and returns how long each scroll-animation-step must be in order to target the _minAnimationFrame.
-`calcYStepLength` | Takes in the remaning scroll amount of a scroll-animation on the y-axis and returns how long each scroll-animation-step must be in order to target the _minAnimationFrame.
-`getScrollXCalculator` | Takes in a container and returns a function that returns:<br/> 1) The scrollLeft property of the container if it's an instance of HTMLelement.<br/> 2) The scrollX property of the container if it's the window element.
-`getScrollYCalculator` | Takes in a container and returns a function that returns:<br/> 1) The scrollTop property of the container if it's an instance of HTMLelement.<br/> 2) The scrollY property of the container if it's the window element.
-`getMaxScrollX` | Takes in a scroll container and returns its highest scroll-reachable x-value.
-`getMaxScrollY` | Takes in a scroll container and returns its highest scroll-reachable y-value.
-`getScrollableParent` | Returns the first scrollable container of the passed element, works with "overflow('',X,Y): hidden" if specified.
-`scrollXTo` | Takes in a number which indicates the position that the passed container's "scrollX" (left border's x-coordinate) has to reach and performs a scroll-animation on the x-axis. <br/> After the scroll-animation has finished a callback function can be invoked.
-`scrollYTo` | Takes in a number which indicates the position that the passed container's "scrollY" (top border's y-coordinate) has to reach and performs a scroll-animation on the y-axis. <br/> After the scroll-animation has finished a callback function can be invoked.
+`calcXStepLength` | Takes in the remaning scroll amount of a scroll-animation on the x-axis and returns how long each scroll-animation-step must be in order to target the _minAnimationFrame value.
+`calcYStepLength` | Takes in the remaning scroll amount of a scroll-animation on the y-axis and returns how long each scroll-animation-step must be in order to target the _minAnimationFrame value.
+`getScrollXCalculator` | Takes in a container and returns a function that returns:<br/>  - The scrollLeft property of the container if it's an instance of HTMLElement.<br/>  - The scrollX property of the container if it's the window element.
+`getScrollYCalculator` | Takes in a container and returns a function that returns:<br/>  - The scrollTop property of the container if it's an instance of HTMLElement.<br/>  - The scrollY property of the container if it's the window element.
+`getMaxScrollX` | Takes in a container and returns its highest scroll-reachable x-value.
+`getMaxScrollY` | Takes in a container and returns its highest scroll-reachable y-value.
+`getScrollableParent` | Returns the first scrollable container for the passed element, works with `overflow: hidden`, `overflowX: hidden` and `overflowY: hidden` if specified.
+`scrollXTo` | Takes in a number which indicates the position that the passed container's left border's x-coordinate has to reach and performs a scroll-animation on the x-axis. <br/> After the scroll-animation has finished a callback function can be invoked.
+`scrollYTo` | Takes in a number which indicates the position that the passed container's top border's y-coordinate has to reach and performs a scroll-animation on the y-axis. <br/> After the scroll-animation has finished a callback function can be invoked.
 `scrollXBy` | Takes in a number which indicates the number of pixel on the x-axis that the passed container has to be scrolled by and performs a scroll-animation on that axis. <br/> After the scroll-animation has finished a callback function can be invoked.
 `scrollYBy` | Takes in a number which indicates the number of pixel on the y-axis that the passed container has to be scrolled by and performs a scroll-animation on that axis. <br/> After the scroll-animation has finished a callback function can be invoked.
-`scrollTo` | Takes in 2 numbers which respectively indicate the position that the passed container's "scrollX" (left border's x-coordinate) and "scrollY" (top border's y-coordinate) have to reach and performs 2 scroll-animations on both the x-axis and the y-axis. <br/> After the scroll-animations have finished a callback function can be invoked.
-`scrollBy` | Takes in 2 numbers which respectively indicate the number of pixels on the x-axis and the y-axis that the passed container has to be scrolled by and performs 2 scroll-animations on both the x-axis and the y-axis. <br/> After the scroll-animations have finished a callback function can be invoked.
-`scrollIntoView` | Scrolls the window and, if necessary, the container of the passed element in order to make it visible on the screen. <br/> There are 3 possible allignments for both the passed element and it's closest scrollable container: top, bottom, center. <br/> The allignments can be changed by passing different values of alignToTop and alignToLeft.<br/> Works with "overflow('',X,Y): hidden" if specified. <br/> After the scroll-animations have finished a callback function can be invoked.
-`stopScrollingX` | Stops all the current scroll-animation on the x-axis of the passed container. <br/> After the animations are stopped a callback function can be invoked.
-`stopScrollingY` | Stops all the current scroll-animation on the y-axis of the passed container. <br/> After the animations are stopped a callback function can be invoked.
-`stopScrolling` | Stops all the current scroll-animation on both the x-axis and the y-axis of the passed container. <br/> After the animations are stopped a callback function can be invoked.
-`hrefSetup` | Looks for every anchor element (`<a>` && `<area>`) with a value for the href attribute linked to an element on the same page and attaches an eventListener(onclick) to it in order to trigger a smooth scroll-animation to reach the linked element (internally uses `scrollIntoView`). <br/> Before the scroll-animations are performed an init function can be invoked. <br/> After the scroll-animations have finished a callback function can be invoked.
+`scrollTo` | Takes in 2 numbers which respectively indicate the position that the passed container's left border's x-coordinate and top border's y-coordinate have to reach and performs 2 scroll-animations on both the x-axis and the y-axis. <br/> After the scroll-animations have been performed a callback function can be invoked.
+`scrollBy` | Takes in 2 numbers which respectively indicate the number of pixels on the x-axis and the y-axis that the passed container has to be scrolled by and performs 2 scroll-animations on both the x-axis and the y-axis. <br/> After the scroll-animations have been performed a callback function can be invoked.
+`scrollIntoView` | Scrolls all the containers of the passed element in order to make it visible on the screen. <br/> There are 3 possible alignments for both the passed element and it's closest scrollable container: top, bottom, center. <br/> The alignments can be changed by passing different values of alignToTop and alignToLeft. <br/> Works with `overflow: hidden`, `overflowX: hidden` and `overflowY: hidden` if specified. <br/> After the scroll-animations have been performed a callback function can be invoked.
+`stopScrollingX` | Stops all the current scroll-animation on the x-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
+`stopScrollingY` | Stops all the current scroll-animation on the y-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
+`stopScrolling` | Stops all the current scroll-animation on both the x-axis and the y-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
+`hrefSetup` | Looks for every anchor element (`<a>` && `<area>`) with a value for the `href` attribute which corresponds to an element on the same page and attaches an eventListener(onclick) to it in order to trigger a smooth scroll-animation to reach the linked element (internally uses `scrollIntoView`). <br/> Before the scroll-animations are performed an init function can be invoked: if this functions returns false, the scroll-animation is prevented. <br/> After the scroll-animations have been performed a callback function can be invoked.
 
 # Methods' syntaxes
 #### isXscrolling
@@ -377,22 +377,22 @@ Method Name | Purpose
 ```javascript
 /*
  * @param element window or HTML element
- * @param alignToLeft true if you want both the passed element and it's container (if available) to be alligned to the left of:
+ * @param alignToLeft true if you want both the passed element and it's container (if available) to be aligned to the left of:
  *                      1) The container for the passed element
  *                      2) The window for the element's container
- *                    false if you want both the passed element and it's container (if available) to be alligned to the right of:
+ *                    false if you want both the passed element and it's container (if available) to be aligned to the right of:
  *                      1) The container for the passed element
  *                      2) The window for the element's container
- *                    anything else if you want both the passed element and it's container (if available) to be alligned to the center of:
+ *                    anything else if you want both the passed element and it's container (if available) to be aligned to the center of:
  *                      1) The container for the passed element
  *                      2) The window for the element's container
- * @param alignToTop true if you want both the passed element and it's container (if available) to be alligned to the top of:
+ * @param alignToTop true if you want both the passed element and it's container (if available) to be aligned to the top of:
  *                      1) The container for the passed element
  *                      2) The window for the element's container
- *                    false if you want both the passed element and it's container (if available) to be alligned to the bottom of:
+ *                    false if you want both the passed element and it's container (if available) to be aligned to the bottom of:
  *                      1) The container for the passed element
  *                      2) The window for the element's container
- *                    anything else if you want both the passed element and it's container (if available) to be alligned to the center of:
+ *                    anything else if you want both the passed element and it's container (if available) to be aligned to the center of:
  *                      1) The container for the passed element
  *                      2) The window for the element's container
  * @callback callback the function you want to be executed after the scroll-animations have been performed.
@@ -432,22 +432,22 @@ Method Name | Purpose
 #### hrefSetup
 ```javascript
 /*
- * @param alignToLeft true if you want either every valid anchor link's destination element and their containers (if available) to be alligned to the left of:
+ * @param alignToLeft true if you want either every valid anchor link's destination element and their containers (if available) to be aligned to the left of:
  *                      1) The container for the anchor link's destination element
  *                      2) The window for the destination elements' containers
- *                    false if you want either every valid anchor link's destination element and their containers (if available) to be alligned to the right of:
+ *                    false if you want either every valid anchor link's destination element and their containers (if available) to be aligned to the right of:
  *                      1) The container for the anchor link's destination element
  *                      2) The window for the destination elements' containers
- *                    anything else if you want either every valid anchor link's destination element and their containers (if available) to be alligned to the center of:
+ *                    anything else if you want either every valid anchor link's destination element and their containers (if available) to be aligned to the center of:
  *                      1) The container for the anchor link's destination element
  *                      2) The window for the destination elements' containers
- * @param alignToTop true if you want either every valid anchor link's destination element and their containers (if available) to be alligned to the top of:
+ * @param alignToTop true if you want either every valid anchor link's destination element and their containers (if available) to be aligned to the top of:
  *                      1) The container for the anchor link's destination element
  *                      2) The window for the destination elements' containers
- *                    false if you want either every valid anchor link's destination element and their containers (if available) to be alligned to the bottom of:
+ *                    false if you want either every valid anchor link's destination element and their containers (if available) to be aligned to the bottom of:
  *                      1) The container for the anchor link's destination element
  *                      2) The window for the destination elements' containers
- *                    anything else if you want either every valid anchor link's destination element and their containers (if available) to be alligned to the center of:
+ *                    anything else if you want either every valid anchor link's destination element and their containers (if available) to be aligned to the center of:
  *                      1) The container for the anchor link's destination element
  *                      2) The window for the destination elements' containers
  * @callback init the function you want to be executed before
@@ -493,7 +493,7 @@ For istance:<br/>
 uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); //Every scroll-animation on our container will last 2 seconds
 ```
 You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) helpful.
-## Q: What is a _StepLengthCalculator_ ? 
+## Q: What is a _StepLengthCalculator_ ?
 A: It's function that has to always return a number >= 0.<br/>
 
 This function will be invoked by the API every time it has to decide how many pixels should be scrolled on the x/y axis of a container.<br/>
@@ -519,7 +519,7 @@ For istance:<br/>
  * arriving at full speed (remaning = 0 at the end of the scroll-animation)   
  */
 const myScrollCalculator = (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {
-    const traveledDistance = total - remaning; 
+    const traveledDistance = total - remaning;
     return traveledDistance + 1; //+1 because at first total = remaning and we wouldn't move at all without it
 };
 uss.setYStepLengthCalculator(myScrollCalculator, myContainer);
@@ -530,10 +530,10 @@ You can also use the functions of the `universalsmoothscroll-ease-functions` lib
 
 For example:<br/>
 ```javascript
-/* 
- * Make sure to have imported the universalsmoothscroll-ease-function library in your project 
+/*
+ * Make sure to have imported the universalsmoothscroll-ease-function library in your project
  * This StepLengthCalculator will make our scroll-animations always last 1 second and will make sure that
- * they will start as fast as possible and finish as slow as they can. 
+ * they will start as fast as possible and finish as slow as they can.
  */
 uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 ```
