@@ -70,7 +70,7 @@ Constant name | Purpose
 `DEFAULT_XSTEP_LENGTH` | Default number of pixel scrolled in a single scroll-animation's step on the x-axis: 50px steps for a 1920px screen width.
 `DEFAULT_YSTEP_LENGTH` | Default number of pixel scrolled in a single scroll-animation's step on the y-axis: 50px steps for a 937px(1080px - urlbar) screen height.
 `DEFAULT_MIN_ANIMATION_FRAMES` | Default lowest possible number of frames any scroll-animation should last if no custom StepLengthCalculator are set for a container.
-`DEFAULT_SCROLL_CALCULATOR_TEST_VALUE` | Default number of pixel scrolled when testing a newScrollCalculator.
+`DEFAULT_SCROLL_CALCULATOR_TEST_VALUE` | Default number of pixel scrolled when testing a newStepLengthCalculator.
 
 # Methods List
 Method Name | Purpose
@@ -111,6 +111,7 @@ Method Name | Purpose
 `stopScrollingY` | Stops all the current scroll-animation on the y-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
 `stopScrolling` | Stops all the current scroll-animation on both the x-axis and the y-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
 `hrefSetup` | Looks for every anchor element (`<a>` && `<area>`) with a value for the `href` attribute which corresponds to an element on the same page and attaches an eventListener(onclick) to it in order to trigger a smooth scroll-animation to reach the linked element (internally uses `scrollIntoView`). <br/> Before the scroll-animations are performed an init function can be invoked: if this functions returns false, the scroll-animation is prevented. <br/> After the scroll-animations have been performed a callback function can be invoked.
+<br/>
 
 # Methods' syntaxes
 #### isXscrolling
@@ -463,6 +464,7 @@ Method Name | Purpose
  */
  function hrefSetup (alignToLeft = true, alignToTop = true, init = () => {}, callback = () => {}, includeHidden = false);
 ```
+<br/>
 
 # F.A.Q.
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-behavior: smooth`_ CSS property ?
@@ -518,11 +520,11 @@ For istance:<br/>
  * ramp up the speed (remaning will decrease more and more)
  * arriving at full speed (remaning = 0 at the end of the scroll-animation)   
  */
-const myScrollCalculator = (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {
+const myStepLengthCalculator = (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {
     const traveledDistance = total - remaning;
     return traveledDistance + 1; //+1 because at first total = remaning and we wouldn't move at all without it
 };
-uss.setYStepLengthCalculator(myScrollCalculator, myContainer);
+uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer);
 ```
 
 You don't have to write your own StepLengthCalculator if you don't want to, infact the API will still function even if you don't specify any (the behavior will be linear).<br/>
@@ -573,6 +575,21 @@ For example: <br/>
 ```javascript
 let changeBg = () => document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"; //No need to return anything in this case
 uss.hrefSetup(true, true, changeBg); //Every time an anchor link is clicked our body's backgroundColor is randomly changed
+```
+## Q: Can I obtain the _"momentum-scrolling"_ effect with this API ?
+A: YES! <br/>
+You can achive it by setting a custom ease-out stepLengthCalculator for the container you want to be _"momentum-scrolled"_. <br/>
+For istance: <br/>
+```javascript
+/** 
+ * For the sake of semplicity I will use the stepLengthCalculator given by the EASE_OUT_EXPO function
+ * of the universal-smooth-scroll-ease-function library.
+ */
+myContainer.addEventListener("wheel", event => { //We want the momentum-scroll effect on wheel 
+    event.preventDefault(); //Prevent the classic scroll
+    uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
+}, {passive:false});
+uss.setYStepLengthCalculator(EASE_OUT_EXPO(800), myContainer); //800ms will give us a medium-speed scroll effect
 ```
 ## Q: What are _`_scrollX()`_ and _`_scrollY()`_ ?
 A: They are functions that can only be internally accessed by the API, you won't be able to invoke them. <br/>
