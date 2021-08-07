@@ -117,7 +117,7 @@
     let easeFunctionSelectorList = document.getElementById("easeFunctionSelectorList");
 
     let lastAnchorPressed = null;
-    const defaultEase = remaning => {return remaning / 15 + 1;};
+    const defaultEase = EASE_OUT_EXPO(1000);
 
     uss.hrefSetup(true, true, (anchor, el) => {
       if(storedCalculator !== null) {
