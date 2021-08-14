@@ -235,7 +235,7 @@ var uss = {
       let _container = element.parentElement;
       while(_container !== null) {
           _style = getComputedStyle(_container);
-          if(_excludeStaticParent && _style.position === "static") continue;
+          if(_excludeStaticParent && _style.position === "static") {_container = _container.parentElement; continue;}
           if(_overflowRegex.test(_style.overflow + _style.overflowY + _style.overflowX))
             if(_container.scrollWidth > _container.clientWidth || _container.scrollHeight > _container.clientHeight)
               return _container;
