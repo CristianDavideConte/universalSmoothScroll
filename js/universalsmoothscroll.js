@@ -475,18 +475,17 @@ var uss = {
     if(!(element instanceof HTMLElement)) {console.error("USS Error:", element, "is not an HTML element"); return;}
 
     const _container = uss.getScrollableParent(element, includeHidden); //First scrollable parent of the passed element
-
-    const _elementRect = element.getBoundingClientRect();
     let _containerRect = (_container !== window) ? _container.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
 
-    const _elementInitialX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
-    const _elementInitialY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
-    const _elementFinalX   = (alignToLeft === true) ? 0 : (alignToLeft === false) ? _containerRect.width  - _elementRect.width    : 0.5 * (_containerRect.width  - _elementRect.width);
-    const _elementFinalY   = (alignToTop  === true) ? 0 : (alignToTop  === false) ? _containerRect.height - _elementRect.height   : 0.5 * (_containerRect.height - _elementRect.height);
-
     if(_container === window) {
+      const _elementRect = element.getBoundingClientRect();
+      const _elementInitialX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
+      const _elementInitialY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
+      const _elementFinalX   = (alignToLeft === true) ? 0 : (alignToLeft === false) ? _containerRect.width  - _elementRect.width  : 0.5 * (_containerRect.width  - _elementRect.width);
+      const _elementFinalY   = (alignToTop  === true) ? 0 : (alignToTop  === false) ? _containerRect.height - _elementRect.height : 0.5 * (_containerRect.height - _elementRect.height);
+
+      uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _container, callback);
       element.focus();
-      window.requestAnimationFrame(() => uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _container, callback));
       return;
     }
 
@@ -502,12 +501,18 @@ var uss = {
     const _directionY = _deltaY > 0 ? 1 : -1;
 
     let _containerParent = uss.getScrollableParent(_container, includeHidden); //First scrollable parent of the passed element's container
-    window.requestAnimationFrame(_scrollParents);
+    _scrollParents();
 
     function _scrollParents() {
       uss.scrollBy(_deltaX, _deltaY, _containerParent, () => {
         //We won't be able to scroll any further even if we wanted
         if(_containerParent === window) {
+          const _elementRect = element.getBoundingClientRect();
+          const _elementInitialX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
+          const _elementInitialY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
+          const _elementFinalX   = (alignToLeft === true) ? 0 : (alignToLeft === false) ? _containerRect.width  - _elementRect.width  : 0.5 * (_containerRect.width  - _elementRect.width);
+          const _elementFinalY   = (alignToTop  === true) ? 0 : (alignToTop  === false) ? _containerRect.height - _elementRect.height : 0.5 * (_containerRect.height - _elementRect.height);
+
           element.focus();
           uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _container, callback);
           return;
@@ -527,6 +532,12 @@ var uss = {
           window.requestAnimationFrame(_scrollParents);
           return;
         }
+
+        const _elementRect = element.getBoundingClientRect();
+        const _elementInitialX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
+        const _elementInitialY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
+        const _elementFinalX   = (alignToLeft === true) ? 0 : (alignToLeft === false) ? _containerRect.width  - _elementRect.width  : 0.5 * (_containerRect.width  - _elementRect.width);
+        const _elementFinalY   = (alignToTop  === true) ? 0 : (alignToTop  === false) ? _containerRect.height - _elementRect.height : 0.5 * (_containerRect.height - _elementRect.height);
 
         element.focus();
         uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _container, callback);
