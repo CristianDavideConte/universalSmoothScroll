@@ -1,6 +1,6 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgba%2850%2C200%2C80%29&label=Version&logo=github) 
 ![npm](https://img.shields.io/npm/v/universalsmoothscroll?color=rgb%28255%2C50%2C50%29&label=%20Version&logo=npm) 
-[<img id="donate" src="http://www.imonticelli31.com/wp-content/uploads/2020/04/PayPal-Logo.png" height="50" width="100"/>](https://www.paypal.com/donate?hosted_button_id=9ZH3MVR56C7M8)
+[<img id="donate" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1920px-PayPal.svg.png" height="20" width="80"/>](https://www.paypal.com/donate?hosted_button_id=9ZH3MVR56C7M8)
 
 
 <br/><p align="center">
