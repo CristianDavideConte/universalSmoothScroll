@@ -5,7 +5,7 @@
 
 <br/><p align="center">
     <a href="https://github.com/CristianDavideConte/universalSmoothScroll">
-        <img src="https://raw.githubusercontent.com/CristianDavideConte/universalSmoothScroll/master/images/new_logo_dark_high_res.png" height="140">
+        <img src="https://raw.githubusercontent.com/CristianDavideConte/universalSmoothScroll/master/images/new_logo_high_res_no_background.png" height="140">
     </a>
 </p>
 <h1 align="center">Universal Smooth Scroll API</h1>
