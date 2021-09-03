@@ -18,11 +18,6 @@ a {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-button,
-input {
-  font-size: 2.3vh;
-}
-
 #easeFunctionSelectorList::-webkit-scrollbar {
   //display: none;
 }
@@ -30,7 +25,7 @@ body::-webkit-scrollbar {
   //display: none;
 }
 
-html, body {
+body {
   margin: 0;
   width: 100vw;
   height: 100vh;
@@ -45,12 +40,28 @@ body {
   overflow: scroll;
 }
 
+button,
+input {
+  transition: 0.3s;
+  font-size: 2.3vh;
+}
+
 button {
+  background-color: rgba(51, 51, 51, 0.9);
   cursor: pointer;
+}
+
+button:hover {
+  background-color: rgba(21, 21, 21, 0.6);
+}
+
+input {
+  background-color: transparent;
 }
 
 #header {
   z-index: 1;
+  margin-top: 2vh;
   position: fixed;
   width: 100%;
   height: 100px;
@@ -62,8 +73,6 @@ button {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(1vw, 1fr));
   grid-template-rows: repeat(1, 100px);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
 }
 
 ul {
@@ -77,6 +86,13 @@ ul {
 li {
   width: 100%;
   height: 100%;
+  transition: 0.3s;
+  background-color: rgba(51, 51, 51, 0.9);;
+}
+
+li.selected,
+li:hover {
+ background-color: rgba(21, 21, 21, 0.6);
 }
 
 li > a {
@@ -88,13 +104,8 @@ li > a {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0,0,0,0.5);
-  transition: 0.3s;
 }
 
-li > a:hover {
-  background: rgba(0,0,0,0.6);
-}
 
 #stopScrollingButtonsSection {
   z-index: 2;
@@ -106,8 +117,6 @@ li > a:hover {
   justify-content: center;
   top: calc(50% - 200px / 2);
   right: 17px;
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
 }
 
 #stopScrollingButtonsSection > button {
@@ -120,12 +129,6 @@ li > a:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0,0,0,0.5);
-  transition: 0.3s;
-}
-
-#stopScrollingButtonsSection > button:hover {
-  background: rgba(0,0,0,0.6);
 }
 
 .page {
@@ -145,6 +148,7 @@ li > a:hover {
 }
 
 #xScrollerSection {
+  display: flex;
   overflow-x: scroll;
   overflow-y: hidden;
 }
@@ -186,10 +190,6 @@ li > a:hover {
     flex-shrink: 0;
 }
 
-#easeFunctionSelector > ul > li.selected {
-    background: rgba(0,0,0,0.3);
-}
-
 #xScroller {
   position: relative;
   width: 70vmin;
@@ -212,9 +212,6 @@ li > a:hover {
   height: 70vmin;
   width: 20vmin;
   border: none;
-  background: rgba(0,0,0,0.5);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
 }
 
 #xScrollerLeft {
@@ -225,10 +222,6 @@ li > a:hover {
   margin-left: 70vmin;
   -webkit-transform: translateX(-100%);
   transform: translateX(-100%);
-}
-
-#xScrollerSection {
-  display: flex;
 }
 
 #section2,
@@ -254,9 +247,6 @@ li > a:hover {
   height: 20vmin;
   width: 70vmin;
   border: none;
-  background: rgba(0,0,0,0.5);
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
 }
 
 #yScrollerUp {
@@ -307,23 +297,24 @@ input {
   text-align: center;
   border: none;
   outline: none;
-  background: rgba(0,0,0,0.5);
-  transition: 0.3s;
-}
-
-input:hover,
-input:focus,
-input:active {
-  background: rgba(0,0,0,0.6);
 }
 
 input[type = submit] {
   width: 75%;
   height: 10vh;
   cursor: pointer;
+  background-color: rgba(51, 51, 51, 0.9);;
+}
+
+input[type = submit]:hover {
+   background-color: rgba(21, 21, 21, 0.6);
 }
 
 @media only screen and (max-width: 1250px), (max-height: 870px)  {
+  li > a {
+      font-size: 1.9vh;
+  }
+
   #stopScrollingButtonsSection {
     width: 200px;
     height: 12vmin;

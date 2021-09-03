@@ -4,15 +4,16 @@
     <meta name = "Description" content = "Universal smooth scroll demo">
     <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
     <title>Universal Smooth Scroll</title>
-    <link rel = "icon" type = "image/png" href = "./images/favicon.png">
+    <link rel = "icon" type = "image/png" href = "./images/new_favicon.png">
     <link rel = "stylesheet" type = "text/css" href = "./css/universalsmoothscroll.css">
+    <!--<script async src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/old/universalsmoothscroll-old-min.js"></script>-->
     <!--<script async src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/41d6bbb80203a81e4dab942fe0328b9c237d823f/js/universalsmoothscroll-min.js"></script>-->
     <!--<script async src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>-->
     <script async src = "./js/universalsmoothscroll.js"></script>
     <script async src = "./js/universalsmoothscroll-ease-functions.js"></script>
 
   </head>
-  <body onload = "init()" oncontextmenu = "return false">
+  <body onload = "init()">
     <section id = "stopScrollingButtonsSection">
       <button id = "stopScrollingX">STOP X</button>
       <button id = "stopScrollingY">STOP Y</button>
@@ -54,6 +55,10 @@
             <li><a id = "easeInOutQuint">easeInOutQuint</a></li>
             <li><a id = "easeInOutExpo" >easeInOutExpo</a></li>
             <li><a id = "easeInOutCirc" >easeInOutCirc</a></li>
+
+            <li><a id = "easeInBounce"  >easeInBounce</a></li>
+            <li><a id = "easeOutBounce" >easeOutBounce</a></li>
+            <li><a id = "easeInOutBounce" >easeInOutBounce</a></li>
           </ul>
         </div>
       </div>
@@ -101,9 +106,9 @@
   </body>
 </html>
 <script>
-  let storedCalculator = null;
   function init() {
-    const body = document.body;
+    const pageScroller = document.body;
+    const defaultEase = EASE_OUT_EXPO(1000);
 
     let yScroller = document.getElementsByClassName("scrollerSections")[0];
     let yScrollerUpButton = document.getElementById("yScrollerUp");
@@ -117,19 +122,24 @@
     let easeFunctionSelectorList = document.getElementById("easeFunctionSelectorList");
 
     let lastAnchorPressed = null;
-    const defaultEase = EASE_OUT_EXPO(1000);
+    let storedCalculator = EASE_LINEAR();
+    let wheelScrolled = false;
 
+    uss.setPageScroller(pageScroller);
     uss.hrefSetup(true, true, (anchor, el) => {
-      if(storedCalculator !== null) {
-        uss.setStepLengthCalculator(storedCalculator, body);
-        storedCalculator = null;
+      if(uss.getYStepLengthCalculator() === defaultEase) {
+        uss.setStepLengthCalculator(storedCalculator);
       }
 
-      if(lastAnchorPressed === anchor) return false;
+      storedCalculator = null;
+      wheelScrolled = false;
+
+      if(lastAnchorPressed === anchor && uss.isScrolling()) return false;
       lastAnchorPressed = anchor;
+      uss.stopScrolling();
       return true;
     }, null, false);
-    uss.setStepLengthCalculator(EASE_LINEAR(), body);
+    uss.setStepLengthCalculator(EASE_LINEAR());
 
     easeFunctionSelectorList.addEventListener("wheel", event => {
       event.preventDefault();
@@ -150,31 +160,35 @@
       }, {passive:true});
     }
 
-    document.getElementById("linear").addEventListener("click",       () => uss.setStepLengthCalculator(EASE_LINEAR(), body));
+    document.getElementById("linear").addEventListener("click",          () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_LINEAR())});
 
-    document.getElementById("easeInSine").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_SINE(), body));
-    document.getElementById("easeInQuad").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_QUAD(), body));
-    document.getElementById("easeInCubic").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_CUBIC(), body));
-    document.getElementById("easeInQuart").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_QUART(), body));
-    document.getElementById("easeInQuint").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_QUINT(), body));
-    document.getElementById("easeInExpo").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_EXPO(), body));
-    document.getElementById("easeInCirc").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_CIRC(), body));
+    document.getElementById("easeInSine").addEventListener("click",      () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_SINE())});
+    document.getElementById("easeInQuad").addEventListener("click",      () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_QUAD())});
+    document.getElementById("easeInCubic").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_CUBIC())});
+    document.getElementById("easeInQuart").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_QUART())});
+    document.getElementById("easeInQuint").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_QUINT())});
+    document.getElementById("easeInExpo").addEventListener("click",      () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_EXPO())});
+    document.getElementById("easeInCirc").addEventListener("click",      () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_CIRC())});
 
-    document.getElementById("easeOutSine").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_OUT_SINE(), body));
-    document.getElementById("easeOutQuad").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_OUT_QUAD(), body));
-    document.getElementById("easeOutCubic").addEventListener("click", () => uss.setStepLengthCalculator(EASE_OUT_CUBIC(), body));
-    document.getElementById("easeOutQuart").addEventListener("click", () => uss.setStepLengthCalculator(EASE_OUT_QUART(), body));
-    document.getElementById("easeOutQuint").addEventListener("click", () => uss.setStepLengthCalculator(EASE_OUT_QUINT(), body));
-    document.getElementById("easeOutExpo").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_OUT_EXPO(), body));
-    document.getElementById("easeOutCirc").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_OUT_CIRC(), body));
+    document.getElementById("easeOutSine").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_SINE())});
+    document.getElementById("easeOutQuad").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_QUAD())});
+    document.getElementById("easeOutCubic").addEventListener("click",    () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_CUBIC())});
+    document.getElementById("easeOutQuart").addEventListener("click",    () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_QUART())});
+    document.getElementById("easeOutQuint").addEventListener("click",    () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_QUINT())});
+    document.getElementById("easeOutExpo").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_EXPO())});
+    document.getElementById("easeOutCirc").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_CIRC())});
 
-    document.getElementById("easeInOutSine").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_SINE(), body));
-    document.getElementById("easeInOutQuad").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_QUAD(), body));
-    document.getElementById("easeInOutCubic").addEventListener("click", () => uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), body));
-    document.getElementById("easeInOutQuart").addEventListener("click", () => uss.setStepLengthCalculator(EASE_IN_OUT_QUART(), body));
-    document.getElementById("easeInOutQuint").addEventListener("click", () => uss.setStepLengthCalculator(EASE_IN_OUT_QUINT(), body));
-    document.getElementById("easeInOutExpo").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_EXPO(), body));
-    document.getElementById("easeInOutCirc").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_CIRC(), body));
+    document.getElementById("easeInOutSine").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_SINE())});
+    document.getElementById("easeInOutQuad").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_QUAD())});
+    document.getElementById("easeInOutCubic").addEventListener("click",  () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC())});
+    document.getElementById("easeInOutQuart").addEventListener("click",  () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_QUART())});
+    document.getElementById("easeInOutQuint").addEventListener("click",  () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_QUINT())});
+    document.getElementById("easeInOutExpo").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_EXPO())});
+    document.getElementById("easeInOutCirc").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_CIRC())});
+
+    document.getElementById("easeInBounce").addEventListener("click",    () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_BOUNCE())});
+    document.getElementById("easeOutBounce").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_BOUNCE())});
+    document.getElementById("easeInOutBounce").addEventListener("click", () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_BOUNCE())});
 
 
     function scrollListX(direction) {
@@ -253,19 +267,23 @@
         return;
       }
 
-      uss.setStepLengthCalculator(CUSTOM_CUBIC_BEZIER(u0, u1, u2, u3), body);
+      uss.setStepLengthCalculator(CUSTOM_CUBIC_BEZIER(u0, u1, u2, u3));
       title.innerHTML = "All set, try it out !";
       bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
     }, {passive:true});
 
-    body.addEventListener("wheel", event => {
+    pageScroller.addEventListener("wheel", event => {
+      event.preventDefault();
+      if(!wheelScrolled && uss.isScrolling()) uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
+      if(storedCalculator === null) storedCalculator = uss.getYStepLengthCalculator();
+
+      wheelScrolled = true;
       lastAnchorPressed = null;
-      if(storedCalculator === null) storedCalculator = uss.getXStepLengthCalculator(body);
-      uss.setStepLengthCalculator(defaultEase, body);
-      uss.scrollYBy(event.deltaY, body, null, false);
+      uss.setStepLengthCalculator(defaultEase);
+      uss.scrollYBy(event.deltaY, pageScroller, null, false);
       return false;
     }, {passive:false});
-    document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(body, () => console.log("scrollX stopped"));}, {passive:false});
-    document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(body, () => console.log("scrollY stopped"));}, {passive:false});
+    document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(pageScroller, () => console.log("scrollX stopped"));}, {passive:true});
+    document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(pageScroller, () => console.log("scrollY stopped"));}, {passive:true});
   }
 </script>
