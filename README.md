@@ -8,7 +8,7 @@
         <img src="https://raw.githubusercontent.com/CristianDavideConte/universalSmoothScroll/master/images/new_logo.png" height="140">
     </a>
 </p>
-<h1 align="center">Universal Smooth Scroll API</h1>
+<h1 align="center">Universal Smooth Scroll</h1>
 
 A **lightweight and very fast javascript library** that provides an enriched version of the standard `scroll-behavior:smooth` CSS property. <br/>
 This scroll API is based on and improves upon the 3 main ways to scroll an element in plain js: `scrollTo()`, `scrollBy()`, `scrollIntoView()`.<br/>
