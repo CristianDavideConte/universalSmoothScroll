@@ -131,21 +131,21 @@ Method Name | Purpose
 Method Name | Ease type
 ----------- | ---------
 `CUSTOM_CUBIC_BEZIER` | The first 4 input parameters are the 4 points of the bezier curve and they determine the kind of easing obtained.
-`EASE_LINEAR` | Same as `CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, ...)`. <br/> The speed of the scroll animation is costant and depends on the passed duration. 
-`EASE_IN_SINE` | Same as `CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_LINEAR`, it increases as the time passes and it's higher than `EASE_LINEAR` towards the end of the scroll-animation. 
+`EASE_LINEAR` | Same as `CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, ...)`. <br/> The speed of the scroll animation is costant and depends on the passed duration.
+`EASE_IN_SINE` | Same as `CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_LINEAR`, it increases as the time passes and it's higher than `EASE_LINEAR` towards the end of the scroll-animation.
 `EASE_IN_QUAD` | Same as `CUSTOM_CUBIC_BEZIER(0.11, 0, 0.5,  0, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_SINE`, it increases as the time passes and it's higher than `EASE_IN_SINE` towards the end of the scroll-animation.
 `EASE_IN_CUBIC` | Same as `CUSTOM_CUBIC_BEZIER(0.32, 0, 0.67, 0, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_QUAD`, it increases as the time passes and it's higher than `EASE_IN_QUAD` towards the end of the scroll-animation.
 `EASE_IN_QUART` | Same as `CUSTOM_CUBIC_BEZIER(0.5,  0, 0.75, 0, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_CUBIC`, it increases as the time passes and it's higher than `EASE_IN_CUBIC` towards the end of the scroll-animation.
 `EASE_IN_QUINT` | Same as `CUSTOM_CUBIC_BEZIER(0.64, 0, 0.78, 0, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_QUART`, it increases as the time passes and it's higher than `EASE_IN_QUART` towards the end of the scroll-animation.
 `EASE_IN_EXPO` | Same as `CUSTOM_CUBIC_BEZIER(0.7,  0, 0.84, 0, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_QUINT`, it increases as the time passes and it's higher than `EASE_IN_QUINT` towards the end of the scroll-animation.
-`EASE_IN_CIRC` | Same as `CUSTOM_CUBIC_BEZIER(0.55, 0, 1, 0.45, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_QUART` but higher than `EASE_IN_EXPO`, it increases as the time passes and it's roughly the same as `EASE_IN_QUART` towards the end of the scroll-animation. 
+`EASE_IN_CIRC` | Same as `CUSTOM_CUBIC_BEZIER(0.55, 0, 1, 0.45, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_QUART` but higher than `EASE_IN_EXPO`, it increases as the time passes and it's roughly the same as `EASE_IN_QUART` towards the end of the scroll-animation.
 `EASE_IN_BOUNCE` | There is a bouncing effect at the beginning of the scroll-animation, after that it's similar to the first part of `EASE_OUT_QUART`
-`EASE_OUT_SINE` | Same as `CUSTOM_CUBIC_BEZIER(0.61, 1, 0.88, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_LINEAR`, it decreases as the time passes and it's lower than `EASE_LINEAR` towards the end of the scroll-animation. 
-`EASE_OUT_QUAD` | Same as `CUSTOM_CUBIC_BEZIER(0.5,  1, 0.89, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_SINE`, it decreases as the time passes and it's lower than `EASE_OUT_SINE` towards the end of the scroll-animation. 
-`EASE_OUT_CUBIC` | Same as `CUSTOM_CUBIC_BEZIER(0.33, 1, 0.68, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_QUAD`, it decreases as the time passes and it's lower than `EASE_OUT_QUAD` towards the end of the scroll-animation. 
-`EASE_OUT_QUART` | Same as `CUSTOM_CUBIC_BEZIER(0.25, 1, 0.5, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_CUBIC`, it decreases as the time passes and it's lower than `EASE_OUT_CUBIC` towards the end of the scroll-animation. 
-`EASE_OUT_QUINT` | Same as `CUSTOM_CUBIC_BEZIER(0.22, 1, 0.36, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_QUART`, it decreases as the time passes and it's lower than `EASE_OUT_QUART` towards the end of the scroll-animation. 
-`EASE_OUT_EXPO` | Same as `CUSTOM_CUBIC_BEZIER(0.16, 1, 0.3, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_QUINT`, it decreases as the time passes and it's lower than `EASE_OUT_QUINT` towards the end of the scroll-animation. 
+`EASE_OUT_SINE` | Same as `CUSTOM_CUBIC_BEZIER(0.61, 1, 0.88, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_LINEAR`, it decreases as the time passes and it's lower than `EASE_LINEAR` towards the end of the scroll-animation.
+`EASE_OUT_QUAD` | Same as `CUSTOM_CUBIC_BEZIER(0.5,  1, 0.89, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_SINE`, it decreases as the time passes and it's lower than `EASE_OUT_SINE` towards the end of the scroll-animation.
+`EASE_OUT_CUBIC` | Same as `CUSTOM_CUBIC_BEZIER(0.33, 1, 0.68, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_QUAD`, it decreases as the time passes and it's lower than `EASE_OUT_QUAD` towards the end of the scroll-animation.
+`EASE_OUT_QUART` | Same as `CUSTOM_CUBIC_BEZIER(0.25, 1, 0.5, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_CUBIC`, it decreases as the time passes and it's lower than `EASE_OUT_CUBIC` towards the end of the scroll-animation.
+`EASE_OUT_QUINT` | Same as `CUSTOM_CUBIC_BEZIER(0.22, 1, 0.36, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_QUART`, it decreases as the time passes and it's lower than `EASE_OUT_QUART` towards the end of the scroll-animation.
+`EASE_OUT_EXPO` | Same as `CUSTOM_CUBIC_BEZIER(0.16, 1, 0.3, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_QUINT`, it decreases as the time passes and it's lower than `EASE_OUT_QUINT` towards the end of the scroll-animation.
 `EASE_OUT_CIRC` | Same as `CUSTOM_CUBIC_BEZIER(0, 0.55, 0.45, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly higher than the `EASE_OUT_QUINT` but lower than `EASE_OUT_EXPO`, it decreases as the time passes and it's roughly the same as `EASE_OUT_QUART` towards the end of the scroll-animation.
 `EASE_OUT_BOUNCE` |  The first quart of the animation it's similar to the last part of `EASE_IN_QUART`, after that there is a bouncing effect until the end of the scroll-animation
 `EASE_IN_OUT_SINE` | Same as `CUSTOM_CUBIC_BEZIER(0.37, 0, 0.63, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_LINEAR`, it increases till it's higher than `EASE_LINEAR` when half of the duration has passed and then it decreases until it's lower than `EASE_LINEAR` towards the end of the scroll-animation.
@@ -154,8 +154,8 @@ Method Name | Ease type
 `EASE_IN_OUT_QUART` | Same as `CUSTOM_CUBIC_BEZIER(0.76, 0, 0.24, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_OUT_CUBIC`, it increases till it's higher than `EASE_IN_OUT_CUBIC` when half of the duration has passed and then it decreases until it's lower than `EASE_IN_OUT_CUBIC` towards the end of the scroll-animation.
 `EASE_IN_OUT_QUINT` | Same as `CUSTOM_CUBIC_BEZIER(0.83, 0, 0.17, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_OUT_QUART`,it increases till it's higher than `EASE_IN_OUT_QUART` when half of the duration has passed and then it decreases until it's lower than `EASE_IN_OUT_QUART` towards the end of the scroll-animation.
 `EASE_IN_OUT_EXPO` | Same as `CUSTOM_CUBIC_BEZIER(0.87, 0, 0.13, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_OUT_QUINT`, it increases till it's higher than `EASE_IN_OUT_QUINT` when half of the duration has passed and then it decreases until it's lower than `EASE_IN_OUT_QUINT` towards the end of the scroll-animation.
-`EASE_IN_OUT_CIRC` | Same as `CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_OUT_QUINT` but higher than `EASE_IN_OUT_EXPO`, it increases till it's higher than `EASE_IN_OUT_QUINT` when half of the duration has passed and then it decreases until it's lower than `EASE_IN_OUT_QUINT` but higher than `EASE_IN_OUT_EXPO` towards the end of the scroll-animation. 
-`EASE_OUT_BOUNCE` |  The first half of the animation it's the same as to the first part of `EASE_IN_BOUNCE`, the second one is the same as the last part of `EASE_OUT_BOUNCE` 
+`EASE_IN_OUT_CIRC` | Same as `CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_OUT_QUINT` but higher than `EASE_IN_OUT_EXPO`, it increases till it's higher than `EASE_IN_OUT_QUINT` when half of the duration has passed and then it decreases until it's lower than `EASE_IN_OUT_QUINT` but higher than `EASE_IN_OUT_EXPO` towards the end of the scroll-animation.
+`EASE_OUT_BOUNCE` |  The first half of the animation it's the same as to the first part of `EASE_IN_BOUNCE`, the second one is the same as the last part of `EASE_OUT_BOUNCE`
 
 Every stepLengthCalculator takes the `duration` and a `callback` as the last 2 input parameters. <br/>
 The `callback` is executed at every scroll-animation step.
@@ -386,7 +386,7 @@ The `callback` is executed at every scroll-animation step.
 ```javascript
 /*
  * @param element window or HTMLElement
- * @param includeHidden true if the element's first scrollable parent has 
+ * @param includeHidden true if the element's first scrollable parent has
  *        the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
  *        false otherwise.
  */
@@ -694,11 +694,11 @@ A: YES! <br/>
 You can achive it by setting a custom ease-out stepLengthCalculator for the container you want to be _"momentum-scrolled"_. <br/>
 For istance: <br/>
 ```javascript
-/** 
+/**
  * For the sake of semplicity I will use the stepLengthCalculator given by the EASE_OUT_EXPO function
  * of the universal-smooth-scroll-ease-function library.
  */
-myContainer.addEventListener("wheel", event => { //We want the momentum-scroll effect on wheel 
+myContainer.addEventListener("wheel", event => { //We want the momentum-scroll effect on wheel
     event.preventDefault(); //Prevent the classic scroll
     uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
 }, {passive:false});
