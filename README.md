@@ -130,7 +130,7 @@ Method Name | Purpose
 # Included ease functions (public use)
 Method Name | Ease type
 ----------- | ---------
-`CUSTOM_CUBIC_BEZIER` | The first 4 input parameters are the 4 points of the bezier curve and they determine the kind of easing obtained.
+`CUSTOM_CUBIC_BEZIER` | The first 4 input parameters are the 4 points of the bézier curve and they determine the kind of easing obtained.
 `EASE_LINEAR` | Same as `CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, ...)`. <br/> The speed of the scroll animation is costant and depends on the passed duration.
 `EASE_IN_SINE` | Same as `CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_LINEAR`, it increases as the time passes and it's higher than `EASE_LINEAR` towards the end of the scroll-animation.
 `EASE_IN_QUAD` | Same as `CUSTOM_CUBIC_BEZIER(0.11, 0, 0.5,  0, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_SINE`, it increases as the time passes and it's higher than `EASE_IN_SINE` towards the end of the scroll-animation.
@@ -157,7 +157,8 @@ Method Name | Ease type
 `EASE_IN_OUT_CIRC` | Same as `CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_OUT_QUINT` but higher than `EASE_IN_OUT_EXPO`, it increases till it's higher than `EASE_IN_OUT_QUINT` when half of the duration has passed and then it decreases until it's lower than `EASE_IN_OUT_QUINT` but higher than `EASE_IN_OUT_EXPO` towards the end of the scroll-animation.
 `EASE_OUT_BOUNCE` |  The first half of the animation it's the same as to the first part of `EASE_IN_BOUNCE`, the second one is the same as the last part of `EASE_OUT_BOUNCE`
 
-Every stepLengthCalculator takes the `duration` and a `callback` as the last 2 input parameters. <br/>
+All the above mentioned methods return a `stepLengthCalculator` and take a `duration` (in milliseconds) and a `callback` as the input parameters. <br/>
+The only exception is `CUSTOM_CUBIC_BEZIER` which requires the 4 bézier points (finite numbers between 0 and 1) before the `duration` and the `callback`. <br/> 
 The `callback` is executed at every scroll-animation step.
 <br/><br/>
 
@@ -593,7 +594,7 @@ For example:<br/>
 ```javascript
 uss.setYStepLengthCalculator((remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {return remaning / 10 + 1;});
 ```
-<br/>You can also use the standard cubic-bezier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js).<br/>
+<br/>You can also use the standard cubic-bézier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js).<br/>
 For istance:<br/>
 ```javascript
 uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
@@ -602,7 +603,7 @@ uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
 A: YES!<br/>
 While setting a custom ease function you will notice it will be passed both the timestamp relative to the beginning of the scroll-animation and the current timestamp as the second and third arguments of your function.<br/>
 You can use them to make the scroll-animations last any amount of time you want.<br/><br/>
-You can also use the standard cubic-bezier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) which can be used by specifing a duration as the first argument.<br/>
+You can also use the standard cubic-bézier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) which can be used by specifing a duration as the first argument.<br/>
 For istance:<br/>
 ```javascript
 uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); //Every scroll-animation on our container will last 2 seconds
