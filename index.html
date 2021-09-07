@@ -108,7 +108,7 @@
 <script>
   function init() {
     const pageScroller = document.body;
-    const defaultEase = EASE_OUT_EXPO(1000);
+    const defaultEase = (remaning) => {return remaning / 20 + 1;};
 
     let yScroller = document.getElementsByClassName("scrollerSections")[0];
     let yScrollerUpButton = document.getElementById("yScrollerUp");
@@ -274,6 +274,7 @@
 
     pageScroller.addEventListener("wheel", event => {
       event.preventDefault();
+      event.stopPropagation();
       if(!wheelScrolled && uss.isScrolling()) uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
       if(storedCalculator === null) storedCalculator = uss.getYStepLengthCalculator();
 
