@@ -696,14 +696,15 @@ You can achive it by setting a custom ease-out stepLengthCalculator for the cont
 For istance: <br/>
 ```javascript
 /**
- * For the sake of semplicity I will use the stepLengthCalculator given by the EASE_OUT_EXPO function
- * of the universal-smooth-scroll-ease-function library.
+ * For the sake of semplicity I will use the same ease-out function 
+ * I used on my personal web page.
  */
+const myEaseFunction = (remaning) => {return 1 + remaning / 20;}; //Increase the divisor for an even smoother effect
 myContainer.addEventListener("wheel", event => { //We want the momentum-scroll effect on wheel
     event.preventDefault(); //Prevent the classic scroll
     uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
 }, {passive:false});
-uss.setYStepLengthCalculator(EASE_OUT_EXPO(800), myContainer); //800ms will give us a medium-speed scroll effect
+uss.setYStepLengthCalculator(myEaseFunction, myContainer); //A medium-speed momentum scrolling effect
 ```
 ## Q: What are _`_scrollX()`_ and _`_scrollY()`_ ?
 A: They are functions that can only be internally accessed by the API, you won't be able to invoke them. <br/>
