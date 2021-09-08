@@ -16,8 +16,8 @@ This scroll API is based on and improves upon the 3 main ways to scroll an eleme
 **Multiple scroll-animations** can be played **at the same time** for 1 or more DOM's elements.<br/>
 
 # Demo
-You can try most of the API functionalities on [my personal website](https://cristiandavideconte.github.io/myPersonalWebPage/).<br/>
-You can also take a look at how single features are implemented on [this playground](https://cristiandavideconte.github.io/universalSmoothScroll/).
+You can try most of the API functionalities on <a href="https://cristiandavideconte.github.io/myPersonalWebPage/" target="_blank">my personal website</a>.<br/>
+You can also take a look at how single features are implemented on <a href="https://cristiandavideconte.github.io/universalSmoothScroll/" target="_blank">this playground</a>.
 
 # Download options
 ## NPM:
