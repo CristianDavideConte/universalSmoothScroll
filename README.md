@@ -28,7 +28,7 @@ The scripts' minified versions are available in the [releases section](https://g
 # Installation
 Move the scripts you downloaded into your project's js directory && add them to your project's `<head>`. <br/>
 For example:<br/>
-```
+```html
 <head>
     ...
   <script src = "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-min.js"></script>
