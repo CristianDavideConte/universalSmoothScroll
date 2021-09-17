@@ -1,3 +1,4 @@
+//This is USS Version 2.1.1
 const DEFAULTXSTEPLENGTH = window.innerWidth  * 50 / 1920; //Default number of pixels scrolled in a single scroll-animation's step on the x-axis: 50px steps for a 1920px screen width.
 const DEFAULTYSTEPLENGTH = window.innerHeight * 50 / 937;  //Default number of pixels scrolled in a single scroll-animation's step on the y-axis: 50px steps for a 937px(1080px - urlbar) screen height.
 const DEFAULTMINANIMATIONFRAMES = 5;                       //Default lowest possible number of frames any scroll-animation should last.
