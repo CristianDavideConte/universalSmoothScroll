@@ -26,7 +26,7 @@ You can also take a look at how single features are implemented on <a href="http
 The scripts' minified versions are available in the [releases section](https://github.com/CristianDavideConte/universalSmoothScroll/releases).
 
 # Installation
-Move the scripts you downloaded into your project's js directory && add them to your project's `<head>`. <br/>
+Move the scripts you downloaded into your project's js directory && add them to your `index.html`'s header. <br/>
 For example:<br/>
 ```html
 <head>
@@ -585,8 +585,41 @@ The `callback` is executed at every scroll-animation step.
 A: NO! They won't work on those containers.
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-snap-type`_ CSS property ?
 A: NO! They won't work on those containers.
+## Q: Can I use the API in a `React` project ?
+A: YES! Just import the scripts in your `index.html` header and then you can start using the API.  
 ## Q: How do I invoke the API methods ?  
 A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD(ARGUMENTS)`.
+## Q: Can I pass a `React.Component` as either the `container` or the `element` value ? 
+A: NO! You have to pass the API methods either an `HTMLElement` or the `window` element. <br/>
+This problem can be easily solved _the Javascript way_ (by looking for the elements in the DOM with `getElementById`, `getElementsByClassName`, etc...) or by using either React's [`Refs`](https://en.reactjs.org/docs/refs-and-the-dom.html) or the [`React.findDOMNode`](https://en.reactjs.org/docs/react-dom.html#finddomnode) method to obtain the `HTMLElement` from your `ReactElements`. <br/>
+
+For istance:
+```javascript
+/*
+ * In this example I want to create a scrollable React Component which
+ * has a button which smooothly scrolls the Component when clicked.
+ * To get the corresponding HTMLElement I'll use React's ref and the document.getElementById method. 
+ */
+class myApp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef(); //Create the referece to the DOM node
+  }
+  ... 
+  render() {
+    return(
+      <div id="myID" ref={this.myRef}> { /*Use the ref on the element you want to scroll*/ }
+        <button onClick={
+          () => uss.scrollYBy(500, {this.myRef.current}); { /*We retrieve the HTMLElement with the help of our ref*/ }
+          //() => uss.scrollYBy(500, document.getElementById("myID")); { /*This would also work*/ }
+        }>
+        </button>
+        ...
+      </div>
+    );
+  }
+}
+```
 ## Q: Can I modify the way scroll-animation steps are calculated to a non-linear behavior ?
 A: YES! <br/>
 Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br/>
