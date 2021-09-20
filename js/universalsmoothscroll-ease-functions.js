@@ -7,7 +7,7 @@ const CUSTOM_CUBIC_BEZIER = (u0 = 0, u1 = 0, u2 = 1, u3 = 1, duration = 500, cal
   if(!Number.isFinite(u2) || u2 < 0 || u2 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as u2", u2); return;}
   if(!Number.isFinite(u3) || u3 < 0 || u3 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as u3", u3); return;}
 
-  const _callback = (typeof callback === "function") ? callback : () => {};
+  const _callback = typeof callback === "function" ? callback : () => {};
   const aX = 1  + 3 * (u0 - u2);
   const bX = 3 * (u2 - 2 * u0);
   const cX = 3 * u0;
@@ -74,7 +74,7 @@ const _CUSTOM_BOUNCE = (progress = 0) => {
   const d1 = 2.75;
 
   if (progress < 1 / d1)   return n1 * progress * progress;
-  if (progress < 2 / d1)   return n1 * (progress -= 1.5 / d1) * progress + 0.75;
+  if (progress < 2 / d1)   return n1 * (progress -= 1.5  / d1) * progress + 0.75;
   if (progress < 2.5 / d1) return n1 * (progress -= 2.25 / d1) * progress + 0.9375;
 
   return n1 * (progress -= 2.625 / d1) * progress + 0.984375;
@@ -82,7 +82,7 @@ const _CUSTOM_BOUNCE = (progress = 0) => {
 
 const EASE_IN_BOUNCE = (duration = 900, callback = () => {}) => {
   if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_BOUNCE", "a positive number", duration); return;}
-  const _callback = (typeof callback === "function") ? callback : () => {};
+  const _callback = typeof callback === "function" ? callback : () => {};
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
@@ -97,7 +97,7 @@ const EASE_IN_BOUNCE = (duration = 900, callback = () => {}) => {
 
 const EASE_OUT_BOUNCE = (duration = 900, callback = () => {}) => {
   if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_OUT_BOUNCE", "a positive number", duration); return;}
-  const _callback = (typeof callback === "function") ? callback : () => {};
+  const _callback = typeof callback === "function" ? callback : () => {};
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
@@ -112,7 +112,7 @@ const EASE_OUT_BOUNCE = (duration = 900, callback = () => {}) => {
 
 const EASE_IN_OUT_BOUNCE = (duration = 1200, callback = () => {}) => {
   if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_OUT_BOUNCE", "a positive number", duration); return;}
-  const _callback = (typeof callback === "function") ? callback : () => {};
+  const _callback = typeof callback === "function" ? callback : () => {};
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);

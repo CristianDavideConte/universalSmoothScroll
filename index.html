@@ -126,7 +126,7 @@
     let wheelScrolled = false;
 
     uss.setPageScroller(pageScroller);
-    uss.hrefSetup(true, true, (anchor, el) => {
+    uss.hrefSetup(null, null, (anchor, el) => {
       if(uss.getYStepLengthCalculator() === defaultEase) {
         uss.setStepLengthCalculator(storedCalculator);
       }
