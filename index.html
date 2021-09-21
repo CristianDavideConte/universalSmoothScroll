@@ -146,6 +146,7 @@
       event.stopPropagation();
       uss.scrollYBy(event.deltaY, easeFunctionSelectorList, null, false);
     }, {passive:false});
+    easeFunctionSelectorList.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
     uss.setStepLengthCalculator(defaultEase, easeFunctionSelectorList);
 
     const listItems = easeFunctionSelectorList.children;
@@ -204,6 +205,7 @@
       uss.setXStepLengthCalculator(defaultEase, xScroller);
       uss.scrollXBy(event.deltaY, xScroller, null, false);
     }, {passive:false});
+    xScroller.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
 
     xScrollerLeftButton.addEventListener("mousedown",   () => scrollListX(-1), {passive: false});
     xScrollerRightButton.addEventListener("mousedown",  () => scrollListX(+1), {passive: false});
@@ -230,6 +232,7 @@
       uss.setYStepLengthCalculator(defaultEase, yScroller);
       uss.scrollYBy(event.deltaY, yScroller, null, false);
     }, {passive:false});
+    yScroller.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
 
     yScrollerUpButton.addEventListener("mousedown",    () => scrollListY(-1), {passive: false});
     yScrollerDownButton.addEventListener("mousedown",  () => scrollListY(+1), {passive: false});
@@ -286,5 +289,32 @@
     }, {passive:false});
     document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(pageScroller, () => console.log("scrollX stopped"));}, {passive:true});
     document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(pageScroller, () => console.log("scrollY stopped"));}, {passive:true});
+
+    //Smooth scrolling for touch devices
+    let _Y = null;
+    let _X = null;
+    pageScroller.addEventListener("touchstart", event => {
+      if(_X == null) _X = event.touches[0].screenX;
+      if(_Y == null) _Y = event.touches[0].screenY;
+    },{passive:true});
+    pageScroller.addEventListener("touchend", event => {
+      _Y = null;
+      _X = null;
+    }, {passive:true});
+    pageScroller.addEventListener("touchmove", event => {
+      event.preventDefault();
+      if(storedCalculator !== defaultEase) {
+        storedCalculator = uss.getYStepLengthCalculator() !== defaultEase ? uss.getYStepLengthCalculator() : storedCalculator;
+        uss.setStepLengthCalculator(defaultEase);
+      }
+
+      const _originalDeltaX = _X - event.changedTouches[0].screenX;
+      const _originalDeltaY = _Y - event.changedTouches[0].screenY;
+      const _deltaX = Math.abs(_originalDeltaX) > 1 ? 10 * _originalDeltaX : 0;
+      const _deltaY = Math.abs(_originalDeltaY) > 1 ? 16 * _originalDeltaY : 0;
+      uss.scrollBy(_deltaX, _deltaY);
+      _X -= _originalDeltaX;
+      _Y -= _originalDeltaY;
+    }, {passive:false});
   }
 </script>

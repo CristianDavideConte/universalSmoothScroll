@@ -183,6 +183,7 @@ li > a {
    flex-direction: column;
    height: 50vh;
    overflow-y: scroll;
+   overscroll-behavior: contain;
 }
 
 #easeFunctionSelector > ul > li {
