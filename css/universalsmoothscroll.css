@@ -151,11 +151,13 @@ li > a {
   display: flex;
   overflow-x: scroll;
   overflow-y: hidden;
+  overscroll-behavior: contain;
 }
 
 #yScrollerSection {
   overflow-y: scroll;
   overflow-x: hidden;
+  overscroll-behavior: contain;
 }
 
 #section1 {

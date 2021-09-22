@@ -42,6 +42,7 @@
  * _minAnimationFrame: number, the minimum number of frames any scroll-animation, on any axis, should last if no custom StepLengthCalculator are set for a container.
  * _windowHeight: number, the current window's inner heigth in pixels.
  * _windowWidth: number, the current window's inner width in pixels.
+ * _scrollbarDimension: number, the dimension of any scrollbar in px.
  * _pageScroller: object, the current default value of the "container" input parameter used by some of the API's methods.
  * _reducedMotion: boolean, true if the user has enabled any "reduce-motion" setting devicewise, false otherwise.
  *                 Internally used to follow the user's accessibility preferences reverting back to the browser's default jump-to-position behavior if needed.
@@ -181,6 +182,7 @@ var uss = {
   _minAnimationFrame: DEFAULT_MIN_ANIMATION_FRAMES,
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _windowWidth: INITIAL_WINDOW_WIDTH,
+  _scrollbarDimension: 0,
   _pageScroller: DEFAULT_PAGE_SCROLLER,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   isXscrolling: function (container = uss._pageScroller) {const _containerData = uss._containersData.get(container) || []; return typeof _containerData[0] !== "undefined" && _containerData[0] !== null;},
@@ -485,7 +487,7 @@ var uss = {
         if(!Number.isFinite(_calculatedScrollStepLength)) _calculatedScrollStepLength = _scrollStepLength;
       } else _calculatedScrollStepLength = _scrollStepLength;
 
-      if(_remaningScrollAmount <=  Math.abs(_calculatedScrollStepLength)) {
+      if(_remaningScrollAmount <= _calculatedScrollStepLength) {
         _containerData[0] = null;
         container.scroll(finalXPosition, _scrollYCalculator());
         if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
@@ -495,7 +497,7 @@ var uss = {
       container.scroll(_currentXPosition + _calculatedScrollStepLength * _direction, _scrollYCalculator());
 
       //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container
-      if(_calculatedScrollStepLength >= 1 && _currentXPosition === _scrollXCalculator()) {
+      if(_calculatedScrollStepLength !== 0 && _currentXPosition === _scrollXCalculator()) {
         _containerData[0] = null;
         if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
         return;
@@ -570,7 +572,7 @@ var uss = {
         if(!Number.isFinite(_calculatedScrollStepLength)) _calculatedScrollStepLength = _scrollStepLength;
       } else _calculatedScrollStepLength = _scrollStepLength;
 
-      if(_remaningScrollAmount <= Math.abs(_calculatedScrollStepLength)) {
+      if(_remaningScrollAmount <= _calculatedScrollStepLength) {
         _containerData[1] = null;
         container.scroll(_scrollXCalculator(), finalYPosition);
         if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
@@ -723,6 +725,13 @@ var uss = {
     let _containerParent = _deltaX * _directionX > 0 && _deltaY * _directionY > 0 ? uss.getScrollableParent(_container,  includeHidden) :
                            _deltaX * _directionX > 0                              ? uss.getXScrollableParent(_container, includeHidden) :
                                                                                     uss.getYScrollableParent(_container, includeHidden);
+
+    //Update deltas with new scrollbars' dimensions
+    if(_alignToLeft !== true || _alignToTop !== true) {
+      _getContainerScrollbarDimensions(_containerParent);
+      _deltaX += _alignToLeft === true ? 0 : _alignToLeft === false ? _scrollbarDimensions[0] : 0.5 * _scrollbarDimensions[0];
+      _deltaY += _alignToTop  === true ? 0 : _alignToTop  === false ? _scrollbarDimensions[1] : 0.5 * _scrollbarDimensions[1];
+    }
     _scrollParents();
 
     function _scrollElementContainer() {
@@ -747,11 +756,11 @@ var uss = {
         _alignToTop = _containerToElementTopDistance < _containerToElementCenterDistance ? true : _containerToElementBottomDistance < _containerToElementCenterDistance ? false : null;
       }
 
-      const _elementFinalX = _alignToLeft === true ? 0 : _alignToLeft === false ? _containerWidth  - _elementWidth  : 0.5 * (_containerWidth  - _elementWidth);
-      const _elementFinalY = _alignToTop  === true ? 0 : _alignToTop  === false ? _containerHeight - _elementHeight : 0.5 * (_containerHeight - _elementHeight);
       _getContainerScrollbarDimensions(_container);
+      const _elementFinalX = _alignToLeft === true ? 0 : _alignToLeft === false ? _containerWidth  - _elementWidth  - _scrollbarDimensions[0] : 0.5 * (_containerWidth  - _elementWidth  - _scrollbarDimensions[0]);
+      const _elementFinalY = _alignToTop  === true ? 0 : _alignToTop  === false ? _containerHeight - _elementHeight - _scrollbarDimensions[1] : 0.5 * (_containerHeight - _elementHeight - _scrollbarDimensions[1]);
 
-      uss.scrollBy(_elementInitialX - _elementFinalX + _scrollbarDimensions[0], _elementInitialY - _elementFinalY + _scrollbarDimensions[1], _container, callback);
+      uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _container, callback);
     }
 
     function _getContainerScrollbarDimensions(scrollableContainer) {
@@ -760,17 +769,20 @@ var uss = {
         return;
       }
 
-      let __scrollBox = document.createElement("div");
-      __scrollBox.style.overflow = "scroll";
-      scrollableContainer.appendChild(__scrollBox);
-      _scrollbarDimensions[0] = __scrollBox.offsetWidth  - __scrollBox.clientWidth;
-      _scrollbarDimensions[1] = __scrollBox.offsetHeight - __scrollBox.clientHeight;
-      scrollableContainer.removeChild(__scrollBox);
+      const _originalOverflowX = scrollableContainer.style.overflowX;
+      const _originalOverflowY = scrollableContainer.style.overflowY;
+      const _originalWidth  = scrollableContainer.clientWidth;
+      const _originalHeight = scrollableContainer.clientHeight;
+      scrollableContainer.style.overflowX = "scroll";
+      scrollableContainer.style.overflowY = "scroll";
+      _scrollbarDimensions[0] = scrollableContainer.clientWidth  === _originalWidth  ? uss._scrollbarDimension : 0;
+      _scrollbarDimensions[1] = scrollableContainer.clientHeight === _originalHeight ? uss._scrollbarDimension : 0;
+      scrollableContainer.style.overflowX = _originalOverflowX;
+      scrollableContainer.style.overflowY = _originalOverflowY;
     }
 
     function _scrollParents() {
-      _getContainerScrollbarDimensions(_containerParent);
-      uss.scrollBy(_deltaX + _scrollbarDimensions[0], _deltaY + _scrollbarDimensions[1], _containerParent, () => {
+      uss.scrollBy(_deltaX, _deltaY, _containerParent, () => {
         //We won't be able to scroll any further even if we wanted
         if(_containerParent === window) {
           _scrollElementContainer();
@@ -795,6 +807,12 @@ var uss = {
         _containerParent = _deltaX * _directionX > 0 && _deltaY * _directionY > 0 ? uss.getScrollableParent(_containerParent,  includeHidden) :
                            _deltaX * _directionX > 0                              ? uss.getXScrollableParent(_containerParent, includeHidden) :
                                                                                     uss.getYScrollableParent(_containerParent, includeHidden);
+        //Update deltas with new scrollbars' dimensions
+        if(_alignToLeft !== true || _alignToTop !== true) {
+          _getContainerScrollbarDimensions(_containerParent);
+          _deltaX += _alignToLeft === true ? 0 : _alignToLeft === false ? _scrollbarDimensions[0] : 0.5 * _scrollbarDimensions[0];
+          _deltaY += _alignToTop  === true ? 0 : _alignToTop  === false ? _scrollbarDimensions[1] : 0.5 * _scrollbarDimensions[1];
+        }
         window.requestAnimationFrame(_scrollParents);
       });
     }
@@ -809,7 +827,7 @@ var uss = {
     let _alignToTop, _alignToLeft;
     const _container = uss.getScrollableParent(element, includeHidden); //First scrollable parent of the passed element
     let _containerRect = _container !== window ? _container.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
-    const _containerWidth = _containerRect.width;
+    const _containerWidth  = _containerRect.width;
     const _containerHeight = _containerRect.height;
     let _containerInitialX = _containerRect.left;
     let _containerInitialY = _containerRect.top;
@@ -818,9 +836,16 @@ var uss = {
     //_scrollbarDimensions[1] = scrollbar's dimension on the y-axis of the current parent
     let _scrollbarDimensions = [];
     _getContainerScrollbarDimensions(_container);
+    const _containerScrollbarDimensions = [_scrollbarDimensions[0], _scrollbarDimensions[1]]; //Scrollbars' dimensions of the passed element's container
 
     //Container is already in the viewport
-    if(_container === window || (_containerInitialX >= 0 && _containerInitialY >= 0 && _containerInitialX + _containerWidth + _scrollbarDimensions[0] <= uss._windowWidth && _containerInitialY + _containerHeight + _scrollbarDimensions[1]  <= uss._windowHeight)) {
+    if(_container === window ||
+        (_containerInitialX >= 0 &&
+         _containerInitialY >= 0 &&
+         _containerInitialX + _containerWidth  <= uss._windowWidth &&
+         _containerInitialY + _containerHeight <= uss._windowHeight
+        )
+      ) {
       _scrollElementContainer();
       return;
     }
@@ -829,15 +854,15 @@ var uss = {
     if(alignToCenter !== true) {
       const _containerToElementLeftDistance   = Math.abs(_containerInitialX);
       const _containerToElementRightDistance  = Math.abs(uss._windowWidth - _containerInitialX - _containerWidth);
-      let _containerToElementCenterDistance   = Math.abs(uss._windowWidth * 0.5 - _containerInitialX - _containerWidth * 0.5);
+      let _containerToElementCenterDistance   = Math.abs(0.5 * (uss._windowWidth - _containerWidth) - _containerInitialX);
       const _containerToElementTopDistance    = Math.abs(_containerInitialY);
       const _containerToElementBottomDistance = Math.abs(uss._windowHeight - _containerInitialY - _containerHeight);
 
-      _alignToLeft = _containerToElementLeftDistance < _containerToElementCenterDistance ? true : _containerToElementRightDistance < _containerToElementCenterDistance ? false : null;
+      _alignToLeft = _containerToElementLeftDistance < _containerToElementCenterDistance ? true : _containerToElementRightDistance  < _containerToElementCenterDistance ? false : null;
 
-      _containerToElementCenterDistance = Math.abs(uss._windowHeight * 0.5 - _containerInitialY - _containerHeight * 0.5);
+      _containerToElementCenterDistance = Math.abs(0.5 * (uss._windowHeight - _containerHeight) - _containerInitialY);
 
-      _alignToTop  = _containerToElementTopDistance < _containerToElementCenterDistance ? true : _containerToElementBottomDistance < _containerToElementCenterDistance ? false : null;
+      _alignToTop  = _containerToElementTopDistance  < _containerToElementCenterDistance ? true : _containerToElementBottomDistance < _containerToElementCenterDistance ? false : null;
     } else {
       _alignToLeft = null;
       _alignToTop  = null;
@@ -856,19 +881,25 @@ var uss = {
     let _containerParent = _deltaX * _directionX > 0 && _deltaY * _directionY > 0 ? uss.getScrollableParent(_container,  includeHidden) :
                            _deltaX * _directionX > 0                              ? uss.getXScrollableParent(_container, includeHidden) :
                                                                                     uss.getYScrollableParent(_container, includeHidden);
+    //Update deltas with new scrollbars' dimensions
+    if(_alignToLeft !== true || _alignToTop !== true) {
+      _getContainerScrollbarDimensions(_containerParent);
+      _deltaX += _alignToLeft === true ? 0 : _alignToLeft === false ? _scrollbarDimensions[0] : 0.5 * _scrollbarDimensions[0];
+      _deltaY += _alignToTop  === true ? 0 : _alignToTop  === false ? _scrollbarDimensions[1] : 0.5 * _scrollbarDimensions[1];
+    }
     _scrollParents();
 
     function _scrollElementContainer() {
       const _elementRect = element.getBoundingClientRect();
+      const _elementWidth    = _elementRect.width;
+      const _elementHeight   = _elementRect.height;
       const _elementInitialX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
       const _elementInitialY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
-      const _elementWidth  = _elementRect.width;
-      const _elementHeight = _elementRect.height;
 
       const _elementOverflowX = _elementInitialX <= 0 && _elementInitialX + _elementWidth  >= _containerWidth;  //Checks if the elements is already in the viewport and its width is bigger than its container's width
       const _elementOverflowY = _elementInitialY <= 0 && _elementInitialY + _elementHeight >= _containerHeight; //Checks if the elements is already in the viewport and its height is bigger than its container's height
-      const _elementIntoViewX = _elementInitialX >= 0 && _elementInitialX + _elementWidth + _scrollbarDimensions[0] <= _containerWidth;   //Checks if the element is already in the viewport on the x-axis
-      const _elementIntoViewY = _elementInitialY >= 0 && _elementInitialY + _elementHeight + _scrollbarDimensions[1] <= _containerHeight; //Checks if the element is already in the viewport on the y-axis
+      const _elementIntoViewX = _elementInitialX >= 0 && _elementInitialX + _elementWidth  <= _containerWidth;  //Checks if the element is already in the viewport on the x-axis
+      const _elementIntoViewY = _elementInitialY >= 0 && _elementInitialY + _elementHeight <= _containerHeight; //Checks if the element is already in the viewport on the y-axis
 
       //Element is already in the viewport or its size exceed the viewport
       if((_elementOverflowX && _elementOverflowY) || (_elementIntoViewX && _elementIntoViewY)) {
@@ -881,26 +912,25 @@ var uss = {
         if(!_elementOverflowX && !_elementIntoViewX) {
           const _containerToElementLeftDistance   = Math.abs(_elementInitialX);
           const _containerToElementRightDistance  = Math.abs(_containerWidth - _elementInitialX - _elementWidth);
-          const _containerToElementCenterDistance = Math.abs(_containerWidth * 0.5 - _elementInitialX - _elementWidth * 0.5);
-          _alignToLeft = _containerToElementLeftDistance < _containerToElementCenterDistance ? true : _containerToElementRightDistance < _containerToElementCenterDistance ? false : null;
+          const _containerToElementCenterDistance = Math.abs(0.5 * (_containerWidth - _elementWidth) - _elementInitialX);
+          _alignToLeft = _containerToElementLeftDistance < _containerToElementCenterDistance ? true : _containerToElementRightDistance  < _containerToElementCenterDistance ? false : null;
         }
 
         if(!_elementOverflowY && !_elementIntoViewY) {
-        const _containerToElementTopDistance    = Math.abs(_elementInitialY);
-        const _containerToElementBottomDistance = Math.abs(_containerHeight - _elementInitialY - _elementHeight);
-        const _containerToElementCenterDistance = Math.abs(_containerHeight * 0.5 - _elementInitialY - _elementHeight * 0.5);
-        _alignToTop = _containerToElementTopDistance < _containerToElementCenterDistance ? true : _containerToElementBottomDistance < _containerToElementCenterDistance ? false : null;
+          const _containerToElementTopDistance    = Math.abs(_elementInitialY);
+          const _containerToElementBottomDistance = Math.abs(_containerHeight - _elementInitialY - _elementHeight);
+          const _containerToElementCenterDistance = Math.abs(0.5 * (_containerHeight - _elementHeight) - _elementInitialY);
+          _alignToTop = _containerToElementTopDistance  < _containerToElementCenterDistance  ? true : _containerToElementBottomDistance < _containerToElementCenterDistance ? false : null;
         }
       } else {
         _alignToLeft = null;
         _alignToTop  = null;
       }
 
-      _getContainerScrollbarDimensions(_container);
-      const _elementFinalX = _elementOverflowX || _elementIntoViewX ? _elementInitialX + _scrollbarDimensions[0] : _alignToLeft === true ? 0 : _alignToLeft === false ? _containerWidth  - _elementWidth  : 0.5 * (_containerWidth  - _elementWidth);
-      const _elementFinalY = _elementOverflowY || _elementIntoViewY ? _elementInitialY + _scrollbarDimensions[1] : _alignToTop  === true ? 0 : _alignToTop  === false ? _containerHeight - _elementHeight : 0.5 * (_containerHeight - _elementHeight);
+      const _elementFinalX = _elementOverflowX || _elementIntoViewX ? _elementInitialX : _alignToLeft === true ? 0 : _alignToLeft === false ? _containerWidth  - _elementWidth  - _containerScrollbarDimensions[0] : 0.5 * (_containerWidth  - _elementWidth  - _containerScrollbarDimensions[0]);
+      const _elementFinalY = _elementOverflowY || _elementIntoViewY ? _elementInitialY : _alignToTop  === true ? 0 : _alignToTop  === false ? _containerHeight - _elementHeight - _containerScrollbarDimensions[1] : 0.5 * (_containerHeight - _elementHeight - _containerScrollbarDimensions[1]);
 
-      uss.scrollBy(_elementInitialX - _elementFinalX + _scrollbarDimensions[0], _elementInitialY - _elementFinalY + _scrollbarDimensions[1], _container, callback);
+      uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _container, callback);
     }
 
     function _getContainerScrollbarDimensions(scrollableContainer) {
@@ -909,17 +939,20 @@ var uss = {
         return;
       }
 
-      let __scrollBox = document.createElement("div");
-      __scrollBox.style.overflow = "scroll";
-      scrollableContainer.appendChild(__scrollBox);
-      _scrollbarDimensions[0] = __scrollBox.offsetWidth  - __scrollBox.clientWidth;
-      _scrollbarDimensions[1] = __scrollBox.offsetHeight - __scrollBox.clientHeight;
-      scrollableContainer.removeChild(__scrollBox);
+      const _originalOverflowX = scrollableContainer.style.overflowX;
+      const _originalOverflowY = scrollableContainer.style.overflowY;
+      const _originalWidth  = scrollableContainer.clientWidth;
+      const _originalHeight = scrollableContainer.clientHeight;
+      scrollableContainer.style.overflowX = "scroll";
+      scrollableContainer.style.overflowY = "scroll";
+      _scrollbarDimensions[0] = scrollableContainer.clientWidth  === _originalWidth  ? uss._scrollbarDimension : 0;
+      _scrollbarDimensions[1] = scrollableContainer.clientHeight === _originalHeight ? uss._scrollbarDimension : 0;
+      scrollableContainer.style.overflowX = _originalOverflowX;
+      scrollableContainer.style.overflowY = _originalOverflowY;
     }
 
     function _scrollParents() {
-      _getContainerScrollbarDimensions(_containerParent);
-      uss.scrollBy(_deltaX + _scrollbarDimensions[0], _deltaY + _scrollbarDimensions[1], _containerParent, () => {
+      uss.scrollBy(_deltaX, _deltaY, _containerParent, () => {
         //We won't be able to scroll any further even if we wanted
         if(_containerParent === window) {
           _scrollElementContainer();
@@ -944,6 +977,12 @@ var uss = {
         _containerParent = _deltaX * _directionX > 0 && _deltaY * _directionY > 0 ? uss.getScrollableParent(_containerParent,  includeHidden) :
                            _deltaX * _directionX > 0                              ? uss.getXScrollableParent(_containerParent, includeHidden) :
                                                                                     uss.getYScrollableParent(_containerParent, includeHidden);
+        //Update deltas with new scrollbars' dimensions
+        if(_alignToLeft !== true || _alignToTop !== true) {
+          _getContainerScrollbarDimensions(_containerParent);
+          _deltaX += _alignToLeft === true ? 0 : _alignToLeft === false ? _scrollbarDimensions[0] : 0.5 * _scrollbarDimensions[0];
+          _deltaY += _alignToTop  === true ? 0 : _alignToTop  === false ? _scrollbarDimensions[1] : 0.5 * _scrollbarDimensions[1];
+        }
         window.requestAnimationFrame(_scrollParents);
       });
     }
@@ -1008,6 +1047,14 @@ var uss = {
 }
 
 window.addEventListener("resize", () => {uss._windowHeight = window.innerHeight; uss._windowWidth = window.innerWidth;} , {passive:true});
+window.addEventListener("load", () => {
+  const __scrollBox = document.createElement("div");
+  __scrollBox.style.overflowX = "scroll";
+  document.body.appendChild(__scrollBox);
+  uss._scrollbarDimension = __scrollBox.offsetHeight  - __scrollBox.clientHeight;
+  document.body.removeChild(__scrollBox);
+}, {passive: true});
+
 try { //Chrome, Firefox & Safari >= 14
   window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
     uss._reducedMotion = !uss._reducedMotion;

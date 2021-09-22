@@ -30,8 +30,8 @@ const CUSTOM_CUBIC_BEZIER = (u0 = 0, u1 = 0, u2 = 1, u3 = 1, duration = 500, cal
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
     const _elapsed = timestamp - originalTimestamp;
-    const _currentBezierX = _elapsed < 0 ? 0 : _elapsed / duration; // from 0 to 1
-    const _nextPos = _currentBezierX === 0 ? 0 : newtonRapson(aX, bX, cX, aY, bY, cY, _currentBezierX) * total;
+    const _progress = _elapsed / duration;
+    const _nextPos = _progress <= 0 ? 0 : _progress >= 1 ? total : newtonRapson(aX, bX, cX, aY, bY, cY, _progress) * total;
   	return Math.ceil(remaning - total + _nextPos);
   }
 }
@@ -68,7 +68,7 @@ const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0
  */
 const _CUSTOM_BOUNCE = (progress = 0) => {
   if(!Number.isFinite(progress) || progress < 0 || progress > 1) {DEFAULT_ERROR_LOGGER("_CUSTOM_BOUNCE", "a number between 0 and 1 (inclusive) as the progress", progress); return;}
-  if(progress === 0) return 0;
+  if(progress === 0 || progress === 1) return progress;
 
   const n1 = 7;
   const d1 = 2.75;
@@ -88,9 +88,8 @@ const EASE_IN_BOUNCE = (duration = 900, callback = () => {}) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
     const _elapsed = timestamp - originalTimestamp;
-    let _progress = _elapsed < 0 ? 0 : _elapsed / duration; // from 0 to 1
-    if(_progress > 1) _progress = 1;
-    const _nextPos = (1 - _CUSTOM_BOUNCE(1 - _progress)) * total;
+    const _progress = _elapsed / duration;
+    const _nextPos = _progress <= 0 ? 0 : _progress >= 1 ? total : (1 - _CUSTOM_BOUNCE(1 - _progress)) * total;
   	return Math.ceil(remaning - total + _nextPos);
   }
 }
@@ -103,9 +102,8 @@ const EASE_OUT_BOUNCE = (duration = 900, callback = () => {}) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
     const _elapsed = timestamp - originalTimestamp;
-    let _progress = _elapsed < 0 ? 0 : _elapsed / duration; // from 0 to 1
-    if(_progress > 1) _progress = 1;
-    const _nextPos = _CUSTOM_BOUNCE(_progress) * total;
+    const _progress = _elapsed / duration;
+    const _nextPos = _progress <= 0 ? 0 : _progress >= 1 ? total : _CUSTOM_BOUNCE(_progress) * total;
   	return Math.ceil(remaning - total + _nextPos);
   }
 }
@@ -118,9 +116,11 @@ const EASE_IN_OUT_BOUNCE = (duration = 1200, callback = () => {}) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
     const _elapsed = timestamp - originalTimestamp;
-    let _progress = _elapsed < 0 ? 0 : _elapsed / duration; // from 0 to 1
-    if(_progress > 1) _progress = 1;
-    const _nextPos = _progress < 0.5 ? 0.5 * (1 - _CUSTOM_BOUNCE(1 - 2 * _progress)) * total : 0.5 * (1 + _CUSTOM_BOUNCE(2 * _progress - 1)) * total;
+    const _progress = _elapsed / duration;
+    const _nextPos = _progress <= 0 ? 0 :
+                     _progress >= 1 ? total :
+                     _progress < 0.5 ? 0.5 * (1 - _CUSTOM_BOUNCE(1 - 2 * _progress)) * total :
+                                       0.5 * (1 + _CUSTOM_BOUNCE(2 * _progress - 1)) * total;
     return Math.ceil(remaning - total + _nextPos);
   }
 }

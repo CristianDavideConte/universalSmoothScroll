@@ -126,7 +126,7 @@
     let wheelScrolled = false;
 
     uss.setPageScroller(pageScroller);
-    uss.hrefSetup(null, null, (anchor, el) => {
+    uss.hrefSetup(null, true, (anchor, el) => {
       if(uss.getYStepLengthCalculator() === defaultEase) {
         uss.setStepLengthCalculator(storedCalculator);
       }
@@ -212,6 +212,9 @@
     xScrollerLeftButton.addEventListener("touchstart",  () => scrollListX(-1), {passive: false});
     xScrollerRightButton.addEventListener("touchstart", () => scrollListX(+1), {passive: false});
 
+    xScrollerLeftButton.addEventListener("touchmove",  event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
+    xScrollerRightButton.addEventListener("touchmove", event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
+
     xScrollerLeftButton.addEventListener("touchend",  () => uss.stopScrollingX(xScroller), {passive:false});
     xScrollerRightButton.addEventListener("touchend", () => uss.stopScrollingX(xScroller), {passive:false});
     xScrollerLeftButton.addEventListener("mouseup",   () => uss.stopScrollingX(xScroller), {passive:false});
@@ -238,6 +241,9 @@
     yScrollerDownButton.addEventListener("mousedown",  () => scrollListY(+1), {passive: false});
     yScrollerUpButton.addEventListener("touchstart",   () => scrollListY(-1), {passive: false});
     yScrollerDownButton.addEventListener("touchstart", () => scrollListY(+1), {passive: false});
+
+    yScrollerUpButton.addEventListener("touchmove",   event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
+    yScrollerDownButton.addEventListener("touchmove", event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
 
     yScrollerUpButton.addEventListener("touchend",   () => uss.stopScrollingY(yScroller), {passive:false});
     yScrollerDownButton.addEventListener("touchend", () => uss.stopScrollingY(yScroller), {passive:false});
@@ -310,7 +316,7 @@
 
       const _originalDeltaX = _X - event.changedTouches[0].screenX;
       const _originalDeltaY = _Y - event.changedTouches[0].screenY;
-      const _deltaX = Math.abs(_originalDeltaX) > 1 ? 10 * _originalDeltaX : 0;
+      const _deltaX = Math.abs(_originalDeltaX) > 1 ? 16 * _originalDeltaX : 0;
       const _deltaY = Math.abs(_originalDeltaY) > 1 ? 16 * _originalDeltaY : 0;
       uss.scrollBy(_deltaX, _deltaY);
       _X -= _originalDeltaX;
