@@ -77,6 +77,7 @@ Variable name | Purpose
 `_minAnimationFrame` | The minimum number of frames any scroll-animation, on any axis, should last if no custom StepLengthCalculator are set for a container.
 `_windowHeight` | The current window's inner height in pixels.
 `_windowWidth` | The current window's inner width in pixels.
+`_scrollbarDimension` | The dimension of any scrollbar in px.
 `_pageScroller` | The current default value of the `container` input parameter used by some of the API's methods.
 `_reducedMotion` | True if the user has enabled any "reduce-motion" setting devicewise, false otherwise. <br/> Internally used to follow the user's accessibility preferences, reverting back to the browser's default _jump-to-position behavior_ if needed.  
 <br/>
