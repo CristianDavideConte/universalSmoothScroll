@@ -299,28 +299,27 @@
     //Smooth scrolling for touch devices
     let _Y = null;
     let _X = null;
-    pageScroller.addEventListener("touchstart", event => {
-      if(_X == null) _X = event.touches[0].screenX;
-      if(_Y == null) _Y = event.touches[0].screenY;
-    },{passive:true});
     pageScroller.addEventListener("touchend", event => {
       _Y = null;
       _X = null;
     }, {passive:true});
     pageScroller.addEventListener("touchmove", event => {
       event.preventDefault();
+      event.stopPropagation();
       if(storedCalculator !== defaultEase) {
         storedCalculator = uss.getYStepLengthCalculator() !== defaultEase ? uss.getYStepLengthCalculator() : storedCalculator;
         uss.setStepLengthCalculator(defaultEase);
       }
 
-      const _originalDeltaX = _X - event.changedTouches[0].screenX;
-      const _originalDeltaY = _Y - event.changedTouches[0].screenY;
-      const _deltaX = Math.abs(_originalDeltaX) > 1 ? 16 * _originalDeltaX : 0;
-      const _deltaY = Math.abs(_originalDeltaY) > 1 ? 16 * _originalDeltaY : 0;
-      uss.scrollBy(_deltaX, _deltaY);
+      if(_X === null) _X = event.changedTouches[0].clientX;
+      if(_Y === null) _Y = event.changedTouches[0].clientY;
+      const _originalDeltaX = _X - event.changedTouches[0].clientX;
+      const _originalDeltaY = _Y - event.changedTouches[0].clientY;
       _X -= _originalDeltaX;
       _Y -= _originalDeltaY;
+      const _deltaX = Math.abs(_originalDeltaX) > 2 ? 18 * _originalDeltaX : 2 * _originalDeltaX;
+      const _deltaY = Math.abs(_originalDeltaY) > 2 ? 18 * _originalDeltaY : 2 * _originalDeltaY;
+      uss.scrollBy(_deltaX, _deltaY);
     }, {passive:false});
   }
 </script>
