@@ -300,12 +300,15 @@
     let _Y = null;
     let _X = null;
     pageScroller.addEventListener("touchend", event => {
+  		if(event.touches.length > 1) return;
       _Y = null;
       _X = null;
     }, {passive:true});
     pageScroller.addEventListener("touchmove", event => {
       event.preventDefault();
       event.stopPropagation();
+
+  		if(event.touches.length > 1) return;
       if(storedCalculator !== defaultEase) {
         storedCalculator = uss.getYStepLengthCalculator() !== defaultEase ? uss.getYStepLengthCalculator() : storedCalculator;
         uss.setStepLengthCalculator(defaultEase);
