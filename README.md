@@ -21,7 +21,7 @@ You can also take a look at how single features are implemented on <a href="http
 
 # Download options
 ## NPM:
-`npm i universalsmoothscroll`
+[`npm i universalsmoothscroll`](https://www.npmjs.com/package/universalsmoothscroll)
 ## Github:
 The scripts' minified versions are available in the [releases section](https://github.com/CristianDavideConte/universalSmoothScroll/releases).
 
