@@ -77,7 +77,7 @@ Variable name | Purpose
 `_minAnimationFrame` | The minimum number of frames any scroll-animation, on any axis, should last if no custom StepLengthCalculator are set for a container.
 `_windowHeight` | The current window's inner height in pixels.
 `_windowWidth` | The current window's inner width in pixels.
-`_scrollbarDimension` | The dimension of any scrollbar in px.
+`_scrollbarsMaxDimension` | The highest amount of pixels any scrollbar on the page can occupy (it's browser dependent).
 `_pageScroller` | The current default value of the `container` input parameter used by some of the API's methods.
 `_reducedMotion` | True if the user has enabled any "reduce-motion" setting devicewise, false otherwise. <br/> Internally used to follow the user's accessibility preferences, reverting back to the browser's default _jump-to-position behavior_ if needed.  
 <br/>
@@ -95,6 +95,7 @@ Method Name | Purpose
 `getMinAnimationFrame` | Returns the value of `_minAnimationFrame`.
 `getWindowHeight` | Returns the value of `_windowHeight`.
 `getWindowWidth` | Returns the value of `_windowWidth`.
+`getScrollbarsMaxDimension` | Returns the value of `_scrollbarsMaxDimension`.
 `getPageScroller` | Returns the value of `_pageScroller`.
 `getReducedMotionState` | Returns the value of `_reducedMotion`.
 `setXStepLengthCalculator` | Sets the `_xStepLengthCalculator` for the requested container to the passed ease function if compatible.
@@ -107,6 +108,7 @@ Method Name | Purpose
 `setPageScroller` | Sets the `_pageScroller` to the passed value if compatible.
 `calcXStepLength` | Takes in the remaning scroll amount of a scroll-animation on the x-axis and returns how long each scroll-animation-step must be in order to target the `_minAnimationFrame` value.
 `calcYStepLength` | Takes in the remaning scroll amount of a scroll-animation on the y-axis and returns how long each scroll-animation-step must be in order to target the `_minAnimationFrame` value.
+ `calcScrollbarsDimensions` | Takes in an element and returns an array containing 2 numbers: <br/> **[0]** contains the vertical scrollbar's width of the passed container. <br/> **[1]** contains the horizontal scrollbar's height of the passed container.
 `getScrollXCalculator` | Takes in a container and returns a function that returns:<br/>  - The scrollLeft property of the container if it's an instance of HTMLElement.<br/>  - The scrollX property of the container if it's the window element.
 `getScrollYCalculator` | Takes in a container and returns a function that returns:<br/>  - The scrollTop property of the container if it's an instance of HTMLElement.<br/>  - The scrollY property of the container if it's the window element.
 `getMaxScrollX` | Takes in a container and returns its highest scroll-reachable x-value.
@@ -157,10 +159,15 @@ Method Name | Ease type
 `EASE_IN_OUT_EXPO` | Same as `CUSTOM_CUBIC_BEZIER(0.87, 0, 0.13, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_OUT_QUINT`, it increases till it's higher than `EASE_IN_OUT_QUINT` when half of the duration has passed and then it decreases until it's lower than `EASE_IN_OUT_QUINT` towards the end of the scroll-animation.
 `EASE_IN_OUT_CIRC` | Same as `CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, ...)`. <br/> Initially the speed of the scroll animation is slightly lower than the `EASE_IN_OUT_QUINT` but higher than `EASE_IN_OUT_EXPO`, it increases till it's higher than `EASE_IN_OUT_QUINT` when half of the duration has passed and then it decreases until it's lower than `EASE_IN_OUT_QUINT` but higher than `EASE_IN_OUT_EXPO` towards the end of the scroll-animation.
 `EASE_IN_OUT_BOUNCE` |  The first half of the animation it's the same as to the first part of `EASE_IN_BOUNCE`, the second one is the same as the last part of `EASE_OUT_BOUNCE`
+`EASE_ELASTIC_X` | Allows for an elastic easing effect on the x-axis of a container. <br/> Takes in 4 parameters: <br/> <ol> 1) A step length calculator which controls the easing of the **forward part** of the scroll-animation. <br/> 2) A step length calculator which controls the easing of the **backward part** of the scroll-animation. <br/> 3) A function which must return the number of pixels that will have to be scrolled by the backward part of the scroll-animation. <br/> This function will be passed the following input parameters (in this order): <br/> <ol> - OriginalTimestamp which indicates the exact time in milliseconds at which the forward part of the scroll-animation has started <br/> - Timestamp which indicates the time in milliseconds at which this function is invoked <br/> - CurrentPosition of the container's left border <br/> - Direction, 1 if the elements inside the container have gone from right to left as a consequence of the forward part of the scroll-animation, -1 otherwise <br/> - Container on which the scroll-animation is currently being performed (a DOM element that can be scrolled) <br/> </ol> If this function returns a negative number, the forward easing will be used instead of the backward one. <br/> 4) The time in milliseconds that has to pass after the end of the forward part of the scroll animation to start the backward part </ol>
+`EASE_ELASTIC_Y` | Allows for an elastic easing effect on the y-axis of a container. <br/> Takes in 4 parameters: <br/> <ol> 1) A step length calculator which controls the easing of the **forward part** of the scroll-animation. <br/> 2) A step length calculator which controls the easing of the **backward part** of the scroll-animation. <br/> 3) A function which must return the number of pixels that will have to be scrolled by the backward part of the scroll-animation. <br/> This function will be passed the following input parameters (in this order): <br/> <ol> - OriginalTimestamp which indicates the exact time in milliseconds at which the forward part of the scroll-animation has started <br/> - Timestamp which indicates the time in milliseconds at which this function is invoked <br/> - CurrentPosition of the container's top border <br/> - Direction, 1 if the elements inside the container have gone from bottom to top as a consequence of the forward part of the scroll-animation, -1 otherwise <br/> - Container on which the scroll-animation is currently being performed (a DOM element that can be scrolled) <br/> </ol> If this function returns a negative number, the forward easing will be used instead of the backward one. <br/> 4) The time in milliseconds that has to pass after the end of the forward part of the scroll animation to start the backward part </ol>
 
-All the above mentioned methods return a `stepLengthCalculator` and take a `duration` (in milliseconds) and a `callback` as the input parameters. <br/>
-The only exception is `CUSTOM_CUBIC_BEZIER` which requires the 4 bézier points (finite numbers between 0 and 1) before the `duration` and the `callback`. <br/> 
-The `callback` is executed at every scroll-animation step.
+All the above mentioned methods return a `stepLengthCalculator`. <br/>
+Except for `CUSTOM_CUBIC_BEZIER`, `EASE_ELASTIC_X` and `EASE_ELASTIC_Y`, the input parameters are: <br/>  
+  1) A `duration` in milliseconds <br/>
+  2) A `callback` that is executed at every scroll-animation step and that will be invoked with the same input parameters the returned stepLengthCalculators are passed <br/>
+
+`CUSTOM_CUBIC_BEZIER` requires the 4 bézier points (finite numbers between 0 and 1) before the `duration` and the `callback`. <br/> 
 <br/><br/>
 
 # Methods signatures
