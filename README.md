@@ -108,7 +108,7 @@ Method Name | Purpose
 `setPageScroller` | Sets the `_pageScroller` to the passed value if compatible.
 `calcXStepLength` | Takes in the remaning scroll amount of a scroll-animation on the x-axis and returns how long each scroll-animation-step must be in order to target the `_minAnimationFrame` value.
 `calcYStepLength` | Takes in the remaning scroll amount of a scroll-animation on the y-axis and returns how long each scroll-animation-step must be in order to target the `_minAnimationFrame` value.
- `calcScrollbarsDimensions` | Takes in an element and returns an array containing 2 numbers: <br/> **[0]** contains the vertical scrollbar's width of the passed container. <br/> **[1]** contains the horizontal scrollbar's height of the passed container.
+ `calcScrollbarsDimensions` | Takes in an element and returns an array containing 2 numbers: <br/> <ol> **[0]** contains the vertical scrollbar's width of the passed container. <br/> **[1]** contains the horizontal scrollbar's height of the passed container. </ol>
 `getScrollXCalculator` | Takes in a container and returns a function that returns:<br/>  - The scrollLeft property of the container if it's an instance of HTMLElement.<br/>  - The scrollX property of the container if it's the window element.
 `getScrollYCalculator` | Takes in a container and returns a function that returns:<br/>  - The scrollTop property of the container if it's an instance of HTMLElement.<br/>  - The scrollY property of the container if it's the window element.
 `getMaxScrollX` | Takes in a container and returns its highest scroll-reachable x-value.
@@ -164,8 +164,8 @@ Method Name | Ease type
 
 All the above mentioned methods return a `stepLengthCalculator`. <br/>
 Except for `CUSTOM_CUBIC_BEZIER`, `EASE_ELASTIC_X` and `EASE_ELASTIC_Y`, the input parameters are: <br/>  
-  1) A `duration` in milliseconds <br/>
-  2) A `callback` that is executed at every scroll-animation step and that will be invoked with the same input parameters the returned stepLengthCalculators are passed <br/>
+1) A `duration` in milliseconds <br/>
+2) A `callback` that is executed at every scroll-animation step and that will be invoked with the same input parameters the returned stepLengthCalculators are passed <br/>
 
 `CUSTOM_CUBIC_BEZIER` requires the 4 bézier points (finite numbers between 0 and 1) before the `duration` and the `callback`. <br/> 
 <br/><br/>
