@@ -164,8 +164,8 @@ Method Name | Ease type
 
 All the above mentioned methods return a `stepLengthCalculator`. <br/>
 Except for `CUSTOM_CUBIC_BEZIER`, `EASE_ELASTIC_X` and `EASE_ELASTIC_Y`, the input parameters are: <br/>  
-1) A `duration` in milliseconds <br/>
-2) A `callback` that is executed at every scroll-animation step and that will be invoked with the same input parameters the returned stepLengthCalculators are passed <br/>
+- A `duration` in milliseconds <br/>
+- A `callback` that is executed at every scroll-animation step and that will be invoked with the same input parameters the returned stepLengthCalculators are passed <br/>
 
 `CUSTOM_CUBIC_BEZIER` requires the 4 bézier points (finite numbers between 0 and 1) before the `duration` and the `callback`. <br/> 
 <br/><br/>
