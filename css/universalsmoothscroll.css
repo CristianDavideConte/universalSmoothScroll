@@ -1,4 +1,5 @@
-* {
+h2,
+a {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
      -khtml-user-select: none; /* Konqueror HTML */
@@ -18,9 +19,6 @@ a {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
-#easeFunctionSelectorList::-webkit-scrollbar {
-  //display: none;
-}
 body::-webkit-scrollbar {
   //display: none;
 }
@@ -87,10 +85,9 @@ li {
   width: 100%;
   height: 100%;
   transition: 0.3s;
-  background-color: rgba(51, 51, 51, 0.9);;
+  background-color: rgba(51, 51, 51, 0.9);
 }
 
-li.selected,
 li:hover {
  background-color: rgba(21, 21, 21, 0.6);
 }
@@ -180,17 +177,26 @@ li > a {
   justify-content: center;
 }
 
-#easeFunctionSelector > ul {
-   display: flex;
-   flex-direction: column;
-   height: 50vh;
-   overflow-y: scroll;
-   overscroll-behavior: contain;
+#easeFunctionSelectorList {
+  height: 40vh;
+  padding: 25vh 0;        /* For elastic scrolling */
+  box-sizing: border-box; /* For elastic scrolling */
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+  background-color: rgba(21, 21, 21, 0.6);
 }
 
-#easeFunctionSelector > ul > li {
-    height: 10vh;
-    flex-shrink: 0;
+#easeFunctionSelectorList > li {
+  height: 10vh;
+  flex-shrink: 0;
+  background-color: rgba(51, 51, 51, 0.65);
+}
+
+#easeFunctionSelectorList > li:hover,
+#easeFunctionSelectorList > li.selected {
+  background-color: rgba(21, 21, 21, 0);
 }
 
 #xScroller {

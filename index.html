@@ -31,7 +31,7 @@
     <div class = "sections-container">
       <div id = "section1" class = "page">
         <div id = "easeFunctionSelector">
-          <h2>Change anchors' ease function</h2>
+          <h2>Select the above anchor's easing</h2>
           <ul id = "easeFunctionSelectorList">
             <li><a id = "linear"        >linear</a></li>
             <li><a id = "easeInSine"    >easeInSine</a></li>
@@ -106,6 +106,87 @@
   </body>
 </html>
 <script>
+  //Enables smooth scrolling for touch devices
+  let wasTouchEvent;
+  let isFingerDown;
+  function touchHelper(container, init, callback, scrollModifier = delta => {return delta;}, shouldTrackFinger = false, onfingerUp = () => {}) {
+    let _Y = null;
+    let _X = null;
+
+
+    container.addEventListener("touchstart", event => {
+      event.stopPropagation();
+      if(event.touches.length > 1) return;
+      _Y = null;
+      _X = null;
+      if(event.target.href === undefined) uss.stopScrolling(container);
+      if(shouldTrackFinger) isFingerDown = true;
+    }, {passive:true});
+
+    container.addEventListener("touchend", event => {
+      event.stopPropagation();
+  		if(event.touches.length > 1) return;
+      _Y = null;
+      _X = null;
+      if(shouldTrackFinger) {
+        isFingerDown = false;
+        onfingerUp();
+      }
+    }, {passive:true});
+
+    container.addEventListener("touchmove", event => {
+      event.stopPropagation();
+      event.preventDefault();
+
+  		if(event.touches.length > 1) return;
+      if(typeof init === "function") init();
+
+      if(_X === null) _X = event.changedTouches[0].clientX;
+      if(_Y === null) _Y = event.changedTouches[0].clientY;
+      const _originalDeltaX = _X - event.changedTouches[0].clientX;
+      const _originalDeltaY = _Y - event.changedTouches[0].clientY;
+      _X -= _originalDeltaX;
+      _Y -= _originalDeltaY;
+      const _absDeltaX = Math.abs(_originalDeltaX);
+      const _absDeltaY = Math.abs(_originalDeltaY);
+
+      //TODO: find an exponetial function for deciding the multiplication factor
+      const _deltaX = scrollModifier(_absDeltaX < 2 ? 3 * _originalDeltaX : _absDeltaX < 10 ? 5 * _originalDeltaX : _absDeltaX < 15 ? 10 * _originalDeltaX : 15 * _originalDeltaX);
+      const _deltaY = scrollModifier(_absDeltaY < 2 ? 3 * _originalDeltaY : _absDeltaY < 10 ? 6 * _originalDeltaY : _absDeltaY < 16 ? 11 * _originalDeltaY : 16 * _originalDeltaY);
+      uss.scrollBy(_deltaX, _deltaY, container, callback, false);
+    }, {passive:false});
+  }
+
+
+
+
+
+
+
+
+  let backwardPhase;
+  function calcScrollDistance(container, scrollLimit, delta, touchScroll = false) {
+    const _currentPos = uss.getScrollYCalculator(container)();
+    const _maxScroll = uss.getMaxScrollY(container);
+
+    if(_currentPos < scrollLimit && delta < 0) {
+      delta *= _currentPos <= 0 ? 0 : wasTouchEvent ? 1 : 0.2;
+      return delta * _currentPos / scrollLimit;
+    }
+
+    if(_currentPos > _maxScroll - scrollLimit && delta > 0) {
+      delta *= _currentPos >= _maxScroll ? 0 : wasTouchEvent ? 1 : 0.2;
+      return delta * (_maxScroll - _currentPos) / scrollLimit;
+    }
+
+    return delta;
+  }
+
+
+
+
+
+
   function init() {
     const pageScroller = document.body;
     const defaultEase = (remaning) => {return remaning / 20 + 1;};
@@ -125,7 +206,10 @@
     let storedCalculator = EASE_LINEAR();
     let wheelScrolled = false;
 
+
     uss.setPageScroller(pageScroller);
+    uss.setStepLengthCalculator(EASE_LINEAR());
+
     uss.hrefSetup(null, true, (anchor, el) => {
       if(uss.getYStepLengthCalculator() === defaultEase) {
         uss.setStepLengthCalculator(storedCalculator);
@@ -139,24 +223,126 @@
       uss.stopScrolling();
       return true;
     }, null, false);
-    uss.setStepLengthCalculator(EASE_LINEAR());
+
+
+
+
+
+
+
+
+
+
+    //Used to initially hide the elastic containers
+    const elasticDebounceTime = 70; //Debounce time in ms
+    easeFunctionSelectorList.scrollTop = 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5));
+    uss.setYStepLengthCalculator(
+      EASE_ELASTIC_Y(
+        defaultEase,
+        EASE_OUT_CUBIC(),
+        (originalTimestamp, timestamp, currentPos, direction, container) => {
+          if(isFingerDown) return 0;
+          backwardPhase = true;
+          const _elasticLimit = 2.5 * (container.scrollHeight / (container.children.length + 5)); //Container's padding-top/bottom
+          const _maxScroll = uss.getMaxScrollY(container);
+          return currentPos <= _elasticLimit              ? direction * (currentPos - _elasticLimit) :
+                 currentPos >= _maxScroll - _elasticLimit ? direction * (currentPos + _elasticLimit - _maxScroll) :
+                 0;
+        },
+        elasticDebounceTime
+    ), easeFunctionSelectorList);
+
+
+
+
 
     easeFunctionSelectorList.addEventListener("wheel", event => {
       event.preventDefault();
       event.stopPropagation();
-      uss.scrollYBy(event.deltaY, easeFunctionSelectorList, null, false);
+      const _scrollDistance  = calcScrollDistance(easeFunctionSelectorList, 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)) - 1, event.deltaY);
+      const _scrollDirection = _scrollDistance > 0 ? 1 : -1;
+      if(_scrollDistance * _scrollDirection < 2) return;
+      uss.scrollYBy(_scrollDistance, easeFunctionSelectorList, () => backwardPhase = false, false);
     }, {passive:false});
-    easeFunctionSelectorList.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
-    uss.setStepLengthCalculator(defaultEase, easeFunctionSelectorList);
+
+
+
+
+    let scrollbarTimeout;
+    easeFunctionSelectorList.addEventListener("scroll", (event) => {
+      if(isFingerDown || backwardPhase || uss.isYscrolling(easeFunctionSelectorList)) return;
+      clearTimeout(scrollbarTimeout);
+
+      const _elasticLimit = 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)); //Container's padding-top/bottom
+      const _currentPos = uss.getScrollYCalculator(easeFunctionSelectorList)();
+
+      if(_currentPos < _elasticLimit - 1) {
+        scrollbarTimeout = setTimeout(() => {
+                            if(isFingerDown || backwardPhase || uss.isYscrolling(easeFunctionSelectorList)) return;
+                            easeFunctionSelectorList.style.pointerEvents = "none";
+                            easeFunctionSelectorList.style.overflowY = "hidden";
+                            window.requestAnimationFrame(() => {easeFunctionSelectorList.style.overflowY = "scroll"});
+                            uss.scrollYTo(_currentPos - 0.0001, easeFunctionSelectorList, () => {easeFunctionSelectorList.style.pointerEvents = ""; backwardPhase = false;});
+                          }, 1.5 * elasticDebounceTime);
+        return;
+      }
+
+      const maxScroll = uss.getMaxScrollY(easeFunctionSelectorList);
+      if(_currentPos > maxScroll - _elasticLimit + 1) {
+        scrollbarTimeout = setTimeout(() => {
+                            if(isFingerDown || backwardPhase || uss.isYscrolling(easeFunctionSelectorList)) return;
+                            easeFunctionSelectorList.style.pointerEvents = "none";
+                            easeFunctionSelectorList.style.overflowY = "hidden";
+                            window.requestAnimationFrame(() => {easeFunctionSelectorList.style.overflowY = "scroll"});
+                            uss.scrollYTo(_currentPos + 0.0001, easeFunctionSelectorList, () => {easeFunctionSelectorList.style.pointerEvents = ""; backwardPhase = false;});
+                          }, 1.5 * elasticDebounceTime);
+      }
+    }, {passive:false});
+
+
+
+
+
+    touchHelper(easeFunctionSelectorList,
+                () => wasTouchEvent = true,
+                null,
+                delta => {return calcScrollDistance(easeFunctionSelectorList, 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)), delta, true);},
+                true,
+                () => {
+                  wasTouchEvent = false;
+                  const _elasticLimit = 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)); //Container's padding-top/bottom
+                  const _currentPos = uss.getScrollYCalculator(easeFunctionSelectorList)();
+                  const maxScroll = uss.getMaxScrollY(easeFunctionSelectorList);
+                  if(_currentPos < _elasticLimit - 1) {
+                    uss.scrollYTo(_currentPos - 0.0001, easeFunctionSelectorList, () => backwardPhase = false);
+                  } else if(_currentPos > maxScroll - _elasticLimit + 1) {
+                    uss.scrollYTo(_currentPos + 0.0001, easeFunctionSelectorList, () => backwardPhase = false);
+                  }
+                }
+               );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     const listItems = easeFunctionSelectorList.children;
     listItems[0].classList.add("selected");
-    for(let li of listItems) {
-      const button = li.children[0];
-      button.addEventListener("click", () => {
-        for(let li of listItems) {
-          li.classList.remove("selected");
-        }
+    for(const li of listItems) {
+      li.addEventListener("click", () => {
+        document.getElementsByClassName("selected")[0].classList.remove("selected");
         li.classList.add("selected");
       }, {passive:true});
     }
@@ -221,6 +407,7 @@
     xScrollerRightButton.addEventListener("mouseup",  () => uss.stopScrollingX(xScroller), {passive:false});
     xScrollerLeftButton.addEventListener("mouseout",  () => uss.stopScrollingX(xScroller), {passive:false});
     xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScroller), {passive:false});
+
 
     function scrollListY(direction) {
       uss.setYStepLengthCalculator(EASE_OUT_EXPO(2000), yScroller);
@@ -296,33 +483,11 @@
     document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(pageScroller, () => console.log("scrollX stopped"));}, {passive:true});
     document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(pageScroller, () => console.log("scrollY stopped"));}, {passive:true});
 
-    //Smooth scrolling for touch devices
-    let _Y = null;
-    let _X = null;
-    pageScroller.addEventListener("touchend", event => {
-  		if(event.touches.length > 1) return;
-      _Y = null;
-      _X = null;
-    }, {passive:true});
-    pageScroller.addEventListener("touchmove", event => {
-      event.preventDefault();
-      event.stopPropagation();
-
-  		if(event.touches.length > 1) return;
+    touchHelper(pageScroller, () => {
       if(storedCalculator !== defaultEase) {
         storedCalculator = uss.getYStepLengthCalculator() !== defaultEase ? uss.getYStepLengthCalculator() : storedCalculator;
         uss.setStepLengthCalculator(defaultEase);
       }
-
-      if(_X === null) _X = event.changedTouches[0].clientX;
-      if(_Y === null) _Y = event.changedTouches[0].clientY;
-      const _originalDeltaX = _X - event.changedTouches[0].clientX;
-      const _originalDeltaY = _Y - event.changedTouches[0].clientY;
-      _X -= _originalDeltaX;
-      _Y -= _originalDeltaY;
-      const _deltaX = Math.abs(_originalDeltaX) > 2 ? 18 * _originalDeltaX : 2 * _originalDeltaX;
-      const _deltaY = Math.abs(_originalDeltaY) > 2 ? 18 * _originalDeltaY : 2 * _originalDeltaY;
-      uss.scrollBy(_deltaX, _deltaY);
-    }, {passive:false});
+    });
   }
 </script>
