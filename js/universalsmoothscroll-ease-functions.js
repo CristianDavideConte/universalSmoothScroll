@@ -90,7 +90,7 @@ const EASE_IN_BOUNCE = (duration = 900, callback = () => {}) => {
     const _elapsed = timestamp - originalTimestamp;
     const _progress = _elapsed / duration;
     const _nextPos = _progress <= 0 ? 0 : _progress >= 1 ? total : (1 - _CUSTOM_BOUNCE(1 - _progress)) * (total - 1);
-  	return Math.ceil(remaning - total + _nextPos);
+    return Math.ceil(remaning - total + _nextPos);
   }
 }
 
@@ -104,7 +104,7 @@ const EASE_OUT_BOUNCE = (duration = 900, callback = () => {}) => {
     const _elapsed = timestamp - originalTimestamp;
     const _progress = _elapsed / duration;
     const _nextPos = _progress <= 0 ? 0 : _progress >= 1 ? total : _CUSTOM_BOUNCE(_progress) * (total - 1);
-  	return Math.ceil(remaning - total + _nextPos);
+    return Math.ceil(remaning - total + _nextPos);
   }
 }
 
