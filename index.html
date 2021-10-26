@@ -150,10 +150,10 @@
       const _absDeltaX = Math.abs(_originalDeltaX);
       const _absDeltaY = Math.abs(_originalDeltaY);
 
-      //TODO: find an exponetial function for deciding the multiplication factor
-      const _deltaX = scrollModifier(_absDeltaX < 2 ? 3 * _originalDeltaX : _absDeltaX < 10 ? 5 * _originalDeltaX : _absDeltaX < 15 ? 10 * _originalDeltaX : 15 * _originalDeltaX);
-      const _deltaY = scrollModifier(_absDeltaY < 2 ? 3 * _originalDeltaY : _absDeltaY < 10 ? 6 * _originalDeltaY : _absDeltaY < 16 ? 11 * _originalDeltaY : 16 * _originalDeltaY);
-      uss.scrollBy(_deltaX, _deltaY, container, callback, false);
+      const _deltaX = _absDeltaX <= 1 ? _originalDeltaX : _originalDeltaX * Math.log(1e5 * _absDeltaX);
+      const _deltaY = _absDeltaY <= 1 ? _originalDeltaY : _originalDeltaY * Math.log(1e5 * _absDeltaY);
+      
+      uss.scrollBy(_deltaX, _deltaY, container, callback, true);
     }, {passive:false});
   }
 
