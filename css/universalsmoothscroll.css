@@ -7,7 +7,6 @@ a {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                 supported by Chrome, Edge, Opera and Firefox */
-  user-drag: none;
   -webkit-user-drag: none;
 }
 
@@ -20,7 +19,7 @@ a {
 }
 
 body::-webkit-scrollbar {
-  //display: none;
+  /*display: none;*/
 }
 
 body {
