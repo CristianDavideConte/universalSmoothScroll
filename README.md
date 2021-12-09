@@ -51,7 +51,7 @@ QQ Browser | ❔
 KaiOS Browser | ❔
 
 # Support Me
-If you want to support my work through a donation, you can either use the github [`sponsor button`](https://github.com/sponsors/CristianDavideConte) or the <a href="#donate"><code>PayPal donate button</code></a> above.<br/>
+If you want to support my work through a donation, you can either use the GitHub [`sponsor button`](https://github.com/sponsors/CristianDavideConte) or the PayPal <a href="#donate"><code>donate button</code></a> above.<br/>
 Support is appreciated but it's not compulsory in any way nor needed in order to use any of my work!
 
 # Contact Me
