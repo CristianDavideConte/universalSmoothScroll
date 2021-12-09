@@ -1,3 +1,6 @@
+#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
+<br/>
+
 # F.A.Q.
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-behavior: smooth`_ CSS property ?
 A: NO! They won't work on those containers.
