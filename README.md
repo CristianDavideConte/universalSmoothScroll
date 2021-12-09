@@ -20,14 +20,14 @@ You can try most of the API functionalities on <a href="https://cristiandavideco
 You can also take a look at how single features are implemented on <a href="https://cristiandavideconte.github.io/universalSmoothScroll/" target="_blank">this playground</a>.
 
 # Table of Contents
-  0. [Download](https://github.com/CristianDavideConte/universalSmoothScroll/docs/Download.md)
-  1. [Installation](https://github.com/CristianDavideConte/universalSmoothScroll/docs/Installation.md)
-  2. [How it Works](https://github.com/CristianDavideConte/universalSmoothScroll/docs/HowItWorks.md)
-  3. [Available constants](https://github.com/CristianDavideConte/universalSmoothScroll/docs/ConstantsAbout.md)
-  4. [Available variables](https://github.com/CristianDavideConte/universalSmoothScroll/docs/VariablesAbout.md)
-  5. [Available methods](https://github.com/CristianDavideConte/universalSmoothScroll/docs/MethodsAbout.md)
-  6. [Available easing functions](https://github.com/CristianDavideConte/universalSmoothScroll/docs/EasingFunctions.md)
-  7. [F.A.Q.](https://github.com/CristianDavideConte/universalSmoothScroll/docs/FAQ.md)
+  0. [Download](./docs/Download.md)
+  1. [Installation](./docs/Installation.md)
+  2. [How it Works](./docs/HowItWorks.md)
+  3. [Available constants](./docs/ConstantsAbout.md)
+  4. [Available variables](./docs/VariablesAbout.md)
+  5. [Available methods](./docs/MethodsAbout.md)
+  6. [Available easing functions](./docs/EasingFunctions.md)
+  7. [F.A.Q.](./docs/FAQ.md)
 
 # Browser Compatibility
 Browser | Support 
