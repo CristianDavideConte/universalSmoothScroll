@@ -1,7 +1,7 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
 <br/>
 
-# Included ease functions (public use)
+# Included easing functions (public use)
 Method Name | Ease type
 ----------- | ---------
 `CUSTOM_CUBIC_BEZIER` | The first 4 input parameters are the 4 points of the bézier curve and they determine the kind of easing obtained.
