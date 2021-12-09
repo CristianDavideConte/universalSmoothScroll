@@ -1,3 +1,6 @@
+#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
+<br/>
+
 # How it works
 All the API methods are properties of the `uss` object which gets automatically initialized when you import the script into your project.<br/>
 The `uss` object is initialized in the global scope of you project so be aware of that !<br/>
