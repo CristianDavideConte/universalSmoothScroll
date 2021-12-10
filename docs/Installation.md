@@ -24,4 +24,4 @@ Because all the scripts will auto-initialize themselves, you can now start using
 ---
 
 ### N.B. 
-If don't have access to the `index.html` file _(or you simply don't have it)_ another way to import the USS API is to create _(via javascript or whichever language you're using)_ as many `Script` elements as the files you downloaded inside your project and link them to correct paths. <br/>
+If don't have access to the `index.html` file _(or you simply don't have it)_ another way to import the USS API is to create _(via javascript or whichever language you're using)_ as many `Script` elements as the files you downloaded inside your project and link them to the correct paths. <br/>
