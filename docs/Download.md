@@ -16,7 +16,7 @@ All the download options will give you access to all the above described files, 
 ---
 
 ## NPM:
-[`npm i universalsmoothscroll`](https://www.npmjs.com/package/universalsmoothscroll) <br/>
+[`npm i universalsmoothscroll@latest`](https://www.npmjs.com/package/universalsmoothscroll) <br/>
 
 All of the above mentioned files will be downloaded inside your `node_module` folder.
 <br/>
