@@ -1,15 +1,36 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
 <br/>
 
-# F.A.Q.
+<h1 align = "center">F.A.Q.</h1>
+This section contains a collection of the most asked questions about any aspect of the USS API. <br/>
+If the answer you are looking for is not here, you can [`contact me`](https://github.com/CristianDavideConte/universalSmoothScroll#contact-me)
+
+<br/><br/>
+
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-behavior: smooth`_ CSS property ?
 A: NO! They won't work on those containers.
+
+---
+<br/>
+
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-snap-type`_ CSS property ?
 A: NO! They won't work on those containers.
+
+---
+<br/>
+
 ## Q: Can I use the API in a `React` project ?
 A: YES! Just import the scripts in your `index.html` header and then you can start using the API.  
+
+---
+<br/>
+
 ## Q: How do I invoke the API methods ?  
 A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD(ARGUMENTS)`.
+
+---
+<br/>
+
 ## Q: Can I pass a `React.Component` as either the `container` or the `element` value ? 
 A: NO! You have to pass the API methods either an `HTMLElement` or the `window` element. <br/>
 This problem can be easily solved _the Javascript way_ (by looking for the elements in the DOM with `getElementById`, `getElementsByClassName`, etc...) or by using either React's [`Refs`](https://en.reactjs.org/docs/refs-and-the-dom.html) or the [`React.findDOMNode`](https://en.reactjs.org/docs/react-dom.html#finddomnode) method to obtain the `HTMLElement` from your `ReactElements`. <br/>
@@ -41,6 +62,10 @@ class myApp extends React.Component {
   }
 }
 ```
+
+---
+<br/>
+
 ## Q: Can I modify the way scroll-animation steps are calculated to a non-linear behavior ?
 A: YES! <br/>
 Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br/>
@@ -53,6 +78,10 @@ For istance:<br/>
 ```javascript
 uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
 ```
+
+---
+<br/>
+
 ## Q: Can I make my scroll-animation last a certain amount of time?
 A: YES!<br/>
 While setting a custom ease function you will notice it will be passed both the timestamp relative to the beginning of the scroll-animation and the current timestamp as the second and third arguments of your function.<br/>
@@ -63,6 +92,10 @@ For istance:<br/>
 uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); //Every scroll-animation on our container will last 2 seconds
 ```
 You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) helpful.
+
+---
+<br/>
+
 ## Q: What is a _StepLengthCalculator_ ?
 A: It's function that has to always return a finite number.<br/>
 
@@ -108,6 +141,10 @@ For example:<br/>
 uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 ```
 [Here](https://easings.net/) you can find out more about the way the StepLengthCalculators provided by `universalsmoothscroll-ease-functions` [library](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) will affect your scroll-animations.
+
+---
+<br/>
+
 ## Q: What is the difference between _`stillStart = true`_ and _`stillStart = false`_ ?
 A: They produce 2 completly different kind of scroll-animations' behaviors.<br/>
 _`stillStart = true`_ means that before the scroll-animation you requested can be played any other scroll-animation on the same axis of the passed container is cancelled so this type of scroll-animations always start from a no-movement situation in order to be performed.<br/>  
@@ -136,6 +173,10 @@ const stillStartFalseBehavior = wheelEvent => {
 //window.addEventListener("wheel", stillStartTrueBehavior,  {passive:false});
 //window.addEventListener("wheel", stillStartFalseBehavior, {passive:false});
 ```
+
+---
+<br/>
+
 ## Q: What is the _hrefSetup's_ `init` parameter ?
 A: Unlike every other callback parameter of this API, this is a function that gets executed right before any scroll-animation is performed. <br/>
 You may want to use this function to execute actions that must happen after an anchor link is clicked but before any scroll-animation is performed. <br/>
@@ -144,6 +185,10 @@ For example: <br/>
 let changeBg = () => document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"; //No need to return anything in this case
 uss.hrefSetup(true, true, changeBg); //Every time an anchor link is clicked our body's backgroundColor is randomly changed
 ```
+
+---
+<br/>
+
 ## Q: Can I obtain the _"momentum-scrolling"_ effect with this API ?
 A: YES! <br/>
 You can achive it by setting a custom ease-out stepLengthCalculator for the container you want to be _"momentum-scrolled"_. <br/>
@@ -160,14 +205,29 @@ myContainer.addEventListener("wheel", event => { //We want the momentum-scroll e
 }, {passive:false});
 uss.setYStepLengthCalculator(myEaseFunction, myContainer); //A medium-speed momentum scrolling effect
 ```
+
+---
+<br/>
+
 ## Q: What are _`_scrollX()`_ and _`_scrollY()`_ ?
 A: They are functions that can only be internally accessed by the API, you won't be able to invoke them. <br/>
 They execute all the instructions needed for a single scroll-animation-step on respectively the x-axis and the y-axis.
+
+---
+<br/>
+
 ## Q: Why there's no setter for the _`_reducedMotion`_ variable ?
 A: Because it's up to the final users to decide which accessibility settings they want to enable. <br/>
 Ignoring user preferences is not suggested.   
+
+---
+<br/>
+
 ## Q: Why is it allowed to directly modify internal variables ?
 A: It is allowed (but highly discouraged) because there may be a bug that prevents you from setting a variable to a right value (not common). <br/>
 If that's the case don't hesitate to contact me !
 
-More coming soon...<br/><br/>
+---
+<br/>
+
+<h3 align = "center">More coming soon...</h3><br/><br/>
