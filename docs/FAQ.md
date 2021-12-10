@@ -71,14 +71,20 @@ class myApp extends React.Component {
 
 ## Q: Can I apply an easing to the scroll-animations ?
 A: Yes, just use:
-* `uss.setXStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the x-axis
-* `uss.setYStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the y-axis. 
+* `uss.setXStepLengthCalculator()` for the x-axis
+* `uss.setYStepLengthCalculator()` for the y-axis. 
+* `uss.setStepLengthCalculator()` for both axes. 
 
 For example:<br/>
 ```javascript
-uss.setYStepLengthCalculator((remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {return remaning / 10 + 1;});
+uss.setYStepLengthCalculator(
+    (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {
+        return remaning / 15 + 1;
+    }
+);
 ```
-<br/>You can also use the standard cubic-bézier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js).<br/>
+<br/>You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library.<br/>
+
 For istance:<br/>
 ```javascript
 uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
@@ -88,15 +94,22 @@ uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
 <br/>
 
 ## Q: Can I make my scroll-animation last a certain amount of time?
-A: YES!<br/>
-While setting a custom ease function you will notice it will be passed both the timestamp relative to the beginning of the scroll-animation and the current timestamp as the second and third arguments of your function.<br/>
-You can use them to make the scroll-animations last any amount of time you want.<br/><br/>
-You can also use the standard cubic-bézier ease-functions included in the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) which can be used by specifing a duration as the first argument.<br/>
-For istance:<br/>
+A: Yes. <br/>
+If you try to write a custom stepLengthCalculator you will notice it will be passed both the original timestamp _(relative to the beginning of the scroll-animation)_ and the current timestamp as respectively the second and third arguments.<br/>
+You can use them to make the scroll-animations last any amount of time you want.<br/>
+_(quick tip: the elapsed time is just `currentTimestap - originalTimestamp`)_.<br/>
+
+You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library by specifing a duration. <br/>
+
+For example:<br/>
 ```javascript
-uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); //Every scroll-animation on our container will last 2 seconds
+/**
+ * In this case I use the EASE_LINEAR function so that
+ * every scroll-animation on our container will always last 2 seconds
+ * on any screen resolution and refresh rate.
+ */
+uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); 
 ```
-You may find [this](https://developer.mozilla.org/en/docs/Web/API/Window/requestAnimationFrame) helpful.
 
 ---
 <br/>
