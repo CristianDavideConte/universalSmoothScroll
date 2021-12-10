@@ -175,26 +175,26 @@ _`stillStart = false`_ means that even if other scroll-animations on the same ax
 
 This is an example of how different these 2 kind of scroll-animations are:<br/>
 ```javascript
-const ourEaseFunction = (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {return remaning / 15 + 1;};
-uss.setYStepLengthCalculator(ourEaseFunction, window);
+const ourEaseFunction = (remaning) => {return remaning / 15 + 1;};
+uss.setYStepLengthCalculator(ourEaseFunction, myContainer);
 
 //CASE A: stillStart = true
 const stillStartTrueBehavior = wheelEvent => {
     wheelEvent.preventDefault();
     wheelEvent.stopPropagation();
-    uss.scrollYBy(wheelEvent.deltaY, window, null, true);
+    uss.scrollYBy(wheelEvent.deltaY, myContainer, null, true);
 }
 
 //CASE B: stillStart = false
 const stillStartFalseBehavior = wheelEvent => {
     wheelEvent.preventDefault();
     wheelEvent.stopPropagation();
-    uss.scrollYBy(wheelEvent.deltaY, window, null, false);
+    uss.scrollYBy(wheelEvent.deltaY, myContainer, null, false);
 }
 
-//Uncomment one or the other and look at the difference
-//window.addEventListener("wheel", stillStartTrueBehavior,  {passive:false});
-//window.addEventListener("wheel", stillStartFalseBehavior, {passive:false});
+//Uncomment one line at a time and notice the difference
+//myContainer.addEventListener("wheel", stillStartTrueBehavior,  {passive:false});
+//myContainer.addEventListener("wheel", stillStartFalseBehavior, {passive:false});
 ```
 
 ---
