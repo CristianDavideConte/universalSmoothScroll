@@ -201,12 +201,29 @@ const stillStartFalseBehavior = wheelEvent => {
 <br/>
 
 ## Q: What is the _hrefSetup's_ `init` parameter ?
-A: Unlike every other callback parameter of this API, this is a function that gets executed right before any scroll-animation is performed. <br/>
-You may want to use this function to execute actions that must happen after an anchor link is clicked but before any scroll-animation is performed. <br/>
+A: Unlike any other callback parameter of the USS API, this is a function that gets automatically executed by the `uss` object whenever an anchor is clicked but right before any scroll-animation is performed. <br/>
+
+An `init` function is always passed the following input parameters _(in this order)_:
+* the anchor that has been clicked
+* the element that has to be reached (the HTMLElement that has the same id of the anchors's `href` parameter) <br/>
+
+If the `init` function returns `false` the scroll-animation is prevented. 
+
+
 For example: <br/>
 ```javascript
-let changeBg = () => document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + Math.random() * 255 + "," + Math.random() * 255 + ")"; //No need to return anything in this case
-uss.hrefSetup(true, true, changeBg); //Every time an anchor link is clicked our body's backgroundColor is randomly changed
+/**
+ * In this example, every time an anchor link is clicked 
+ * the document.body's background color is randomly changed.
+ */
+function changeBg() {
+  document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + 
+                                                 Math.random() * 255 + "," + 
+                                                 Math.random() * 255 + ")"; 
+  //I don't want to prevent the scroll, 
+  //so there's no need to return anything in this case
+}
+uss.hrefSetup(true, true, changeBg);
 ```
 
 ---
