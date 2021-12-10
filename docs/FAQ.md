@@ -8,19 +8,19 @@ If the answer you are looking for is not here, you can always [`contact me`](htt
 <br/><br/>
 
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-behavior: smooth`_ CSS property ?
-A: NO! They won't work on those containers.
+A: No, they won't work on those containers.
 
 ---
 <br/>
 
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-snap-type`_ CSS property ?
-A: NO! They won't work on those containers.
+A: No, they won't work on those containers.
 
 ---
 <br/>
 
 ## Q: Can I use the API in a `React` project ?
-A: YES! Just import the scripts in your `index.html` header and then you can start using the API.  
+A: Yes, as described in the [`Installation`](./Installation.md) section, just import the scripts in your `index.html` then you can start using the API. <br/>
 
 ---
 <br/>
@@ -32,14 +32,14 @@ A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME
 <br/>
 
 ## Q: Can I pass a `React.Component` as either the `container` or the `element` value ? 
-A: NO! You have to pass the API methods either an `HTMLElement` or the `window` element. <br/>
-This problem can be easily solved _the Javascript way_ (by looking for the elements in the DOM with `getElementById`, `getElementsByClassName`, etc...) or by using either React's [`Refs`](https://en.reactjs.org/docs/refs-and-the-dom.html) or the [`React.findDOMNode`](https://en.reactjs.org/docs/react-dom.html#finddomnode) method to obtain the `HTMLElement` from your `ReactElements`. <br/>
+A: No, you have to pass either an `HTMLElement` or the `window` element. <br/>
+This problem can be easily solved by looking for the elements in the DOM with `getElementById`, `getElementsByClassName`, etc... or by using either React's [`Refs`](https://en.reactjs.org/docs/refs-and-the-dom.html) or the [`React.findDOMNode`](https://en.reactjs.org/docs/react-dom.html#finddomnode) method to obtain the `HTMLElement` from your `ReactElements`. <br/>
 
 For istance:
 ```javascript
 /*
  * In this example I want to create a scrollable React Component which
- * has a button which smooothly scrolls the Component when clicked.
+ * has a button that smoothly scrolls the Component when clicked.
  * To get the corresponding HTMLElement I'll use React's ref and the document.getElementById method. 
  */
 class myApp extends React.Component {
@@ -50,10 +50,13 @@ class myApp extends React.Component {
   ... 
   render() {
     return(
-      <div id="myID" ref={this.myRef}> { /*Use the ref on the element you want to scroll*/ }
+      <div id="myID" ref={this.myRef}> { /* I'm using the ref on the container I want to scroll */ }
         <button onClick={
-          () => uss.scrollYBy(500, {this.myRef.current}); { /*We retrieve the HTMLElement with the help of our ref*/ }
-          //() => uss.scrollYBy(500, document.getElementById("myID")); { /*This would also work*/ }
+          {/* Option A: retrieve the HTMLElement with the help of the ref */}
+          () => uss.scrollYBy(500, {this.myRef.current}); 
+          
+          {/* Option B: retrieve the HTMLElement with js */}
+          () => uss.scrollYBy(500, document.getElementById("myID"));
         }>
         </button>
         ...
@@ -66,9 +69,11 @@ class myApp extends React.Component {
 ---
 <br/>
 
-## Q: Can I modify the way scroll-animation steps are calculated to a non-linear behavior ?
-A: YES! <br/>
-Just use `uss.setXStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the x-axis and `uss.setYStepLengthCalculator(...)` for the y-axis. <br/>
+## Q: Can I apply an easing to the scroll-animations ?
+A: Yes, just use:
+* `uss.setXStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the x-axis
+* `uss.setYStepLengthCalculator(YOUR_CUSTOM_EASE_FUNCTION, TARGET_CONTAINER)` for the y-axis. 
+
 For example:<br/>
 ```javascript
 uss.setYStepLengthCalculator((remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {return remaning / 10 + 1;});
