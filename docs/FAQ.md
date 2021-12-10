@@ -2,9 +2,9 @@
 <br/>
 
 <h1 align = "center">F.A.Q.</h1>
-This section contains a collection of the most asked questions about any aspect of the USS API. <br/>
-If the answer you are looking for is not here, you can [`contact me`](https://github.com/CristianDavideConte/universalSmoothScroll#contact-me)
 
+This section contains a collection of the most asked questions about any aspect of the USS API. <br/>
+If the answer you are looking for is not here, you can always [`contact me`](https://github.com/CristianDavideConte/universalSmoothScroll#contact-me).
 <br/><br/>
 
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-behavior: smooth`_ CSS property ?
