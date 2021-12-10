@@ -115,50 +115,55 @@ uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer);
 <br/>
 
 ## Q: What is a _StepLengthCalculator_ ?
-A: It's function that has to always return a finite number.<br/>
+A: It's function that must return a finite number.<br/>
 
-This function will be invoked by the API every time it has to decide how many pixels should be scrolled on the x/y axis of a container.<br/>
-The way the API will invoke this function is by passing it the following input parameters (in this order):
-  - RemaningScrollAmount of current the scroll-animation
-  - OriginalTimestamp provided by the first \_stepX/Y function call (indicates the exact time in milliseconds at which the scroll-animation has started)
-  - Timestamp provided by each \_stepX/Y function call (indicates the time in milliseconds at which the StepLengthCalculator is invoked)
-  - TotalScrollAmount of the current scroll-animation
-  - CurrentPosition of the container's top/left border (top if the scroll-animation is on the y-axis, left otherwise)
-  - FinalPosition that the container's top/left border has to reach (top if the scroll-animation is on the y-axis, left otherwise)
-  - Container on which the scroll-animation is currently being performed (a DOM element that can be scrolled)<br/>
+This function will be automatically invoked by the `uss` object every time it has to decide how many pixels should be scrolled on either the x or y axis of a container.<br/>
 
-Imagine that a scroll-animation is like a stair: you know where/when you started, how long the stair is, how much time has passed and where you are right now.<br/>
-This stair could have many steps and you can decide if you want to rest and don't make any step (return 0), go up (return a number > 0), go down (return a number < 0) by telling the API through a StepLengthCalculator.<br/>   
-This function can be invoked by the API 1000s of times during a single scroll-animation and that's why it gets passed all the parameters described above.<br/>
+A StepLengthCalculator is always passed the following input parameters _(in this order)_:
+* the `remaningScrollAmount` of current the scroll-animation
+* the `originalTimestamp` which indicates the exact time in milliseconds at which the scroll-animation has started
+* the `currentTimestamp` which indicates the time in milliseconds at which the StepLengthCalculator is invoked
+* the `totalScrollAmount` of the current scroll-animation
+* the `currentPosition` of the container's scrollTop/Left (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/X otherwise)
+* the `finalPosition` that the container's scrollTop/Left has to reach (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/X otherwise)
+* the `container` on which the scroll-animation is currently being performed (an HTMLElement that can be scrolled or the window object) <br/>
 
-For istance:<br/>
+Imagine that a scroll-animation is like a stair: you know when/from where you started walking up/down the stair, how much time has passed since, how long the the stair is and where you are right now.<br/>
+This stair could have many steps and you can decide if you want to rest and don't make any step _(return 0)_, go up _(return a number > 0)_, go down _(return a number < 0)_ by telling the API through the return value of a StepLengthCalculator.<br/>   
+
+This function can be invoked by the API thousands of times during a single scroll-animation and that's why it gets passed all the parameters described above.<br/>
+
+A simple StepLengthCalculator may be:<br/>
 ```javascript
 /*
- * This particular scroll calculator will make the scroll-animation
- * start slowly (total = remaning at the beginnig of the scroll-animation)
- * ramp up the speed (remaning will decrease more and more)
- * arriving at full speed (remaning = 0 at the end of the scroll-animation)   
+ * This particular scroll calculator will make the scroll-animation:
+ *  1. start slowly           (total = remaning at the beginnig of the scroll-animation)
+ *  2. ramp up the speed      (remaning will decrease more and more)
+ *  3. arriving at full speed (remaning = 0 at the end of the scroll-animation)   
  */
-const myStepLengthCalculator = (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {
+const myStepLengthCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
     const traveledDistance = total - remaning;
-    return traveledDistance + 1; //+1 because at first total = remaning and we wouldn't move at all without it
+    return traveledDistance + 1; //+1 because at first traveledDistance = 0 and we would never start moving without it
 };
 uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer);
 ```
+<br/>
 
-You don't have to write your own StepLengthCalculator if you don't want to, infact the API will still function even if you don't specify any (the behavior will be linear).<br/>
-You can also use the functions of the `universalsmoothscroll-ease-functions` library that you can find [here](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) to get a StepLengthCalculator.<br/>
+You don't have to write your own StepLengthCalculator if you don't want to. <br/>
+The API will still function even if you don't specify any _(the behavior/easing will be linear)_.<br/>
+You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library to get a StepLengthCalculator.<br/>
 
 For example:<br/>
 ```javascript
 /*
- * Make sure to have imported the universalsmoothscroll-ease-function library in your project
- * This StepLengthCalculator will make our scroll-animations always last 1 second and will make sure that
- * they will start as fast as possible and finish as slow as they can.
+ * This StepLengthCalculator will make our scroll-animations always last 1 second and 
+ * it will make sure that they will start as fast as possible and finish as slow as they can.
  */
 uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 ```
-[Here](https://easings.net/) you can find out more about the way the StepLengthCalculators provided by `universalsmoothscroll-ease-functions` [library](https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/js/universalsmoothscroll-ease-functions.js) will affect your scroll-animations.
+<br/>
+
+On [`easings.net`](https://easings.net/) you can find out more about the way the StepLengthCalculators provided by [`universalsmoothscroll-ease-functions`](./Download.md) library will affect your scroll-animations.
 
 ---
 <br/>
