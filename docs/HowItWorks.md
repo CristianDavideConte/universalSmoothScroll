@@ -2,19 +2,50 @@
 <br/>
 
 # How it works
-All the API methods are properties of the `uss` object which gets automatically initialized when you import the script into your project.<br/>
-The `uss` object is initialized in the global scope of you project so be aware of that !<br/>
-The `uss` object has some internal variables which **SHOULD NOT** be directly manipulated: always use the provided getters and setters.<br/>
-You will be able to recognize those internal properties because their names begin with an `_` (underscore). <br/>
+Once you've imported a USS API's script, it will automatically do all the work needed for you. <br/>
+
+## \#API script 
+The `universalsmoothscroll-min.js` script will declare and initialize ***(in the global scope of your application)*** either the API's [`constants`](./ConstantsAbout.md) _(internally used by the API, but available as read-only values)_ and the `uss` object. <br/>
+
+The `uss` object's properties are the API's functionalities and they can either be: <br/>
+* [`variables`](./VariablesAbout.md)
+* [`functions`](./MethodsAbout.md) <br/>
+  
+The `uss`'s variables ***SHOULD NOT*** be directly manipulated: always use the provided accessors.<br/>
+You will be able to recognize those internal variables because their names begin with an `_` _(underscore)_. <br/>
+
 For istance:
-* `uss._xStepLength` is the name of the internal property used by the `uss` object.
-* `uss.getXStepLength()` && `uss.setXStepLength()` are the two getter and setter for the `uss._xStepLength` variable.<br/>
+```javascript
+//This is the name of the internal variable used by the uss object.
+uss._xStepLength
 
-There are 3 main scrolling-methods:
-* `uss.scrollTo()`
-* `uss.scrollBy()`
-* `uss.scrollIntoView()`<br/>
 
-There's also 1 handy auto-initializer for anchor links:
-* `uss.hrefSetup()`<br/>
+//These are the accessors for the uss._xStepLength variable.
+uss.getXStepLength() //Getter
+uss.setXStepLength() //Setter
+```
+
+---
+
+The main scrolling-functions are:
+* `uss.scrollXTo()`,  `uss.scrollYTo()` and `uss.scrollTo()`
+* `uss.scrollXBy()`,  `uss.scrollYBy()` and `uss.scrollBy()`
+* `uss.scrollIntoView()` and `uss.scrollIntoViewIfNeeded()`<br/>
+
+Any scroll-animation can be stopped at any time by using:
+* `uss.stopScrollingX()`
+* `uss.stopScrollingY()`
+* `uss.stopScrolling()`
+
+There's also a handy function for anchor links's smooth scrolling management:
+* `uss.hrefSetup()`
+
+
 <br/>
+
+## \#Easing library 
+The `universalsmoothscroll-ease-functions-min.js` script will declare and initialize ***(in the global scope of your application)*** functions that can be invoked to get custom [`stepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) which can be used to control the easing of any USS API's scroll-animation. <br/>
+
+All the functions of this library are read-only and cannot be modified. <br/>
+
+To know which default easings are available visit the [`Available easing functions`](./EasingFunctions.md) section. 
