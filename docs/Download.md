@@ -5,8 +5,8 @@
 In order to use the USS API you first need to download the needed scripts which you can get in many ways. <br/>
 
 In total, there are two files available:
-  - `universalsmoothscroll-min.js`                
-  - `universalsmoothscroll-ease-functions-min.js` 
+* `universalsmoothscroll-min.js`                
+* `universalsmoothscroll-ease-functions-min.js` 
   
 The former is always required and contains _(the minified version of)_ the API itself. <br/> 
 The latter is optional instead and contains _(the minified version of)_ an easing-functions library which you may find useful later on. <br/>
