@@ -2,7 +2,7 @@
 <br/>
 
 # How it works
-Once you've imported a USS API's script, it will automatically do all the work needed for you. <br/>
+Once you've imported a USS API's script, it will automatically do all the needed work for you. <br/>
 <br/>
 ## \#API script 
 The `universalsmoothscroll-min.js` script will declare and initialize ***(in the global scope of your application)*** either the API's [`constants`](./ConstantsAbout.md) _(internally used by the API, but available as read-only values)_ and the `uss` object. <br/>
@@ -18,7 +18,6 @@ For istance:
 ```javascript
 //This is the name of the internal variable used by the uss object.
 uss._xStepLength
-
 
 //These are the accessors for the uss._xStepLength variable.
 uss.getXStepLength() //Getter
