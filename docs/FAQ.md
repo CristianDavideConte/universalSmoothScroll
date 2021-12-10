@@ -229,21 +229,26 @@ uss.hrefSetup(true, true, changeBg);
 ---
 <br/>
 
-## Q: Can I obtain the _"momentum-scrolling"_ effect with this API ?
-A: YES! <br/>
-You can achive it by setting a custom ease-out stepLengthCalculator for the container you want to be _"momentum-scrolled"_. <br/>
+## Q: Can I obtain the ***momentum-scrolling*** effect with this API ?
+A: Yes, it can be achieved by setting a custom ease-out StepLengthCalculator for the container you want to be _"momentum-scrolled"_. <br/>
+
 For istance: <br/>
 ```javascript
 /**
- * For the sake of semplicity I will use the same ease-out function 
- * I used on my personal web page.
+ * In this example I want to apply the momentum-scroll effect on mousewheel only.
+ * myEaseFunction is an ease-out StepLengthCalculator
+ * because the returned values will be bigger at the beginning and 
+ * smaller at the end of the scroll-animation.
  */
-const myEaseFunction = (remaning) => {return 1 + remaning / 20;}; //Increase the divisor for an even smoother effect
-myContainer.addEventListener("wheel", event => { //We want the momentum-scroll effect on wheel
-    event.preventDefault(); //Prevent the classic scroll
-    uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
+function myEaseFunction(remaning) {
+  return 1 + remaning / 20; //Increase the divisor for an even smoother effect
+}
+uss.setYStepLengthCalculator(myEaseFunction, myContainer); 
+
+myContainer.addEventListener("wheel", event => {
+  event.preventDefault(); //Prevent the classic scroll
+  uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
 }, {passive:false});
-uss.setYStepLengthCalculator(myEaseFunction, myContainer); //A medium-speed momentum scrolling effect
 ```
 
 ---
@@ -251,7 +256,7 @@ uss.setYStepLengthCalculator(myEaseFunction, myContainer); //A medium-speed mome
 
 ## Q: What are _`_scrollX()`_ and _`_scrollY()`_ ?
 A: They are functions that can only be internally accessed by the API, you won't be able to invoke them. <br/>
-They execute all the instructions needed for a single scroll-animation-step on respectively the x-axis and the y-axis.
+They execute all the instructions needed for a single scroll-animation-step on, respectively, the x and y axis.
 
 ---
 <br/>
@@ -264,8 +269,8 @@ Ignoring user preferences is not suggested.
 <br/>
 
 ## Q: Why is it allowed to directly modify internal variables ?
-A: It is allowed (but highly discouraged) because there may be a bug that prevents you from setting a variable to a right value (not common). <br/>
-If that's the case don't hesitate to contact me !
+A: It is allowed _(but highly discouraged)_ because there may be a bug that prevents you from setting a variable to a right value _(very uncommon)_. <br/>
+If that's the case don't hesitate to [`contact me`](https://github.com/CristianDavideConte/universalSmoothScroll#contact-me).
 
 ---
 <br/>
