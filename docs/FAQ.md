@@ -120,16 +120,16 @@ A: It's function that must return a finite number.<br/>
 This function will be automatically invoked by the `uss` object every time it has to decide how many pixels should be scrolled on either the x or y axis of a container.<br/>
 
 A StepLengthCalculator is always passed the following input parameters _(in this order)_:
-* the `remaningScrollAmount` of current the scroll-animation
+* the `remaningScrollAmount` of current the scroll-animation in px _(always positive)_
 * the `originalTimestamp` which indicates the exact time in milliseconds at which the scroll-animation has started
 * the `currentTimestamp` which indicates the time in milliseconds at which the StepLengthCalculator is invoked
-* the `totalScrollAmount` of the current scroll-animation
-* the `currentPosition` of the container's scrollTop/Left (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/X otherwise)
-* the `finalPosition` that the container's scrollTop/Left has to reach (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/X otherwise)
+* the `totalScrollAmount` of the current scroll-animation in px _(always positive)_
+* the `currentPosition` of the container's scrollTop/Left (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/scrollX otherwise)
+* the `finalPosition` that the container's scrollTop/Left has to reach (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/scrollX otherwise)
 * the `container` on which the scroll-animation is currently being performed (an HTMLElement that can be scrolled or the window object) <br/>
 
 Imagine that a scroll-animation is like a stair: you know when/from where you started walking up/down the stair, how much time has passed since, how long the the stair is and where you are right now.<br/>
-This stair could have many steps and you can decide if you want to rest and don't make any step _(return 0)_, go up _(return a number > 0)_, go down _(return a number < 0)_ by telling the API through the return value of a StepLengthCalculator.<br/>   
+This stair could have many steps and you can decide that you want to rest and don't make any step _(return 0)_, go up _(return a number > 0)_ or go down _(return a number < 0)_ by telling the API through the return value of a StepLengthCalculator.<br/>   
 
 This function can be invoked by the API thousands of times during a single scroll-animation and that's why it gets passed all the parameters described above.<br/>
 
@@ -145,19 +145,22 @@ const myStepLengthCalculator = (remaning, originalTimestamp, currentTimestamp, t
     const traveledDistance = total - remaning;
     return traveledDistance + 1; //+1 because at first traveledDistance = 0 and we would never start moving without it
 };
-uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer);
+
+//myStepLengthCalculator will controll only the easing on the y axis of myContainer
+uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer); 
 ```
 <br/>
 
 You don't have to write your own StepLengthCalculator if you don't want to. <br/>
-The API will still function even if you don't specify any _(the behavior/easing will be linear)_.<br/>
+The API will still function even if you don't specify any _(the scroll behavior/easing will be linear)_.<br/>
 You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library to get a StepLengthCalculator.<br/>
 
 For example:<br/>
 ```javascript
 /*
- * This StepLengthCalculator will make our scroll-animations always last 1 second and 
- * it will make sure that they will start as fast as possible and finish as slow as they can.
+ * This StepLengthCalculator will make our scroll-animations on the x axis of myContainer 
+ * always last 1 second and it will make sure that 
+ * they will start as fast as possible and finish as slow as they can.
  */
 uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 ```
