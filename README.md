@@ -1,6 +1,6 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgba%2850%2C200%2C80%29&label=Version&logo=github) 
 ![npm](https://img.shields.io/npm/v/universalsmoothscroll?color=rgb%28255%2C50%2C50%29&label=%20Version&logo=npm) 
-[<img id="donate" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1920px-PayPal.svg.png" height="20" width="80"/>](https://www.paypal.com/donate?hosted_button_id=9ZH3MVR56C7M8)
+[<img id="donate" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1920px-PayPal.svg.png" height="20" width="80"/>](https://www.paypal.com/donate?hosted_button_id=9ZH3MVR56C7M8) 
 
 
 <br/><p align="center">
@@ -16,8 +16,9 @@ A ***lightweight and very fast javascript library*** based upon the browsers' sc
 ***Custom animations based on the scroll position*** are also extremly easy to implement. <br/>
 
 # Demo
-You can try most of the API functionalities on <a href="https://cristiandavideconte.github.io/myPersonalWebPage/" target="_blank">my personal website</a>.<br/>
-You can also take a look at how single features are implemented on <a href="https://cristiandavideconte.github.io/universalSmoothScroll/" target="_blank">this playground</a>.
+You can try most of the features on: 
+* [`USS Playground`](https://cristiandavideconte.github.io/universalSmoothScroll/)
+* [`my website`](https://cristiandavideconte.github.io/myPersonalWebPage/)
 
 # Table of Contents
   0. [Download](./docs/Download.md)
