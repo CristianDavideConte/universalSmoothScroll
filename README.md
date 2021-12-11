@@ -23,14 +23,16 @@ You can try most of the features on:
 <br/>
 
 # Table of Contents
-  0. [Download](./docs/Download.md)
-  1. [Installation](./docs/Installation.md)
-  2. [How it works](./docs/HowItWorks.md)
-  3. [Available constants](./docs/ConstantsAbout.md)
-  4. [Available variables](./docs/VariablesAbout.md)
-  5. [Available methods](./docs/MethodsAbout.md)
-  6. [Available easing functions](./docs/EasingFunctions.md)
-  7. [F.A.Q.](./docs/FAQ.md)
+Sections |
+:-------:
+[`Download`](./docs/Download.md) |
+[`Installation`](./docs/Installation.md) |
+[`How it works`](./docs/HowItWorks.md) | 
+[`Available constants`](./docs/ConstantsAbout.md) | 
+[`Available variables`](./docs/VariablesAbout.md) |
+[`Available methods`](./docs/MethodsAbout.md) |
+[`Available easing functions`](./docs/EasingFunctions.md) |
+[`F.A.Q.`](./docs/FAQ.md) |
 
 ---
 <br/>
