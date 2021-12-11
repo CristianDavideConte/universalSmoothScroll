@@ -10,10 +10,10 @@
 </p>
 <h1 align="center">Universal Smooth Scroll</h1>
 
-A **lightweight and very fast javascript library** that provides an enriched version of the standard `scroll-behavior:smooth` CSS property. <br/>
-This scroll API is based on and improves upon the 3 main ways to scroll an element in plain js: `scrollTo()`, `scrollBy()`, `scrollIntoView()`.<br/>
-**Every scroll-animation** triggered by the API **can be interrupted** at any moment and **supports user-defined custom ease functions.**<br/>
-**Multiple scroll-animations** can be played **at the same time** for 1 or more DOM's elements.<br/>
+A ***lightweight and very fast javascript library*** based upon the browsers' scrolling APIs that provides enriched versions of them with ***smooth-scrolling***, ***callbacks*** and many other features. <br/>
+***Multiple scroll-animations*** on one or more containers can be played at the same time with full controll over them. <br/>
+***Every scroll-animation*** triggered by the API ***can be interrupted*** at any time and ***supports user-defined custom ease functions***. <br/>
+***Custom animations based on the scroll position*** are also extremly easy to implement. <br/>
 
 # Demo
 You can try most of the API functionalities on <a href="https://cristiandavideconte.github.io/myPersonalWebPage/" target="_blank">my personal website</a>.<br/>
