@@ -233,12 +233,12 @@ uss.hrefSetup(true, true, changeBg);
 <br/>
 
 ## Q: Can I obtain the ***momentum-scrolling*** effect with this API ?
-A: Yes, it can be achieved by setting a custom ease-out StepLengthCalculator for the container you want to be _"momentum-scrolled"_. <br/>
+A: Yes, it can be achieved by setting a custom ease-out [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for the container you want to be _"momentum-scrolled"_. <br/>
 
 For istance: <br/>
 ```javascript
 /**
- * In this example I want to apply the momentum-scroll effect on mousewheel only.
+ * In this example I want to apply the momentum-scrolling effect on mousewheel only.
  * myEaseFunction is an ease-out StepLengthCalculator
  * because the returned values will be bigger at the beginning and 
  * smaller at the end of the scroll-animation.
