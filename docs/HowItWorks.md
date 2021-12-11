@@ -36,7 +36,7 @@ Any scroll-animation can be stopped at any time by using:
 * `uss.stopScrollingY()`
 * `uss.stopScrolling()`
 
-There's also a handy function for anchor links's smooth scrolling management:
+There's also a handy function for anchor's smooth scrolling management:
 * `uss.hrefSetup()`
 
 
