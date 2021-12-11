@@ -15,10 +15,12 @@ A ***lightweight and very fast javascript library*** based upon the browsers' sc
 ***Every scroll-animation*** triggered by the API ***can be interrupted*** at any time and ***supports user-defined custom ease functions***. <br/>
 ***Custom animations based on the scroll position*** are also extremly easy to implement. <br/>
 
-# Demo
 You can try most of the features on: 
-* [`USS Playground`](https://cristiandavideconte.github.io/universalSmoothScroll/)
-* [`my website`](https://cristiandavideconte.github.io/myPersonalWebPage/)
+* [`The Official Playground`](https://cristiandavideconte.github.io/universalSmoothScroll/)
+* [`My Website`](https://cristiandavideconte.github.io/myPersonalWebPage/)
+
+---
+<br/>
 
 # Table of Contents
   0. [Download](./docs/Download.md)
@@ -29,6 +31,9 @@ You can try most of the features on:
   5. [Available methods](./docs/MethodsAbout.md)
   6. [Available easing functions](./docs/EasingFunctions.md)
   7. [F.A.Q.](./docs/FAQ.md)
+
+---
+<br/>
 
 # Browser Compatibility
 Browser | Support 
@@ -51,10 +56,16 @@ Baidu Browser | ✔️
 QQ Browser | ❔ 
 KaiOS Browser | ❔
 
+---
+<br/>
+
 # Support Me
 If you want to support my work through a donation, you can either use the GitHub [`sponsor button`](https://github.com/sponsors/CristianDavideConte) or the PayPal <a href="#donate"><code>donate button</code></a> above.<br/>
 Support is appreciated but it's not compulsory in any way nor needed in order to use any of my work!
 
+---
+<br/>
+
 # Contact Me
-If you find a bug, have a suggestion, a feature request, or if you simply want to contact me, use [my website](https://cristiandavideconte.github.io/myPersonalWebPage). <br/>
+If you find a bug, have a suggestion, a feature request, or if you simply want to contact me, use [`my website`](https://cristiandavideconte.github.io/myPersonalWebPage). <br/>
 Feel free to reach out !
