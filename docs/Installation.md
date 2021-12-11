@@ -2,7 +2,7 @@
 <br/>
 
 # Installation
-In order to use any script you downloaded in the [`Download`](./Download.md) section, ***you must import it/them into your project***. <br/>
+In order to use any script you downloaded in the [`Download`](./Download.md) section, ***you must import it into your project***. <br/>
 Most of the time your project will have an `index.html` file which can be used as the API's entrypoint. <br/>
 Inside the `index.html`'s `<head>` section create a `<script>` for each file you downloaded and use the `src` attribute to specify its path. <br/>  
 
