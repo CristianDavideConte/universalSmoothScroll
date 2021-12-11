@@ -95,11 +95,11 @@ uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
 
 ## Q: Can I make my scroll-animation last a certain amount of time?
 A: Yes. <br/>
-If you try to write a custom stepLengthCalculator you will notice it will be passed both the original timestamp _(relative to the beginning of the scroll-animation)_ and the current timestamp as respectively the second and third arguments.<br/>
+If you try to write a custom [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) you will notice it will be passed both the original timestamp _(relative to the beginning of the scroll-animation)_ and the current timestamp as respectively the second and third arguments.<br/>
 You can use them to make the scroll-animations last any amount of time you want.<br/>
 _(quick tip: the elapsed time is just `currentTimestap - originalTimestamp`)_.<br/>
 
-You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library by specifing a duration. <br/>
+You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library with a specific duration. <br/>
 
 For example:<br/>
 ```javascript
