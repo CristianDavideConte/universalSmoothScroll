@@ -20,7 +20,7 @@ A: No, they won't work on those containers.
 <br/>
 
 ## Q: Can I use the API in a `React` project ?
-A: Yes, as described in the [`Installation`](./Installation.md) section, just import the scripts in your `index.html` then you can start using the API. <br/>
+A: Yes, as described in the [`Installation`](./Installation.md) section, just import the scripts in your `index.html` file then you can start using the API. <br/>
 
 ---
 <br/>
