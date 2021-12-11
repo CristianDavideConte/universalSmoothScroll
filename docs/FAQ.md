@@ -70,7 +70,7 @@ class myApp extends React.Component {
 <br/>
 
 ## Q: Can I apply an easing to the scroll-animations ?
-A: Yes, just use:
+A: Yes, you can create a custom [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) and apply it with:
 * `uss.setXStepLengthCalculator()` for the x-axis
 * `uss.setYStepLengthCalculator()` for the y-axis. 
 * `uss.setStepLengthCalculator()` for both axes. 
@@ -78,7 +78,7 @@ A: Yes, just use:
 For example:<br/>
 ```javascript
 uss.setYStepLengthCalculator(
-    (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => {
+    (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => { //A custom StepLengthCalculator
         return remaning / 15 + 1;
     }
 );
