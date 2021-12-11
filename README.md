@@ -25,7 +25,7 @@ You can try most of the features on:
 # Table of Contents
   0. [Download](./docs/Download.md)
   1. [Installation](./docs/Installation.md)
-  2. [How it Works](./docs/HowItWorks.md)
+  2. [How it works](./docs/HowItWorks.md)
   3. [Available constants](./docs/ConstantsAbout.md)
   4. [Available variables](./docs/VariablesAbout.md)
   5. [Available methods](./docs/MethodsAbout.md)
