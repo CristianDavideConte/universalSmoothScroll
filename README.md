@@ -1,7 +1,16 @@
-![GitHub release (latest by date)](https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgba%2850%2C200%2C80%29&label=Version&logo=github) 
-![npm](https://img.shields.io/npm/v/universalsmoothscroll?color=rgb%28255%2C50%2C50%29&label=%20Version&logo=npm) 
-[<img id="donate" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1920px-PayPal.svg.png" height="20" width="80"/>](https://www.paypal.com/donate?hosted_button_id=9ZH3MVR56C7M8) 
-
+<p align="center">
+    <a href="./docs/Download.md">
+        <img src="https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgba%2850%2C200%2C80%29&label=Version&logo=github"/>
+    </a>
+    <img width="20"/> <!-- Just empty space -->
+    <a href="./docs/Download.md">
+        <img src="https://img.shields.io/npm/v/universalsmoothscroll?color=rgb%28255%2C50%2C50%29&label=%20Version&logo=npm"/>
+    </a>
+    <img width="20"/> <!-- Just empty space -->
+    <a href="https://www.paypal.com/donate?hosted_button_id=9ZH3MVR56C7M8">
+        <img id="donate" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/PayPal.svg/1920px-PayPal.svg.png" height="20" width="80"/>
+    </a>
+ </p>
 
 <br/><p align="center">
     <a href="https://github.com/CristianDavideConte/universalSmoothScroll">
