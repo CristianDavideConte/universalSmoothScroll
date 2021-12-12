@@ -5,8 +5,8 @@
 Method Name   | Ease type | Visualization
 :-----------: | --------- | :-------------:
 `CUSTOM_CUBIC_BEZIER` | The first 4 input parameters are the 4 points of the bézier curve and they determine the kind of easing obtained. | 
-`EASE_LINEAR` | Same as `CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, ...)`. | <img src ="./easingsGifs/EASE_LINEAR_X.gif" width="40px" height="40px"/> <img src ="./easingsGifs/EASE_LINEAR_Y.gif" width="40px" height="40px"/>
-`EASE_IN_SINE` | Same as `CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, ...)`. |
+`EASE_LINEAR` | Same as `CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, ...)`. | <img src ="./easingsGifs/EASE_LINEAR/X.gif" width="40px" height="40px"/> <img src ="./easingsGifs/EASE_LINEAR/Y.gif" width="40px" height="40px"/>
+`EASE_IN_SINE` | Same as `CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, ...)`. | <img src ="./easingsGifs/EASE_IN_SINE/X.gif" width="40px" height="40px"/> <img src ="./easingsGifs/EASE_IN_SINE/Y.gif" width="40px" height="40px"/>
 `EASE_IN_QUAD` | Same as `CUSTOM_CUBIC_BEZIER(0.11, 0, 0.5,  0, ...)`. |
 `EASE_IN_CUBIC` | Same as `CUSTOM_CUBIC_BEZIER(0.32, 0, 0.67, 0, ...)`. |
 `EASE_IN_QUART` | Same as `CUSTOM_CUBIC_BEZIER(0.5,  0, 0.75, 0, ...)`. |
