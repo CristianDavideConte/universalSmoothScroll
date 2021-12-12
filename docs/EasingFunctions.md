@@ -4,7 +4,7 @@
 # Included easing functions (public use)
 Method Name   | Ease type | Visualization
 :-----------: | --------- | :-------------:
-`CUSTOM_CUBIC_BEZIER` | The first 4 input parameters are the 4 points of the bézier curve and they determine the kind of easing obtained. | 
+`CUSTOM_CUBIC_BEZIER` | The first 4 input parameters are the 4 points of the bézier curve and they determine the kind of easing obtained. | <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width="40px" height="40px"/> 
 `EASE_LINEAR` | Same as `CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, ...)`. | <img src="./easingsGifs/1_EASE_LINEAR/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/1_EASE_LINEAR/Y.gif" width="40px" height="40px"/>
 `EASE_IN_SINE` | Same as `CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, ...)`. | <img src="./easingsGifs/2_EASE_IN_SINE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/2_EASE_IN_SINE/Y.gif" width="40px" height="40px"/>
 `EASE_IN_QUAD` | Same as `CUSTOM_CUBIC_BEZIER(0.11, 0, 0.5,  0, ...)`. | <img src="./easingsGifs/3_EASE_IN_QUAD/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/3_EASE_IN_QUAD/Y.gif" width="40px" height="40px"/>
