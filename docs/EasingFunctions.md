@@ -4,7 +4,7 @@
 # Included easing functions (public use)
 Method Name   | Visualization | Input parameters
 :-----------: | :-----------: | :-------------
-`CUSTOM_CUBIC_BEZIER` | <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width="40px" height="40px"/> | `x1` `x2` `x3` `x4` <br/> [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
+`CUSTOM_CUBIC_BEZIER` | <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width="40px" height="40px"/> | [`x1`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) [`x2`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) [`x3`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) [`x4`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) <br/> [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_LINEAR` | <img src="./easingsGifs/1_EASE_LINEAR/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/1_EASE_LINEAR/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_IN_SINE` | <img src="./easingsGifs/2_EASE_IN_SINE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/2_EASE_IN_SINE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_IN_QUAD` | <img src="./easingsGifs/3_EASE_IN_QUAD/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/3_EASE_IN_QUAD/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
@@ -52,7 +52,7 @@ Is'a positive number which indicates the time _(in milliseconds)_ every scroll-a
 # The callback parameter
 Each one of the above mentioned functions will return a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) when invoked. <br/>
 These [`StepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) are passed _some input parameters_. <br/> 
-The [`callback`](./EasingFunctions.md#the-callback-parameter) is a function which gets executed at every scroll-animation step and that is always invoked with _those same input parameters_.
+The `callback` is a function which gets executed at every scroll-animation step and that is always invoked with _those same input parameters_.
 
 ---
 <br/>
