@@ -115,7 +115,7 @@ uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer);
 <br/>
 
 ## Q: What is a _StepLengthCalculator_ ?
-A: It's function that must return a finite number.<br/>
+A: It's a function that must return a finite number.<br/>
 
 This function will be automatically invoked by the `uss` object every time it has to decide how many pixels should be scrolled on either the x or y axis of a container.<br/>
 
