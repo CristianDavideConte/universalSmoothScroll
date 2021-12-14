@@ -63,7 +63,7 @@ The `callback` is a function which gets executed at every scroll-animation step 
  * ### Backward StepLengthCalculator 
       * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***backward part*** of the scroll-animation.
  * ### ElasticPointCalculator
-      * A function which must return the number of pixels that will have to be scrolled by the backward part of the scroll-animation. <br/>
+      * It's a function which must return the number of pixels that will have to be scrolled by the backward part of the scroll-animation. <br/>
         An ElasticPointCalculator is always passed the following input parameters _(in this order)_: 
         * the `originalTimestamp` which indicates the exact time in milliseconds at which the _(forward part of)_ the scroll-animation has started 
         * the `currentTimestamp` which indicates the time in milliseconds at which this function is invoked 
@@ -73,7 +73,7 @@ The `callback` is a function which gets executed at every scroll-animation step 
         
         If this function returns a negative number, the forward easing will be used instead of the backward one. 
  * ### Debounce Time     
-      * The time _(in milliseconds)_ that has to elapse after the end of the _(forward part of)_ the scroll-animation in order to start the backward part.
+      * It's the time _(in milliseconds)_ that has to elapse after the end of the _(forward part of)_ the scroll-animation in order to start the backward part.
 
 For example:
 ```javascript
