@@ -3,7 +3,7 @@
 
 # Included easing functions (public use)
 Method Name   | Visualization | Input parameters
-:-----------: | :-----------: | :-------------
+:-----------: | :-----------: | :-------------:
 `CUSTOM_CUBIC_BEZIER` | <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width="40px" height="40px"/> | [`x1`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) [`x2`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) [`x3`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) [`x4`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) <br/> [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_LINEAR` | <img src="./easingsGifs/1_EASE_LINEAR/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/1_EASE_LINEAR/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_IN_SINE` | <img src="./easingsGifs/2_EASE_IN_SINE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/2_EASE_IN_SINE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
@@ -30,8 +30,8 @@ Method Name   | Visualization | Input parameters
 `EASE_IN_OUT_EXPO` | <img src="./easingsGifs/23_EASE_IN_OUT_EXPO/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/23_EASE_IN_OUT_EXPO/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_IN_OUT_CIRC` | <img src="./easingsGifs/24_EASE_IN_OUT_CIRC/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/24_EASE_IN_OUT_CIRC/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_IN_OUT_BOUNCE` | <img src="./easingsGifs/25_EASE_IN_OUT_BOUNCE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/25_EASE_IN_OUT_BOUNCE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_ELASTIC_X` | <img src="./easingsGifs/26_EASE_ELASTIC/X.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`]() <br/> [`backward StepLengthCalculator`]() <br/> [`elasticPointCalculator`]() <br/> [`debounce time`]()
-`EASE_ELASTIC_Y` | <img src="./easingsGifs/26_EASE_ELASTIC/Y.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`]() <br/> [`backward StepLengthCalculator`]() <br/> [`elasticPointCalculator`]() <br/> [`debounce time`]()
+`EASE_ELASTIC_X` | <img src="./easingsGifs/26_EASE_ELASTIC/X.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`backward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`elasticPointCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`debounce time`](./EasingFunctions.md#the-ease_elastic-parameters)
+`EASE_ELASTIC_Y` | <img src="./easingsGifs/26_EASE_ELASTIC/Y.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`backward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`elasticPointCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`debounce time`](./EasingFunctions.md#the-ease_elastic-parameters)
 
 ---
 <br/>
