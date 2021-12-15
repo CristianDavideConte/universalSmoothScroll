@@ -1,7 +1,7 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
 <br/>
 
-# Included easings
+# Included Easings
 Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the functions listed below. <br/>
 When invoked, each one of these functions will return a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that you can use to customize the easing of the scroll-animations on any axis of any container. <br/>
 
