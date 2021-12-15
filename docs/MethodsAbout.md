@@ -465,4 +465,7 @@ Method Name | Purpose
  */
  function hrefSetup (alignToLeft = true, alignToTop = true, init = () => {}, callback = () => {}, includeHidden = false);
 ```
+
 <br/>
+
+#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/EasingFunctions.md"><code>Go to next section &#8680;</code></a>
