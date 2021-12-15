@@ -16,4 +16,4 @@ Constant name | Purpose
 
 <br/>
 
-#### <p align="right"><a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/VariablesAbout.md"><code>Go to next section &#8680;</code></a></p>
+#### <p align="right"><a href = "./VariablesAbout.md"><code>Go to next section &#8680;</code></a></p>
