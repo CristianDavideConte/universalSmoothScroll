@@ -1,8 +1,22 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
 <br/>
 
-# Included easing functions (public use)
-Method Name   | Visualization | Input parameters
+# Included easings
+Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the function listed below. <br/>
+When invoked, each one of these functions will return a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that you can use to customize the easing of the scroll-animations on any axis of any container. <br/>
+
+In order to do that, just pass the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) to either one of these methods: 
+* `uss.setXStepLengthCalculator()` for the scroll-animations on the x-axis of your container.
+* `uss.setYStepLengthCalculator()` for the scroll-animations on the y-axis of your container. 
+* `uss.setStepLengthCalculator()` for the scroll-animations on both axes of your container. 
+
+### N.B.
+This library can't be used without having imported the [`universalsmoothscroll-min.js`](./Download.md) script in your project.
+
+---
+<br/>
+
+Function Name   | Visualization | Input parameters
 :-----------: | :-----------: | :-------------:
 `CUSTOM_CUBIC_BEZIER` | <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width="40px" height="40px"/> | [`x1`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x2`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x3`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x4`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) <br/> [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_LINEAR` | <img src="./easingsGifs/1_EASE_LINEAR/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/1_EASE_LINEAR/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
