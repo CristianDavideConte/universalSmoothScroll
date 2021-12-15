@@ -2,17 +2,17 @@
 <br/>
 
 # Constants (internal use only)
-Constant name | Purpose
-------------- | -------
-`INITIAL_WINDOW_HEIGHT` | The window's inner height measured in pixels when first loaded.
-`INITIAL_WINDOW_WIDTH` | The window's inner width measured in pixels when first loaded.
-`DEFAULT_XSTEP_LENGTH` | The default number of pixel scrolled in a single scroll-animation's step on the x-axis: 50px steps for a 1920px screen width.
-`DEFAULT_YSTEP_LENGTH` | The default number of pixel scrolled in a single scroll-animation's step on the y-axis: 50px steps for a 937px(1080px - urlbar) screen height.
-`DEFAULT_MIN_ANIMATION_FRAMES` | The default lowest possible number of frames any scroll-animation should last if no custom StepLengthCalculator are set for a container.
-`DEFAULT_SCROLL_CALCULATOR_TEST_VALUE` | The default number of pixel scrolled when testing a newStepLengthCalculator.
-`DEFAULT_PAGE_SCROLLER` | The initial default value of the `container` input parameter used by some of the API's methods.
-`DEFAULT_ERROR_LOGGER` | A function that pretty-prints the API error messages inside the console.
-`DEFAULT_WARNING_LOGGER` | A function that pretty-prints the API warning messages inside the console.
+Name | Type | Description
+:--: | :--: | -----------
+`INITIAL_WINDOW_HEIGHT` | `Number` |The window's inner height _(in px)_ when the page is first loaded.
+`INITIAL_WINDOW_WIDTH` | `Number` | The window's inner width _(in px)_ when the page is first loaded.
+`DEFAULT_XSTEP_LENGTH` | `Number` | The initial value of the `uss._xStepLength` variable: it represents the default number of pixels scrolled in a single scroll-animation's step on the x-axis. <br/> It's **16px at 412px** of _(initial window's)_ width and **23px at 1920px** of _(initial window's)_ width.
+`DEFAULT_YSTEP_LENGTH` | `Number` | The initial value of the `uss._yStepLength` variable: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. <br/> It's **38px at 789px** of _(initial window's)_ height and **22px at 1920px** of _(initial window's)_ height.
+`DEFAULT_MIN_ANIMATION_FRAMES` | `Number` | The initial value of the `uss._minAnimationFrame` variable: it represent the default lowest number of frames any scroll-animation should last if no [StepLengthCalculator](./FAQ.md#q-what-is-a-steplengthcalculator-) is set for a container.
+`DEFAULT_SCROLL_CALCULATOR_TEST_VALUE` | `Number` | The default number of pixel scrolled when testing a newStepLengthCalculator.
+`DEFAULT_PAGE_SCROLLER` | `Object` | The initial value of the `uss_pageScroller` variable: it represent the default value used when an API method requires the `container` input parameter but nothing is passed.
+`DEFAULT_ERROR_LOGGER` | `Function` | A function that logs the API error messages inside the browser's console.
+`DEFAULT_WARNING_LOGGER` | `Function` | A function that logs the API warning messages inside the browser's console.
 
 <br/>
 
