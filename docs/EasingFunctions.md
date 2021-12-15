@@ -11,9 +11,8 @@ In order to do that, just pass the returned [`StepLengthCalculator`](./FAQ.md#q-
 * `uss.setStepLengthCalculator()` for the scroll-animations on both axes of your container. 
 
 ### N.B.
-This library can't be used without having imported the [`universalsmoothscroll-min.js`](./Download.md) script in your project.
-
----
+This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Download.md) script in your project first. 
+<br/>
 <br/>
 
 Function Name   | Visualization | Input parameters
@@ -50,33 +49,30 @@ Function Name   | Visualization | Input parameters
 ---
 <br/>
 
-# The `x1`, `x2`, `x3` and `x4` parameters
+## The `x1`, `x2`, `x3` and `x4` parameters
 They're 4 finite numbers between 0 _(included)_ and 1 _(included)_. <br/>
 They determine the type of easing the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will have. 
 
 ---
-<br/>
 
-# The `duration` parameter
+## The `duration` parameter
 Is'a positive number which indicates the time _(in milliseconds)_ every scroll-animation controlled by this StepLengthCalculator will last.
 
 ---
-<br/>
 
-# The `callback` parameter
+## The `callback` parameter
 Each one of the above mentioned functions will return a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) when invoked. <br/>
 These [`StepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) are passed _some input parameters_. <br/> 
 The `callback` is a function which gets executed at every scroll-animation step and that is always invoked with _those same input parameters_.
 
 ---
-<br/>
 
-# EASE_ELASTIC parameters
-  ### The `forward StepLengthCalculator` parameter 
+## EASE_ELASTIC parameters
+  #### The `forward StepLengthCalculator` parameter 
   * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***forward part*** of the scroll-animation. 
-  ### The `backward StepLengthCalculator` parameter
+  #### The `backward StepLengthCalculator` parameter
   * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***backward part*** of the scroll-animation.
-  ### The `ElasticPointCalculator` parameter
+  #### The `ElasticPointCalculator` parameter
   * It's a function which must return the number of pixels that will be scrolled by the backward part of the scroll-animation. <br/>
     If this function returns a negative number, the [`forward StepLengthCalculator`](./EasingFunctions.md#forward-steplengthcalculator) will be used instead of the [`backward StepLengthCalculator`](./EasingFunctions.md#backward-steplengthcalculator) for the backward part of the scroll-animation. <br/>
   
@@ -87,7 +83,7 @@ The `callback` is a function which gets executed at every scroll-animation step 
     * the `direction` of the scroll-animation: 1 if the scrolling is from right-to-left/bottom-to-top, -1 otherwise
     * the `container` on which the scroll-animation is currently being performed (an HTMLElement that can be scrolled or the window object)
         
-  ### The `debounce time` parameter     
+  #### The `debounce time` parameter     
   * It's the time _(in milliseconds)_ that has to elapse after the end of the _(forward part of)_ the scroll-animation in order to start the backward part.
 
 For example:
