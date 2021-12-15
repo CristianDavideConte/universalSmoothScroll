@@ -468,4 +468,4 @@ Method Name | Purpose
 
 <br/>
 
-#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/EasingFunctions.md"><code>Go to next section &#8680;</code></a>
+#### <p align="right"><a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/EasingFunctions.md"><code>Go to next section &#8680;</code></a></p>
