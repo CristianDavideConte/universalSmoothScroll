@@ -2,7 +2,7 @@
 <br/>
 
 # Included easings
-Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the function listed below. <br/>
+Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the functions listed below. <br/>
 When invoked, each one of these functions will return a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that you can use to customize the easing of the scroll-animations on any axis of any container. <br/>
 
 In order to do that, just pass the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) to either one of these methods: 
