@@ -4,7 +4,7 @@
 # Variables (internal use only)
 Name | Type | Description
 :--: | :--: | -----------
-`_containersData` | `Map` | A Map in which: <ul> <li> The keys are DOM elements internally called `container`. </li> <li> The values are [`arrays of 16 values`](). </li></ul>
+`_containersData` | `Map` | A Map in which: <ul> <li> The keys are DOM elements internally called `container`. </li> <li> The values are [`arrays of 16 values`](./VariablesAbout.md#the-_containersdata-arrays). </li></ul>
 `_xStepLength` | `Number` | The number of pixel scrolled on the x-axis during a single scroll-animation's step.
 `_yStepLength` | `Number` | The number of pixel scrolled on the y-axis during a single scroll-animation's step.
 `_minAnimationFrame` | `Number` | The minimum number of frames any scroll-animation, on any axis, should last if no custom StepLengthCalculator are set for a container.
