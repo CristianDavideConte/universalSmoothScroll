@@ -1,7 +1,16 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
 <br/>
 
-# Variables (internal use only)
+# Variables 
+Once imported, the [`universalsmoothscroll-min.js`](./Download.md) script will automatically declare and initialize _(in the global scope of your application)_ the `uss` object. <br/>
+This object has the below listed properties and they're internally used by the API to control the scroll-animations' behaviors. <br/>
+Even though it's _possible_ to directly modify these variables it's ***highly discouraged***: the best way to modify them is through the provided [`accessors`](./MethodsAbout.md).
+
+### N.B.
+Manually altering the variables listed below may cause the API to not function properly. 
+<br/>
+<br/>
+
 Name | Type | Description
 :--: | :--: | -----------
 `_containersData` | `Map` | A Map in which: <ul> <li> The keys are DOM elements internally called `container`. </li> <li> The values are [`arrays of 16 values`](./VariablesAbout.md#the-_containersdata-arrays). </li></ul>
