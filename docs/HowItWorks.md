@@ -48,3 +48,7 @@ The `universalsmoothscroll-ease-functions-min.js` script will declare and initia
 All the functions of this library are read-only and cannot be modified. <br/>
 
 To know which default easings are available visit the [`Available easing functions`](./EasingFunctions.md) section. 
+
+<br/>
+
+#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/ConstantsAbout.md"><code>Go to next section &#8680;</code></a>
