@@ -1,7 +1,7 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
 <br/>
 
-# Methods (public use)
+# Available Methods (public use)
 Method Name | Purpose
 ----------- | -------
 `isXscrolling` | Returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
