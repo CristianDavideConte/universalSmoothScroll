@@ -28,4 +28,4 @@ If don't have access to the `index.html` file _(or you simply don't have it)_ an
 
 <br/>
 
-#### <p align="right"><a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/HowItWorks.md"><code>Go to next section &#8680;</code></a></p>
+#### <p align="right"><a href = "./HowItWorks.md"><code>Go to next section &#8680;</code></a></p>
