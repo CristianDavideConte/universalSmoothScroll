@@ -37,10 +37,10 @@ Sections |
 [`Download`](./docs/Download.md) |
 [`Installation`](./docs/Installation.md) |
 [`How it works`](./docs/HowItWorks.md) | 
-[`Available constants`](./docs/ConstantsAbout.md) | 
-[`Available variables`](./docs/VariablesAbout.md) |
-[`Available methods`](./docs/MethodsAbout.md) |
-[`Available easings`](./docs/EasingFunctions.md) |
+[`Internal Constants`](./docs/ConstantsAbout.md) | 
+[`Internal Variables`](./docs/VariablesAbout.md) |
+[`Available Methods`](./docs/MethodsAbout.md) |
+[`Included Easings`](./docs/EasingFunctions.md) |
 [`F.A.Q.`](./docs/FAQ.md) |
 
 ---
