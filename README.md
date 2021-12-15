@@ -40,7 +40,7 @@ Sections |
 [`Available constants`](./docs/ConstantsAbout.md) | 
 [`Available variables`](./docs/VariablesAbout.md) |
 [`Available methods`](./docs/MethodsAbout.md) |
-[`Available easing functions`](./docs/EasingFunctions.md) |
+[`Available easings`](./docs/EasingFunctions.md) |
 [`F.A.Q.`](./docs/FAQ.md) |
 
 ---
