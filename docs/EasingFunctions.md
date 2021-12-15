@@ -4,7 +4,7 @@
 # Included easing functions (public use)
 Method Name   | Visualization | Input parameters
 :-----------: | :-----------: | :-------------:
-`CUSTOM_CUBIC_BEZIER` | <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width="40px" height="40px"/> | [`x1`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) [`x2`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) [`x3`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) [`x4`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) <br/> [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
+`CUSTOM_CUBIC_BEZIER` | <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width="40px" height="40px"/> | [`x1`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x2`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x3`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x4`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) <br/> [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_LINEAR` | <img src="./easingsGifs/1_EASE_LINEAR/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/1_EASE_LINEAR/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_IN_SINE` | <img src="./easingsGifs/2_EASE_IN_SINE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/2_EASE_IN_SINE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_IN_QUAD` | <img src="./easingsGifs/3_EASE_IN_QUAD/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/3_EASE_IN_QUAD/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
@@ -30,26 +30,26 @@ Method Name   | Visualization | Input parameters
 `EASE_IN_OUT_EXPO` | <img src="./easingsGifs/23_EASE_IN_OUT_EXPO/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/23_EASE_IN_OUT_EXPO/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_IN_OUT_CIRC` | <img src="./easingsGifs/24_EASE_IN_OUT_CIRC/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/24_EASE_IN_OUT_CIRC/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_IN_OUT_BOUNCE` | <img src="./easingsGifs/25_EASE_IN_OUT_BOUNCE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/25_EASE_IN_OUT_BOUNCE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_ELASTIC_X` | <img src="./easingsGifs/26_EASE_ELASTIC/X.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`backward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`elasticPointCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`debounce time`](./EasingFunctions.md#the-ease_elastic-parameters)
-`EASE_ELASTIC_Y` | <img src="./easingsGifs/26_EASE_ELASTIC/Y.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`backward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`elasticPointCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`debounce time`](./EasingFunctions.md#the-ease_elastic-parameters)
+`EASE_ELASTIC_X` | <img src="./easingsGifs/26_EASE_ELASTIC/X.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`backward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`ElasticPointCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`debounce time`](./EasingFunctions.md#the-ease_elastic-parameters)
+`EASE_ELASTIC_Y` | <img src="./easingsGifs/26_EASE_ELASTIC/Y.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`backward StepLengthCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`ElasticPointCalculator`](./EasingFunctions.md#the-ease_elastic-parameters) <br/> [`debounce time`](./EasingFunctions.md#the-ease_elastic-parameters)
 
 ---
 <br/>
 
-# The x1, x2, x3 and x4 parameters
+# The `x1`, `x2`, `x3` and `x4` parameters
 They're 4 finite numbers between 0 _(included)_ and 1 _(included)_. <br/>
 They determine the type of easing the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will have. 
 
 ---
 <br/>
 
-# The duration parameter
+# The `duration` parameter
 Is'a positive number which indicates the time _(in milliseconds)_ every scroll-animation controlled by this StepLengthCalculator will last.
 
 ---
 <br/>
 
-# The callback parameter
+# The `callback` parameter
 Each one of the above mentioned functions will return a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) when invoked. <br/>
 These [`StepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) are passed _some input parameters_. <br/> 
 The `callback` is a function which gets executed at every scroll-animation step and that is always invoked with _those same input parameters_.
@@ -57,23 +57,24 @@ The `callback` is a function which gets executed at every scroll-animation step 
 ---
 <br/>
 
-# The EASE_ELASTIC parameters
- * ### Forward StepLengthCalculator 
-      * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***forward part*** of the scroll-animation. 
- * ### Backward StepLengthCalculator 
-      * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***backward part*** of the scroll-animation.
- * ### ElasticPointCalculator
-      * It's a function which must return the number of pixels that will have to be scrolled by the backward part of the scroll-animation. <br/>
-        An ElasticPointCalculator is always passed the following input parameters _(in this order)_: 
-        * the `originalTimestamp` which indicates the exact time in milliseconds at which the _(forward part of)_ the scroll-animation has started 
-        * the `currentTimestamp` which indicates the time in milliseconds at which this function is invoked 
-        * the `currentPosition` of the container's scrollTop/Left (scrollTop/scrollY for EASE_ELASTIC_Y, scrollLeft/scrollX for EASE_ELASTIC_X)
-        * the `direction` of the scroll-animation: 1 if the scrolling is from right-to-left/bottom-to-top, -1 otherwise
-        * the `container` on which the scroll-animation is currently being performed (an HTMLElement that can be scrolled or the window object)
+# EASE_ELASTIC parameters
+  ### The `forward StepLengthCalculator` parameter 
+  * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***forward part*** of the scroll-animation. 
+  ### The `backward StepLengthCalculator` parameter
+  * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***backward part*** of the scroll-animation.
+  ### The `ElasticPointCalculator` parameter
+  * It's a function which must return the number of pixels that will be scrolled by the backward part of the scroll-animation. <br/>
+    If this function returns a negative number, the [`forward StepLengthCalculator`](./EasingFunctions.md#forward-steplengthcalculator) will be used instead of the [`backward StepLengthCalculator`](./EasingFunctions.md#backward-steplengthcalculator) for the backward part of the scroll-animation. <br/>
+  
+    An ElasticPointCalculator is always passed the following input parameters _(in this order)_: 
+    * the `originalTimestamp` which indicates the exact time in milliseconds at which the _(forward part of)_ the scroll-animation has started 
+    * the `currentTimestamp` which indicates the time in milliseconds at which this function is invoked 
+    * the `currentPosition` of the container's scrollTop/Left (scrollTop/scrollY for EASE_ELASTIC_Y, scrollLeft/scrollX for EASE_ELASTIC_X)
+    * the `direction` of the scroll-animation: 1 if the scrolling is from right-to-left/bottom-to-top, -1 otherwise
+    * the `container` on which the scroll-animation is currently being performed (an HTMLElement that can be scrolled or the window object)
         
-        If this function returns a negative number, the forward easing will be used instead of the backward one. 
- * ### Debounce Time     
-      * It's the time _(in milliseconds)_ that has to elapse after the end of the _(forward part of)_ the scroll-animation in order to start the backward part.
+  ### The `debounce time` parameter     
+  * It's the time _(in milliseconds)_ that has to elapse after the end of the _(forward part of)_ the scroll-animation in order to start the backward part.
 
 For example:
 ```javascript
