@@ -51,4 +51,4 @@ To know which default easings are available visit the [`Available easing functio
 
 <br/>
 
-#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/ConstantsAbout.md"><code>Go to next section &#8680;</code></a>
+#### <p align="right"><a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/ConstantsAbout.md"><code>Go to next section &#8680;</code></a></p>
