@@ -13,4 +13,7 @@ Variable name | Purpose
 `_scrollbarsMaxDimension` | The highest amount of pixels any scrollbar on the page can occupy (it's browser dependent).
 `_pageScroller` | The current default value of the `container` input parameter used by some of the API's methods.
 `_reducedMotion` | True if the user has enabled any "reduce-motion" setting devicewise, false otherwise. <br/> Internally used to follow the user's accessibility preferences, reverting back to the browser's default _jump-to-position behavior_ if needed.  
+
 <br/>
+
+#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/MethodsAbout.md"><code>Go to next section &#8680;</code></a>
