@@ -13,4 +13,7 @@ Constant name | Purpose
 `DEFAULT_PAGE_SCROLLER` | The initial default value of the `container` input parameter used by some of the API's methods.
 `DEFAULT_ERROR_LOGGER` | A function that pretty-prints the API error messages inside the console.
 `DEFAULT_WARNING_LOGGER` | A function that pretty-prints the API warning messages inside the console.
+
 <br/>
+
+#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/VariablesAbout.md"><code>Go to next section &#8680;</code></a>
