@@ -27,3 +27,7 @@ All of the above mentioned files will be downloaded inside your `node_module` fo
 Whenever a new version of the API is published, a new release is drafted. <br/>
 Each release has a changelog and the latest versions of the above mentioned files attached as assets. <br/>
 All the USS API releases are available in the [`releases section`](https://github.com/CristianDavideConte/universalSmoothScroll/releases).
+
+<br/>
+
+#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/Installation.md"><code>Go to next section &#8680;</code></a>
