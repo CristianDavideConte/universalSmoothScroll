@@ -30,4 +30,4 @@ All the USS API releases are available in the [`releases section`](https://githu
 
 <br/>
 
-#### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/Installation.md"><code>Go to next section &#8680;</code></a>
+#### <p align="right"><a href = "https://github.com/CristianDavideConte/universalSmoothScroll/blob/master/docs/Installation.md"><code>Go to next section &#8680;</code></a></p>
