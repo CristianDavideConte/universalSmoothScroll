@@ -5,14 +5,14 @@
 Name | Type | Description
 :--: | :--: | -----------
 `_containersData` | `Map` | A Map in which: <ul> <li> The keys are DOM elements internally called `container`. </li> <li> The values are [`arrays of 16 values`](./VariablesAbout.md#the-_containersdata-arrays). </li></ul>
-`_xStepLength` | `Number` | The number of pixel scrolled on the x-axis during a single scroll-animation's step.
-`_yStepLength` | `Number` | The number of pixel scrolled on the y-axis during a single scroll-animation's step.
-`_minAnimationFrame` | `Number` | The minimum number of frames any scroll-animation, on any axis, should last if no custom StepLengthCalculator are set for a container.
-`_windowHeight` | `Number` | The current window's inner height in pixels.
-`_windowWidth` | `Number` | The current window's inner width in pixels.
+`_xStepLength` | `Number` | If there's no [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
+`_yStepLength` | `Number` | If there's no [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
+`_minAnimationFrame` | `Number` | If there's no [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
+`_windowHeight` | `Number` | The current window's inner height _(in px)_.
+`_windowWidth` | `Number` | The current window's inner width _(in px)_.
 `_scrollbarsMaxDimension` | `Number` | The highest amount of pixels any scrollbar on the page can occupy (it's browser dependent).
-`_pageScroller` | `Object` | The current default value of the `container` input parameter used by some of the API's methods.
-`_reducedMotion` | `String` | True if the user has enabled any "reduce-motion" setting devicewise, false otherwise. <br/> Internally used to follow the user's accessibility preferences, reverting back to the browser's default _jump-to-position behavior_ if needed.  
+`_pageScroller` | `Object` | The value used when an API method requires the `container` input parameter but nothing is passed.
+`_reducedMotion` | `Boolean` | True if the user has enabled any `reduce-motion` setting devicewise, false otherwise. <br/> Internally used to follow the user's accessibility preferences, reverting back to the browser's default _jump-to-position behavior_ if needed.  
 
 ---
 <br/>
