@@ -23,8 +23,7 @@ uss._xStepLength
 uss.getXStepLength() //Getter
 uss.setXStepLength() //Setter
 ```
-
----
+<br/>
 
 The main scrolling-functions are:
 * `uss.scrollXTo()`,  `uss.scrollYTo()` and `uss.scrollTo()`
@@ -39,7 +38,7 @@ Any scroll-animation can be stopped at any time by using:
 There's also a handy function for anchor's smooth scrolling management:
 * `uss.hrefSetup()`
 
-
+---
 <br/>
 
 ## \#Easing library 
