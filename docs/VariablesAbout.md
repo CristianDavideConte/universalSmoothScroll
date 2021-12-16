@@ -7,7 +7,8 @@ This object has the below listed properties and they're internally used by the A
 Even though it's _possible_ to directly modify these properties it's ***highly discouraged***: the best way to get/set them is through the provided [`accessors`](./MethodsAbout.md).
 
 ### N.B.
-Manually altering the variables listed below may cause the API to not function properly. 
+Manually altering the properties listed below may cause the API to not function properly. <br/>
+Moreover anyone of them can be renamed, deleted and/or repurposed at any time.
 <br/>
 <br/>
 
