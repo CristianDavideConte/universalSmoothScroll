@@ -9,8 +9,8 @@ Name | Input Parameters | Description
 `isScrolling` | `container` | Returns true if a scroll-animation on any axis of the passed container is currently being performed by this API, false otherwise.
 `getFinalXPosition` | `container` | Returns the position _(in px)_ at which the container will be at the end of the scroll-animation on the x-axis. <br/> The current position is returned if no scroll-animation is in place.
 `getFinalYPosition` | `container` | Returns the position _(in px)_ at which the container will be at the end of the scroll-animation on the y-axis. <br/> The current position is returned if no scroll-animation is in place.
-`getXStepLengthCalculator` | `container` | Returns the current [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) which controls the animations on the x-axis of the passed container if available.
-`getYStepLengthCalculator` | `container` | Returns the current [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) which controls the animations on the y-axis of the passed container if available.
+`getXStepLengthCalculator` | `container` <br/> `getTemporary` | Returns the current [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) which controls the animations on the x-axis of the passed container if available.
+`getYStepLengthCalculator` | `container` <br/> `getTemporary` | Returns the current [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) which controls the animations on the y-axis of the passed container if available.
 `getXStepLength` | / | Returns the value of the `_xStepLength` property.
 `getYStepLength` | / | Returns the value of the `_yStepLength` property.
 `getMinAnimationFrame` | / | Returns the value of the `_minAnimationFrame` property.
@@ -19,9 +19,10 @@ Name | Input Parameters | Description
 `getScrollbarsMaxDimension` | / | Returns the value of the `_scrollbarsMaxDimension` property.
 `getPageScroller` | / | Returns the value of the `_pageScroller` property.
 `getReducedMotionState` | / | Returns the value of the `_reducedMotion` property.
-`setXStepLengthCalculator` | `newCalculator` <br/> `container` | Sets the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for _(the x-axis of)_ the passed container if compatible.
-`setYStepLengthCalculator` | `newCalculator` <br/> `container` | Sets the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for _(the y-axis of)_ the passed container if compatible.
-`setStepLengthCalculator` | `newCalculator` <br/> `container` | Sets the [`StepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) for _(both the y and x axes of)_ the passed container if compatible.
+`getDebugMode` | / | Returns the value of the `_debugMode` property.
+`setXStepLengthCalculator` | `newCalculator` <br/> `container` <br/> `isTemporary` | Sets the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for _(the x-axis of)_ the passed container if compatible.
+`setYStepLengthCalculator` | `newCalculator` <br/> `container` <br/> `isTemporary`  | Sets the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for _(the y-axis of)_ the passed container if compatible.
+`setStepLengthCalculator` | `newCalculator` <br/> `container` <br/> `isTemporary` | Sets the [`StepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) for _(both the y and x axes of)_ the passed container if compatible.
 `setXStepLength` | `newXStepLength` | Sets the `_xStepLength` property to the passed value if compatible.
 `setYStepLength` | `newYStepLength` | Sets the `_yStepLength` property to the passed value if compatible.
 `setStepLength` | `newStepLength` | Sets both the `_xStepLength` and the `_yStepLength` properties to the passed value if compatible.
@@ -36,21 +37,22 @@ Name | Input Parameters | Description
 `getScrollYCalculator` | `container` | Returns a function that returns: <ul> <li> The scrollTop property of the passed container if it's an instance of HTMLElement. </li> <li> The scrollY property of the passed container if it's the window element. </li> </ul>
 `getMaxScrollX` | `container` | Returns the highest reacheable scrollLeft/scrollX value of the passed container.
 `getMaxScrollY` | `container` | Returns the highest reacheable scrollTop/scrollY value of the passed container.
-`getXScrollableParent` | `element` <br/> `includeHidden`| Returns the first scrollable container _(on the x-axis)_ of the passed element or null if it doesn't have one. 
-`getYScrollableParent` | `element` <br/>  `includeHidden` | Returns the first scrollable container _(on the y-axis)_ of the passed element or null if it doesn't have one. 
-`getScrollableParent` | `element` <br/>  `includeHidden` | Returns the first scrollable container _(on either the x or y axis)_ of the passed element or null if it doesn't have one. 
+`getXScrollableParent` | `element` <br/> `includeHiddenParents`| Returns the first scrollable container _(on the x-axis)_ of the passed element or null if it doesn't have one. 
+`getYScrollableParent` | `element` <br/>  `includeHiddenParents` | Returns the first scrollable container _(on the y-axis)_ of the passed element or null if it doesn't have one. 
+`getScrollableParent` | `element` <br/>  `includeHiddenParents` | Returns the first scrollable container _(on either the x or y axis)_ of the passed element or null if it doesn't have one. 
+`getAllScrollableParents` | `element` <br/>  `includeHiddenParents` <br/> `callback` | Returns an array containing all the scrollable containers _(on either the x or y axis)_ of the passed element.
 `scrollXTo` | `finalXPosition` <br/> `container` <br/> `callback` | Scrolls the x-axis of the passed container to the specified position _(in px)_ if possible.
 `scrollYTo` | `finalYPosition` <br/> `container` <br/> `callback` | Scrolls the y-axis of the passed container to the specified position _(in px)_ if possible.
 `scrollXBy` | `deltaX` <br/> `container` <br/> `callback` <br/> `stillStart` | Scrolls the x-axis the passed container by the specified amount of in pixels if possible.
 `scrollYBy` | `deltaY` <br/> `container` <br/> `callback` <br/> `stillStart` | Scrolls the y-axis the passed container by the specified amount of in pixels if possible.
 `scrollTo` | `finalXPosition` <br/> `finalYPosition` <br/> `container` <br/> `callback` | Scrolls both the x and y axes of the passed container to the specified positions _(in px)_ if possible.
 `scrollBy` | `deltaX` <br/> `deltaY` <br/> `container` <br/> `callback` <br/> `stillStart` | Scrolls both the x and y axes of the passed container by the specified amount of in pixels if possible.
-`scrollIntoView` | `element` <br/> `alignToLeft` <br/> `alignToTop` <br/> `callback` <br/> `includeHidden` | Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignments.
-`scrollIntoViewIfNeeded` | `element` <br/> `alignToCenter` <br/> `callback` <br/> `includeHidden` | Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignment only if it's not already visible.
+`scrollIntoView` | `element` <br/> `alignToLeft` <br/> `alignToTop` <br/> `callback` <br/> `includeHiddenParents` | Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignments.
+`scrollIntoViewIfNeeded` | `element` <br/> `alignToCenter` <br/> `callback` <br/> `includeHiddenParents` | Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignment only if it's not already visible.
 `stopScrollingX` | `container` <br/> `callback` | Stops all the current scroll-animation on the x-axis of the passed container.
 `stopScrollingY` | `container` <br/> `callback` | Stops all the current scroll-animation on the y-axis of the passed container.
 `stopScrolling` | `container` <br/> `callback` | Stops all the current scroll-animation on both the x and y axes of the passed container.
-`hrefSetup` | `alignToLeft` <br/> `alignToTop` <br/> `init` <br/> `callback` <br/> `includeHidden` | Automatically binds every valid anchor (`<a>` and `<area>` in the DOM) to the corresponding element that should be scrolled into view. <br/> Whenever a valid anchor is clicked the passed init function is invoked and if it doesn't return `false`, a scroll-animation will bring into view the linked element
+`hrefSetup` | `alignToLeft` <br/> `alignToTop` <br/> `init` <br/> `callback` <br/> `includeHiddenParents` <br/> `updateHistory` | Automatically binds every valid anchor (`<a>` and `<area>` in the DOM) to the corresponding element that should be scrolled into view. <br/> Whenever a valid anchor is clicked the passed init function is invoked and if it doesn't return `false`, a scroll-animation will bring into view the linked element and the browser's history will be updated _(if requested)_.
 
 ---
 <br/>
@@ -272,31 +274,31 @@ Name | Input Parameters | Description
 ```javascript
 /*
  * @param element window or HTMLElement
- * @param includeHidden true if the element's first scrollable parent on the x-axis has
+ * @param includeHiddenParents true if the element's first scrollable parent on the x-axis has
  *        the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
  *        false otherwise.
  */
- function getXScrollableParent (element, includeHidden = false);
+ function getXScrollableParent (element, includeHiddenParents = false);
 ```
 #### getYScrollableParent
 ```javascript
 /*
  * @param element window or HTMLElement
- * @param includeHidden true if the element's first scrollable parent on the y-axis has
+ * @param includeHiddenParents true if the element's first scrollable parent on the y-axis has
  *        the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
  *        false otherwise.
  */
- function getYScrollableParent (element, includeHidden = false);
+ function getYScrollableParent (element, includeHiddenParents = false);
 ```
 #### getScrollableParent
 ```javascript
 /*
  * @param element window or HTMLElement
- * @param includeHidden true if the element's first scrollable parent has
+ * @param includeHiddenParents true if the element's first scrollable parent has
  *        the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
  *        false otherwise.
  */
- function getScrollableParent (element, includeHidden = false);
+ function getScrollableParent (element, includeHiddenParents = false);
 ```
 #### scrollXTo
 ```javascript
@@ -389,11 +391,11 @@ Name | Input Parameters | Description
  *                      1) The scrollable parent for the passed element
  *                      2) The window for the element's scrollable parent
  * @callback the function you want to be executed after the scroll-animations have been performed.
- * @param includeHidden true if the element's first scrollable parent may have the
+ * @param includeHiddenParents true if the element's first scrollable parent may have the
  *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
  *        false otherwise.
  */
- function scrollIntoView (element, alignToLeft = true, alignToTop = true, callback = () => {}, includeHidden = false);
+ function scrollIntoView (element, alignToLeft = true, alignToTop = true, callback = () => {}, includeHiddenParents = false);
 ```
 #### scrollIntoViewIfNeeded
 ```javascript
@@ -410,11 +412,11 @@ Name | Input Parameters | Description
  *                            - x-axis: the left, the center or the right of the window
  *                            - y-axis: the top, the center or the bottom of the window
  * @callback the function you want to be executed after the scroll-animations have been performed.
- * @param includeHidden true if the element's first scrollable parent may have the
+ * @param includeHiddenParents true if the element's first scrollable parent may have the
  *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
  *        false otherwise.
  */
- function scrollIntoViewIfNeeded (element, alignToCenter = true, callback = () => {}, includeHidden = false);
+ function scrollIntoViewIfNeeded (element, alignToCenter = true, callback = () => {}, includeHiddenParents = false);
 ```
 #### stopScrollingX
 ```javascript
@@ -478,10 +480,10 @@ Name | Input Parameters | Description
  *           It can return false to prevent the scroll-animation completly.
  * @callback the function you want to be executed after
  *           any scroll-animation of every of the valid anchor link found by this function have been performed.
- * @param includeHidden true if the first scrollable parent of any valid anchor link's destination element found by this function
+ * @param includeHiddenParents true if the first scrollable parent of any valid anchor link's destination element found by this function
  *        may have the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden, false otherwise.
  */
- function hrefSetup (alignToLeft = true, alignToTop = true, init = () => {}, callback = () => {}, includeHidden = false);
+ function hrefSetup (alignToLeft = true, alignToTop = true, init = () => {}, callback = () => {}, includeHiddenParents = false);
 ```
 
 <br/>
