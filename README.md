@@ -39,7 +39,7 @@ Sections |
 [`How it works`](./docs/HowItWorks.md) | 
 [`Internal Constants`](./docs/ConstantsAbout.md) | 
 [`Internal Variables`](./docs/VariablesAbout.md) |
-[`Available Methods`](./docs/FunctionsAbout.md) |
+[`Available Functions`](./docs/FunctionsAbout.md) |
 [`Included Easings`](./docs/EasingFunctions.md) |
 [`F.A.Q.`](./docs/FAQ.md) |
 
