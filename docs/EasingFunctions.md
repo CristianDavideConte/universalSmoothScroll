@@ -15,7 +15,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
 <br/>
 <br/>
 
-Function Name   | Visualization | Input parameters
+Function Name   | Visualization | Input Parameters
 :-----------: | :-----------: | :-------------:
 `CUSTOM_CUBIC_BEZIER` | <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width="40px" height="40px"/> | [`x1`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x2`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x3`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x4`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) <br/> [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
 `EASE_LINEAR` | <img src="./easingsGifs/1_EASE_LINEAR/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/1_EASE_LINEAR/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
