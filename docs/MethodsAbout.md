@@ -2,51 +2,51 @@
 <br/>
 
 # Available Methods (public use)
-Method Name | Purpose
------------ | -------
-`isXscrolling` | Returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
-`isYscrolling` | Returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
-`isScrolling` | Returns true if a scroll-animation on any axis of the passed container is currently being performed by this API, false otherwise.
-`getXStepLengthCalculator` | Returns the _xStepLengthCalculator ease function for the passed container if available.
-`getYStepLengthCalculator` | Returns the _yStepLengthCalculator ease function for the passed container if available.
-`getXStepLength` | Returns the value of `_xStepLength`.
-`getYStepLength` | Returns the value of `_yStepLength`.
-`getMinAnimationFrame` | Returns the value of `_minAnimationFrame`.
-`getWindowHeight` | Returns the value of `_windowHeight`.
-`getWindowWidth` | Returns the value of `_windowWidth`.
-`getScrollbarsMaxDimension` | Returns the value of `_scrollbarsMaxDimension`.
-`getPageScroller` | Returns the value of `_pageScroller`.
-`getReducedMotionState` | Returns the value of `_reducedMotion`.
-`setXStepLengthCalculator` | Sets the `_xStepLengthCalculator` for the requested container to the passed ease function if compatible.
-`setYStepLengthCalculator` | Sets the `_yStepLengthCalculator` for the requested container to the passed ease function if compatible.
-`setStepLengthCalculator` | Sets both the `_xStepLengthCalculator` and the `_yStepLengthCalculator` for the requested container to the passed ease function if compatible.
-`setXStepLength` | Sets the `_xStepLength` to the passed value if compatible.
-`setYStepLength` | Sets the `_yStepLength` to the passed value if compatible.
-`setStepLength` | Sets both the `_xStepLength` and the `_yStepLength` to the passed value if compatible.
-`setMinAnimationFrame` | Sets the `_minAnimationFrame` to the passed value if compatible.
-`setPageScroller` | Sets the `_pageScroller` to the passed value if compatible.
-`calcXStepLength` | Takes in the remaning scroll amount of a scroll-animation on the x-axis and returns how long each scroll-animation-step must be in order to target the `_minAnimationFrame` value.
-`calcYStepLength` | Takes in the remaning scroll amount of a scroll-animation on the y-axis and returns how long each scroll-animation-step must be in order to target the `_minAnimationFrame` value.
- `calcScrollbarsDimensions` | Takes in an element and returns an array containing 2 numbers: <br/> <ol> **[0]** contains the vertical scrollbar's width of the passed container. <br/> **[1]** contains the horizontal scrollbar's height of the passed container. </ol>
-`getScrollXCalculator` | Takes in a container and returns a function that returns:<br/>  - The scrollLeft property of the container if it's an instance of HTMLElement.<br/>  - The scrollX property of the container if it's the window element.
-`getScrollYCalculator` | Takes in a container and returns a function that returns:<br/>  - The scrollTop property of the container if it's an instance of HTMLElement.<br/>  - The scrollY property of the container if it's the window element.
-`getMaxScrollX` | Takes in a container and returns its highest scroll-reachable x-value.
-`getMaxScrollY` | Takes in a container and returns its highest scroll-reachable y-value.
-`getXScrollableParent` | Returns the first scrollable container for the passed element on the x-axis, works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified.
-`getYScrollableParent` | Returns the first scrollable container for the passed element on the y-axis, works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified.
-`getScrollableParent` | Returns the first scrollable container for the passed element, works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified.
-`scrollXTo` | Takes in a number which indicates the position that the passed container's left border's x-coordinate has to reach and performs a scroll-animation on the x-axis. <br/> After the scroll-animation has finished a callback function can be invoked.
-`scrollYTo` | Takes in a number which indicates the position that the passed container's top border's y-coordinate has to reach and performs a scroll-animation on the y-axis. <br/> After the scroll-animation has finished a callback function can be invoked.
-`scrollXBy` | Takes in a number which indicates the number of pixel on the x-axis that the passed container has to be scrolled by and performs a scroll-animation on that axis. <br/> After the scroll-animation has finished a callback function can be invoked.
-`scrollYBy` | Takes in a number which indicates the number of pixel on the y-axis that the passed container has to be scrolled by and performs a scroll-animation on that axis. <br/> After the scroll-animation has finished a callback function can be invoked.
-`scrollTo` | Takes in 2 numbers which respectively indicate the position that the passed container's left border's x-coordinate and top border's y-coordinate have to reach and performs 2 scroll-animations on both the x-axis and the y-axis. <br/> After the scroll-animations have been performed a callback function can be invoked.
-`scrollBy` | Takes in 2 numbers which respectively indicate the number of pixels on the x-axis and the y-axis that the passed container has to be scrolled by and performs 2 scroll-animations on both the x-axis and the y-axis. <br/> After the scroll-animations have been performed a callback function can be invoked.
-`scrollIntoView` | Scrolls all the necessary containers of the passed element in order to make it and its closest scrollable parent visible on the screen. <br/> There are 4 possible alignments for both: top, bottom, center, nearest. <br/> The alignments can be changed by passing different values of alignToTop and alignToLeft. <br/> Works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified. <br/> After the scroll-animations have been performed a callback function can be invoked.
-`scrollIntoViewIfNeeded` | Scrolls all the necessary containers of the passed element in order to make it and its closest scrollable parent visible on the screen only if they are not already fully visible. <br/> There are 2 possible alignments for both: center, nearest. <br/> The alignments can be changed by passing different values of alignToCenter. <br/> Works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified. <br/> After the scroll-animations have been performed a callback function can be invoked.
-`stopScrollingX` | Stops all the current scroll-animation on the x-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
-`stopScrollingY` | Stops all the current scroll-animation on the y-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
-`stopScrolling` | Stops all the current scroll-animation on both the x-axis and the y-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
-`hrefSetup` | Looks for every anchor element (`<a>` && `<area>`) with a value for the `href` attribute which corresponds to an element on the same page and registers an eventListener for it in order to trigger a smooth scroll-animation to reach the linked element once the anchor is clicked (internally uses `scrollIntoView`). <br/> Before the scroll-animations are performed an init function can be invoked: if this functions returns false, the scroll-animation is prevented. <br/> After the scroll-animations have been performed a callback function can be invoked.
+Name | Input Parameters | Description
+:--: | :--------------: | -----------
+`isXscrolling` | `container` | Returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
+`isYscrolling` | `container` | Returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
+`isScrolling` | `container` | Returns true if a scroll-animation on any axis of the passed container is currently being performed by this API, false otherwise.
+`getXStepLengthCalculator` | `container` | Returns the `_xStepLengthCalculator` ease function for the passed container if available.
+`getYStepLengthCalculator` | `container` | Returns the `_yStepLengthCalculator` ease function for the passed container if available.
+`getXStepLength` | / | Returns the value of `_xStepLength`.
+`getYStepLength` | / | Returns the value of `_yStepLength`.
+`getMinAnimationFrame` | / | Returns the value of `_minAnimationFrame`.
+`getWindowHeight` | / | Returns the value of `_windowHeight`.
+`getWindowWidth` | / | Returns the value of `_windowWidth`.
+`getScrollbarsMaxDimension` | / | Returns the value of `_scrollbarsMaxDimension`.
+`getPageScroller` | / | Returns the value of `_pageScroller`.
+`getReducedMotionState` | / | Returns the value of `_reducedMotion`.
+`setXStepLengthCalculator` | `newCalculator` <br/> `container` | Sets the `_xStepLengthCalculator` for the requested container to the passed ease function if compatible.
+`setYStepLengthCalculator` | `newCalculator` <br/> `container` | Sets the `_yStepLengthCalculator` for the requested container to the passed ease function if compatible.
+`setStepLengthCalculator` | `newCalculator` <br/> `container` | Sets both the `_xStepLengthCalculator` and the `_yStepLengthCalculator` for the requested container to the passed ease function if compatible.
+`setXStepLength` | `newXStepLength` | Sets the `_xStepLength` to the passed value if compatible.
+`setYStepLength` | `newYStepLength` | Sets the `_yStepLength` to the passed value if compatible.
+`setStepLength` | `newStepLength` | Sets both the `_xStepLength` and the `_yStepLength` to the passed value if compatible.
+`setMinAnimationFrame` | `newMinAnimationFrame` | Sets the `_minAnimationFrame` to the passed value if compatible.
+`setPageScroller` | `newPageScroller` | Sets the `_pageScroller` to the passed value if compatible.
+`calcXStepLength` | `deltaX` | Takes in the remaning scroll amount of a scroll-animation on the x-axis and returns how long each scroll-animation-step must be in order to target the `_minAnimationFrame` value.
+`calcYStepLength` | `deltaY` | Takes in the remaning scroll amount of a scroll-animation on the y-axis and returns how long each scroll-animation-step must be in order to target the `_minAnimationFrame` value.
+ `calcScrollbarsDimensions` | `element` | Takes in an element and returns an array containing 2 numbers: <br/> <ol> **[0]** contains the vertical scrollbar's width of the passed container. <br/> **[1]** contains the horizontal scrollbar's height of the passed container. </ol>
+`getScrollXCalculator` | `container` | Takes in a container and returns a function that returns:<br/>  - The scrollLeft property of the container if it's an instance of HTMLElement.<br/>  - The scrollX property of the container if it's the window element.
+`getScrollYCalculator` | `container` | Takes in a container and returns a function that returns:<br/>  - The scrollTop property of the container if it's an instance of HTMLElement.<br/>  - The scrollY property of the container if it's the window element.
+`getMaxScrollX` | `container` | Takes in a container and returns its highest scroll-reachable x-value.
+`getMaxScrollY` | `container` | Takes in a container and returns its highest scroll-reachable y-value.
+`getXScrollableParent` | `element` <br/> `includeHidden`| Returns the first scrollable container for the passed element on the x-axis, works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified.
+`getYScrollableParent` | `element` <br/>  `includeHidden` | Returns the first scrollable container for the passed element on the y-axis, works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified.
+`getScrollableParent` | `element` <br/>  `includeHidden` | Returns the first scrollable container for the passed element, works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified.
+`scrollXTo` | `finalXPosition` <br/> `container` <br/> `callback` | Takes in a number which indicates the position that the passed container's left border's x-coordinate has to reach and performs a scroll-animation on the x-axis. <br/> After the scroll-animation has finished a callback function can be invoked.
+`scrollYTo` | `finalYPosition` <br/> `container` <br/> `callback` | Takes in a number which indicates the position that the passed container's top border's y-coordinate has to reach and performs a scroll-animation on the y-axis. <br/> After the scroll-animation has finished a callback function can be invoked.
+`scrollXBy` | `deltaX` <br/> `container` <br/> `callback` <br/> `stillStart` | Takes in a number which indicates the number of pixel on the x-axis that the passed container has to be scrolled by and performs a scroll-animation on that axis. <br/> After the scroll-animation has finished a callback function can be invoked.
+`scrollYBy` | `deltaY` <br/> `container` <br/> `callback` <br/> `stillStart` | Takes in a number which indicates the number of pixel on the y-axis that the passed container has to be scrolled by and performs a scroll-animation on that axis. <br/> After the scroll-animation has finished a callback function can be invoked.
+`scrollTo` | `finalXPosition` <br/> `finalYPosition` <br/> `container` <br/> `callback` | Takes in 2 numbers which respectively indicate the position that the passed container's left border's x-coordinate and top border's y-coordinate have to reach and performs 2 scroll-animations on both the x-axis and the y-axis. <br/> After the scroll-animations have been performed a callback function can be invoked.
+`scrollBy` | `deltaX` <br/> `deltaY` <br/> `container` <br/> `callback` <br/> `stillStart` | Takes in 2 numbers which respectively indicate the number of pixels on the x-axis and the y-axis that the passed container has to be scrolled by and performs 2 scroll-animations on both the x-axis and the y-axis. <br/> After the scroll-animations have been performed a callback function can be invoked.
+`scrollIntoView` | `element` <br/> `alignToLeft` <br/> `alignToTop` <br/> `callback` <br/> `includeHidden` | Scrolls all the necessary containers of the passed element in order to make it and its closest scrollable parent visible on the screen. <br/> There are 4 possible alignments for both: top, bottom, center, nearest. <br/> The alignments can be changed by passing different values of alignToTop and alignToLeft. <br/> Works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified. <br/> After the scroll-animations have been performed a callback function can be invoked.
+`scrollIntoViewIfNeeded` | `element` <br/> `alignToCenter` <br/> `callback` <br/> `includeHidden` | Scrolls all the necessary containers of the passed element in order to make it and its closest scrollable parent visible on the screen only if they are not already fully visible. <br/> There are 2 possible alignments for both: center, nearest. <br/> The alignments can be changed by passing different values of alignToCenter. <br/> Works with `overflow:hidden`, `overflowX:hidden` and `overflowY:hidden` if specified. <br/> After the scroll-animations have been performed a callback function can be invoked.
+`stopScrollingX` | `container` <br/> `callback` | Stops all the current scroll-animation on the x-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
+`stopScrollingY` | `container` <br/> `callback` | Stops all the current scroll-animation on the y-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
+`stopScrolling` | `container` <br/> `callback` | Stops all the current scroll-animation on both the x-axis and the y-axis of the passed container. <br/> After the animations have been stopped a callback function can be invoked.
+`hrefSetup` | `alignToLeft` <br/> `alignToTop` <br/> `init` <br/> `callback` <br/> `includeHidden` | Looks for every anchor element (`<a>` && `<area>`) with a value for the `href` attribute which corresponds to an element on the same page and registers an eventListener for it in order to trigger a smooth scroll-animation to reach the linked element once the anchor is clicked (internally uses `scrollIntoView`). <br/> Before the scroll-animations are performed an init function can be invoked: if this functions returns false, the scroll-animation is prevented. <br/> After the scroll-animations have been performed a callback function can be invoked.
 <br/>
 
 # Methods signatures
@@ -109,6 +109,11 @@ Method Name | Purpose
 ```javascript
 /* No input parameters required */
  function getWindowWidth ();
+```
+#### getScrollbarsMaxDimensions
+```javascript
+/* No input parameters required */
+ function getScrollbarsMaxDimensions ();
 ```
 #### getPageScroller
 ```javascript
@@ -221,6 +226,13 @@ Method Name | Purpose
  * @param deltaY A number > 0
  */
  function calcYStepLength (deltaY);
+```
+#### calcScrollbarsDimensions
+```javascript
+/*
+ * @param element window or HTMLElement
+ */
+ function calcScrollbarsDimensions (element);
 ```
 #### getScrollXCalculator
 ```javascript
