@@ -58,4 +58,4 @@ Index | Type | Description
 
 <br/>
 
-#### <p align="right"><a href = "./MethodsAbout.md"><code>Go to next section &#8680;</code></a></p>
+#### <p align="right"><a href = "./FunctionsAbout.md"><code>Go to next section &#8680;</code></a></p>
