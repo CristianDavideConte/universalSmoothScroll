@@ -57,219 +57,522 @@ Name | Input Parameters | Description
 ---
 <br/>
 
+<table>
+ <thead>
+  <tr>
+   <th>Name</th>
+   <th>Input Parameters</th>
+   <th>Input Parameters Type</th>
+   <th>Input Parameters Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr id = "isXScrolling">
+   <td rowspan = "1" align = "center">
+    <code>isXScrolling</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+   
+  </tr>
+    <tr id = "isYScrolling">
+   <td rowspan = "1" align = "center">
+    <code>isYScrolling</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  
+  <tr id = "isScrolling">
+   <td rowspan = "1" align = "center">
+    <code>isYScrolling</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  
+  <tr id = "getFinalXPosition">
+   <td rowspan = "1" align = "center">
+    <code>getFinalXPosition</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  
+  <tr id = "getFinalYPosition">
+   <td rowspan = "1" align = "center">
+    <code>getFinalYPosition</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  
+  <tr id = "getXStepLengthCalculator">
+   <td rowspan = "2" align = "center">
+    <code>getXStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>getTemporary</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> the returned StepLengthCalculator is the temporary one set for the x-axis of this container, otherwise it's the standard one.
+   </td>
+  </tr>
+   
+  <tr id = "getYStepLengthCalculator">
+   <td rowspan = "2" align = "center">
+    <code>getYStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>getTemporary</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> the returned StepLengthCalculator is the temporary one set for the y-axis of this container, otherwise it's the standard one.
+   </td>
+  </tr>
+  
+  <tr id = "setXStepLengthCalculator">
+   <td rowspan = "3" align = "center">
+    <code>setXStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>newCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A valid StepLengthCalculator.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>  
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>isTemporary</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code>, <code>newCalculator</code> will control only the next scroll-animation on the x-axis of this container and it will be automatically discarded at the end of it. <br/>
+    If <code>false</code> every scroll-animation on the x-axis of this container will be controlled by <code>newCalculator</code>. <br/>
+    If a container has both a temporary and non-temporary StepLengthCalculator set for its x-axis, the temporary one will controll the next scroll-animation on the x-axis of the container. <br/>
+    Setting a temporary StepLengthCalculator will only overwrite the previous temporary one. <br/>
+    Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
+   </td>
+  </tr>
+  
+  <tr id = "setYStepLengthCalculator">
+   <td rowspan = "3" align = "center">
+    <code>setYStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>newCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A valid StepLengthCalculator.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>  
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>isTemporary</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code>, <code>newCalculator</code> will control only the next scroll-animation on the y-axis of this container and it will be automatically discarded at the end of it. <br/>
+    If <code>false</code> every scroll-animation on the y-axis of this container will be controlled by <code>newCalculator</code>. <br/>
+    If a container has both a temporary and non-temporary StepLengthCalculator set for its y-axis, the temporary one will controll the next scroll-animation on the y-axis of the container. <br/>
+    Setting a temporary StepLengthCalculator will only overwrite the previous temporary one. <br/>
+    Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
+   </td>
+  </tr> 
+  
+  <tr id = "setStepLengthCalculator">
+   <td rowspan = "3" align = "center">
+    <code>setStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>newCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A valid StepLengthCalculator.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>  
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>isTemporary</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code>, <code>newCalculator</code> will control only the next scroll-animation on the x-axis and the next one on the y-axis of this container. <br/>
+    It will automatically be discarded separately for each axis whenever the next scroll-animation on an axis is completed. <br/>
+    If <code>false</code> every scroll-animation on both the x and y axes of this container will be controlled by <code>newCalculator</code>. <br/>
+    If a container has both a temporary and non-temporary StepLengthCalculator, the temporary one will controll the next scroll-animation of the container. <br/>
+    Setting a temporary StepLengthCalculator will only overwrite the previous temporary one. <br/>
+    Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
+   </td>
+  </tr> 
+  
+  <tr id = "setXStepLength">
+   <td rowspan = "1" align = "center">
+    <code>setXStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>newXStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A number > 0.
+   </td>
+  </tr>
+  
+  <tr id = "setYStepLength">
+   <td rowspan = "1" align = "center">
+    <code>setYStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>newYStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A number > 0.
+   </td>
+  </tr>
+    
+  <tr id = "setStepLength">
+   <td rowspan = "1" align = "center">
+    <code>setStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>newStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A number > 0.
+   </td>
+  </tr>
+  
+  <tr id = "setMinAnimationFrame">
+   <td rowspan = "1" align = "center">
+    <code>setMinAnimationFrame</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>newMinAnimationFrame</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A number > 0.
+   </td>
+  </tr>
+    
+  <tr id = "setPageScroller">
+   <td rowspan = "1" align = "center">
+    <code>setPageScroller</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>newPageScroller</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A number > 0.
+   </td>
+  </tr>
+    
+  <tr id = "setDebugMode">
+   <td rowspan = "1" align = "center">
+    <code>setDebugMode</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>newDebugMode</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A number > 0.
+   </td>
+  </tr>
+      
+  <tr id = "calcXStepLength">
+   <td rowspan = "1" align = "center">
+    <code>calcXStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>deltaX</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A number > 0.
+   </td>
+  </tr>
+      
+  <tr id = "calcYStepLength">
+   <td rowspan = "1" align = "center">
+    <code>calcYStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>deltaY</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A number > 0.
+   </td>
+  </tr>
+     
+  </tr>
+    <tr id = "calcScrollbarsDimensions">
+   <td rowspan = "1" align = "center">
+    <code>calcScrollbarsDimensions</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>element</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+       
+  </tr>
+    <tr id = "calcBordersDimensions">
+   <td rowspan = "1" align = "center">
+    <code>calcBordersDimensions</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>element</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+       
+  </tr>
+    <tr id = "getScrollXCalculator">
+   <td rowspan = "1" align = "center">
+    <code>getScrollXCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+         
+  </tr>
+    <tr id = "getScrollYCalculator">
+   <td rowspan = "1" align = "center">
+    <code>getScrollYCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+         
+  </tr>
+    <tr id = "getMaxScrollX">
+   <td rowspan = "1" align = "center">
+    <code>getMaxScrollX</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+           
+  </tr>
+    <tr id = "getMaxScrollY">
+   <td rowspan = "1" align = "center">
+    <code>getMaxScrollY</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  
+  <tr id = "getXScrollableParent">
+   <td rowspan = "2" align = "center">
+    <code>getXScrollableParent</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>element</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>includeHiddenParents</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if the first scrollable container <i>(on the x-axis)</i> of <code>element</code> has the css property <code>overflow-x:hidden</code>, <code>false</code> otherwise.
+   </td>
+  </tr>
+  
+  
+  
+  
+ </tbody>
+</table>
+
+
+
+
 # Methods signatures
-#### isXscrolling
-```javascript
-/*
- * @param container window or HTMLElement
- */
- function isXscrolling (container = uss._pageScroller);
-```
-#### isYscrolling
-```javascript
-/*
- * @param container window or HTMLElement
- */
- function isYscrolling (container = uss._pageScroller);
-```
-#### isScrolling
-```javascript
-/*
- * @param container window or HTMLElement
- */
- function isScrolling (container = uss._pageScroller);
-```
-#### getXStepLengthCalculator
-```javascript
-/*
- * @param container window or HTMLElement
- */
- function getXStepLengthCalculator (container = uss._pageScroller);
-```
-#### getYStepLengthCalculator
-```javascript
-/*
- * @param container window or HTMLElement
- */
- function getYStepLengthCalculator (container = uss._pageScroller);
-```
-#### getXStepLength
-```javascript
-/* No input parameters required */
- function getXStepLength ();
-```
-#### getYStepLength
-```javascript
-/* No input parameters required */
- function getYStepLength ();
-```
-#### getMinAnimationFrame
-```javascript
-/* No input parameters required */
- function getMinAnimationFrame ();
-```
-#### getWindowHeight
-```javascript
-/* No input parameters required */
- function getWindowHeight ();
-```
-#### getWindowWidth
-```javascript
-/* No input parameters required */
- function getWindowWidth ();
-```
-#### getScrollbarsMaxDimensions
-```javascript
-/* No input parameters required */
- function getScrollbarsMaxDimensions ();
-```
-#### getPageScroller
-```javascript
-/* No input parameters required */
- function getPageScroller ();
-```
-#### getReducedMotionState
-```javascript
-/* No input parameters required */
- function getReducedMotionState ();
-```
-#### setXStepLengthCalculator
-```javascript
-/*
- * @param newCalculator function that returns the length of each step of every scroll-animation on the x-axis for the passed container.
- *        In order for it to work, it has to always return a number (otherwise the step length will be defaulted to calcXStepLength(totalScrollAmount) at runtime)
- *        It will be passed the following input parameters:
- *          1) remaningScrollAmount of current the scroll-animation
- *          2) originalTimestamp provided by the first _stepX function call
- *          3) timestamp provided by each _stepX function call
- *          4) totalScrollAmount of the current scroll-animation
- *          5) currentXPosition of the container's left border
- *          6) finalXPosition that the container's left border has to reach
- *          7) container on which the scroll-animation is currently being performed
- * @param container window or HTMLElement
- */
- function setXStepLengthCalculator (newCalculator, container = uss._pageScroller);
-```
-#### setYStepLengthCalculator
-```javascript
-/*
- * @param newCalculator function that returns the length of each step of every scroll-animation on the y-axis for the passed container.
- *        In order for it to work, it has to always return a number (otherwise the step length will be defaulted to calcYStepLength(totalScrollAmount) at runtime)
- *        It will be passed the following input parameters:
- *          1) remaningScrollAmount of current the scroll-animation
- *          2) originalTimestamp provided by the first _stepY function call
- *          3) timestamp provided by each _stepY function call
- *          4) totalScrollAmount of the current scroll-animation
- *          5) currentYPosition of the container's top border
- *          6) finalYPosition that the container's top border has to reach
- *          7) container on which the scroll-animation is currently being performed
- * @param container window or HTMLElement
- */
- function setYStepLengthCalculator (newCalculator, container = uss._pageScroller);
-```
-#### setStepLengthCalculator
-```javascript
-/*
- * @param newCalculator function that returns the length of each step of every scroll-animation on both the x-axis and the y-axis for the passed container.
- *        In order for it to work, it has to always return a number (otherwise the step length will be defaulted to calc[X/Y]StepLength(totalScrollAmount) at runtime)
- *        It will be passed the following input parameters:
- *          1) remaningScrollAmount of current the scroll-animation
- *          2) originalTimestamp provided by the first _stepX/Y function call
- *          3) timestamp provided by each _stepX/Y function call
- *          4) totalScrollAmount of the current scroll-animation
- *          5) currentPosition of the container's top/left border
- *          6) finalPosition that the container's top/left border has to reach
- *          7) container on which the scroll-animation is currently being performed
- * @param container window or HTMLElement
- */
- function setStepLengthCalculator (newCalculator, container = uss._pageScroller);
-```
-#### setXStepLength
-```javascript
-/*
- * @param newXStepLength A number > 0
- */
- function setXStepLength (newXStepLength);
-```
-#### setYStepLength
-```javascript
-/*
- * @param newYStepLength A number > 0
- */
- function setYStepLength (newYStepLength);
-```
-#### setStepLength
-```javascript
-/*
- * @param newStepLength A number > 0
- */
- function setStepLength (newStepLength);
-```
-#### setMinAnimationFrame
-```javascript
-/*
- * @param newMinAnimationFrame A number > 0
- */
- function setMinAnimationFrame (newMinAnimationFrame);
-```
-#### setPageScroller
-```javascript
-/*
- * @param newPageScroller window or HTMLElement
- */
- function setPageScroller (newPageScroller);
-```
-#### calcXStepLength
-```javascript
-/*
- * PUBLIC METHOD BUT USED INTERNALLY
- * @param deltaX A number > 0
- */
- function calcXStepLength (deltaX);
-```
-#### calcYStepLength
-```javascript
-/*
- * PUBLIC METHOD BUT USED INTERNALLY
- * @param deltaY A number > 0
- */
- function calcYStepLength (deltaY);
-```
-#### calcScrollbarsDimensions
-```javascript
-/*
- * @param element window or HTMLElement
- */
- function calcScrollbarsDimensions (element);
-```
-#### getScrollXCalculator
-```javascript
-/*
- * @param container window or HTMLElement
- */
- function getScrollXCalculator (container = uss._pageScroller);
-```
-#### getScrollYCalculator
-```javascript
-/*
- * @param container window or HTMLElement
- */
- function getScrollYCalculator (container = uss._pageScroller);
-```
-#### getMaxScrollX
-```javascript
-/*
- * @param container window or HTMLElement
- */
- function getMaxScrollX (container = uss._pageScroller);
-```
-#### getMaxScrollY
-```javascript
-/*
- * @param container window or HTMLElement
- */
- function getMaxScrollY (container = uss._pageScroller);
-```
+
+
 #### getXScrollableParent
 ```javascript
 /*
