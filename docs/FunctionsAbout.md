@@ -557,7 +557,7 @@ Name | Input Parameters | Description
     <code>Boolean</code>
    </td>
    <td rowspan = "1" align = "left">
-    <code>True</code> if the first scrollable container <i>(on the x-axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code>, <code>false</code> otherwise.
+    <code>True</code> if the first scrollable parent <i>(on the x-axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code>, <code>false</code> otherwise.
    </td>
   </tr>
     
@@ -583,7 +583,7 @@ Name | Input Parameters | Description
     <code>Boolean</code>
    </td>
    <td rowspan = "1" align = "left">
-    <code>True</code> if the first scrollable container <i>(on the y-axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+    <code>True</code> if the first scrollable parent <i>(on the y-axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
    </td>
   </tr>
       
@@ -609,7 +609,7 @@ Name | Input Parameters | Description
     <code>Boolean</code>
    </td>
    <td rowspan = "1" align = "left">
-    <code>True</code> if the first scrollable container <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+    <code>True</code> if the first scrollable parent <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
    </td>
   </tr>
         
@@ -635,7 +635,7 @@ Name | Input Parameters | Description
     <code>Boolean</code>
    </td>
    <td rowspan = "1" align = "left">
-    <code>True</code> if the first scrollable container <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+    <code>True</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
    </td>
   </tr>
   <tr>
@@ -927,12 +927,124 @@ Name | Input Parameters | Description
     <code>Boolean</code>
    </td>
    <td rowspan = "1" align = "left">
-    <code>True</code> if any on-going scroll-animation on the y-axis of <code>container</code> must be stopped before starting this animation. <br/>
-    <code>False</code> if any on-going scroll-animation on the y-axis of <code>container</code> should extended by <code>deltaY</code> if possible.
+    <code>True</code> if any on-going scroll-animation on either the x and y axes of <code>container</code> must be stopped before starting this animation. <br/>
+    <code>False</code> if any on-going scroll-animation on either the x and y axes of <code>container</code> should extended by respectively <code>deltaX</code> and <code>deltaY</code> if possible.
    </td>
   </tr> 
-  
-  
+                
+  <tr id = "scrollIntoView">
+   <td rowspan = "5" align = "center">
+    <code>scrollIntoView</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>element</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>alignToLeft</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the left. <br/>
+    <code>False</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the right. <br/>
+    <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
+    Any other value if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the center. <br/>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>alignToTop</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the left. <br/>
+    <code>False</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the right. <br/>
+    <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
+    Any other value if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the center. <br/>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>includeHiddenParents</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+   </td>
+  </tr>
+                  
+  <tr id = "scrollIntoViewIfNeeded">
+   <td rowspan = "4" align = "center">
+    <code>scrollIntoViewIfNeeded</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>element</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>alignToCenter</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if the alignment <i>(on either the x and y axis)</i> of <code>element</code> should be to the center of its closest scrollable parent. <br/>
+    Any other value if the alignment <i>(on either the x and y axis)</i> of <code>element</code> and all its scrollable containers should be to the to the closest between <i>"left aligned"</i> or <i>"right aligned"</i>: the alignment of each container is decided by measuring its relative position <i>(on either the x and y axis)</i> to their closest scrollable parent. <br/>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>includeHiddenParents</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+   </td>
+  </tr>
  </tbody>
 </table>
 
@@ -941,62 +1053,6 @@ Name | Input Parameters | Description
 
 # Methods signatures
 
-#### scrollIntoView
-```javascript
-/*
- * @param element window or HTMLElement
- * @param alignToLeft true if you want both the passed element and its first scrollable parent (if available) to be aligned to the left of:
- *                      1) The scrollable parent for the passed element
- *                      2) The window for the element's scrollable parent
- *                    false if you want both the passed element and its first scrollable parent (if available) to be aligned to the right of:
- *                      1) The scrollable parent for the passed element
- *                      2) The window for the element's scrollable parent
- *                    "nearest" if you want:
- *                      1) The element to be dynamically aligned to the closest between the left, the center or the right of its first scrollable parent
- *                      2) The scrollable parent to be dynamically aligned to the closest between the left, the center or the right of the window
- *                    anything else if you want both the passed element and its first scrollable parent (if available) to be aligned to the center of:
- *                      1) The scrollable parent for the passed element
- *                      2) The window for the element's scrollable parent
- * @param alignToTop true if you want both the passed element and its first scrollable parent (if available) to be aligned to the top of:
- *                      1) The scrollable parent for the passed element
- *                      2) The window for the element's scrollable parent
- *                    false if you want both the passed element and its first scrollable parent (if available) to be aligned to the bottom of:
- *                      1) The scrollable parent for the passed element
- *                      2) The window for the element's container
- *                    "nearest" if you want:
- *                      1) The element to be dynamically aligned to the closest between the top, the center or the bottom of its first scrollable parent
- *                      2) The scrollable parent to be dynamically aligned to the closest between the top, the center or the bottom of the window
- *                    anything else if you want both the passed element and its first scrollable parent (if available) to be aligned to the center of:
- *                      1) The scrollable parent for the passed element
- *                      2) The window for the element's scrollable parent
- * @callback the function you want to be executed after the scroll-animations have been performed.
- * @param includeHiddenParents true if the element's first scrollable parent may have the
- *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
- *        false otherwise.
- */
- function scrollIntoView (element, alignToLeft = true, alignToTop = true, callback = () => {}, includeHiddenParents = false);
-```
-#### scrollIntoViewIfNeeded
-```javascript
-/*
- * @param element window or HTMLElement
- * @param alignToCenter true if you want both the passed element and its first scrollable parent (if available) to be aligned to the center of:
- *                        1) The scrollable parent for the passed element
- *                        2) The window for the element's scrollable parent
- *                      anything else if you want:
- *                        1) The element to be dynamically aligned to the closest between:
- *                            - x-axis: the left, the center or the right of its first scrollable parent
- *                            - y-axis: the top, the center or the bottom of its first scrollable parent
- *                        2) The scrollable parent to be dynamically aligned to the closest between:
- *                            - x-axis: the left, the center or the right of the window
- *                            - y-axis: the top, the center or the bottom of the window
- * @callback the function you want to be executed after the scroll-animations have been performed.
- * @param includeHiddenParents true if the element's first scrollable parent may have the
- *        CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
- *        false otherwise.
- */
- function scrollIntoViewIfNeeded (element, alignToCenter = true, callback = () => {}, includeHiddenParents = false);
-```
 #### stopScrollingX
 ```javascript
 /*
