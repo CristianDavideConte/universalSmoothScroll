@@ -102,7 +102,7 @@ Name | Input Parameters | Description
   
   <tr id = "isScrolling">
    <td rowspan = "1" align = "center">
-    <code>isYScrolling</code>
+    <code>isScrolling</code>
    </td>
    <td rowspan = "1" align = "center">
     <code>container</code>
