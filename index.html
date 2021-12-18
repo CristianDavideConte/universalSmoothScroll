@@ -9,8 +9,8 @@
     <!--<script async src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/old/universalsmoothscroll-old-min.js"></script>-->
     <!--<script async src = "https://rawcdn.githack.com/CristianDavideConte/universalSmoothScroll/41d6bbb80203a81e4dab942fe0328b9c237d823f/js/universalsmoothscroll-min.js"></script>-->
     <!--<script async src = "https://raw.githack.com/CristianDavideConte/universalSmoothScroll/master/js/universalsmoothscroll-min.js"></script>-->
-    <script async src = "./js/universalsmoothscroll.js"></script>
-    <script async src = "./js/universalsmoothscroll-ease-functions.js"></script>
+    <script async src = "./js/universalsmoothscroll-min.js"></script>
+    <script async src = "./js/universalsmoothscroll-ease-functions-min.js"></script>
 
   </head>
   <body onload = "init()">
@@ -107,12 +107,10 @@
 </html>
 <script>
   //Enables smooth scrolling for touch devices
-  let wasTouchEvent;
   let isFingerDown;
   function touchHelper(container, init, callback, scrollModifier = delta => {return delta;}, shouldTrackFinger = false, onfingerUp = () => {}) {
     let _Y = null;
     let _X = null;
-
 
     container.addEventListener("touchstart", event => {
       event.stopPropagation();
@@ -153,7 +151,7 @@
       const _deltaX = _absDeltaX <= 1 ? _originalDeltaX : _originalDeltaX * Math.log(1e5 * _absDeltaX);
       const _deltaY = _absDeltaY <= 1 ? _originalDeltaY : _originalDeltaY * Math.log(1e5 * _absDeltaY);
       
-      uss.scrollBy(_deltaX, _deltaY, container, callback, true);
+      uss.scrollBy(scrollModifier(_deltaX), scrollModifier(_deltaY), container, callback, true);
     }, {passive:false});
   }
 
@@ -165,18 +163,18 @@
 
 
   let backwardPhase;
-  function calcScrollDistance(container, scrollLimit, delta, touchScroll = false) {
-    const _currentPos = uss.getScrollYCalculator(container)();
+  function calcScrollDistance(container, scrollLimit, delta, wasTouchEvent = false) { 
+    const _finalPos = wasTouchEvent ? uss.getScrollYCalculator(container)() : uss.getFinalYPosition(container);
     const _maxScroll = uss.getMaxScrollY(container);
 
-    if(_currentPos < scrollLimit && delta < 0) {
-      delta *= _currentPos <= 0 ? 0 : wasTouchEvent ? 1 : 0.2;
-      return delta * _currentPos / scrollLimit;
+    if(_finalPos < scrollLimit && delta < 0) {
+      delta *= _finalPos <= 0 ? 0 : 0.25;
+      return delta * _finalPos / scrollLimit;
     }
 
-    if(_currentPos > _maxScroll - scrollLimit && delta > 0) {
-      delta *= _currentPos >= _maxScroll ? 0 : wasTouchEvent ? 1 : 0.2;
-      return delta * (_maxScroll - _currentPos) / scrollLimit;
+    if(_finalPos > _maxScroll - scrollLimit && delta > 0) {
+      delta *= _finalPos >= _maxScroll ? 0 : 0.25;
+      return delta * (_maxScroll - _finalPos) / scrollLimit;
     }
 
     return delta;
@@ -203,26 +201,16 @@
     let easeFunctionSelectorList = document.getElementById("easeFunctionSelectorList");
 
     let lastAnchorPressed = null;
-    let storedCalculator = EASE_LINEAR();
-    let wheelScrolled = false;
 
 
     uss.setPageScroller(pageScroller);
     uss.setStepLengthCalculator(EASE_LINEAR());
 
     uss.hrefSetup(null, true, (anchor, el) => {
-      if(uss.getYStepLengthCalculator() === defaultEase) {
-        uss.setStepLengthCalculator(storedCalculator);
-      }
-
-      storedCalculator = null;
-      wheelScrolled = false;
-
-      if(lastAnchorPressed === anchor && uss.isScrolling()) return false;
+      if(anchor !== window && lastAnchorPressed === anchor && uss.isScrolling()) return false;
       lastAnchorPressed = anchor;
-      uss.stopScrolling();
-      return true;
-    }, null, false);
+      uss.setStepLengthCalculator(uss.getXStepLengthCalculator()); //Unsets the temporary StepLengthCalculator
+    }, null, false, true);
 
 
 
@@ -232,10 +220,10 @@
 
 
 
-
-    //Used to initially hide the elastic containers
+    //Used to bring the easeFunctionSelectorList to initial position
     const elasticDebounceTime = 70; //Debounce time in ms
-    easeFunctionSelectorList.scrollTop = 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5));
+    uss.setStepLengthCalculator((r,o,ts,t) => {return t;}, easeFunctionSelectorList, true); //A temporary calculator that returns the total scrollAmount
+    uss.scrollYBy(2.5 * easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5), easeFunctionSelectorList);
     uss.setYStepLengthCalculator(
       EASE_ELASTIC_Y(
         defaultEase,
@@ -282,7 +270,7 @@
                             easeFunctionSelectorList.style.pointerEvents = "none";
                             easeFunctionSelectorList.style.overflowY = "hidden";
                             window.requestAnimationFrame(() => {easeFunctionSelectorList.style.overflowY = "scroll"});
-                            uss.scrollYTo(_currentPos - 0.0001, easeFunctionSelectorList, () => {easeFunctionSelectorList.style.pointerEvents = ""; backwardPhase = false;});
+                            uss.scrollYTo(_currentPos - 1, easeFunctionSelectorList, () => {easeFunctionSelectorList.style.pointerEvents = ""; backwardPhase = false;});
                           }, 1.5 * elasticDebounceTime);
         return;
       }
@@ -294,7 +282,7 @@
                             easeFunctionSelectorList.style.pointerEvents = "none";
                             easeFunctionSelectorList.style.overflowY = "hidden";
                             window.requestAnimationFrame(() => {easeFunctionSelectorList.style.overflowY = "scroll"});
-                            uss.scrollYTo(_currentPos + 0.0001, easeFunctionSelectorList, () => {easeFunctionSelectorList.style.pointerEvents = ""; backwardPhase = false;});
+                            uss.scrollYTo(_currentPos + 1, easeFunctionSelectorList, () => {easeFunctionSelectorList.style.pointerEvents = ""; backwardPhase = false;});
                           }, 1.5 * elasticDebounceTime);
       }
     }, {passive:false});
@@ -304,19 +292,18 @@
 
 
     touchHelper(easeFunctionSelectorList,
-                () => wasTouchEvent = true,
+                null,
                 null,
                 delta => {return calcScrollDistance(easeFunctionSelectorList, 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)), delta, true);},
                 true,
                 () => {
-                  wasTouchEvent = false;
                   const _elasticLimit = 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)); //Container's padding-top/bottom
                   const _currentPos = uss.getScrollYCalculator(easeFunctionSelectorList)();
                   const maxScroll = uss.getMaxScrollY(easeFunctionSelectorList);
                   if(_currentPos < _elasticLimit - 1) {
-                    uss.scrollYTo(_currentPos - 0.0001, easeFunctionSelectorList, () => backwardPhase = false);
+                    uss.scrollYTo(_currentPos - 1, easeFunctionSelectorList, () => backwardPhase = false);
                   } else if(_currentPos > maxScroll - _elasticLimit + 1) {
-                    uss.scrollYTo(_currentPos + 0.0001, easeFunctionSelectorList, () => backwardPhase = false);
+                    uss.scrollYTo(_currentPos + 1, easeFunctionSelectorList, () => backwardPhase = false);
                   }
                 }
                );
@@ -347,40 +334,39 @@
       }, {passive:true});
     }
 
-    document.getElementById("linear").addEventListener("click",          () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_LINEAR())});
+    document.getElementById("linear").addEventListener("click",          () => uss.setStepLengthCalculator(EASE_LINEAR()));
 
-    document.getElementById("easeInSine").addEventListener("click",      () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_SINE())});
-    document.getElementById("easeInQuad").addEventListener("click",      () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_QUAD())});
-    document.getElementById("easeInCubic").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_CUBIC())});
-    document.getElementById("easeInQuart").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_QUART())});
-    document.getElementById("easeInQuint").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_QUINT())});
-    document.getElementById("easeInExpo").addEventListener("click",      () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_EXPO())});
-    document.getElementById("easeInCirc").addEventListener("click",      () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_CIRC())});
+    document.getElementById("easeInSine").addEventListener("click",      () => uss.setStepLengthCalculator(EASE_IN_SINE()));
+    document.getElementById("easeInQuad").addEventListener("click",      () => uss.setStepLengthCalculator(EASE_IN_QUAD()));
+    document.getElementById("easeInCubic").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_IN_CUBIC()));
+    document.getElementById("easeInQuart").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_IN_QUART()));
+    document.getElementById("easeInQuint").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_IN_QUINT()));
+    document.getElementById("easeInExpo").addEventListener("click",      () => uss.setStepLengthCalculator(EASE_IN_EXPO()));
+    document.getElementById("easeInCirc").addEventListener("click",      () => uss.setStepLengthCalculator(EASE_IN_CIRC()));
 
-    document.getElementById("easeOutSine").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_SINE())});
-    document.getElementById("easeOutQuad").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_QUAD())});
-    document.getElementById("easeOutCubic").addEventListener("click",    () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_CUBIC())});
-    document.getElementById("easeOutQuart").addEventListener("click",    () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_QUART())});
-    document.getElementById("easeOutQuint").addEventListener("click",    () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_QUINT())});
-    document.getElementById("easeOutExpo").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_EXPO())});
-    document.getElementById("easeOutCirc").addEventListener("click",     () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_CIRC())});
+    document.getElementById("easeOutSine").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_OUT_SINE()));
+    document.getElementById("easeOutQuad").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_OUT_QUAD()));
+    document.getElementById("easeOutCubic").addEventListener("click",    () => uss.setStepLengthCalculator(EASE_OUT_CUBIC()));
+    document.getElementById("easeOutQuart").addEventListener("click",    () => uss.setStepLengthCalculator(EASE_OUT_QUART()));
+    document.getElementById("easeOutQuint").addEventListener("click",    () => uss.setStepLengthCalculator(EASE_OUT_QUINT()));
+    document.getElementById("easeOutExpo").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_OUT_EXPO()));
+    document.getElementById("easeOutCirc").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_OUT_CIRC()));
 
-    document.getElementById("easeInOutSine").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_SINE())});
-    document.getElementById("easeInOutQuad").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_QUAD())});
-    document.getElementById("easeInOutCubic").addEventListener("click",  () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC())});
-    document.getElementById("easeInOutQuart").addEventListener("click",  () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_QUART())});
-    document.getElementById("easeInOutQuint").addEventListener("click",  () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_QUINT())});
-    document.getElementById("easeInOutExpo").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_EXPO())});
-    document.getElementById("easeInOutCirc").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_CIRC())});
+    document.getElementById("easeInOutSine").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_OUT_SINE()));
+    document.getElementById("easeInOutQuad").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_OUT_QUAD()));
+    document.getElementById("easeInOutCubic").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC()));
+    document.getElementById("easeInOutQuart").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_QUART()));
+    document.getElementById("easeInOutQuint").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_QUINT()));
+    document.getElementById("easeInOutExpo").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_OUT_EXPO()));
+    document.getElementById("easeInOutCirc").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_OUT_CIRC()));
 
-    document.getElementById("easeInBounce").addEventListener("click",    () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_BOUNCE())});
-    document.getElementById("easeOutBounce").addEventListener("click",   () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_OUT_BOUNCE())});
-    document.getElementById("easeInOutBounce").addEventListener("click", () => {storedCalculator = null; uss.setStepLengthCalculator(EASE_IN_OUT_BOUNCE())});
+    document.getElementById("easeInBounce").addEventListener("click",    () => uss.setStepLengthCalculator(EASE_IN_BOUNCE()));
+    document.getElementById("easeOutBounce").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_OUT_BOUNCE()));
+    document.getElementById("easeInOutBounce").addEventListener("click", () => uss.setStepLengthCalculator(EASE_IN_OUT_BOUNCE()));
 
 
     function scrollListX(direction) {
-      uss.setXStepLengthCalculator(EASE_IN_OUT_QUAD(1000), xScroller);
-      const finalXPosition = (direction === -1) ? 0 : uss.getMaxScrollX(xScroller);
+      const finalXPosition = direction === -1 ? 0 : uss.getMaxScrollX(xScroller);
       uss.scrollXTo(finalXPosition, xScroller, null, true);
     }
 
@@ -388,7 +374,7 @@
     xScroller.addEventListener("wheel", event => {
       event.preventDefault();
       event.stopPropagation();
-      uss.setXStepLengthCalculator(defaultEase, xScroller);
+      uss.setXStepLengthCalculator(defaultEase, xScroller, true);
       uss.scrollXBy(event.deltaY, xScroller, null, false);
     }, {passive:false});
     xScroller.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
@@ -410,8 +396,7 @@
 
 
     function scrollListY(direction) {
-      uss.setYStepLengthCalculator(EASE_OUT_EXPO(2000), yScroller);
-      const finalYPosition = (direction === -1) ? 0 : uss.getMaxScrollY(yScroller);
+      const finalYPosition = direction === -1 ? 0 : uss.getMaxScrollY(yScroller);
       uss.scrollYTo(finalYPosition, yScroller, null, true);
     }
 
@@ -419,7 +404,7 @@
     yScroller.addEventListener("wheel", event => {
       event.preventDefault();
       event.stopPropagation();
-      uss.setYStepLengthCalculator(defaultEase, yScroller);
+      uss.setYStepLengthCalculator(defaultEase, yScroller, true);
       uss.scrollYBy(event.deltaY, yScroller, null, false);
     }, {passive:false});
     yScroller.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
@@ -471,23 +456,16 @@
     pageScroller.addEventListener("wheel", event => {
       event.preventDefault();
       event.stopPropagation();
-      if(!wheelScrolled && uss.isScrolling()) uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
-      if(storedCalculator === null) storedCalculator = uss.getYStepLengthCalculator();
-
-      wheelScrolled = true;
+      if(lastAnchorPressed && uss.isScrolling()) uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
+      
       lastAnchorPressed = null;
-      uss.setStepLengthCalculator(defaultEase);
+      uss.setStepLengthCalculator(defaultEase, pageScroller, true);
       uss.scrollYBy(event.deltaY, pageScroller, null, false);
       return false;
     }, {passive:false});
     document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(pageScroller, () => console.log("scrollX stopped"));}, {passive:true});
     document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(pageScroller, () => console.log("scrollY stopped"));}, {passive:true});
 
-    touchHelper(pageScroller, () => {
-      if(storedCalculator !== defaultEase) {
-        storedCalculator = uss.getYStepLengthCalculator() !== defaultEase ? uss.getYStepLengthCalculator() : storedCalculator;
-        uss.setStepLengthCalculator(defaultEase);
-      }
-    });
+    touchHelper(pageScroller, () => uss.setStepLengthCalculator(defaultEase, pageScroller, true));
   }
 </script>

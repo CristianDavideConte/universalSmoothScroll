@@ -1,27 +1,27 @@
 "use strict";
 
-const CUSTOM_CUBIC_BEZIER = (u0 = 0, u1 = 0, u2 = 1, u3 = 1, duration = 500, callback = () => {}, debugString = "CUSTOM_CUBIC_BEZIER") => {
+const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
   if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "a positive number", duration); return;}
-  if(!Number.isFinite(u0) || u0 < 0 || u0 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as u0", u0); return;}
-  if(!Number.isFinite(u1) || u1 < 0 || u1 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as u1", u1); return;}
-  if(!Number.isFinite(u2) || u2 < 0 || u2 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as u2", u2); return;}
-  if(!Number.isFinite(u3) || u3 < 0 || u3 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as u3", u3); return;}
+  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as x1", x1); return;}
+  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as y1", y1); return;}
+  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as x2", x2); return;}
+  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as y2", y2); return;}
 
   const _callback = typeof callback === "function" ? callback : () => {};
-  const aX = 1  + 3 * (u0 - u2);
-  const bX = 3 * (u2 - 2 * u0);
-  const cX = 3 * u0;
-  const aY = 1 + 3 * (u1 - u3);
-  const bY = 3 * (u3 - 2 * u1);
-  const cY = 3 * u1;
-
-  function newtonRapson(aX, bX, cX, aY, bY, cY, x) {
+  const aX = 1 + 3 * (x1 - x2);
+  const aY = 1 + 3 * (y1 - y2);
+  const bX = 3 * (x2 - 2 * x1);
+  const bY = 3 * (y2 - 2 * y1);
+  const cX = 3 * x1;
+  const cY = 3 * y1;
+  
+  function newtonRapson(x) {
     let prev;
     let t = x;
     do {
       prev = t;
-      t = t - ((t * (cX + t * (bX + t * aX)) - x) / (cX + t * (2 * bX + 3 * aX * t)));
-    } while (Math.abs(t - prev) > 0.0001);  //Precision of 1^(-4)
+      t -= ((t * (cX + t * (bX + t * aX)) - x) / (cX + t * (2 * bX + 3 * aX * t)));
+    } while (Math.abs(t - prev) > 0.001);   //Precision of 1^(-3)
 
     return t * ( cY + t * ( bY + t * aY )); //This is y given t on the bezier curve (0 <= y <= 1 && 0 <= t <= 1)
   }
@@ -29,10 +29,9 @@ const CUSTOM_CUBIC_BEZIER = (u0 = 0, u1 = 0, u2 = 1, u3 = 1, duration = 500, cal
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
-    const _elapsed = timestamp - originalTimestamp;
-    const _progress = _elapsed / duration;
-    const _nextPos = _progress <= 0 ? 0 : _progress >= 1 ? total : newtonRapson(aX, bX, cX, aY, bY, cY, _progress) * (total - 1);
-  	return Math.ceil(remaning - total + _nextPos);
+    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
+    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : newtonRapson(_progress) * (total - 1);
+    return Math.ceil(remaning - total + _nextPos);
   }
 }
 
@@ -70,7 +69,7 @@ const _CUSTOM_BOUNCE = (progress = 0) => {
   if(!Number.isFinite(progress) || progress < 0 || progress > 1) {DEFAULT_ERROR_LOGGER("_CUSTOM_BOUNCE", "a number between 0 and 1 (inclusive) as the progress", progress); return;}
   if(progress === 0 || progress === 1) return progress;
 
-  const n1 = 7;
+  const n1 = 7.5625;
   const d1 = 2.75;
 
   if (progress < 1 / d1)   return n1 * progress * progress;
@@ -80,47 +79,44 @@ const _CUSTOM_BOUNCE = (progress = 0) => {
   return n1 * (progress -= 2.625 / d1) * progress + 0.984375;
 }
 
-const EASE_IN_BOUNCE = (duration = 900, callback = () => {}) => {
+const EASE_IN_BOUNCE = (duration = 900, callback) => {
   if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_BOUNCE", "a positive number", duration); return;}
   const _callback = typeof callback === "function" ? callback : () => {};
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
-    const _elapsed = timestamp - originalTimestamp;
-    const _progress = _elapsed / duration;
-    const _nextPos = _progress <= 0 ? 0 : _progress >= 1 ? total : (1 - _CUSTOM_BOUNCE(1 - _progress)) * (total - 1);
+    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
+    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : (1 - _CUSTOM_BOUNCE(1 - _progress)) * (total - 1);
     return Math.ceil(remaning - total + _nextPos);
   }
 }
 
-const EASE_OUT_BOUNCE = (duration = 900, callback = () => {}) => {
+const EASE_OUT_BOUNCE = (duration = 900, callback) => {
   if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_OUT_BOUNCE", "a positive number", duration); return;}
   const _callback = typeof callback === "function" ? callback : () => {};
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
-    const _elapsed = timestamp - originalTimestamp;
-    const _progress = _elapsed / duration;
-    const _nextPos = _progress <= 0 ? 0 : _progress >= 1 ? total : _CUSTOM_BOUNCE(_progress) * (total - 1);
+    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
+    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : _CUSTOM_BOUNCE(_progress) * (total - 1);
     return Math.ceil(remaning - total + _nextPos);
   }
 }
 
-const EASE_IN_OUT_BOUNCE = (duration = 1200, callback = () => {}) => {
+const EASE_IN_OUT_BOUNCE = (duration = 1200, callback) => {
   if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_OUT_BOUNCE", "a positive number", duration); return;}
   const _callback = typeof callback === "function" ? callback : () => {};
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
-    const _elapsed = timestamp - originalTimestamp;
-    const _progress = _elapsed / duration;
-    const _nextPos = _progress <= 0 ? 0 :
-                     _progress >= 1 ? total :
-                     _progress < 0.5 ? 0.5 * (1 - _CUSTOM_BOUNCE(1 - 2 * _progress)) * (total - 1) :
-                                       0.5 * (1 + _CUSTOM_BOUNCE(2 * _progress - 1)) * (total - 1);
+    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
+    const _nextPos  = _progress <= 0 ? 0 :
+                      _progress >= 1 ? total :
+                      _progress < 0.5 ? 0.5 * (1 - _CUSTOM_BOUNCE(1 - 2 * _progress)) * (total - 1) :
+                                        0.5 * (1 + _CUSTOM_BOUNCE(2 * _progress - 1)) * (total - 1);
     return Math.ceil(remaning - total + _nextPos);
   }
 }
@@ -173,7 +169,7 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _containerData = uss._containersData.get(container) || [];
-    if(_containerData[10] !== _elasticInit && _containerData[10] !== _elasticCallback) {
+    if(!_elasticInit || !_elasticCallback || (_containerData[10] !== _elasticInit && _containerData[10] !== _elasticCallback)) {
       _init(originalTimestamp, timestamp, container);
     }
     return _scrollCalculator(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
@@ -228,7 +224,7 @@ const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = 
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _containerData = uss._containersData.get(container) || [];
-    if(_containerData[11] !== _elasticInit && _containerData[11] !== _elasticCallback) {
+    if(!_elasticInit || !_elasticCallback || (_containerData[11] !== _elasticInit && _containerData[11] !== _elasticCallback)) {
       _init(originalTimestamp, timestamp, container);
     }
     return _scrollCalculator(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
