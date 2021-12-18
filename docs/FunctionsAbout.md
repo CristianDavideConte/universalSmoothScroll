@@ -57,13 +57,15 @@ Name | Input Parameters | Description
 ---
 <br/>
 
+# Input parameters details
+
 <table>
  <thead>
   <tr>
    <th>Name</th>
-   <th>Input Parameters</th>
-   <th>Input Parameters Type</th>
-   <th>Input Parameters Description</th>
+   <th>Parameter Name</th>
+   <th>Parameter Type</th>
+   <th>Parameter Description</th>
   </tr>
  </thead>
  <tbody>
@@ -1045,81 +1047,172 @@ Name | Input Parameters | Description
     <code>True</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
    </td>
   </tr>
+            
+  <tr id = "stopScrollingX">
+   <td rowspan = "2" align = "center">
+    <code>stopScrollingX</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+              
+  <tr id = "stopScrollingY">
+   <td rowspan = "2" align = "center">
+    <code>stopScrollingY</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+              
+  <tr id = "stopScrolling">
+   <td rowspan = "2" align = "center">
+    <code>stopScrolling</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+  
+  <tr id = "hrefSetup">
+   <td rowspan = "6" align = "center">
+    <code>hrefSetup</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>alignToLeft</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the left. <br/>
+    <code>False</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the right. <br/>
+    <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
+    Any other value if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the center. <br/>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>alignToTop</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the left. <br/>
+    <code>False</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the right. <br/>
+    <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
+    Any other value if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the center. <br/>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>init</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when any anchor is clicked. <br/>
+    If <code>init</code> returns <code>false</code>, the click is ignored. <br/>
+    When invoked, <code>init</code> is always passed the following input parameters <i>(in this order)</i>: 
+    <ul> 
+     <li>The anchor that has been clicked</li>
+     <li>The anchor's destination element</li>
+    </ul>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when any anchor's destination element is successfully scrolled into view.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>includeHiddenParents</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of any anchor's destination has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>updateHistory</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>True</code>, the browser's history is updated every time a valid anchor is clicked and navigating through history triggers a smooth scroll-animation to the corresponding fragment.
+    If <code>false</code>, the browser's history is never updated by the API and navigating through history produces the default <i>jump-to-position</i> behavior.
+   </td>
+  </tr>
+              
+  
+  
  </tbody>
 </table>
-
-
-
-
-# Methods signatures
-
-#### stopScrollingX
-```javascript
-/*
- * @param container window or HTMLElement
- * @callback the function you want to be executed after
- *           all the scroll-animations on the x-axis of the passed container have been stopped.
- */
- function stopScrollingX (container = uss._pageScroller, callback = () => {});
-```
-#### stopScrollingY
-```javascript
-/*
- * @param container window or HTMLElement
- * @callback the function you want to be executed after
- *           all the scroll-animations on the y-axis of the passed container have been stopped.
- */
- function stopScrollingY (container = uss._pageScroller, callback = () => {});
-```
-#### stopScrolling
-```javascript
-/*
- * @param container window or HTMLElement
- * @callback the function you want to be executed after
- *           all the scroll-animations on both the x-axis and the y-axis of the passed container have been stopped.
- */
- function stopScrolling (container = uss._pageScroller, callback = () => {});
-```
-#### hrefSetup
-```javascript
-/*
- * @param alignToLeft true if you want either every valid anchor link's destination element and their first scrollable parents (if available) to be aligned to the left of:
- *                      1) The scrollable parent for the anchor link's destination element
- *                      2) The window for the destination elements' scrollable parent
- *                    false if you want either every valid anchor link's destination element and their first scrollable parents (if available) to be aligned to the right of:
- *                      1) The scrollable parent for the anchor link's destination element
- *                      2) The window for the destination elements' scrollable parent
- *                    "nearest" if you want:
- *                      1) The destination element to be dynamically aligned to the closest between the left, the center or the right of its first scrollable parent
- *                      2) The scrollable parent to be dynamically aligned to the closest between the left, the center or the right of the window
- *                    anything else if you want either every valid anchor link's destination element and their first scrollable parents (if available) to be aligned to the center of:
- *                      1) The scrollable parent for the anchor link's destination element
- *                      2) The window for the destination elements' scrollable parent
- * @param alignToTop true if you want either every valid anchor link's destination element and their first scrollable parents (if available) to be aligned to the top of:
- *                      1) The scrollable parent for the anchor link's destination element
- *                      2) The window for the destination elements' scrollable parent
- *                    false if you want either every valid anchor link's destination element and their first scrollable parents (if available) to be aligned to the bottom of:
- *                      1) The scrollable parent for the anchor link's destination element
- *                      2) The window for the destination elements' scrollable parent
- *                    "nearest" if you want:
- *                      1) The destination element to be dynamically aligned to the closest between the top, the center or the bottom of its first scrollable parent
- *                      2) The scrollable parent to be dynamically aligned to the closest between the top, the center or the bottom of the window
- *                    anything else if you want either every valid anchor link's destination element and their first scrollable parents (if available) to be aligned to the center of:
- *                      1) The scrollable parent for the anchor link's destination element
- *                      2) The window for the destination elements' scrollable parent
- * @callback init the function you want to be executed before
- *           any scroll-animation of every of the valid anchor link found by this function is performed.
- *           It will be passed the following input parameters:
- *             1) The anchor link element which has been clicked
- *             2) The anchor link's destination element
- *           It can return false to prevent the scroll-animation completly.
- * @callback the function you want to be executed after
- *           any scroll-animation of every of the valid anchor link found by this function have been performed.
- * @param includeHiddenParents true if the first scrollable parent of any valid anchor link's destination element found by this function
- *        may have the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden, false otherwise.
- */
- function hrefSetup (alignToLeft = true, alignToTop = true, init = () => {}, callback = () => {}, includeHiddenParents = false);
-```
 
 <br/>
 
