@@ -2,6 +2,28 @@
 <br/>
 
 # Available Functions
+Once imported, the [`universalsmoothscroll-min.js`](./Download.md) script will automatically declare and initialize _(in the global scope of your application)_ the `uss` object. <br/>
+This object has the below listed properties and they are the core functionalities of the UniversalSmoothScroll API. <br/>
+Each one of these functions can be invoked in this way: `uss.NAME_OF_THE_FUNCTION(param1, param2, ...)`. <br/>
+
+For instance:
+```javascript
+/**
+ * In this example:
+ * - an ease-out StepLengthCalculator is first set to control
+ *   the scroll-animations on the y-axis of myContainer.
+ * - the API is requested to scroll the y-axis of myContainer to 500px and 
+ *   log "dOnE" when finished.
+ * - the API is requested to extend the scroll-animation by 50px and 
+ *   log "Done" instead of "dOnE" when finished.
+ */
+uss.setYStepLengthCalculator((r) => {return r / 20 + 1;}, myContainer);
+uss.scrollYTo(500, myContainer, () => console.log("dOnE"));             
+uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);      
+```
+<br/>
+<br/>
+
 Name | Input Parameters | Description
 :--: | :--------------: | -----------
 `isXscrolling` | `container` | Returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
@@ -58,6 +80,9 @@ Name | Input Parameters | Description
 <br/>
 
 # Input parameters details
+The following table describes every entry of the `Input Parameters` column of the table above.
+<br/>
+<br/>
 
 <table>
  <thead>
