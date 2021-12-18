@@ -557,11 +557,380 @@ Name | Input Parameters | Description
     <code>Boolean</code>
    </td>
    <td rowspan = "1" align = "left">
-    <code>True</code> if the first scrollable container <i>(on the x-axis)</i> of <code>element</code> has the css property <code>overflow-x:hidden</code>, <code>false</code> otherwise.
+    <code>True</code> if the first scrollable container <i>(on the x-axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code>, <code>false</code> otherwise.
+   </td>
+  </tr>
+    
+  <tr id = "getYScrollableParent">
+   <td rowspan = "2" align = "center">
+    <code>getYScrollableParent</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>element</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>includeHiddenParents</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if the first scrollable container <i>(on the y-axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+   </td>
+  </tr>
+      
+  <tr id = "getScrollableParent">
+   <td rowspan = "2" align = "center">
+    <code>getScrollableParent</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>element</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>includeHiddenParents</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if the first scrollable container <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+   </td>
+  </tr>
+        
+  <tr id = "getAllScrollableParents">
+   <td rowspan = "3" align = "center">
+    <code>getAllScrollableParents</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>element</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>includeHiddenParents</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if the first scrollable container <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked every time a scrollable parent of <code>element</code> if found. <br/>
+    When <code>callback</code> is invoked, it is passed <i>(as an input parameter)</i> the found scrollable parent.
+   </td>
+  </tr>
+          
+  <tr id = "scrollXTo">
+   <td rowspan = "3" align = "center">
+    <code>scrollXTo</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>finalXPosition</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A finite number.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
    </td>
   </tr>
   
-  
+            
+  <tr id = "scrollYTo">
+   <td rowspan = "3" align = "center">
+    <code>scrollYTo</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>finalYPosition</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A finite number.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+              
+  <tr id = "scrollXBy">
+   <td rowspan = "4" align = "center">
+    <code>scrollXBy</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>deltaX</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A finite number.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>stillStart</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if any on-going scroll-animation on the x-axis of <code>container</code> must be stopped before starting this animation. <br/>
+    <code>False</code> if any on-going scroll-animation on the x-axis of <code>container</code> should extended by <code>deltaX</code> if possible.
+   </td>
+  </tr>
+              
+  <tr id = "scrollYBy">
+   <td rowspan = "4" align = "center">
+    <code>scrollYBy</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>deltaY</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A finite number.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>stillStart</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if any on-going scroll-animation on the y-axis of <code>container</code> must be stopped before starting this animation. <br/>
+    <code>False</code> if any on-going scroll-animation on the y-axis of <code>container</code> should extended by <code>deltaY</code> if possible.
+   </td>
+  </tr>
+                
+  <tr id = "scrollTo">
+   <td rowspan = "4" align = "center">
+    <code>scrollTo</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>finalXPosition</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A finite number.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>finalYPosition</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A finite number.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+              
+  <tr id = "scrollBy">
+   <td rowspan = "5" align = "center">
+    <code>scrollBy</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>deltaX</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A finite number.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>deltaY</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A finite number.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>container</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when this scroll-animation is completed.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>stillStart</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    <code>True</code> if any on-going scroll-animation on the y-axis of <code>container</code> must be stopped before starting this animation. <br/>
+    <code>False</code> if any on-going scroll-animation on the y-axis of <code>container</code> should extended by <code>deltaY</code> if possible.
+   </td>
+  </tr> 
   
   
  </tbody>
@@ -572,99 +941,6 @@ Name | Input Parameters | Description
 
 # Methods signatures
 
-
-#### getXScrollableParent
-```javascript
-/*
- * @param element window or HTMLElement
- * @param includeHiddenParents true if the element's first scrollable parent on the x-axis has
- *        the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
- *        false otherwise.
- */
- function getXScrollableParent (element, includeHiddenParents = false);
-```
-#### getYScrollableParent
-```javascript
-/*
- * @param element window or HTMLElement
- * @param includeHiddenParents true if the element's first scrollable parent on the y-axis has
- *        the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
- *        false otherwise.
- */
- function getYScrollableParent (element, includeHiddenParents = false);
-```
-#### getScrollableParent
-```javascript
-/*
- * @param element window or HTMLElement
- * @param includeHiddenParents true if the element's first scrollable parent has
- *        the CSS property overflow:hidden or overflow-x:hidden or overflow-y:hidden,
- *        false otherwise.
- */
- function getScrollableParent (element, includeHiddenParents = false);
-```
-#### scrollXTo
-```javascript
-/*
- * @param finalXPosition the x-axis coordinate you want the left border of your container to be at the end of the scroll-animation.
- * @param container window or HTMLElement
- * @callback the function you want to be executed after the scroll-animation has been performed.
- */
- function scrollXTo (finalXPosition, container = uss._pageScroller, callback = () => {});
-```
-#### scrollYTo
-```javascript
-/*
- * @param finalYPosition the y-axis coordinate you want the top border of your container to be at the end of the scroll-animation.
- * @param container window or HTMLElement
- * @callback the function you want to be executed after the scroll-animation has been performed.
- */
- function scrollYTo (finalYPosition, container = uss._pageScroller, callback = () => {});
-```
-#### scrollXBy
-```javascript
-/*
- * @param deltaX the number of pixels you want your container to be scrolled by on the x-axis.
- * @param container window or HTMLElement
- * @callback the function you want to be executed after the scroll-animation has been performed.
- * @param stillStart true if any current scroll-animation on the x-axis of the passed container should be stopped before this method starts scrolling.
- *        Passing false would result in extending/reducing the current remaning scroll amount by the passed deltaX.     
- */
- function scrollXBy (deltaX, container = uss._pageScroller, callback = () => {}, stillStart = true);
-```
-#### scrollYBy
-```javascript
-/*
- * @param deltaY the number of pixels you want your container to be scrolled by on the y-axis .
- * @param container window or HTMLElement
- * @callback the function you want to be executed after the scroll-animation has been performed.
- * @param stillStart true if any current scroll-animation on the y-axis of the passed container should be stopped before this method starts scrolling.
- *        Passing false would result in extending/reducing the current remaning scroll amount by the passed deltaY.  
- */
- function scrollYBy (deltaY, container = uss._pageScroller, callback = () => {}, stillStart = true);
-```
-#### scrollTo
-```javascript
-/*
- * @param finalXPosition the x-axis coordinate you want the left border of your container to be at the end of the scroll-animation.
- * @param finalYPosition the y-axis coordinate you want the top border of your container to be at the end of the scroll-animation.
- * @param container window or HTMLElement
- * @callback the function you want to be executed after the scroll-animations have been performed.
- */
- function scrollTo (finalXPosition, finalYPosition, container = uss._pageScroller, callback = () => {});
-```
-#### scrollBy
-```javascript
-/*
- * @param deltaX the number of pixels you want your container to be scrolled by on the x-axis .
- * @param deltaY the number of pixels you want your container to be scrolled by on the y-axis .
- * @param container window or HTMLElement
- * @callback the function you want to be executed after the scroll-animations have been performed.
- * @param stillStart true if any current scroll-animation on both the x-axis and y-axis of the passed container should be stopped before this method starts scrolling.
- *        Passing false would result in extending/reducing the current remaning scroll amount on the x-axis by the passed deltaX and by the passed deltaY on the y-axis.
- */
- function scrollBy (deltaX, deltaY, container = uss._pageScroller, callback = () => {}, stillStart = true);
-```
 #### scrollIntoView
 ```javascript
 /*
