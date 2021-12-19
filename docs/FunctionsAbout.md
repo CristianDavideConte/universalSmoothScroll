@@ -1233,9 +1233,6 @@ The following table describes every entry of the `Input Parameters` column of th
     If <code>false</code>, the browser's history is never updated by the API and navigating through history produces the default <i>jump-to-position</i> behavior.
    </td>
   </tr>
-              
-  
-  
  </tbody>
 </table>
 
