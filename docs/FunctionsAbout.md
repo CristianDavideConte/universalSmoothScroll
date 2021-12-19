@@ -24,57 +24,852 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
 <br/>
 <br/>
 
-Name | Input Parameters | Description
-:--: | :--------------: | -----------
-`isXscrolling` | `container` | Returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
-`isYscrolling` | `container` | Returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
-`isScrolling` | `container` | Returns true if a scroll-animation on any axis of the passed container is currently being performed by this API, false otherwise.
-`getFinalXPosition` | `container` | Returns the position _(in px)_ at which the container will be at the end of the scroll-animation on the x-axis. <br/> The current position is returned if no scroll-animation is in place.
-`getFinalYPosition` | `container` | Returns the position _(in px)_ at which the container will be at the end of the scroll-animation on the y-axis. <br/> The current position is returned if no scroll-animation is in place.
-`getXStepLengthCalculator` | `container` <br/> `getTemporary` | Returns the current [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) which controls the animations on the x-axis of the passed container if available.
-`getYStepLengthCalculator` | `container` <br/> `getTemporary` | Returns the current [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) which controls the animations on the y-axis of the passed container if available.
-`getXStepLength` | / | Returns the value of the `_xStepLength` property.
-`getYStepLength` | / | Returns the value of the `_yStepLength` property.
-`getMinAnimationFrame` | / | Returns the value of the `_minAnimationFrame` property.
-`getWindowHeight` | / | Returns the value of the `_windowHeight` property.
-`getWindowWidth` | / | Returns the value of the `_windowWidth` property.
-`getScrollbarsMaxDimension` | / | Returns the value of the `_scrollbarsMaxDimension` property.
-`getPageScroller` | / | Returns the value of the `_pageScroller` property.
-`getReducedMotionState` | / | Returns the value of the `_reducedMotion` property.
-`getDebugMode` | / | Returns the value of the `_debugMode` property.
-`setXStepLengthCalculator` | `newCalculator` <br/> `container` <br/> `isTemporary` | Sets the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for _(the x-axis of)_ the passed container if compatible.
-`setYStepLengthCalculator` | `newCalculator` <br/> `container` <br/> `isTemporary`  | Sets the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for _(the y-axis of)_ the passed container if compatible.
-`setStepLengthCalculator` | `newCalculator` <br/> `container` <br/> `isTemporary` | Sets the [`StepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) for _(both the y and x axes of)_ the passed container if compatible.
-`setXStepLength` | `newXStepLength` | Sets the `_xStepLength` property to the passed value if compatible.
-`setYStepLength` | `newYStepLength` | Sets the `_yStepLength` property to the passed value if compatible.
-`setStepLength` | `newStepLength` | Sets both the `_xStepLength` and the `_yStepLength` properties to the passed value if compatible.
-`setMinAnimationFrame` | `newMinAnimationFrame` | Sets the `_minAnimationFrame` property to the passed value if compatible.
-`setPageScroller` | `newPageScroller` | Sets the `_pageScroller` property to the passed value if compatible.
-`setDebugMode` | `newDebugMode` | Sets the `_debugMode` property to the passed value if compatible.
-`calcXStepLength` | `deltaX` | Returns how long each animation-step on the x-axis must be in order to target the `_minAnimationFrame` property value. <br/> This function can be considered the default [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for any scroll-animation on the x-axis of any container.
-`calcYStepLength` | `deltaY` | Returns how long each animation-step on the y-axis must be in order to target the `_minAnimationFrame` property value. <br/> This function can be considered the default [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for any scroll-animation on the y-axis of any container.
-`calcScrollbarsDimensions` | `element` | Returns an array containing 2 numbers: <br/> <ol start="0"> <li> Contains the vertical scrollbar's width <i> (in px) </i> of the passed element. </li> <li> Contains the horizontal scrollbar's height <i> (in px) </i> of the passed element. </li> </ol>
-`calcBordersDimensions` | `element` | Returns an array containing 4 numbers: <br/> <ol start="0"> <li> Contains the top border's height <i> (in px) </i> of the passed element. </li> <li> Contains the right border's width <i> (in px) </i> of the passed element. </li> <li> Contains the bottom border's height <i> (in px) </i> of the passed element. </li> <li> Contains the left border's width <i> (in px) </i> of the passed element. </li> </ol>
-`getScrollXCalculator` | `container` | Returns a function that returns: <ul> <li> The scrollLeft property of the passed container if it's an instance of HTMLElement. </li> <li> The scrollX property of the passed container if it's the window element. </li> </ul>
-`getScrollYCalculator` | `container` | Returns a function that returns: <ul> <li> The scrollTop property of the passed container if it's an instance of HTMLElement. </li> <li> The scrollY property of the passed container if it's the window element. </li> </ul>
-`getMaxScrollX` | `container` | Returns the highest reacheable scrollLeft/scrollX value of the passed container.
-`getMaxScrollY` | `container` | Returns the highest reacheable scrollTop/scrollY value of the passed container.
-`getXScrollableParent` | `element` <br/> `includeHiddenParents`| Returns the first scrollable container _(on the x-axis)_ of the passed element or null if it doesn't have one. 
-`getYScrollableParent` | `element` <br/>  `includeHiddenParents` | Returns the first scrollable container _(on the y-axis)_ of the passed element or null if it doesn't have one. 
-`getScrollableParent` | `element` <br/>  `includeHiddenParents` | Returns the first scrollable container _(on either the x or y axis)_ of the passed element or null if it doesn't have one. 
-`getAllScrollableParents` | `element` <br/>  `includeHiddenParents` <br/> `callback` | Returns an array containing all the scrollable containers _(on either the x or y axis)_ of the passed element.
-`scrollXTo` | `finalXPosition` <br/> `container` <br/> `callback` | Scrolls the x-axis of the passed container to the specified position _(in px)_ if possible.
-`scrollYTo` | `finalYPosition` <br/> `container` <br/> `callback` | Scrolls the y-axis of the passed container to the specified position _(in px)_ if possible.
-`scrollXBy` | `deltaX` <br/> `container` <br/> `callback` <br/> `stillStart` | Scrolls the x-axis the passed container by the specified amount of in pixels if possible.
-`scrollYBy` | `deltaY` <br/> `container` <br/> `callback` <br/> `stillStart` | Scrolls the y-axis the passed container by the specified amount of in pixels if possible.
-`scrollTo` | `finalXPosition` <br/> `finalYPosition` <br/> `container` <br/> `callback` | Scrolls both the x and y axes of the passed container to the specified positions _(in px)_ if possible.
-`scrollBy` | `deltaX` <br/> `deltaY` <br/> `container` <br/> `callback` <br/> `stillStart` | Scrolls both the x and y axes of the passed container by the specified amount of in pixels if possible.
-`scrollIntoView` | `element` <br/> `alignToLeft` <br/> `alignToTop` <br/> `callback` <br/> `includeHiddenParents` | Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignments.
-`scrollIntoViewIfNeeded` | `element` <br/> `alignToCenter` <br/> `callback` <br/> `includeHiddenParents` | Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignment only if it's not already visible.
-`stopScrollingX` | `container` <br/> `callback` | Stops all the current scroll-animation on the x-axis of the passed container.
-`stopScrollingY` | `container` <br/> `callback` | Stops all the current scroll-animation on the y-axis of the passed container.
-`stopScrolling` | `container` <br/> `callback` | Stops all the current scroll-animation on both the x and y axes of the passed container.
-`hrefSetup` | `alignToLeft` <br/> `alignToTop` <br/> `init` <br/> `callback` <br/> `includeHiddenParents` <br/> `updateHistory` | Automatically binds every valid anchor (`<a>` and `<area>` in the DOM) to the corresponding element that should be scrolled into view. <br/> Whenever a valid anchor is clicked the passed init function is invoked and if it doesn't return `false`, a scroll-animation will bring into view the linked element and the browser's history will be updated _(if requested)_.
+<table>
+ <thead>
+  <tr>
+   <th>Name</th>
+   <th>Input Parameters</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr id = "isXScrollingFun">
+   <td rowspan = "1" align = "center">
+    <code>isXScrolling</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#isXScrolling"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns <code>true</code> if a scroll-animation on the x-axis of the passed container is currently being performed by this API,<code>false</code> otherwise.
+   </td>
+  </tr>
+
+  <tr id = "isYScrollingFun">
+   <td rowspan = "1" align = "center">
+    <code>isYScrolling</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#isYScrolling"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns <code>true</code> if a scroll-animation on the y-axis of the passed container is currently being performed by this API,<code>false</code> otherwise.
+   </td>
+  </tr>
+
+  <tr id = "isScrollingFun">
+   <td rowspan = "1" align = "center">
+   <code>isScrolling</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#isScrolling"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns <code>true</code> if a scroll-animation on any axis of the passed container is currently being performed by this API,<code>false</code> otherwise.
+   </td>
+  </tr>
+
+  <tr id = "getFinalXPositionFun">
+   <td rowspan = "1" align = "center">
+    <code>getFinalXPosition</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getFinalXPosition"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the position <i>(in px)</i> at which the container will be at the end of the scroll-animation on the x-axis. <br/>
+    The current position is returned if no scroll-animation is in place.
+   </td>
+  </tr>
+
+  <tr id = "getFinalYPositionFun">
+   <td rowspan = "1" align = "center">
+    <code>getFinalYPosition</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getFinalYPosition"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the position <i>(in px)</i> at which the container will be at the end of the scroll-animation on the y-axis. <br/> 
+    The current position is returned if no scroll-animation is in place.
+   </td>
+  </tr>
+
+  <tr id = "getXStepLengthCalculatorFun">
+   <td rowspan = "2" align = "center">
+    <code>getXStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getXStepLengthCalculator"><code>container</code></a>
+   </td>
+   <td rowspan = "2" align = "left">
+    Returns the current <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> which controls the animations on the x-axis of the passed container if available.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getXStepLengthCalculator"><code>getTemporary</code></a>
+   </td>
+  </tr>
+  
+  <tr id = "getYStepLengthCalculatorFun">
+   <td rowspan = "2" align = "center">
+    <code>getYStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getYStepLengthCalculator"><code>container</code></a>
+   </td>
+   <td rowspan = "2" align = "left">
+    Returns the current <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> which controls the animations on the y-axis of the passed container if available.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getYStepLengthCalculator"><code>getTemporary</code></a>
+   </td>
+  </tr>
+
+  <tr id = "getXStepLengthFun">
+   <td rowspan = "1" align = "center">
+    <code>getXStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    /
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <code>_xStepLength</code> property.
+   </td>
+  </tr>   
+  
+  <tr id = "getYStepLengthFun">
+   <td rowspan = "1" align = "center">
+    <code>getYStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    /
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <code>_yStepLength</code> property.
+   </td>
+  </tr> 
+    
+  <tr id = "getMinAnimationFrameFun">
+   <td rowspan = "1" align = "center">
+    <code>getMinAnimationFrame</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    /
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <code>_minAnimationFrame</code> property.
+   </td>
+  </tr> 
+      
+  <tr id = "getWindowHeightFun">
+   <td rowspan = "1" align = "center">
+    <code>getWindowHeight</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    /
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <code>_windowHeight</code> property.
+   </td>
+  </tr> 
+           
+  <tr id = "getWindowWidthFun">
+   <td rowspan = "1" align = "center">
+    <code>getWindowWidth</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    /
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <code>_windowWidth</code> property.
+   </td>
+  </tr> 
+          
+  <tr id = "getScrollbarsMaxDimensionFun">
+   <td rowspan = "1" align = "center">
+    <code>getScrollbarsMaxDimension</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    /
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <code>_scrollbarsMaxDimension</code> property.
+   </td>
+  </tr> 
+         
+  <tr id = "getPageScrollerFun">
+   <td rowspan = "1" align = "center">
+    <code>getPageScroller</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    /
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <code>_pageScroller</code> property.
+   </td>
+  </tr> 
+      
+  <tr id = "getReducedMotionStateFun">
+   <td rowspan = "1" align = "center">
+    <code>getReducedMotionState</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    /
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <code>_reducedMotion</code> property.
+   </td>
+  </tr> 
+    
+  <tr id = "getDebugModeFun">
+   <td rowspan = "1" align = "center">
+    <code>getDebugMode</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    /
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <code>_debugMode</code> property.
+   </td>
+  </tr> 
+ 
+  <tr id = "setXStepLengthCalculatorFun">
+   <td rowspan = "3" align = "center">
+    <code>setXStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>newCalculator</code></a>
+   </td>
+   <td rowspan = "3" align = "left">
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>container</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>isTemporary</code></a>
+   </td>
+  </tr>
+  
+  <tr id = "setYStepLengthCalculatorFun">
+   <td rowspan = "3" align = "center">
+    <code>setYStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>newCalculator</code></a>
+   </td>
+   <td rowspan = "3" align = "left">
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>container</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>isTemporary</code></a>
+   </td>
+  </tr>
+
+  <tr id = "setStepLengthCalculatorFun">
+   <td rowspan = "3" align = "center">
+    <code>setStepLengthCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>newCalculator</code></a>
+   </td>
+   <td rowspan = "3" align = "left">
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>container</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>isTemporary</code></a>
+   </td>
+  </tr>
+    
+  <tr id = "setXStepLengthFun">
+   <td rowspan = "1" align = "center">
+    <code>setXStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setXStepLength"><code>newXStepLength</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Sets the <code>_xStepLength</code> property to the passed value if compatible.
+   </td>
+  </tr> 
+     
+  <tr id = "setYStepLengthFun">
+   <td rowspan = "1" align = "center">
+    <code>setYStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setYStepLength"><code>newYStepLength</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Sets the <code>_yStepLength</code> property to the passed value if compatible.
+   </td>
+  </tr> 
+       
+  <tr id = "setStepLengthFun">
+   <td rowspan = "1" align = "center">
+    <code>setStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setStepLength"><code>newStepLength</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Sets both the <code>_xStepLength</code> and <code>_yStepLength</code> properties to the passed value if compatible.
+   </td>
+  </tr> 
+        
+  <tr id = "setMinAnimationFrameFun">
+   <td rowspan = "1" align = "center">
+    <code>setMinAnimationFrame</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setMinAnimationFrame"><code>newMinAnimationFrame</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Sets the <code>_minAnimationFrame</code> property to the passed value if compatible.
+   </td>
+  </tr> 
+       
+  <tr id = "setPageScrollerFun">
+   <td rowspan = "1" align = "center">
+    <code>setPageScroller</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setPageScroller"><code>newPageScroller</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Sets the <code>_pageScroller</code> property to the passed value if compatible.
+   </td>
+  </tr> 
+       
+  <tr id = "setDebugModeFun">
+   <td rowspan = "1" align = "center">
+    <code>setDebugMode</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setDebugMode"><code>newDebugMode</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Sets the <code>_debugMode</code> property to the passed value if compatible.
+   </td>
+  </tr> 
+         
+  <tr id = "calcXStepLengthFun">
+   <td rowspan = "1" align = "center">
+    <code>calcXStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcXStepLength"><code>deltaX</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns how long each animation-step on the x-axis must be in order to target the <code>_minAnimationFrame</code> property value. <br/>
+    This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for any scroll-animation on the x-axis of any container.
+   </td>
+  </tr> 
+           
+  <tr id = "calcYStepLengthFun">
+   <td rowspan = "1" align = "center">
+    <code>calcYStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcYStepLength"><code>deltaY</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns how long each animation-step on the y-axis must be in order to target the <code>_minAnimationFrame</code> property value. <br/>
+    This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for any scroll-animation on the y-axis of any container.
+   </td>
+  </tr> 
+           
+  <tr id = "calcScrollbarsDimensionsFun">
+   <td rowspan = "1" align = "center">
+    <code>calcScrollbarsDimensions</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcScrollbarsDimensions"><code>element</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns an array containing 2 numbers: 
+    <ol start="0">
+     <li> Contains the vertical scrollbar's width <i> (in px) </i> of the passed element. </li> 
+     <li> Contains the horizontal scrollbar's height <i> (in px) </i> of the passed element. </li> 
+    </ol>
+   </td>
+  </tr> 
+           
+  <tr id = "calcBordersDimensionsFun">
+   <td rowspan = "1" align = "center">
+    <code>calcBordersDimensions</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcBordersDimensions"><code>element</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns an array containing 4 numbers: 
+    <ol start="0"> 
+     <li> Contains the top border's height <i> (in px) </i> of the passed element. </li> 
+     <li> Contains the right border's width <i> (in px) </i> of the passed element. </li> 
+     <li> Contains the bottom border's height <i> (in px) </i> of the passed element. </li> 
+     <li> Contains the left border's width <i> (in px) </i> of the passed element. </li> 
+    </ol>
+   </td>
+  </tr> 
+           
+  <tr id = "getScrollXCalculatorFun">
+   <td rowspan = "1" align = "center">
+    <code>getScrollXCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollXCalculator"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns a function that returns: 
+    <ul> 
+     <li> The scrollLeft property of the passed container if it's an instance of HTMLElement. </li> 
+     <li> The scrollX property of the passed container if it's the window element. </li> 
+    </ul>
+   </td>
+  </tr> 
+             
+  <tr id = "getScrollYCalculatorFun">
+   <td rowspan = "1" align = "center">
+    <code>getScrollYCalculator</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollYCalculator"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns a function that returns: 
+    <ul> 
+     <li> The scrollTop property of the passed container if it's an instance of HTMLElement. </li> 
+     <li> The scrollY property of the passed container if it's the window element. </li> 
+    </ul>
+   </td>
+  </tr> 
+               
+  <tr id = "getMaxScrollXFun">
+   <td rowspan = "1" align = "center">
+    <code>getMaxScrollX</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getMaxScrollX"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the highest reacheable scrollLeft/scrollX value of the passed container.
+   </td>
+  </tr> 
+                 
+  <tr id = "getMaxScrollYFun">
+   <td rowspan = "1" align = "center">
+    <code>getMaxScrollY</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getMaxScrollY"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the highest reacheable scrollTop/scrollY value of the passed container.
+   </td>
+  </tr> 
+                 
+  <tr id = "getXScrollableParentFun">
+   <td rowspan = "2" align = "center">
+    <code>getXScrollableParent</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getXScrollableParent"><code>element</code></a>
+   </td>
+   <td rowspan = "2" align = "left">
+    Returns the first scrollable container <i>(on the x-axis)</i> of the passed element or null if it doesn't have one.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getXScrollableParent"><code>includeHiddenParents</code></a>
+   </td>
+  </tr>
+                   
+  <tr id = "getYScrollableParentFun">
+   <td rowspan = "2" align = "center">
+    <code>getYScrollableParent</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getYScrollableParent"><code>element</code></a>
+   </td>
+   <td rowspan = "2" align = "left">
+    Returns the first scrollable container <i>(on the y-axis)</i> of the passed element or null if it doesn't have one.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getYScrollableParent"><code>includeHiddenParents</code></a>
+   </td>
+  </tr>
+                     
+  <tr id = "getScrollableParentFun">
+   <td rowspan = "2" align = "center">
+    <code>getScrollableParent</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollableParent"><code>element</code></a>
+   </td>
+   <td rowspan = "2" align = "left">
+    Returns the first scrollable container <i>(on either the x or y axis)</i> of the passed element or null if it doesn't have one.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollableParent"><code>includeHiddenParents</code></a>
+   </td>
+  </tr>
+                        
+  <tr id = "getAllScrollableParentsFun">
+   <td rowspan = "3" align = "center">
+    <code>getAllScrollableParents</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getAllScrollableParent"><code>element</code></a>
+   </td>
+   <td rowspan = "3" align = "left">
+    Returns an array containing all the scrollable containers <i>(on either the x or y axis)</i> of the passed element.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getAllScrollableParent"><code>includeHiddenParents</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getAllScrollableParent"><code>callback</code></a>
+   </td>
+  </tr>
+                        
+  <tr id = "scrollXToFun">
+   <td rowspan = "3" align = "center">
+    <code>scrollXTo</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollXTo"><code>finalXPosition</code></a>
+   </td>
+   <td rowspan = "3" align = "left">
+    Scrolls the x-axis of the passed container to the specified position <i>(in px)</i> if possible.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollXTo"><code>container</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollXTo"><code>callback</code></a>
+   </td>
+  </tr>
+                        
+  <tr id = "scrollYToFun">
+   <td rowspan = "3" align = "center">
+    <code>scrollYTo</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollYTo"><code>finalYPosition</code></a>
+   </td>
+   <td rowspan = "3" align = "left">
+    Scrolls the y-axis of the passed container to the specified position <i>(in px)</i> if possible.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollYTo"><code>container</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollYTo"><code>callback</code></a>
+   </td>
+  </tr>
+                        
+  <tr id = "scrollXByFun">
+   <td rowspan = "4" align = "center">
+    <code>scrollXBy</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollXBy"><code>deltaX</code></a>
+   </td>
+   <td rowspan = "4" align = "left">
+    Scrolls the x-axis the passed container by the specified amount of pixels if possible.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollXBy"><code>container</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollXBy"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollXBy"><code>stillStart</code></a>
+   </td>
+  </tr>
+                       
+  <tr id = "scrollYByFun">
+   <td rowspan = "4" align = "center">
+    <code>scrollYBy</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollYBy"><code>deltaY</code></a>
+   </td>
+   <td rowspan = "4" align = "left">
+    Scrolls the y-axis the passed container by the specified amount of pixels if possible.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollYBy"><code>container</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollYBy"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollYBy"><code>stillStart</code></a>
+   </td>
+  </tr>
+                       
+  <tr id = "scrollToFun">
+   <td rowspan = "4" align = "center">
+    <code>scrollTo</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollTo"><code>finalXPosition</code></a>
+   </td>
+   <td rowspan = "4" align = "left">
+    Scrolls both the x and y axes of the passed container to the specified positions <i>(in px)</i> if possible.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollTo"><code>finalYPosition</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollTo"><code>container</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollTo"><code>callback</code></a>
+   </td>
+  </tr>
+                         
+  <tr id = "scrollByFun">
+   <td rowspan = "5" align = "center">
+    <code>scrollBy</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollBy"><code>deltaX</code></a>
+   </td>
+   <td rowspan = "5" align = "left">
+    Scrolls both the x and y axes of the passed container by the specified amounts of pixels if possible.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollBy"><code>deltaY</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollBy"><code>container</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollBy"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollBy"><code>stillStart</code></a>
+   </td>
+  </tr>
+                         
+  <tr id = "scrollIntoViewFun">
+   <td rowspan = "5" align = "center">
+    <code>scrollIntoView</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoView"><code>element</code></a>
+   </td>
+   <td rowspan = "5" align = "left">
+    Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignments.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoView"><code>alignToLeft</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoView"><code>alignToTop</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoView"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoView"><code>includeHiddenParents</code></a>
+   </td>
+  </tr>
+                           
+  <tr id = "scrollIntoViewIfNeededFun">
+   <td rowspan = "4" align = "center">
+    <code>scrollIntoViewIfNeeded</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoViewIfNeeded"><code>element</code></a>
+   </td>
+   <td rowspan = "4" align = "left">
+    Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignment only if it's not already visible.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoViewIfNeeded"><code>alignToCenter</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoViewIfNeeded"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoViewIfNeeded"><code>includeHiddenParents</code></a>
+   </td>
+  </tr>
+ 
+  <tr id = "stopScrollingXFun">
+   <td rowspan = "2" align = "center">
+    <code>stopScrollingX</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrollingX"><code>container</code></a>
+   </td>
+   <td rowspan = "2" align = "left">
+    Stops the current scroll-animation on the x-axis of the passed container.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrollingX"><code>callback</code></a>
+   </td>
+  </tr>
+ 
+  <tr id = "stopScrollingYFun">
+   <td rowspan = "2" align = "center">
+    <code>stopScrollingY</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrollingY"><code>container</code></a>
+   </td>
+   <td rowspan = "2" align = "left">
+    Stops the current scroll-animation on the y-axis of the passed container.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrollingY"><code>callback</code></a>
+   </td>
+  </tr>
+     
+  <tr id = "stopScrollingFun">
+   <td rowspan = "2" align = "center">
+    <code>stopScrolling</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrolling"><code>container</code></a>
+   </td>
+   <td rowspan = "2" align = "left">
+    Stops the current scroll-animations on both the x and y axes of the passed container
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrolling"><code>callback</code></a>
+   </td>
+  </tr>
+                        
+  <tr id = "hrefSetupFun">
+   <td rowspan = "6" align = "center">
+    <code>hrefSetup</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#hrefSetup"><code>alignToLeft</code></a>
+   </td>
+   <td rowspan = "6" align = "left">
+    Automatically binds every valid anchor (<code>&lt;a&gt;</code> and <code>&lt;area&gt;</code> in the DOM) to the corresponding element that should be scrolled into view. <br/>
+    Whenever a valid anchor is clicked the passed <code>init</code> function is invoked and if it doesn't return <code>false</code>, a scroll-animation will bring into view the linked element and the browser's history will be updated <i>(if requested)</i>.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#hrefSetup"><code>alignToTop</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#hrefSetup"><code>init</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#hrefSetup"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#hrefSetup"><code>includeHiddenParents</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#hrefSetup"><code>updateHistory</code></a>
+   </td>
+  </tr>
+ </tbody>
+</table>
 
 ---
 <br/>
