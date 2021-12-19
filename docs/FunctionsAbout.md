@@ -110,7 +110,7 @@ The following table describes every entry of the `Input Parameters` column of th
   </tr>
    
   </tr>
-    <tr id = "isYScrolling">
+  <tr id = "isYScrolling">
    <td rowspan = "1" align = "center">
     <code>isYScrolling</code>
    </td>
