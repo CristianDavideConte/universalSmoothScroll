@@ -15,36 +15,542 @@ This library cannot be used without having imported the [`universalsmoothscroll-
 <br/>
 <br/>
 
-Function Name   | Visualization | Input Parameters
-:-----------: | :-----------: | :-------------:
-`CUSTOM_CUBIC_BEZIER` | <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width="40px" height="40px"/> | [`x1`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x2`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x3`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) , [`x4`](./EasingFunctions.md#the-x1-x2-x3-and-x4-parameters) <br/> [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_LINEAR` | <img src="./easingsGifs/1_EASE_LINEAR/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/1_EASE_LINEAR/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_SINE` | <img src="./easingsGifs/2_EASE_IN_SINE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/2_EASE_IN_SINE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_QUAD` | <img src="./easingsGifs/3_EASE_IN_QUAD/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/3_EASE_IN_QUAD/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_CUBIC` | <img src="./easingsGifs/4_EASE_IN_CUBIC/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/4_EASE_IN_CUBIC/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_QUART` | <img src="./easingsGifs/5_EASE_IN_QUART/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/5_EASE_IN_QUART/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_QUINT` | <img src="./easingsGifs/6_EASE_IN_QUINT/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/6_EASE_IN_QUINT/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_EXPO` | <img src="./easingsGifs/7_EASE_IN_EXPO/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/7_EASE_IN_EXPO/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_CIRC` | <img src="./easingsGifs/8_EASE_IN_CIRC/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/8_EASE_IN_CIRC/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_BOUNCE` | <img src="./easingsGifs/9_EASE_IN_BOUNCE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/9_EASE_IN_BOUNCE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_OUT_SINE` | <img src="./easingsGifs/10_EASE_OUT_SINE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/10_EASE_OUT_SINE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_OUT_QUAD` | <img src="./easingsGifs/11_EASE_OUT_QUAD/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/11_EASE_OUT_QUAD/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_OUT_CUBIC` | <img src="./easingsGifs/12_EASE_OUT_CUBIC/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/12_EASE_OUT_CUBIC/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_OUT_QUART` | <img src="./easingsGifs/13_EASE_OUT_QUART/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/13_EASE_OUT_QUART/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_OUT_QUINT` | <img src="./easingsGifs/14_EASE_OUT_QUINT/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/14_EASE_OUT_QUINT/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_OUT_EXPO` | <img src="./easingsGifs/15_EASE_OUT_EXPO/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/15_EASE_OUT_EXPO/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_OUT_CIRC` | <img src="./easingsGifs/16_EASE_OUT_CIRC/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/16_EASE_OUT_CIRC/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_OUT_BOUNCE` | <img src="./easingsGifs/17_EASE_OUT_BOUNCE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/17_EASE_OUT_BOUNCE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_OUT_SINE` | <img src="./easingsGifs/18_EASE_IN_OUT_SINE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/18_EASE_IN_OUT_SINE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_OUT_QUAD` | <img src="./easingsGifs/19_EASE_IN_OUT_QUAD/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/19_EASE_IN_OUT_QUAD/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_OUT_CUBIC` | <img src="./easingsGifs/20_EASE_IN_OUT_CUBIC/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/20_EASE_IN_OUT_CUBIC/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_OUT_QUART` | <img src="./easingsGifs/21_EASE_IN_OUT_QUART/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/21_EASE_IN_OUT_QUART/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_OUT_QUINT` | <img src="./easingsGifs/22_EASE_IN_OUT_QUINT/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/22_EASE_IN_OUT_QUINT/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_OUT_EXPO` | <img src="./easingsGifs/23_EASE_IN_OUT_EXPO/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/23_EASE_IN_OUT_EXPO/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_OUT_CIRC` | <img src="./easingsGifs/24_EASE_IN_OUT_CIRC/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/24_EASE_IN_OUT_CIRC/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_IN_OUT_BOUNCE` | <img src="./easingsGifs/25_EASE_IN_OUT_BOUNCE/X.gif" width="40px" height="40px"/> <img src="./easingsGifs/25_EASE_IN_OUT_BOUNCE/Y.gif" width="40px" height="40px"/> | [`duration`](./EasingFunctions.md#the-duration-parameter) <br/> [`callback`](./EasingFunctions.md#the-callback-parameter)
-`EASE_ELASTIC_X` | <img src="./easingsGifs/26_EASE_ELASTIC/X.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`](./EasingFunctions.md#ease_elastic-parameters) <br/> [`backward StepLengthCalculator`](./EasingFunctions.md#ease_elastic-parameters) <br/> [`ElasticPointCalculator`](./EasingFunctions.md#ease_elastic-parameters) <br/> [`debounce time`](./EasingFunctions.md#ease_elastic-parameters)
-`EASE_ELASTIC_Y` | <img src="./easingsGifs/26_EASE_ELASTIC/Y.gif" width="40px" height="40px"/> | [`forward StepLengthCalculator`](./EasingFunctions.md#ease_elastic-parameters) <br/> [`backward StepLengthCalculator`](./EasingFunctions.md#ease_elastic-parameters) <br/> [`ElasticPointCalculator`](./EasingFunctions.md#ease_elastic-parameters) <br/> [`debounce time`](./EasingFunctions.md#ease_elastic-parameters)
+<table>
+ <thead>
+  <tr>
+   <th>Name</th>
+   <th>Visualizations</th>
+   <th>Input Parameters</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr id = "CUSTOM_CUBIC_BEZIER">
+   <td rowspan = "3" align = "center">
+    <code>CUSTOM_CUBIC_BEZIER</code>
+   </td>
+   <td rowspan = "3" align = "center">
+    <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>x1</code></a>, <a href = "./EasingFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>y1</code></a>, <a href = "./EasingFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>x2</code></a>, <a href = "./EasingFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>y2</code></a>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_LINEAR">
+   <td rowspan = "2" align = "center">
+    <code>EASE_LINEAR</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/1_EASE_LINEAR/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/1_EASE_LINEAR/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_SINE">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_SINE</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/2_EASE_IN_SINE/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/2_EASE_IN_SINE/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_QUAD">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_QUAD</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/3_EASE_IN_QUAD/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/3_EASE_IN_QUAD/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_CUBIC">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_CUBIC</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/4_EASE_IN_CUBIC/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/4_EASE_IN_CUBIC/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_QUART">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_QUART</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/5_EASE_IN_QUART/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/5_EASE_IN_QUART/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_QUINT">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_QUINT</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/6_EASE_IN_QUINT/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/6_EASE_IN_QUINT/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_EXPO">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_EXPO</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/7_EASE_IN_EXPO/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/7_EASE_IN_EXPO/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_CIRC">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_CIRC</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/8_EASE_IN_CIRC/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/8_EASE_IN_CIRC/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_BOUNCE">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_BOUNCE</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/9_EASE_IN_BOUNCE/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/9_EASE_IN_BOUNCE/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_OUT_SINE">
+   <td rowspan = "2" align = "center">
+    <code>EASE_OUT_SINE</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/10_EASE_OUT_SINE/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/10_EASE_OUT_SINE/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_OUT_QUAD">
+   <td rowspan = "2" align = "center">
+    <code>EASE_OUT_QUAD</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/11_EASE_OUT_QUAD/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/11_EASE_OUT_QUAD/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_OUT_CUBIC">
+   <td rowspan = "2" align = "center">
+    <code>EASE_OUT_CUBIC</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/12_EASE_OUT_CUBIC/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/12_EASE_OUT_CUBIC/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_OUT_QUART">
+   <td rowspan = "2" align = "center">
+    <code>EASE_OUT_QUART</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/13_EASE_OUT_QUART/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/13_EASE_OUT_QUART/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_OUT_QUINT">
+   <td rowspan = "2" align = "center">
+    <code>EASE_OUT_QUINT</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/14_EASE_OUT_QUINT/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/14_EASE_OUT_QUINT/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_OUT_EXPO">
+   <td rowspan = "2" align = "center">
+    <code>EASE_OUT_EXPO</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/15_EASE_OUT_EXPO/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/15_EASE_OUT_EXPO/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_OUT_CIRC">
+   <td rowspan = "2" align = "center">
+    <code>EASE_OUT_CIRC</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/16_EASE_OUT_CIRC/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/16_EASE_OUT_CIRC/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_OUT_BOUNCE">
+   <td rowspan = "2" align = "center">
+    <code>EASE_OUT_BOUNCE</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/17_EASE_OUT_BOUNCE/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/17_EASE_OUT_BOUNCE/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_OUT_SINE">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_OUT_SINE</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/18_EASE_IN_OUT_SINE/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/18_EASE_IN_OUT_SINE/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_OUT_QUAD">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_OUT_QUAD</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/19_EASE_IN_OUT_QUAD/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/19_EASE_IN_OUT_QUAD/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_OUT_CUBIC">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_OUT_CUBIC</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/20_EASE_IN_OUT_CUBIC/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/20_EASE_IN_OUT_CUBIC/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "EASE_IN_OUT_QUART">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_OUT_QUART</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/21_EASE_IN_OUT_QUART/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/21_EASE_IN_OUT_QUART/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+    
+  <tr id = "EASE_IN_OUT_QUINT">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_OUT_QUINT</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/22_EASE_IN_OUT_QUINT/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/22_EASE_IN_OUT_QUINT/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+    
+  <tr id = "EASE_IN_OUT_EXPO">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_OUT_EXPO</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/23_EASE_IN_OUT_EXPO/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/23_EASE_IN_OUT_EXPO/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+    
+  <tr id = "EASE_IN_OUT_CIRC">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_OUT_CIRC</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/24_EASE_IN_OUT_CIRC/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/24_EASE_IN_OUT_CIRC/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+    
+  <tr id = "EASE_IN_OUT_BOUNCE">
+   <td rowspan = "2" align = "center">
+    <code>EASE_IN_OUT_BOUNCE</code>
+   </td>
+   <td rowspan = "2" align = "center">
+    <img src = "./easingsGifs/25_EASE_IN_OUT_BOUNCE/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/25_EASE_IN_OUT_BOUNCE/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+    
+  <tr id = "EASE_ELASTIC_X">
+   <td rowspan = "4" align = "center">
+    <code>EASE_ELASTIC_X</code>
+   </td>
+   <td rowspan = "4" align = "center">
+    <img src = "./easingsGifs/26_EASE_ELASTIC/X.gif" width = "40px" height = "40px"/> 
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-forward-steplengthcalculator-parameter"><code>forward StepLengthCalculator</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-backward-steplengthcalculator-parameter"><code>backward StepLengthCalculator</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-elasticpointcalculator-parameter"><code>ElasticPointCalculator</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-debounce-time-parameter"><code>debounce time</code></a>
+   </td>
+  </tr>   
+
+  <tr id = "EASE_ELASTIC_Y">
+   <td rowspan = "4" align = "center">
+    <code>EASE_ELASTIC_Y</code>
+   </td>
+   <td rowspan = "4" align = "center">
+    <img src = "./easingsGifs/26_EASE_ELASTIC/Y.gif" width = "40px" height = "40px"/> 
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-forward-steplengthcalculator-parameter"><code>forward StepLengthCalculator</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-backward-steplengthcalculator-parameter"><code>backward StepLengthCalculator</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-elasticpointcalculator-parameter"><code>ElasticPointCalculator</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-debounce-time-parameter"><code>debounce time</code></a>
+   </td>
+  </tr>  
+ </tbody>
+</table>
 
 ---
 <br/>
