@@ -49,7 +49,7 @@ Function Name   | Visualization | Input Parameters
 ---
 <br/>
 
-## The `x1`, `x2`, `x3` and `x4` parameters
+## The `x1`, `y1`, `x2` and `y2` parameters
 They're 4 finite numbers between 0 _(included)_ and 1 _(included)_. <br/>
 They determine the type of easing the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will have. 
 
