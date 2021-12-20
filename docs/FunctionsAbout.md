@@ -882,1151 +882,1151 @@ The following table describes every entry of the `Input Parameters` column of th
 <table>
  <thead>
   <tr>
-   <th>Name</th>
-   <th>Parameter Name</th>
-   <th>Parameter Type</th>
-   <th>Parameter Description</th>
+  <th>Name</th>
+  <th>Parameter Name</th>
+  <th>Parameter Type</th>
+  <th>Parameter Description</th>
   </tr>
  </thead>
  <tbody>
   <tr id = "isXScrolling">
-   <td rowspan = "1" align = "center">
-    <code>isXScrolling</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#isXScrollingFun"><code>isXScrolling</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
-   
+  
   </tr>
   <tr id = "isYScrolling">
-   <td rowspan = "1" align = "center">
-    <code>isYScrolling</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#isYScrollingFun"><code>isYScrolling</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   
   <tr id = "isScrolling">
-   <td rowspan = "1" align = "center">
-    <code>isScrolling</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#isScrollingFun"><code>isScrolling</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   
   <tr id = "getFinalXPosition">
-   <td rowspan = "1" align = "center">
-    <code>getFinalXPosition</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getFinalXPositionFun"><code>getFinalXPosition</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   
   <tr id = "getFinalYPosition">
-   <td rowspan = "1" align = "center">
-    <code>getFinalYPosition</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getFinalYPositionFun"><code>getFinalYPosition</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   
   <tr id = "getXStepLengthCalculator">
-   <td rowspan = "2" align = "center">
-    <code>getXStepLengthCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#getXStepLengthCalculatorFun"><code>getXStepLengthCalculator</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>getTemporary</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     If <code>true</code> the returned StepLengthCalculator is the temporary one set for the x-axis of this container, otherwise it's the standard one.
-   </td>
+  </td>
   </tr>
-   
+  
   <tr id = "getYStepLengthCalculator">
-   <td rowspan = "2" align = "center">
-    <code>getYStepLengthCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#getYStepLengthCalculatorFun"><code>getYStepLengthCalculator</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>getTemporary</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     If <code>true</code> the returned StepLengthCalculator is the temporary one set for the y-axis of this container, otherwise it's the standard one.
-   </td>
+  </td>
   </tr>
   
   <tr id = "setXStepLengthCalculator">
-   <td rowspan = "3" align = "center">
-    <code>setXStepLengthCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "3" align = "center">
+    <a href = "./FunctionsAbout.md#setXStepLengthCalculatorFun"><code>setXStepLengthCalculator</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>newCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A valid StepLengthCalculator.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>  
+  </td>  
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>isTemporary</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     If <code>true</code>, <code>newCalculator</code> will control only the next scroll-animation on the x-axis of this container and it will be automatically discarded at the end of it. <br/>
     If <code>false</code> every scroll-animation on the x-axis of this container will be controlled by <code>newCalculator</code>. <br/>
     If a container has both a temporary and non-temporary StepLengthCalculator set for its x-axis, the temporary one will controll the next scroll-animation on the x-axis of the container. <br/>
     Setting a temporary StepLengthCalculator will only overwrite the previous temporary one. <br/>
     Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
-   </td>
+  </td>
   </tr>
   
   <tr id = "setYStepLengthCalculator">
-   <td rowspan = "3" align = "center">
-    <code>setYStepLengthCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "3" align = "center">
+    <a href = "./FunctionsAbout.md#setYStepLengthCalculatorFun"><code>setYStepLengthCalculator</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>newCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A valid StepLengthCalculator.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>  
+  </td>  
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>isTemporary</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     If <code>true</code>, <code>newCalculator</code> will control only the next scroll-animation on the y-axis of this container and it will be automatically discarded at the end of it. <br/>
     If <code>false</code> every scroll-animation on the y-axis of this container will be controlled by <code>newCalculator</code>. <br/>
     If a container has both a temporary and non-temporary StepLengthCalculator set for its y-axis, the temporary one will controll the next scroll-animation on the y-axis of the container. <br/>
     Setting a temporary StepLengthCalculator will only overwrite the previous temporary one. <br/>
     Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
-   </td>
+  </td>
   </tr> 
   
   <tr id = "setStepLengthCalculator">
-   <td rowspan = "3" align = "center">
-    <code>setStepLengthCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "3" align = "center">
+    <a href = "./FunctionsAbout.md#setStepLengthCalculatorFun"><code>setStepLengthCalculator</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>newCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A valid StepLengthCalculator.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>  
+  </td>  
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>isTemporary</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     If <code>true</code>, <code>newCalculator</code> will control only the next scroll-animation on the x-axis and the next one on the y-axis of this container. <br/>
     It will automatically be discarded separately for each axis whenever the next scroll-animation on an axis is completed. <br/>
     If <code>false</code> every scroll-animation on both the x and y axes of this container will be controlled by <code>newCalculator</code>. <br/>
     If a container has both a temporary and non-temporary StepLengthCalculator, the temporary one will controll the next scroll-animation of the container. <br/>
     Setting a temporary StepLengthCalculator will only overwrite the previous temporary one. <br/>
     Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
-   </td>
+  </td>
   </tr> 
   
   <tr id = "setXStepLength">
-   <td rowspan = "1" align = "center">
-    <code>setXStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setXStepLengthFun"><code>setXStepLength</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>newXStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A number > 0.
-   </td>
+  </td>
   </tr>
   
   <tr id = "setYStepLength">
-   <td rowspan = "1" align = "center">
-    <code>setYStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setYStepLengthFun"><code>setYStepLength</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>newYStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A number > 0.
-   </td>
+  </td>
   </tr>
     
   <tr id = "setStepLength">
-   <td rowspan = "1" align = "center">
-    <code>setStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setStepLengthFun"><code>setStepLength</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>newStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A number > 0.
-   </td>
+  </td>
   </tr>
   
   <tr id = "setMinAnimationFrame">
-   <td rowspan = "1" align = "center">
-    <code>setMinAnimationFrame</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setMinAnimationFrameFun"><code>setMinAnimationFrame</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>newMinAnimationFrame</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A number > 0.
-   </td>
+  </td>
   </tr>
     
   <tr id = "setPageScroller">
-   <td rowspan = "1" align = "center">
-    <code>setPageScroller</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setPageScrollerFun"><code>setPageScroller</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>newPageScroller</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A number > 0.
-   </td>
+  </td>
   </tr>
     
   <tr id = "setDebugMode">
-   <td rowspan = "1" align = "center">
-    <code>setDebugMode</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setDebugModeFun"><code>setDebugMode</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>newDebugMode</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A number > 0.
-   </td>
+  </td>
   </tr>
       
   <tr id = "calcXStepLength">
-   <td rowspan = "1" align = "center">
-    <code>calcXStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcXStepLengthFun"><code>calcXStepLength</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>deltaX</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A number > 0.
-   </td>
+  </td>
   </tr>
       
   <tr id = "calcYStepLength">
-   <td rowspan = "1" align = "center">
-    <code>calcYStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcYStepLengthFun"><code>calcYStepLength</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>deltaY</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A number > 0.
-   </td>
+  </td>
   </tr>
-     
+    
   </tr>
     <tr id = "calcScrollbarsDimensions">
-   <td rowspan = "1" align = "center">
-    <code>calcScrollbarsDimensions</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcScrollbarsDimensionsFun"><code>calcScrollbarsDimensions</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>element</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
-       
+      
   </tr>
     <tr id = "calcBordersDimensions">
-   <td rowspan = "1" align = "center">
-    <code>calcBordersDimensions</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcBordersDimensionsFun"><code>calcBordersDimensions</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>element</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
-       
+      
   </tr>
     <tr id = "getScrollXCalculator">
-   <td rowspan = "1" align = "center">
-    <code>getScrollXCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollXCalculatorFun"><code>getScrollXCalculator</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
-         
+        
   </tr>
     <tr id = "getScrollYCalculator">
-   <td rowspan = "1" align = "center">
-    <code>getScrollYCalculator</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollYCalculatorFun"><code>getScrollYCalculator</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
-         
+        
   </tr>
     <tr id = "getMaxScrollX">
-   <td rowspan = "1" align = "center">
-    <code>getMaxScrollX</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getMaxScrollXFun"><code>getMaxScrollX</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
-           
+          
   </tr>
     <tr id = "getMaxScrollY">
-   <td rowspan = "1" align = "center">
-    <code>getMaxScrollY</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getMaxScrollYFun"><code>getMaxScrollY</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   
   <tr id = "getXScrollableParent">
-   <td rowspan = "2" align = "center">
-    <code>getXScrollableParent</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#getXScrollableParentFun"><code>getXScrollableParent</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>element</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>includeHiddenParents</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if the first scrollable parent <i>(on the x-axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code>, <code>false</code> otherwise.
-   </td>
+  </td>
   </tr>
     
   <tr id = "getYScrollableParent">
-   <td rowspan = "2" align = "center">
-    <code>getYScrollableParent</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#getYScrollableParentFun"><code>getYScrollableParent</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>element</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>includeHiddenParents</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if the first scrollable parent <i>(on the y-axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
-   </td>
+  </td>
   </tr>
       
   <tr id = "getScrollableParent">
-   <td rowspan = "2" align = "center">
-    <code>getScrollableParent</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollableParentFun"><code>getScrollableParent</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>element</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>includeHiddenParents</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if the first scrollable parent <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
-   </td>
+  </td>
   </tr>
         
   <tr id = "getAllScrollableParents">
-   <td rowspan = "3" align = "center">
-    <code>getAllScrollableParents</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "3" align = "center">
+    <a href = "./FunctionsAbout.md#getAllScrollableParentsFun"><code>getAllScrollableParents</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>element</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>includeHiddenParents</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked every time a scrollable parent of <code>element</code> if found. <br/>
     When <code>callback</code> is invoked, it is passed <i>(as an input parameter)</i> the found scrollable parent.
-   </td>
+  </td>
   </tr>
           
   <tr id = "scrollXTo">
-   <td rowspan = "3" align = "center">
-    <code>scrollXTo</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "3" align = "center">
+    <a href = "./FunctionsAbout.md#scrollXToFun"><code>scrollXTo</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>finalXPosition</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A finite number.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
   
             
   <tr id = "scrollYTo">
-   <td rowspan = "3" align = "center">
-    <code>scrollYTo</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "3" align = "center">
+    <a href = "./FunctionsAbout.md#scrollYToFun"><code>scrollYTo</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>finalYPosition</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A finite number.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
               
   <tr id = "scrollXBy">
-   <td rowspan = "4" align = "center">
-    <code>scrollXBy</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "4" align = "center">
+    <a href = "./FunctionsAbout.md#scrollXByFun"><code>scrollXBy</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>deltaX</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A finite number.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>stillStart</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if any on-going scroll-animation on the x-axis of <code>container</code> must be stopped before starting this animation. <br/>
     <code>False</code> if any on-going scroll-animation on the x-axis of <code>container</code> should extended by <code>deltaX</code> if possible.
-   </td>
+  </td>
   </tr>
               
   <tr id = "scrollYBy">
-   <td rowspan = "4" align = "center">
-    <code>scrollYBy</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "4" align = "center">
+    <a href = "./FunctionsAbout.md#scrollYByFun"><code>scrollYBy</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>deltaY</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A finite number.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>stillStart</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if any on-going scroll-animation on the y-axis of <code>container</code> must be stopped before starting this animation. <br/>
     <code>False</code> if any on-going scroll-animation on the y-axis of <code>container</code> should extended by <code>deltaY</code> if possible.
-   </td>
+  </td>
   </tr>
                 
   <tr id = "scrollTo">
-   <td rowspan = "4" align = "center">
-    <code>scrollTo</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "4" align = "center">
+    <a href = "./FunctionsAbout.md#scrollToFun"><code>scrollTo</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>finalXPosition</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A finite number.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>finalYPosition</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A finite number.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
               
   <tr id = "scrollBy">
-   <td rowspan = "5" align = "center">
-    <code>scrollBy</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "5" align = "center">
+    <a href = "./FunctionsAbout.md#scrollByFun"><code>scrollBy</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>deltaX</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A finite number.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>deltaY</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A finite number.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>stillStart</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if any on-going scroll-animation on either the x and y axes of <code>container</code> must be stopped before starting this animation. <br/>
     <code>False</code> if any on-going scroll-animation on either the x and y axes of <code>container</code> should extended by respectively <code>deltaX</code> and <code>deltaY</code> if possible.
-   </td>
+  </td>
   </tr> 
                 
   <tr id = "scrollIntoView">
-   <td rowspan = "5" align = "center">
-    <code>scrollIntoView</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "5" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoViewFun"><code>scrollIntoView</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>element</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>alignToLeft</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the left. <br/>
     <code>False</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the right. <br/>
     <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
     Any other value if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the center. <br/>
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>alignToTop</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the left. <br/>
     <code>False</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the right. <br/>
     <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
     Any other value if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the center. <br/>
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>includeHiddenParents</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
-   </td>
+  </td>
   </tr>
                   
   <tr id = "scrollIntoViewIfNeeded">
-   <td rowspan = "4" align = "center">
-    <code>scrollIntoViewIfNeeded</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "4" align = "center">
+    <a href = "./FunctionsAbout.md#scrollIntoViewIfNeededFun"><code>scrollIntoViewIfNeeded</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>element</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>alignToCenter</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if the alignment <i>(on either the x and y axis)</i> of <code>element</code> should be to the center of its closest scrollable parent. <br/>
     Any other value if the alignment <i>(on either the x and y axis)</i> of <code>element</code> and all its scrollable containers should be to the to the closest between <i>"left aligned"</i> or <i>"right aligned"</i>: the alignment of each container is decided by measuring its relative position <i>(on either the x and y axis)</i> to their closest scrollable parent. <br/>
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>includeHiddenParents</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of <code>element</code> has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
-   </td>
+  </td>
   </tr>
             
   <tr id = "stopScrollingX">
-   <td rowspan = "2" align = "center">
-    <code>stopScrollingX</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrollingXFun"><code>stopScrollingX</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
               
   <tr id = "stopScrollingY">
-   <td rowspan = "2" align = "center">
-    <code>stopScrollingY</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrollingYFun"><code>stopScrollingY</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
               
   <tr id = "stopScrolling">
-   <td rowspan = "2" align = "center">
-    <code>stopScrolling</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrollingFun"><code>stopScrolling</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>container</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when this scroll-animation is completed.
-   </td>
+  </td>
   </tr>
   
   <tr id = "hrefSetup">
-   <td rowspan = "6" align = "center">
-    <code>hrefSetup</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "6" align = "center">
+    <a href = "./FunctionsAbout.md#hrefSetupFun"><code>hrefSetup</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
     <code>alignToLeft</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the left. <br/>
     <code>False</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the right. <br/>
     <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
     Any other value if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the center. <br/>
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>alignToTop</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Object</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the left. <br/>
     <code>False</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the right. <br/>
     <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
     Any other value if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the center. <br/>
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>init</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when any anchor is clicked. <br/>
     If <code>init</code> returns <code>false</code>, the click is ignored. <br/>
     When invoked, <code>init</code> is always passed the following input parameters <i>(in this order)</i>: 
     <ul> 
-     <li>The anchor that has been clicked</li>
-     <li>The anchor's destination element</li>
+    <li>The anchor that has been clicked</li>
+    <li>The anchor's destination element</li>
     </ul>
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>callback</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Function</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     A function which is invoked when any anchor's destination element is successfully scrolled into view.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>includeHiddenParents</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     <code>True</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of any anchor's destination has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
-   </td>
+  </td>
   </tr>
   <tr>
-   <td rowspan = "1" align = "center">
+  <td rowspan = "1" align = "center">
     <code>updateHistory</code>
-   </td>
-   <td rowspan = "1" align = "center">
+  </td>
+  <td rowspan = "1" align = "center">
     <code>Boolean</code>
-   </td>
-   <td rowspan = "1" align = "left">
+  </td>
+  <td rowspan = "1" align = "left">
     If <code>True</code>, the browser's history is updated every time a valid anchor is clicked and navigating through history triggers a smooth scroll-animation to the corresponding fragment.
     If <code>false</code>, the browser's history is never updated by the API and navigating through history produces the default <i>jump-to-position</i> behavior.
-   </td>
+  </td>
   </tr>
  </tbody>
 </table>
