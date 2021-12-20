@@ -32,16 +32,57 @@ You can try most of the features on:
 <br/>
 
 # Table of Contents
-Sections |
-:-------:
-[`Download`](./docs/Download.md) |
-[`Installation`](./docs/Installation.md) |
-[`How it works`](./docs/HowItWorks.md) | 
-[`Internal Constants`](./docs/ConstantsAbout.md) | 
-[`Internal Variables`](./docs/VariablesAbout.md) |
-[`Available Functions`](./docs/FunctionsAbout.md) |
-[`Included Easings`](./docs/EasingFunctions.md) |
-[`F.A.Q.`](./docs/FAQ.md) |
+<table>
+ <tbody>
+  <tr>
+   <td align = "center">
+    <a href = "./docs/Download.md"><code>Download</code></a>   
+   </td>  
+  </tr> 
+     
+  <tr>
+   <td align = "center">
+    <a href = "./docs/Installation.md"><code>Installation</code></a>   
+   </td>
+  </tr> 
+     
+  <tr>
+   <td align = "center">
+    <a href = "./docs/HowItWorks.md"><code>How it works</code></a>   
+   </td>
+  </tr>
+          
+  <tr>
+   <td align = "center">
+    <a href = "./docs/ConstantsAbout.md"><code>Internal Constants</code></a>   
+   </td>
+  </tr>
+     
+  <tr>
+   <td align = "center">
+    <a href = "./docs/VariablesAbout.md"><code>Internal Variables</code></a>   
+   </td>
+  </tr>
+     
+  <tr>
+   <td align = "center">
+    <a href = "./docs/FunctionsAbout.md"><code>Available Functions</code></a>   
+   </td>
+  </tr>
+     
+  <tr>
+   <td align = "center">
+    <a href = "./docs/EasingFunctions.md"><code>Included Easings</code></a>   
+   </td>
+  </tr>
+          
+  <tr>
+   <td align = "center">
+    <a href = "./docs/FAQ.md"><code>F.A.Q.</code></a>   
+   </td>
+  </tr>
+ </tbody>
+</table>
 
 ---
 <br/>
