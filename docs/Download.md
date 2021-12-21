@@ -15,7 +15,7 @@ All the download options will give you access to all the above described files, 
 
 ---
 
-## NPM:
+## npm
 [`npm i universalsmoothscroll@latest`](https://www.npmjs.com/package/universalsmoothscroll) <br/>
 
 All of the above mentioned files will be downloaded inside your `node_module` folder.
@@ -23,7 +23,14 @@ All of the above mentioned files will be downloaded inside your `node_module` fo
 
 --- 
 
-## Github:
+## jsDelivr
+Visit [`jsDelivr`](https://www.jsdelivr.com/package/npm/universalsmoothscroll) and click the download button. <br/>
+The files will be saved as a _tgz archive_: extract them and you're good to go. 
+<br/>
+
+---
+
+## Github
 Whenever a new version of the API is published, a new release is drafted. <br/>
 Each release has a changelog and the latest versions of the above mentioned files attached as assets. <br/>
 All the USS API releases are available in the [`releases section`](https://github.com/CristianDavideConte/universalSmoothScroll/releases).
