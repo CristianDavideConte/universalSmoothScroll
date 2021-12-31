@@ -8,7 +8,7 @@ Even though it's _possible_ to directly modify these properties it's ***highly d
 
 ### N.B.
 Manually altering the properties listed below may cause the API to not function properly. <br/>
-Moreover anyone of them can be renamed, deleted and/or repurposed at any time.
+Moreover any one of them can be renamed, deleted and/or repurposed at any time by an update.
 <br/>
 <br/>
 
