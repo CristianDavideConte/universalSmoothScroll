@@ -9,7 +9,7 @@ The `universalsmoothscroll-min.js` script will declare and initialize ***(in the
 
 The `uss` object's properties are the API's functionalities and they can either be: <br/>
 * [`variables`](./VariablesAbout.md)
-* [`functions`](./MethodsAbout.md) <br/>
+* [`functions`](./FunctionsAbout.md) <br/>
   
 The `uss`'s variables ***SHOULD NOT*** be directly manipulated: always use the provided accessors.<br/>
 You will be able to recognize those internal variables because their names begin with an `_` _(underscore)_. <br/>
