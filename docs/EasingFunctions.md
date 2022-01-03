@@ -6,9 +6,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
 When invoked, each one of these functions will return a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that you can use to customize the easing of the scroll-animations on any axis of any container. <br/>
 
 In order to do that, just pass the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) to either one of these methods: 
-* `uss.setXStepLengthCalculator()` for the scroll-animations on the x-axis of your container.
-* `uss.setYStepLengthCalculator()` for the scroll-animations on the y-axis of your container. 
-* `uss.setStepLengthCalculator()` for the scroll-animations on both axes of your container. 
+* [`uss.setXStepLengthCalculator()`](./FunctionsAbout.md#setXStepLengthCalculatorFun) for the scroll-animations on the x-axis of your container.
+* [`uss.setYStepLengthCalculator()`](./FunctionsAbout.md#setYStepLengthCalculatorFun) for the scroll-animations on the y-axis of your container. 
+* [`uss.setStepLengthCalculator()`](./FunctionsAbout.md#setStepLengthCalculatorFun) for the scroll-animations on both axes of your container. 
 
 ### N.B.
 This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Download.md) script in your project first. 
