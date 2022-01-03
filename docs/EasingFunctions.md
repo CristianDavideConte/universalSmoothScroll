@@ -583,7 +583,7 @@ It's an optional parameter.
   * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***backward part*** of the scroll-animation. <br/> It's a required parameter.
   #### The `ElasticPointCalculator` parameter
   * It's a function which must return the number of pixels that will be scrolled by the backward part of the scroll-animation. <br/>
-    If this function returns a negative number, the [`forward StepLengthCalculator`](./EasingFunctions.md#forward-steplengthcalculator) will be used instead of the [`backward StepLengthCalculator`](./EasingFunctions.md#backward-steplengthcalculator) for the backward part of the scroll-animation. <br/>
+    If this function returns a negative number, the `forward StepLengthCalculator` will be used instead of the `backward StepLengthCalculator` for the backward part of the scroll-animation. <br/>
     It's an optional parameter. 
   
     An ElasticPointCalculator is always passed the following input parameters _(in this order)_: 
