@@ -112,7 +112,7 @@ KaiOS Browser | ❔
 <br/>
 
 # Support Me
-If you want to support my work through a donation, you can either use the GitHub [`sponsor button`](https://github.com/sponsors/CristianDavideConte) or the PayPal <a href="#donate"><code>donate button</code></a> above.<br/>
+If you want to support my work through a donation, you can either use the GitHub [`sponsor button`](https://github.com/sponsors/CristianDavideConte) or the PayPal [`donate button`](https://www.paypal.com/donate/?hosted_button_id=9ZH3MVR56C7M8) above.<br/>
 Support is appreciated but it's not compulsory in any way nor needed in order to use any of my work!
 
 ---
