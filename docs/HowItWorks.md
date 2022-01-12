@@ -14,7 +14,7 @@ The `uss` object's properties are the API's functionalities and they can either 
 The `uss`'s variables ***SHOULD NOT*** be directly manipulated: always use the provided accessors.<br/>
 You will be able to recognize those internal variables because their names begin with an `_` _(underscore)_. <br/>
 
-For istance:
+For instance:
 ```javascript
 //This is the name of the internal variable used by the uss object.
 uss._xStepLength
