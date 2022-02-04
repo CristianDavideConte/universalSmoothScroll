@@ -1468,7 +1468,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked every time a scrollable parent of <code>element</code> if found. <br/>
+    A function which is invoked every time a scrollable parent of <code>element</code> is found. <br/>
     When <code>callback</code> is invoked, it is passed <i>(as an input parameter)</i> the found scrollable parent.
   </td>
   </tr>
