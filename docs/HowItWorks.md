@@ -2,7 +2,7 @@
 <br/>
 
 # How it works
-Once you've imported a USS API's script, it will automatically do all the needed work for you. <br/>
+Once you've imported one or more USS API's scripts, they will automatically do all the initialization work for you. <br/>
 <br/>
 ## \#API script 
 The `universalsmoothscroll-min.js` script will declare and initialize ***(in the global scope of your application)*** either the API's [`constants`](./ConstantsAbout.md) _(internally used by the API, but available as read-only values)_ and the `uss` object. <br/>
