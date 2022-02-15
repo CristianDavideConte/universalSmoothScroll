@@ -11,7 +11,7 @@ In total, there are two files available:
 The former is always required and contains _(the minified version of)_ the API itself. <br/> 
 The latter is optional instead and contains _(the minified version of)_ an easing-functions library which you may find useful later on. <br/>
 
-All the download options will give you access to all the above described files, so choose freely the download method you prefer.
+Each one of the download options will give you access to all the above described scripts, so choose freely the download method you prefer.
 
 ---
 
