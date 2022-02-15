@@ -64,7 +64,7 @@ EASE_IN_OUT_QUINT = ... //this will give you an error because the library is rea
 ```
 
 All the functions of this library are read-only and cannot be modified. <br/>
-To know which default easings are available visit the [`Available easing functions`](./EasingFunctions.md) section. 
+To know which default easings are available visit the [`Included Easings`](./EasingFunctions.md) section. 
 
 <br/>
 
