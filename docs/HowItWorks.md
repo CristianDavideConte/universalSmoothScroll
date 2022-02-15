@@ -38,14 +38,32 @@ Any scroll-animation can be stopped at any time by using:
 There's also a handy function for anchor's smooth scrolling management:
 * [`uss.hrefSetup()`](./FunctionsAbout.md#hrefSetupFun)
 
+<br/>
+
+The documentation about the API's functions is available in the [`Available Functions`](./FunctionsAbout.md) section. 
+
 ---
 <br/>
 
 ## \#Easing library 
 The `universalsmoothscroll-ease-functions-min.js` script will declare and initialize ***(in the global scope of your application)*** functions that can be invoked to get custom [`stepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) which can be used to control the easing of any USS API's scroll-animation. <br/>
 
-All the functions of this library are read-only and cannot be modified. <br/>
+For example:
+```javascript
+let animationDuration = 300 //duration in ms
 
+//The EASE_IN_OUT_QUINT function of this library will return a stepLengthCalculator
+//which can be used to control the easing of a container's scroll-animations
+let myCustomEase = EASE_IN_OUT_QUINT(animationDuration)  
+
+//myCustomEase will control the easing of 
+//all the scroll-animations on the x-axis of myContainer
+uss.setXStepLengthCalculator(myCustomEase, myContainer)
+
+EASE_IN_OUT_QUINT = ... //this will give you an error because the library is read-only
+```
+
+All the functions of this library are read-only and cannot be modified. <br/>
 To know which default easings are available visit the [`Available easing functions`](./EasingFunctions.md) section. 
 
 <br/>
