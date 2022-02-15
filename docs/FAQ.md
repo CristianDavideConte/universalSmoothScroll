@@ -264,6 +264,12 @@ They execute all the instructions needed for a single scroll-animation-step on, 
 ---
 <br/>
 
+## Q: What is the difference between a _`scroll-animation's step`_ and a _`scroll-animation's frame`_ ?
+A: There's no difference, they are two ways of referring to the same thing. 
+
+---
+<br/>
+
 ## Q: Why there's no setter for the _`_reducedMotion`_ variable ?
 A: Because it's up to the final users to decide which accessibility settings they want to enable. <br/>
 Ignoring user preferences is not suggested.   
@@ -277,5 +283,6 @@ If that's the case don't hesitate to [`contact me`](https://github.com/CristianD
 
 ---
 <br/>
+
 
 <h3 align = "center">More coming soon...</h3><br/><br/>
