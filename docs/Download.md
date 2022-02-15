@@ -18,14 +18,14 @@ Each one of the download options will give you access to all the above described
 ## npm
 [`npm i universalsmoothscroll@latest`](https://www.npmjs.com/package/universalsmoothscroll) <br/>
 
-All of the above mentioned files will be downloaded inside your `node_module` folder.
+All the scripts will be downloaded inside your `node_module` folder.
 <br/>
 
 --- 
 
 ## jsDelivr
 Visit [`jsDelivr`](https://www.jsdelivr.com/package/npm/universalsmoothscroll) and click the download button. <br/>
-The files will be saved as a _tgz archive_: extract them and you're good to go. 
+The files will be saved as a _.tgz archive_: extract them and you're good to go. 
 <br/>
 
 ---
