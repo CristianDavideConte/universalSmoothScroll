@@ -2,7 +2,7 @@
 <br/>
 
 # Download
-In order to use the USS API you first need to download the needed scripts which you can get in many ways. <br/>
+In order to use the USS API you first have to download the needed scripts which you can get in many ways. <br/>
 
 In total, there are two files available:
 * `universalsmoothscroll-min.js`                
