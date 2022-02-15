@@ -57,8 +57,8 @@ let animationDuration = 300 //duration in ms
 let myCustomEase = EASE_IN_OUT_QUINT(animationDuration)  
 
 //myCustomEase will control the easing of 
-//all the scroll-animations on the x-axis of myContainer
-uss.setXStepLengthCalculator(myCustomEase, myContainer)
+//all the scroll-animations on the y-axis of myContainer
+uss.setYStepLengthCalculator(myCustomEase, myContainer)
 
 EASE_IN_OUT_QUINT = ... //this will give you an error because the library is read-only
 ```
