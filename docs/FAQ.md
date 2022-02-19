@@ -7,6 +7,20 @@ This section contains a collection of the most asked questions about any aspect 
 If the answer you are looking for is not here, you can always [`contact me`](https://github.com/CristianDavideConte/universalSmoothScroll#contact-me).
 <br/><br/>
 
+
+## Q: Can I use the API in a `React` project ?
+A: Yes, as described in the [`Installation`](./Installation.md) section, just import the scripts in your `index.html` file and then you can start using the API. <br/>
+
+---
+<br/>
+
+## Q: Can I use the API in a `typescript` project ?
+A: Yes, as described in the [`Installation`](./Installation.md) section, just import the scripts in your `index.html` file and then you can start using the API. <br/>
+If you encounter the `Cannot find name 'uss'` error (or something like that) you have to manually declare the `uss` object by writing `declare var uss: any` in you typescript declaration file (the one that ends with `.d.ts`).
+
+---
+<br/>
+
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-behavior: smooth`_ CSS property ?
 A: No, they won't work on those containers.
 
@@ -15,12 +29,6 @@ A: No, they won't work on those containers.
 
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-snap-type`_ CSS property ?
 A: No, they won't work on those containers.
-
----
-<br/>
-
-## Q: Can I use the API in a `React` project ?
-A: Yes, as described in the [`Installation`](./Installation.md) section, just import the scripts in your `index.html` file and then you can start using the API. <br/>
 
 ---
 <br/>
