@@ -24,6 +24,9 @@ The scripts will auto-initialize themselves and you can now start using the Univ
 ---
 
 ### N.B. 
+If you're using typescript in your project, you may encounter the `Cannot find name 'uss'` error (or something like that). <br/>
+In order to solve it, you have to manually declare the `uss` object by writing `declare var uss: any` in you typescript declaration file. <br/>
+
 If don't have access to the `index.html` file _(or you simply don't have it)_ another way to import the USS API is to create inside your project _(via javascript or whichever language you're using)_ as many `Script` elements as the files you previously downloaded and link them to their paths. <br/>
 
 <br/>
