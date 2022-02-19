@@ -16,7 +16,7 @@ A: Yes, as described in the [`Installation`](./Installation.md) section, just im
 
 ## Q: Can I use the API in a `typescript` project ?
 A: Yes, as described in the [`Installation`](./Installation.md) section, just import the scripts in your `index.html` file and then you can start using the API. <br/>
-If you encounter the `Cannot find name 'uss'` error (or something like that) you have to manually declare the `uss` object by writing `declare var uss: any` in you typescript declaration file (the one that ends with `.d.ts`).
+If you encounter the `Cannot find name 'uss'` error (or something like that) you have to manually declare the `uss` object by adding the `declare var uss: any` line in you typescript declaration file (the one that ends with `.d.ts`).
 
 ---
 <br/>
