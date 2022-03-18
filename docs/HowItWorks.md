@@ -68,4 +68,4 @@ To know which default easings are available visit the [`Included Easings`](./Eas
 
 <br/>
 
-#### <p align="right"><a href = "./ConstantsAbout.md"><code>Go to next section &#8680;</code></a></p>
+#### <p align="right"><a href = "./FunctionsAbout.md"><code>Go to next section &#8680;</code></a></p>
