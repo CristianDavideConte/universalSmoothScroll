@@ -77,7 +77,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#getFinalXPosition"><code>container</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Returns the position <i>(in px)</i> at which the container will be at the end of the scroll-animation on the x-axis. <br/>
+    Returns the position <i>(in px)</i> at which the passed container will be at the end of the scroll-animation on the x-axis. <br/>
     The current position is returned if no scroll-animation is in place.
    </td>
   </tr>
@@ -90,7 +90,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#getFinalYPosition"><code>container</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Returns the position <i>(in px)</i> at which the container will be at the end of the scroll-animation on the y-axis. <br/> 
+    Returns the position <i>(in px)</i> at which the passed container will be at the end of the scroll-animation on the y-axis. <br/> 
     The current position is returned if no scroll-animation is in place.
    </td>
   </tr>
