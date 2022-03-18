@@ -432,6 +432,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
      <li> Contains the bottom border's height <i> (in px) </i> of the passed element. </li> 
      <li> Contains the left border's width <i> (in px) </i> of the passed element. </li> 
     </ol>
+    The returned border sizes don't take into consideration the css "transform" property's effects.
    </td>
   </tr> 
            
