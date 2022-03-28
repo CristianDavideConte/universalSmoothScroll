@@ -19,7 +19,7 @@
 </p>
 <h1 align="center">Universal Smooth Scroll</h1>
 
-A ***lightweight and very fast javascript library*** based upon the browsers' scrolling APIs that provides enriched versions of them with ***smooth-scrolling***, ***callbacks*** and many other features. <br/>
+A ***lightweight and very fast javascript library*** that provides enriched versions of the browsers' scrolling APIs with ***smooth-scrolling***, ***callbacks*** and many other features. <br/>
 ***Multiple scroll-animations*** on one or more containers can be played at the same time with full controll over them. <br/>
 ***Every scroll-animation*** triggered by the API ***can be interrupted*** at any time and ***supports user-defined custom ease functions***. <br/>
 ***Custom animations based on the scroll position*** are also extremly easy to implement. <br/>
