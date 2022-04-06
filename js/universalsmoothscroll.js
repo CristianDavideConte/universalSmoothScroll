@@ -69,10 +69,14 @@
  * isXscrolling: function, returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
  * isYscrolling: function, returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
  * isScrolling:  function, returns true if a scroll-animation on any axis of the passed container is currently being performed by this API, false otherwise.
- * getFinalXPosition: function, returns the position (in px) at which the container will be at the end of the scroll-animation on the x-axis.
+ * getFinalXPosition: function, returns the position (in px) at which the passed container will be at the end of the scroll-animation on the x-axis.
  *                    The current position is returned if no scroll-animation is in place.
- * getFinalYPosition: function, returns the position (in px) at which the container will be at the end of the scroll-animation on the y-axis.
+ * getFinalYPosition: function, returns the position (in px) at which the passed container will be at the end of the scroll-animation on the y-axis.
  *                    The current position is returned if no scroll-animation is in place.
+ * getScrollXDirection: function, returns the direction of the current scroll-animation on the x-axis of the passed container:
+ *                      1 if the scrolling is from right-to-left, -1 if the scrolling is from left-to-right, 0 if there's no scroll-animation.
+ * getScrollYDirection: function, returns the direction of the current scroll-animation on the y-axis of the passed container:
+ *                      1 if the scrolling is from bottom-to-top, -1 if the scrolling is from top-to-bottom, 0 if there's no scroll-animation.
  * getXStepLengthCalculator: function, returns the current StepLengthCalculator which controls the animations on the x-axis of the passed container if available.
  * getYStepLengthCalculator: function, returns the current StepLengthCalculator which controls the animations on the y-axis of the passed container if available.
  * getXStepLength: function, returns the value of the "_xStepLength" property.
@@ -105,6 +109,7 @@
  *                        [1] contains the right border's width (in px) of the passed element.
  *                        [2] contains the bottom border's height (in px) of the passed element.
  *                        [3] contains the left border's width (in px) of the passed element.
+ *                        The returned border sizes don't take into consideration the css "transform" property's effects. 
  * getScrollXCalculator: function, returns a function that returns:
  *                       - The scrollLeft property of the passed container if it's an instance of HTMLElement.
  *                       - The scrollX property of the passed container if it's the window element.
@@ -119,16 +124,17 @@
  * getAllScrollableParents: function, returns an array containing all the scrollable containers (on either the x or y axis) of the passed element.
  * scrollXTo: function, scrolls the x-axis of the passed container to the specified position (in px) if possible.
  * scrollYTo: function, scrolls the y-axis of the passed container to the specified position (in px) if possible.
- * scrollXBy: function, scrolls the x-axis the passed container by the specified amount of in pixels if possible.
- * scrollYBy: function, scrolls the y-axis the passed container by the specified amount of in pixels if possible.
+ * scrollXBy: function, scrolls the x-axis the passed container by the specified amount of pixels if possible.
+ * scrollYBy: function, scrolls the y-axis the passed container by the specified amount of pixels if possible.
  * scrollTo: function, scrolls both the x and y axes of the passed container to the specified positions (in px) if possible.
- * scrollBy: function, scrolls both the x and y axes of the passed container by the specified amount of in pixels if possible.
+ * scrollBy: function, scrolls both the x and y axes of the passed container by the specified amount of pixels if possible.
  * scrollIntoView: function, scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignments.
  * scrollIntoViewIfNeeded: function, scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignment
  *                         only if it's not already visible.
  * stopScrollingX: function, stops all the current scroll-animation on the x-axis of the passed container.
  * stopScrollingY: function, stops all the current scroll-animation on the y-axis of the passed container.
  * stopScrolling: function, stops all the current scroll-animation on both the x and y axes of the passed container.
+ * stopScrollingAll: function, stops all the current scroll-animation on both the x and y axes of all the containers.
  * hrefSetup: function, automatically binds every valid anchor (<a> and <area> in the DOM) to the corresponding element that should be scrolled into view.
  *                      Whenever a valid anchor is clicked the passed init function is invoked and if it doesn't return "false", 
  *                      a scroll-animation will bring into view the linked element and the browser's history will be updated (if requested).
@@ -250,8 +256,8 @@ var uss = {
     }
     const _containerData = uss._containersData.get(container) || [];
 
-    //If there's no scroll-animation, the current position is returned instead
-    return typeof _containerData[0] === "number" ? _containerData[2] : uss.getScrollXCalculator(container)();;
+    //If there's no scroll-animation on the x-axis, the current position is returned instead
+    return typeof _containerData[0] === "number" ? _containerData[2] : uss.getScrollXCalculator(container)();
   },
   getFinalYPosition: function (container = uss._pageScroller) {
     if(container !== window && !(container instanceof HTMLElement)) {
@@ -260,8 +266,28 @@ var uss = {
     }
     const _containerData = uss._containersData.get(container) || [];
 
-    //If there's no scroll-animation, the current position is returned instead
+    //If there's no scroll-animation on the y-axis, the current position is returned instead
     return typeof _containerData[1] === "number" ? _containerData[3] : uss.getScrollYCalculator(container)();
+  },
+  getScrollXDirection: function (container = uss._pageScroller) {
+    if(container !== window && !(container instanceof HTMLElement)) {
+      DEFAULT_ERROR_LOGGER("getScrollXDirection", "an HTMLElement or the Window", container);
+      return;
+    }
+    const _containerData = uss._containersData.get(container) || [];
+
+    //If there's no scroll-animation on the x-axis, 0 is returned instead
+    return typeof _containerData[0] === "number" ? _containerData[4] : 0;
+  },
+  getScrollYDirection: function (container = uss._pageScroller) {
+    if(container !== window && !(container instanceof HTMLElement)) {
+      DEFAULT_ERROR_LOGGER("getScrollYDirection", "an HTMLElement or the Window", container);
+      return;
+    }
+    const _containerData = uss._containersData.get(container) || [];
+
+    //If there's no scroll-animation on the y-axis, 0 is returned instead
+    return typeof _containerData[1] === "number" ? _containerData[5] : 0;
   },
   getXStepLengthCalculator: function (container = uss._pageScroller, getTemporary = false) {
     if(container !== window && !(container instanceof HTMLElement)) {
@@ -284,7 +310,7 @@ var uss = {
   getMinAnimationFrame: function () {return uss._minAnimationFrame;},
   getWindowHeight: function () {return uss._windowHeight;},
   getWindowWidth: function () {return uss._windowWidth;},
-  getScrollbarsMaxDimension: function() {return uss._scrollbarsMaxDimension},
+  getScrollbarsMaxDimension: function() {return uss._scrollbarsMaxDimension;},
   getPageScroller: function () {return uss._pageScroller;},
   getReducedMotionState: function () {return uss._reducedMotion;},
   getDebugMode: function () {return uss._debugMode;}, 
@@ -472,7 +498,7 @@ var uss = {
     element.style.overflowY = "hidden"; //The element is forced to hide its horizontal scrollbars
    
     //When the scrollbars are hidden the element's width/height increase only if 
-    //it was originally showing scrollbars, they remain the same otherwise
+    //it was originally showing scrollbars, otherwise they remain the same 
     _scrollbarsDimensions[0] = Number.parseInt(_elementStyle.width)  - _originalWidth;  //Vertical scrollbar's width
     _scrollbarsDimensions[1] = Number.parseInt(_elementStyle.height) - _originalHeight; //Horizontal scrollbar's height
 
@@ -893,14 +919,15 @@ var uss = {
 
       //A scroll-animation on the x-axis is already being performed and can be repurposed
       if(typeof _containerData[0] === "number")  {
-        _containerData[10] = callback;                               //callback
-        if(deltaX === 0) return;                                     //No actual scroll has been requested
-
-        _containerData[2] += deltaX;                                 //finalXPosition
-        const _totalScrollAmount = _containerData[2] - uss.getScrollXCalculator(container)(); //This can be negative, but we want it to always be positive
-        _containerData[4]  = _totalScrollAmount > 0 ? 1 : -1;        //direction
-        _containerData[6]  = _totalScrollAmount * _containerData[4]; //totalScrollAmount
-        _containerData[8]  = performance.now();                      //originalTimestamp
+        _containerData[8]  = performance.now();                        //originalTimestamp
+        _containerData[10] = callback;                                 //callback
+        
+        if(deltaX !== 0) {                                             //An actual scroll has been requested
+          _containerData[2] += deltaX;                                 //finalXPosition
+          const _totalScrollAmount = _containerData[2] - uss.getScrollXCalculator(container)(); //This can be negative, but we want it to always be positive
+          _containerData[4]  = _totalScrollAmount > 0 ? 1 : -1;        //direction
+          _containerData[6]  = _totalScrollAmount * _containerData[4]; //totalScrollAmount
+        } 
         return;
       }
     }
@@ -922,14 +949,15 @@ var uss = {
 
       //A scroll-animation on the y-axis is already being performed and can be repurposed
       if(typeof _containerData[1] === "number")  {
-        _containerData[11] = callback;                               //callback
-        if(deltaY === 0) return;                                     //No actual scroll has been requested
-
-        _containerData[3] += deltaY;                                 //finalYPosition
-        const _totalScrollAmount = _containerData[3] - uss.getScrollYCalculator(container)(); //This can be negative, but we want it to always be positive
-        _containerData[5]  = _totalScrollAmount > 0 ? 1 : -1;        //direction
-        _containerData[7]  = _totalScrollAmount * _containerData[5]; //totalScrollAmount
-        _containerData[9]  = performance.now();                      //originalTimestamp
+        _containerData[9]  = performance.now();                        //originalTimestamp
+        _containerData[11] = callback;                                 //callback
+        
+        if(deltaY !== 0) {                                             //An actual scroll has been requested
+          _containerData[3] += deltaY;                                 //finalYPosition
+          const _totalScrollAmount = _containerData[3] - uss.getScrollYCalculator(container)(); //This can be negative, but we want it to always be positive
+          _containerData[5]  = _totalScrollAmount > 0 ? 1 : -1;        //direction
+          _containerData[7]  = _totalScrollAmount * _containerData[5]; //totalScrollAmount
+        }
         return;
       }
     }
@@ -1223,11 +1251,26 @@ var uss = {
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
+  stopScrollingAll: function (callback) {
+    const _containersData = uss._containersData.values() || [];
+
+    //Iterate directly on the container's data-arrays
+    for(let _containerData of _containersData) {
+      window.cancelAnimationFrame(_containerData[0]);
+      window.cancelAnimationFrame(_containerData[1]);
+      _containerData[0] = null;
+      _containerData[1] = null;
+      _containerData[14] = null;
+      _containerData[15] = null;
+    }
+
+    if(typeof callback === "function") window.requestAnimationFrame(callback);
+  },
   hrefSetup: function (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false) {
     const _init = typeof init === "function" ? init : () => {};
     const _pageLinks = document.links;
     const _pageURL = document.URL.split("#")[0];
-    const _updateHistory = updateHistory && !!(window.history && window.history.pushState && window.history.scrollRestoration); //Check if the feature is actually supported
+    const _updateHistory = updateHistory && !!(window.history && window.history.pushState && window.history.scrollRestoration); //Check if histoy manipulation is supported
     
     if(_updateHistory) {
       window.history.scrollRestoration = "manual"; 
@@ -1294,13 +1337,11 @@ window.addEventListener("load", function calcMaxScrollbarsDimensions() {
 try { //Chrome, Firefox & Safari >= 14
   window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
     uss._reducedMotion = !uss._reducedMotion;
-    const _containers  = uss._containersData.keys();
-    for(let _container of _containers) uss.stopScrolling(_container);
+    uss.stopScrollingAll();
   }, {passive:true});
 } catch(e) { //Safari < 14
   window.matchMedia("(prefers-reduced-motion)").addListener(() => {
     uss._reducedMotion = !uss._reducedMotion;
-    const _containers  = uss._containersData.keys();
-    for(let _container of _containers) uss.stopScrolling(_container);
+    uss.stopScrollingAll();
   }, {passive:true});
 }
