@@ -1,11 +1,276 @@
 "use strict";
 
+        var canvas = document.getElementById("myCanvas");
+        canvas.style.borderRight="10px solid black";
+        var canvasWidth = canvas.width;
+        var canvasHeight = canvas.height;
+        var ctx = canvas.getContext("2d");
+        var canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+
+
+const CUSTOM_CUBIC_SPLINE = (xs, ys, duration = 500, callback, debugString = "CUSTOM_CUBIC_SPLINE") => {
+  if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_SPLINE", "xs to be an array", xs); return;}
+  if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_SPLINE", "ys to be an array", ys); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
+
+  //The control points must be defined at x = 0 and x = 1
+  if(xs[0] !== 0) {xs.unshift(0); ys.unshift(0);}
+  if(xs[xs.length - 1] !== 1) {xs.push(1); ys.push(1);}
+  console.log(xs)
+  console.log(ys)
+
+  const _callback = typeof callback === "function" ? callback : () => {};
+  const m = xs.length;
+  const n = m - 1;
+  const l = m - 2;
+  const ks = [];
+  const A  = []; //(n+1)x(n+2) matrix filled with 0s
+    
+  let xsCurrMax = null;
+  let i, j;
+  let h = 0;
+  let k = 0;
+  
+  
+  for(i = 0; i < m; i++) {
+    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_SPLINE", "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
+    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_SPLINE", "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
+    if(!xsCurrMax || xsCurrMax < xs[i]) { //Checks if the xs are sorted
+      xsCurrMax = xs[i]; 
+    } else {
+      DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_SPLINE", "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
+      return;
+    }
+    A.push([]); 
+    for(j = 0; j < m + 1; j++) A[i].push(0);
+  } 
+
+
+  for(i = 1; i < n; i++) { // rows
+    A[i][i - 1] = 1 / (xs[i] - xs[i - 1]);
+    A[i][i]     = 2 * (1 / (xs[i] - xs[i - 1]) + 1 / (xs[i + 1] - xs[i]));
+    A[i][i + 1] = 1 / (xs[i + 1] - xs[i]);
+    A[i][m] = 3 * ((ys[i] - ys[i - 1]) / ((xs[i] - xs[i - 1]) * (xs[i] - xs[i - 1])) + (ys[i + 1] - ys[i]) / ((xs[i + 1] - xs[i]) * (xs[i + 1] - xs[i])));
+  }
+
+  A[0][0] = 2 / (xs[1] - xs[0]);
+  A[0][1] = 1 / (xs[1] - xs[0]);
+  A[0][m] = 3 * (ys[1] - ys[0]) / ((xs[1] - xs[0]) * (xs[1] - xs[0]));
+  
+  A[n][l] = 1 / (xs[n] - xs[l]);
+  A[n][n] = 2 / (xs[n] - xs[l]);
+  A[n][m] = 3 * (ys[n] - ys[l]) / ((xs[n] - xs[l]) * (xs[n] - xs[l]));
+
+  while(h < m && k <= m) {	// column
+    //Pivot for column
+    let iMax = 0; 
+    let iMaxVal = Number.NEGATIVE_INFINITY;
+    for(i = h; i < m; i++) {
+      const currVal = Math.abs(A[i][k]);
+      if(currVal > iMaxVal) { 
+        iMax = i; 
+        iMaxVal = currVal;
+      }
+    }
+    
+    if(A[iMax][k] === 0) {
+      k++;
+      continue;
+    }
+
+    //Swap rows
+    const p = A[h]; 
+    A[h] = A[iMax]; 
+    A[iMax] = p;
+    
+    //All the rows below pivot
+    for(i = h + 1; i < m; i++) {
+			const cf = A[i][k] / A[h][k];
+      A[i][k] = 0;
+      for(j = k + 1; j <= m; j++) {
+        A[i][j] -= A[h][j] * cf;
+      }
+    }
+    h++;
+    k++;
+  }
+  
+  for(i = n; i >= 0; i--)	{ // rows = columns
+    ks[i] = A[i][i] ? A[i][m] / A[i][i] : 0;
+    for(j = i - 1; j >= 0; j--)	{ // rows
+      A[j][m] -= A[j][i] * ks[i];
+      A[j][i] = 0;
+    }
+  }		
+
+  function _evalSpline(x) {
+    let i = 1;
+    while(xs[i] < x) i++;
+    
+    const t = (x - xs[i-1]) / (xs[i] - xs[i-1]);
+    const a = +ks[i - 1] * (xs[i] - xs[i - 1]) - (ys[i] - ys[i - 1]);
+    const b = -ks[i]     * (xs[i] - xs[i - 1]) + (ys[i] - ys[i - 1]);
+    
+    return (1 - t) * ys[i - 1] + t * ys[i] + t * (1 - t) * (a * (1 - t) + b * t);
+  }
+
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  ctx.beginPath()
+  ctx.moveTo(0,0)
+  for(let i = 0; i < 1; i += 0.001) {
+    //console.log(i, _evalSpline(i))
+    ctx.lineTo(i * canvasWidth, canvasHeight - _evalSpline(i) * canvasHeight);
+  }
+  ctx.fill();
+
+  return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+    _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
+
+    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
+    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : _evalSpline(_progress) * (total - 1);
+    //console.log(_progress)
+    return Math.ceil(remaning - total + _nextPos);
+  }
+}
+
+
+const TEST = (duration = 900, bouncesNumber = 10, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
+  bouncesNumber++;
+  
+  let _highestAllowedY = 0.99;
+  const _heightDecreaseCoeff = 2;
+
+  const _bounceDeltaX = 1 / bouncesNumber;
+  const _bounceDeltaXHalf = _bounceDeltaX * 0.5;
+  const _bounceCorrectionDeltaX = _bounceDeltaX * (1 - 0.9999);
+  
+  const _xs = [0];
+  const _ys = [0]; 
+  let bounceHeight = 1 / _heightDecreaseCoeff;
+  let i;
+  
+  for(i = 1; i < bouncesNumber; i++) {
+    const _currentBounceX = _bounceDeltaX * i;
+    const _nextHighestY   = _currentBounceX + _bounceDeltaXHalf;
+    
+    _xs.push(//_currentBounceX - _bounceDeltaXHalf / 2, 
+             _currentBounceX,  
+             //_currentBounceX + _bounceCorrectionDeltaX, 
+             _nextHighestY
+             );
+    
+    _ys.push(//_currentBounceX - _bounceDeltaXHalf,       
+             _highestAllowedY, 
+            // _highestAllowedY * 0.9999,  
+             _nextHighestY,//bounceHeight,
+             );
+
+    //bounceHeight = 1 - (1 - bounceHeight) /_heightDecreaseCoeff;
+  }
+  _xs.push(1);          
+  _ys.push(1);
+
+  return CUSTOM_CUBIC_SPLINE(_xs, _ys, duration, callback, debugString);
+
+  /*
+  return CUSTOM_CUBIC_SPLINE(
+    [0, 0.0883, 0.189, 0.270,   0.364, 0.454, 0.542, 0.636,   0.725, 0.776, 0.820,   0.903, 0.917, 1],
+    [0, 0.0589, 0.270, 0.551,   0.990, 0.812, 0.750, 0.812,   0.996, 0.951, 0.937,   0.993, 0.995, 1],
+    duration, callback, debugString);
+    */
+}
+
+
+
+const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CUSTOM_BEZIER_CURVE") => {
+  if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
+  if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
+  if(xs.length !== ys.length) {DEFAULT_ERROR_LOGGER(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
+
+  const _callback = typeof callback === "function" ? callback : () => {};
+  const n = xs.length - 1;
+  const nFact = _factorial(n);
+  let _isXDefinedIn0 = false;
+  let _isXDefinedIn1 = false;
+
+  for(let i = 0; i <= n; i++) {
+    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
+    if(!Number.isFinite(ys[i])) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number", ys[i]); return;}
+    if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
+    if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
+  }
+
+  //The control points must be defined at x = 0 and x = 1
+  if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
+  if(!_isXDefinedIn1) {xs.push(1); ys.push(1);}
+
+  console.log(xs)
+  console.log(ys)
+
+  function _factorial(num) {
+    let fact = 1;
+    for (let i = 1; i <= num; i++) fact *= i;
+    return fact;
+  }
+
+  //Returns B'(t): the first derivative of B(t)
+  function _derivativeBt(t) {
+    let _derivativeBt = 0;
+    for(let i = 0; i <= n; i++) {
+      _derivativeBt += nFact / (_factorial(i) * _factorial(n - i)) * xs[i] * Math.pow(1 - t, n - i - 1) * Math.pow(t, i - 1) * (i - n * t) ;
+    }
+    return _derivativeBt;
+  }
+
+  //Returns B(t): the parametric form of a n-th degree bezier curve
+  function _getBt(arr, t) {
+    let _Bt = 0;
+    for (let i = 0; i <= n; i++) {
+      _Bt += nFact / (_factorial(i) * _factorial(n - i)) * arr[i] * Math.pow(1 - t, n - i) * Math.pow(t, i);      
+    }
+    return _Bt;
+  }
+
+  function _newtonRapson(x) {
+    let prev;
+    let t = x;
+    do {
+      prev = t;
+      t -= (_getBt(xs, t) - x) / _derivativeBt(t);
+    } while (Math.abs(t - prev) > 0.001);   //Precision of 1^(-3)
+   
+    return _getBt(ys, t);
+  }
+  
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  ctx.beginPath()
+  ctx.moveTo(0,0)
+  for(let i = 0.00001; i <= 1; i += 0.001) {
+    ctx.lineTo(i * canvasWidth, (1 - _newtonRapson(i)) * canvasHeight);
+  }
+  ctx.fill();
+
+  return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+    _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
+
+    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
+    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : _newtonRapson(_progress) * (total - 1);
+    return Math.ceil(remaning - total + _nextPos);
+  }
+}
+
+
+
+
+
+
 const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "a positive number", duration); return;}
-  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as x1", x1); return;}
-  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as y1", y1); return;}
-  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as x2", x2); return;}
-  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "a number between 0 and 1 (inclusive) as y2", y2); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
+  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
+  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
+  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
+  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {DEFAULT_ERROR_LOGGER("CUSTOM_CUBIC_BEZIER", "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
 
   const _callback = typeof callback === "function" ? callback : () => {};
   const aX = 1 + 3 * (x1 - x2);
@@ -15,7 +280,7 @@ const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, cal
   const cX = 3 * x1;
   const cY = 3 * y1;
   
-  function newtonRapson(x) {
+  function _newtonRapson(x) {
     let prev;
     let t = x;
     do {
@@ -30,7 +295,7 @@ const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, cal
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
     const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
-    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : newtonRapson(_progress) * (total - 1);
+    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : _newtonRapson(_progress) * (total - 1);
     return Math.ceil(remaning - total + _nextPos);
   }
 }
@@ -66,7 +331,7 @@ const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0
  * for bounce StepLengthCalculators.
  */
 const _CUSTOM_BOUNCE = (progress = 0) => {
-  if(!Number.isFinite(progress) || progress < 0 || progress > 1) {DEFAULT_ERROR_LOGGER("_CUSTOM_BOUNCE", "a number between 0 and 1 (inclusive) as the progress", progress); return;}
+  if(!Number.isFinite(progress) || progress < 0 || progress > 1) {DEFAULT_ERROR_LOGGER("_CUSTOM_BOUNCE", "the progress to be a number between 0 and 1 (inclusive)", progress); return;}
   if(progress === 0 || progress === 1) return progress;
 
   const n1 = 7.5625;
@@ -80,7 +345,7 @@ const _CUSTOM_BOUNCE = (progress = 0) => {
 }
 
 const EASE_IN_BOUNCE = (duration = 900, callback) => {
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_BOUNCE", "a positive number", duration); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_BOUNCE", "the duration to be a positive number", duration); return;}
   const _callback = typeof callback === "function" ? callback : () => {};
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
@@ -93,7 +358,7 @@ const EASE_IN_BOUNCE = (duration = 900, callback) => {
 }
 
 const EASE_OUT_BOUNCE = (duration = 900, callback) => {
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_OUT_BOUNCE", "a positive number", duration); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_OUT_BOUNCE", "the duration to be a positive number", duration); return;}
   const _callback = typeof callback === "function" ? callback : () => {};
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
@@ -106,7 +371,7 @@ const EASE_OUT_BOUNCE = (duration = 900, callback) => {
 }
 
 const EASE_IN_OUT_BOUNCE = (duration = 1200, callback) => {
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_OUT_BOUNCE", "a positive number", duration); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_OUT_BOUNCE", "the duration to be a positive number", duration); return;}
   const _callback = typeof callback === "function" ? callback : () => {};
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
@@ -122,10 +387,10 @@ const EASE_IN_OUT_BOUNCE = (duration = 1200, callback) => {
 }
 
 const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = () => {return 50}, debounceTime = 0) => {
-  if(typeof forwardEasing  !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "a function", forwardEasing);  return;}
-  if(typeof backwardEasing !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "a function", backwardEasing); return;}
-  if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "a function", elasticPointCalculator); return;}
-  if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "a number", debounceTime); return;}
+  if(typeof forwardEasing  !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the forwardEasing to be a function", forwardEasing);  return;}
+  if(typeof backwardEasing !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the backwardEasing to be a function", backwardEasing); return;}
+  if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
+  if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the debounceTime to be a number", debounceTime); return;}
 
   let _elasticInit = null;
   let _elasticCallback = null;
@@ -177,10 +442,10 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
 }
 
 const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = () => {return 50}, debounceTime = 0) => {
-  if(typeof forwardEasing  !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "a function", forwardEasing);  return;}
-  if(typeof backwardEasing !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "a function", backwardEasing); return;}
-  if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "a function", elasticPointCalculator); return;}
-  if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "a number", debounceTime); return;}
+  if(typeof forwardEasing  !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the forwardEasing to be a function", forwardEasing);  return;}
+  if(typeof backwardEasing !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the backwardEasing to be a function", backwardEasing); return;}
+  if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
+  if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the debounceTime to be a number", debounceTime); return;}
 
   let _elasticInit = null;
   let _elasticCallback = null;
