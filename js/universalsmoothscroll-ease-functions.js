@@ -5,7 +5,18 @@
         var canvasWidth = canvas.width;
         var canvasHeight = canvas.height;
         var ctx = canvas.getContext("2d");
-        var canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+        //var canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+
+        const DRAW = (f) => {
+          ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+          ctx.beginPath()
+          ctx.moveTo(0,0)
+          for(let i = 0; i < 1; i += 0.001) {
+            ctx.lineTo(i * canvasWidth, canvasHeight - f(i) * canvasHeight);
+          }
+          ctx.fill();
+        
+        } 
 
 const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0.5, duration = 500, callback, debugString = "CUSTOM_CUBIC_HERMITE_SPLINE") => {
   if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
@@ -72,16 +83,9 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0.5, duration = 500, call
 
     return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1; //The y of the Cubic Hermite-Spline at the given x
   }
-  
-  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  ctx.beginPath()
-  ctx.moveTo(0,0)
-  for(let i = 0; i < 1; i += 0.001) {
-    //console.log(i, _evalSpline(i))
-    ctx.lineTo(i * canvasWidth, canvasHeight - _evalSpline(i) * canvasHeight);
-  }
-  ctx.fill();
 
+  DRAW(_evalSpline);
+  
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
@@ -94,24 +98,25 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0.5, duration = 500, call
 const TEST = (duration = 900, bouncesNumber = 10, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
   bouncesNumber++;
   
-  const _highestAllowedY = 0.99;
+  const _highestAllowedY = bouncesNumber === 2 ? 0.97 : bouncesNumber === 3 ? 0.98 : 0.99;
   const _bounceDeltaX = 1 / bouncesNumber;
   const _bounceDeltaXHalf = _bounceDeltaX * 0.5;
+  const _nextHighestYCalc = (x) => {return 1 - Math.pow(1 - x, 4);}
+  const _nextBounceXCalc  = (x) => {return 1 - Math.pow(1 - x, 2);}
   
-  const _xs = [0];
-  const _ys = [0]; 
+  const _xs = [0, _nextBounceXCalc(_bounceDeltaX * 0.3)];
+  const _ys = [0, _nextBounceXCalc(_bounceDeltaX * 0.3)]; 
   let i;
   
   for(i = 1; i < bouncesNumber; i++) {
     const _currentBounceX = _bounceDeltaX * i;
-    const _nextHighestY   = _currentBounceX + _bounceDeltaXHalf;
     
-    _xs.push(_currentBounceX,  
-             _nextHighestY
+    _xs.push(_nextBounceXCalc(_currentBounceX),  
+             _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)
              );
     
     _ys.push(_highestAllowedY, 
-             _nextHighestY,
+             _nextHighestYCalc(_currentBounceX),
              );
   }
   _xs.push(1);          
