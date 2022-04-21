@@ -11,7 +11,7 @@
           ctx.clearRect(0, 0, canvasWidth, canvasHeight);
           ctx.beginPath()
           ctx.moveTo(0,0)
-          for(let i = 0; i < 1; i += 0.001) {
+          for(let i = 0; i <= 1; i += 0.001) {
             ctx.lineTo(i * canvasWidth, canvasHeight - f(i) * canvasHeight);
           }
           ctx.fill();
@@ -95,29 +95,47 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0.5, duration = 500, call
   }
 }
 
-const TEST = (duration = 900, bouncesNumber = 10, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
+const TEST = (duration = 900, bouncesNumber = 3, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
   bouncesNumber++;
   
-  const _highestAllowedY = bouncesNumber === 2 ? 0.97 : bouncesNumber === 3 ? 0.98 : 0.99;
+  const _bounceY = (x) => {return x * 0.005 + 0.995};
   const _bounceDeltaX = 1 / bouncesNumber;
-  const _bounceDeltaXHalf = _bounceDeltaX * 0.5;
-  const _nextHighestYCalc = (x) => {return 1 - Math.pow(1 - x, 4);}
-  const _nextBounceXCalc  = (x) => {return 1 - Math.pow(1 - x, 2);}
+  const _bounceDeltaXHalf = _bounceDeltaX * 0.5; 
+  const _nextHighestYCalc = (x) => {return x > 0.6 ? x * 0.35 + 0.64 : 1 - Math.pow(1 - x, 2);};
+  const _nextBounceXCalc  = (x) => {return 1 - Math.pow(1 - x, 1.6);};
   
-  const _xs = [0, _nextBounceXCalc(_bounceDeltaX * 0.3)];
-  const _ys = [0, _nextBounceXCalc(_bounceDeltaX * 0.3)]; 
+  const _xs = [0, _nextBounceXCalc(_bounceDeltaXHalf)];
+  const _ys = [0, Math.max(_nextHighestYCalc(_nextBounceXCalc(_bounceDeltaXHalf)), 0.2)];  
   let i;
   
+  console.log(_nextBounceXCalc(_bounceDeltaX), 
+              Math.pow(_nextBounceXCalc(_bounceDeltaXHalf) + _nextBounceXCalc(_bounceDeltaX), 2)
+              )
+
   for(i = 1; i < bouncesNumber; i++) {
     const _currentBounceX = _bounceDeltaX * i;
+    const _currentBounceY = _bounceY(_nextBounceXCalc(_currentBounceX));
+
+    _xs.push(
+      _nextBounceXCalc(_currentBounceX - _bounceDeltaXHalf * 0.001),
+      _nextBounceXCalc(_currentBounceX),  
+      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.001),
+
+      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.35),
+      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf),
+      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 1.65),
+    );
+
     
-    _xs.push(_nextBounceXCalc(_currentBounceX),  
-             _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)
-             );
-    
-    _ys.push(_highestAllowedY, 
-             _nextHighestYCalc(_currentBounceX),
-             );
+    _ys.push(
+      _currentBounceY, 
+      _currentBounceY, 
+      _currentBounceY, 
+
+      _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)) * 0.65 + 0.35 * _currentBounceY,
+      _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)),
+      _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)) * 0.65 + 0.35 * _currentBounceY,
+    );
   }
   _xs.push(1);          
   _ys.push(1);
