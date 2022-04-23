@@ -14,6 +14,7 @@
           for(let i = 0; i <= 1; i += 0.001) {
             ctx.lineTo(i * canvasWidth, canvasHeight - f(i) * canvasHeight);
           }
+          ctx.lineTo(canvasWidth, 0);
           ctx.fill();
         
         } 
@@ -107,10 +108,6 @@ const TEST = (duration = 900, bouncesNumber = 3, callback, debugString = "CUSTOM
   const _xs = [0, _nextBounceXCalc(_bounceDeltaXHalf)];
   const _ys = [0, Math.max(_nextHighestYCalc(_nextBounceXCalc(_bounceDeltaXHalf)), 0.2)];  
   let i;
-  
-  console.log(_nextBounceXCalc(_bounceDeltaX), 
-              Math.pow(_nextBounceXCalc(_bounceDeltaXHalf) + _nextBounceXCalc(_bounceDeltaX), 2)
-              )
 
   for(i = 1; i < bouncesNumber; i++) {
     const _currentBounceX = _bounceDeltaX * i;
@@ -147,8 +144,65 @@ const TEST = (duration = 900, bouncesNumber = 3, callback, debugString = "CUSTOM
     [0, 0.0883, 0.189, 0.270,   0.364, 0.454, 0.542, 0.636,   0.725, 0.776, 0.820,   0.903, 0.917, 1],
     [0, 0.0589, 0.270, 0.551,   0.990, 0.812, 0.750, 0.812,   0.996, 0.951, 0.937,   0.993, 0.995, 1],
     0, duration, callback, debugString);
-    
 }
+
+const TEST_2 = (duration = 900, bouncesNumber = 3, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
+  bouncesNumber++;
+  
+  const _bounceY = (x) => {return (1 - x) * 0.001;};
+  const _bounceDeltaX = 1 / bouncesNumber;
+  const _bounceDeltaXHalf = _bounceDeltaX * 0.5; 
+  const _nextHighestYCalc = (x) => {return x;};
+  const _nextBounceXCalc  = (x) => {return Math.pow(x, 2);};
+  
+  const _xs = [0, _nextBounceXCalc(_bounceDeltaXHalf)];
+  const _ys = [0, Math.min(_nextHighestYCalc(_nextBounceXCalc(_bounceDeltaXHalf)), 0.2)];  
+  let i;
+
+  for(i = 1; i < bouncesNumber; i++) {
+    const _currentBounceX = _bounceDeltaX * i;
+    const _currentBounceY = _bounceY(_nextBounceXCalc(_currentBounceX));
+    const _nextBounceX = _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf);
+
+    _xs.push(
+      _nextBounceXCalc(_currentBounceX - _bounceDeltaXHalf * 0.001),
+      _nextBounceXCalc(_currentBounceX),  
+      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.001),
+
+      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.35),
+      _nextBounceX,
+      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 1.65),
+    );
+
+    
+    _ys.push(
+      _currentBounceY, 
+      _currentBounceY, 
+      _currentBounceY, 
+    );
+
+    if(i < bouncesNumber - 1) {
+      _ys.push(
+        _nextHighestYCalc(_nextBounceX) * 0.65 + 0.35 * _currentBounceY,
+        _nextHighestYCalc(_nextBounceX),
+        _nextHighestYCalc(_nextBounceX) * 0.65 + 0.35 * _currentBounceY,
+      )
+    } else {
+      _ys.push(
+        (_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.35) - 1) * (_currentBounceY - 1) / (_nextBounceXCalc(_currentBounceX) - 1) + 1,
+        (_nextBounceX - 1)                                                 * (_currentBounceY - 1) / (_nextBounceXCalc(_currentBounceX) - 1) + 1,
+        (_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 1.65) - 1) * (_currentBounceY - 1) / (_nextBounceXCalc(_currentBounceX) - 1) + 1,
+      )
+    }
+  }
+  _xs.push(1);          
+  _ys.push(1);
+
+  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, debugString);
+
+}
+
+
 
 
 const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CUSTOM_BEZIER_CURVE") => {
