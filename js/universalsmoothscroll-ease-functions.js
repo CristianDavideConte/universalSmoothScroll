@@ -96,110 +96,90 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0.5, duration = 500, call
   }
 }
 
-const TEST = (duration = 900, bouncesNumber = 3, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
-  bouncesNumber++;
-  
+const TEST = (xs, ys, xsInserter, ysInserter, bouncesNumber = 3,  startBouncesNumber = 1, endBouncesNumber = 3) => {
   const _bounceY = (x) => {return x * 0.005 + 0.995};
   const _bounceDeltaX = 1 / bouncesNumber;
   const _bounceDeltaXHalf = _bounceDeltaX * 0.5; 
   const _nextHighestYCalc = (x) => {return x > 0.6 ? x * 0.35 + 0.64 : 1 - Math.pow(1 - x, 2);};
   const _nextBounceXCalc  = (x) => {return 1 - Math.pow(1 - x, 1.6);};
   
-  const _xs = [0, _nextBounceXCalc(_bounceDeltaXHalf)];
-  const _ys = [0, Math.max(_nextHighestYCalc(_nextBounceXCalc(_bounceDeltaXHalf)), 0.2)];  
-  let i;
+  const xsLen = 10 + (bouncesNumber - 1) * 6 + 1 
+  let currI = 0;
 
-  for(i = 1; i < bouncesNumber; i++) {
+  if(startBouncesNumber === 1) {
+    for (let x = 0; x < _bounceDeltaX - _bounceDeltaXHalf * 0.002; x += (_bounceDeltaX - _bounceDeltaXHalf * 0.001) / 10) {
+      xsInserter(xs, _nextBounceXCalc(x), currI, xsLen)
+      ysInserter(ys,  Math.pow(x / _bounceDeltaX, 3), currI, xsLen)
+      currI++;
+    }
+  } else {
+    currI = 10 + (startBouncesNumber - 1) * 6;
+  }
+
+  for(let i = startBouncesNumber; i < endBouncesNumber; i++) {
     const _currentBounceX = _bounceDeltaX * i;
     const _currentBounceY = _bounceY(_nextBounceXCalc(_currentBounceX));
 
-    _xs.push(
-      _nextBounceXCalc(_currentBounceX - _bounceDeltaXHalf * 0.001),
-      _nextBounceXCalc(_currentBounceX),  
-      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.001),
+    xsInserter(xs, _nextBounceXCalc(_currentBounceX - _bounceDeltaXHalf * 0.001), currI + 0, xsLen);
+    xsInserter(xs, _nextBounceXCalc(_currentBounceX),                             currI + 1, xsLen);
+    xsInserter(xs, _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.001), currI + 2, xsLen);
 
-      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.35),
-      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf),
-      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 1.65),
-    );
-
+    xsInserter(xs, _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.35), currI + 3, xsLen);
+    xsInserter(xs, _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf),        currI + 4, xsLen);
+    xsInserter(xs, _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 1.65), currI + 5, xsLen);
     
-    _ys.push(
-      _currentBounceY, 
-      _currentBounceY, 
-      _currentBounceY, 
+    ysInserter(ys, _currentBounceY, currI + 0, xsLen); 
+    ysInserter(ys, _currentBounceY, currI + 1, xsLen); 
+    ysInserter(ys, _currentBounceY, currI + 2, xsLen); 
 
-      _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)) * 0.65 + 0.35 * _currentBounceY,
-      _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)),
-      _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)) * 0.65 + 0.35 * _currentBounceY,
-    );
+    ysInserter(ys, _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)) * 0.65 + 0.35 * _currentBounceY, currI + 3, xsLen);
+    ysInserter(ys, _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)),                                 currI + 4, xsLen);
+    ysInserter(ys, _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)) * 0.65 + 0.35 * _currentBounceY, currI + 5, xsLen);
+    
+    currI += 6;
   }
-  _xs.push(1);          
-  _ys.push(1);
-
-  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, debugString);
-
-  
-  return CUSTOM_CUBIC_HERMITE_SPLINE(
-    [0, 0.0883, 0.189, 0.270,   0.364, 0.454, 0.542, 0.636,   0.725, 0.776, 0.820,   0.903, 0.917, 1],
-    [0, 0.0589, 0.270, 0.551,   0.990, 0.812, 0.750, 0.812,   0.996, 0.951, 0.937,   0.993, 0.995, 1],
-    0, duration, callback, debugString);
+  xsInserter(xs, 1, currI, xsLen);      
+  xsInserter(ys, 1, currI, xsLen);    
 }
 
-const TEST_2 = (duration = 900, bouncesNumber = 3, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
-  bouncesNumber++;
+const TEST_1b = (duration = 900, bouncesNumber = 3, callback, debugString = "TEST_1b") => {
+  const xs = [];
+  const ys = [];
+  const inserter = (arr, el, currI) => arr[currI] = el;
   
-  const _bounceY = (x) => {return (1 - x) * 0.001;};
-  const _bounceDeltaX = 1 / bouncesNumber;
-  const _bounceDeltaXHalf = _bounceDeltaX * 0.5; 
-  const _nextHighestYCalc = (x) => {return x;};
-  const _nextBounceXCalc  = (x) => {return Math.pow(x, 2);};
+  TEST(xs, ys, inserter, inserter, bouncesNumber + 1, 1, bouncesNumber + 1);
   
-  const _xs = [0, _nextBounceXCalc(_bounceDeltaXHalf)];
-  const _ys = [0, Math.min(_nextHighestYCalc(_nextBounceXCalc(_bounceDeltaXHalf)), 0.2)];  
-  let i;
+  return CUSTOM_CUBIC_HERMITE_SPLINE(xs, ys, 0, duration, callback, debugString);
+}
 
-  for(i = 1; i < bouncesNumber; i++) {
-    const _currentBounceX = _bounceDeltaX * i;
-    const _currentBounceY = _bounceY(_nextBounceXCalc(_currentBounceX));
-    const _nextBounceX = _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf);
+const TEST_2b = (duration = 900, bouncesNumber = 3, callback, debugString = "TEST_2b") => {
+  const xs = [];
+  const ys = [];
+  const inserter = (arr, el, currI, len) => arr[len - currI - 1] = 1 - el;
+  
+  TEST(xs, ys, inserter, inserter, bouncesNumber + 1,  1, bouncesNumber + 1);
+  
+  return CUSTOM_CUBIC_HERMITE_SPLINE(xs, ys, 0, duration, callback, debugString);
+}
 
-    _xs.push(
-      _nextBounceXCalc(_currentBounceX - _bounceDeltaXHalf * 0.001),
-      _nextBounceXCalc(_currentBounceX),  
-      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.001),
+const TEST_3b = (duration = 900, bouncesNumber = 4, callback, debugString = "TEST_3b") => {
+  const xs = [];
+  const ys = [];
+  const inserter1 = (arr, el, currI, len) => arr[len - currI - 1] = 1 - el;
+  const inserter2 = (arr, el, currI) => arr[currI - 1] = el;
+                                       
+  //Still buggy with bouncesNumber = 2
+  const lowBounces1 = bouncesNumber === 2 ? 0 : Math.max(Math.floor((bouncesNumber - 1) / 2), 1);
+  const lowBounces2 = bouncesNumber === 2 ? 1 : Math.max(Math.floor((bouncesNumber) / 2), 2);
 
-      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.35),
-      _nextBounceX,
-      _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 1.65),
-    );
-
-    
-    _ys.push(
-      _currentBounceY, 
-      _currentBounceY, 
-      _currentBounceY, 
-    );
-
-    if(i < bouncesNumber - 1) {
-      _ys.push(
-        _nextHighestYCalc(_nextBounceX) * 0.65 + 0.35 * _currentBounceY,
-        _nextHighestYCalc(_nextBounceX),
-        _nextHighestYCalc(_nextBounceX) * 0.65 + 0.35 * _currentBounceY,
-      )
-    } else {
-      _ys.push(
-        (_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.35) - 1) * (_currentBounceY - 1) / (_nextBounceXCalc(_currentBounceX) - 1) + 1,
-        (_nextBounceX - 1)                                                 * (_currentBounceY - 1) / (_nextBounceXCalc(_currentBounceX) - 1) + 1,
-        (_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 1.65) - 1) * (_currentBounceY - 1) / (_nextBounceXCalc(_currentBounceX) - 1) + 1,
-      )
-    }
-  }
-  _xs.push(1);          
-  _ys.push(1);
-
-  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, debugString);
-
+  TEST(xs, ys, inserter1, inserter1, bouncesNumber, lowBounces1, bouncesNumber);
+  TEST(xs, ys, inserter2, inserter2, bouncesNumber, lowBounces2, bouncesNumber);
+  xs.pop();
+  ys.pop();
+  console.log(xs)
+  console.log(ys)
+  
+  return CUSTOM_CUBIC_HERMITE_SPLINE(xs, ys, 0, duration, callback, debugString);
 }
 
 
