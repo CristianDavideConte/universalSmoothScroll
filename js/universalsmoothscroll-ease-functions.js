@@ -96,95 +96,6 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0.5, duration = 500, call
   }
 }
 
-const TEST = (xs, ys, xsInserter, ysInserter, bouncesNumber = 3,  startBouncesNumber = 1, endBouncesNumber = 3) => {
-  const _bounceY = (x) => {return x * 0.005 + 0.995};
-  const _bounceDeltaX = 1 / bouncesNumber;
-  const _bounceDeltaXHalf = _bounceDeltaX * 0.5; 
-  const _nextHighestYCalc = (x) => {return x > 0.6 ? x * 0.35 + 0.64 : 1 - Math.pow(1 - x, 2);};
-  const _nextBounceXCalc  = (x) => {return 1 - Math.pow(1 - x, 1.6);};
-  
-  const xsLen = 10 + (bouncesNumber - 1) * 6 + 1 
-  let currI = 0;
-
-  if(startBouncesNumber === 1) {
-    for (let x = 0; x < _bounceDeltaX - _bounceDeltaXHalf * 0.002; x += (_bounceDeltaX - _bounceDeltaXHalf * 0.001) / 10) {
-      xsInserter(xs, _nextBounceXCalc(x), currI, xsLen)
-      ysInserter(ys,  Math.pow(x / _bounceDeltaX, 3), currI, xsLen)
-      currI++;
-    }
-  } else {
-    currI = 10 + (startBouncesNumber - 1) * 6;
-  }
-
-  for(let i = startBouncesNumber; i < endBouncesNumber; i++) {
-    const _currentBounceX = _bounceDeltaX * i;
-    const _currentBounceY = _bounceY(_nextBounceXCalc(_currentBounceX));
-
-    xsInserter(xs, _nextBounceXCalc(_currentBounceX - _bounceDeltaXHalf * 0.001), currI + 0, xsLen);
-    xsInserter(xs, _nextBounceXCalc(_currentBounceX),                             currI + 1, xsLen);
-    xsInserter(xs, _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.001), currI + 2, xsLen);
-
-    xsInserter(xs, _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 0.35), currI + 3, xsLen);
-    xsInserter(xs, _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf),        currI + 4, xsLen);
-    xsInserter(xs, _nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf * 1.65), currI + 5, xsLen);
-    
-    ysInserter(ys, _currentBounceY, currI + 0, xsLen); 
-    ysInserter(ys, _currentBounceY, currI + 1, xsLen); 
-    ysInserter(ys, _currentBounceY, currI + 2, xsLen); 
-
-    ysInserter(ys, _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)) * 0.65 + 0.35 * _currentBounceY, currI + 3, xsLen);
-    ysInserter(ys, _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)),                                 currI + 4, xsLen);
-    ysInserter(ys, _nextHighestYCalc(_nextBounceXCalc(_currentBounceX + _bounceDeltaXHalf)) * 0.65 + 0.35 * _currentBounceY, currI + 5, xsLen);
-    
-    currI += 6;
-  }
-  xsInserter(xs, 1, currI, xsLen);      
-  xsInserter(ys, 1, currI, xsLen);    
-}
-
-const TEST_1b = (duration = 900, bouncesNumber = 3, callback, debugString = "TEST_1b") => {
-  const xs = [];
-  const ys = [];
-  const inserter = (arr, el, currI) => arr[currI] = el;
-  
-  TEST(xs, ys, inserter, inserter, bouncesNumber + 1, 1, bouncesNumber + 1);
-  
-  return CUSTOM_CUBIC_HERMITE_SPLINE(xs, ys, 0, duration, callback, debugString);
-}
-
-const TEST_2b = (duration = 900, bouncesNumber = 3, callback, debugString = "TEST_2b") => {
-  const xs = [];
-  const ys = [];
-  const inserter = (arr, el, currI, len) => arr[len - currI - 1] = 1 - el;
-  
-  TEST(xs, ys, inserter, inserter, bouncesNumber + 1,  1, bouncesNumber + 1);
-  
-  return CUSTOM_CUBIC_HERMITE_SPLINE(xs, ys, 0, duration, callback, debugString);
-}
-
-const TEST_3b = (duration = 900, bouncesNumber = 4, callback, debugString = "TEST_3b") => {
-  const xs = [];
-  const ys = [];
-  const inserter1 = (arr, el, currI, len) => arr[len - currI - 1] = 1 - el;
-  const inserter2 = (arr, el, currI) => arr[currI - 1] = el;
-                                       
-  //Still buggy with bouncesNumber = 2
-  const lowBounces1 = bouncesNumber === 2 ? 0 : Math.max(Math.floor((bouncesNumber - 1) / 2), 1);
-  const lowBounces2 = bouncesNumber === 2 ? 1 : Math.max(Math.floor((bouncesNumber) / 2), 2);
-
-  TEST(xs, ys, inserter1, inserter1, bouncesNumber, lowBounces1, bouncesNumber);
-  TEST(xs, ys, inserter2, inserter2, bouncesNumber, lowBounces2, bouncesNumber);
-  xs.pop();
-  ys.pop();
-  console.log(xs)
-  console.log(ys)
-  
-  return CUSTOM_CUBIC_HERMITE_SPLINE(xs, ys, 0, duration, callback, debugString);
-}
-
-
-
-
 const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CUSTOM_BEZIER_CURVE") => {
   if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
   if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
@@ -253,11 +164,6 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
   }
 }
 
-
-
-
-
-
 const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
   if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
   if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {DEFAULT_ERROR_LOGGER(debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
@@ -320,63 +226,116 @@ const EASE_IN_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.87, 0, 0
 const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, duration, callback, "EASE_IN_OUT_CIRC");
 
 /*
- * Internally used to get the y (between 0 and 1) of a given x (between 0 and 1)
- * for bounce StepLengthCalculators.
+ * Internally used to setup the control points' arrays for bounce-type StepLengthCalculators.
+ * Do not use it directly for setting a StepLengthCalculator.
  */
-const _CUSTOM_BOUNCE = (progress = 0) => {
-  if(!Number.isFinite(progress) || progress < 0 || progress > 1) {DEFAULT_ERROR_LOGGER("_CUSTOM_BOUNCE", "the progress to be a number between 0 and 1 (inclusive)", progress); return;}
-  if(progress === 0 || progress === 1) return progress;
+const _CUSTOM_BOUNCE = (xs, ys, arrInserter, bouncesNumber = 3,  startBouncesNumber = 1, endBouncesNumber = 3) => {
+  const _bounceDeltaX = 1 / bouncesNumber;
+  const _bounceDeltaXHalf = _bounceDeltaX * 0.5; 
+  const _bounceCorrectionDelta = _bounceDeltaXHalf * 0.001;
 
-  const n1 = 7.5625;
-  const d1 = 2.75;
+  /**
+   * These functions define:
+   * - The pattern of the control points' x coordinates (same for bounces and peaks)
+   * - The pattern of the control points' y coordinates (2 different ones for bounces and peaks)
+   */
+  const _bounceXCalc = x => 1 - Math.pow(1 - x, 1.6);
+  const _bounceYCalc = x => x * 0.005 + 0.995;
+  const _peakYCalc   = x => x > 0.6 ? x * 0.35 + 0.64 : 1 - (1 - x) * (1 - x);
+  
+  const initPointsNum = 10;
+  const arrLen = initPointsNum + (bouncesNumber - 1) * 6 + 1 
+  let arrIndex = 0;
+  let i;
 
-  if (progress < 1 / d1)   return n1 * progress * progress;
-  if (progress < 2 / d1)   return n1 * (progress -= 1.5  / d1) * progress + 0.75;
-  if (progress < 2.5 / d1) return n1 * (progress -= 2.25 / d1) * progress + 0.9375;
+  if(startBouncesNumber !== 1) arrIndex = initPointsNum + (startBouncesNumber - 1) * 6;
+  else {
+    //Force an ease-in pattern for the first initPointsNum control points
+    const _initBounceDeltaX = (_bounceDeltaX - _bounceCorrectionDelta) / initPointsNum;
+    for (i = 0; i < _bounceDeltaX - 2 * _bounceCorrectionDelta; i += _initBounceDeltaX) {
+      arrInserter(xs, _bounceXCalc(i),                 arrIndex, arrLen);
+      arrInserter(ys,  Math.pow(i / _bounceDeltaX, 2), arrIndex, arrLen);
+      arrIndex++;
+    }
+  }
 
-  return n1 * (progress -= 2.625 / d1) * progress + 0.984375;
+  //Defines the control points of the spline between the first and the last bounce
+  for(i = startBouncesNumber; i < endBouncesNumber; i++) {
+    const _originalBounceX = _bounceDeltaX * i;
+    const _calcBounceX = _bounceXCalc(_originalBounceX);
+    const _calcBounceY = _bounceYCalc(_calcBounceX);
+    const _nextPeakX   = _bounceXCalc(_originalBounceX + _bounceDeltaXHalf);
+    const _nextPeakY   = _peakYCalc(_nextPeakX);
+    const _nextSlopeY  = _nextPeakY * 0.65 + 0.35 * _calcBounceY;
+
+    arrInserter(xs, _bounceXCalc(_originalBounceX - _bounceCorrectionDelta), arrIndex,     arrLen);
+    arrInserter(xs, _calcBounceX,                                            arrIndex + 1, arrLen);
+    arrInserter(xs, _bounceXCalc(_originalBounceX + _bounceCorrectionDelta), arrIndex + 2, arrLen);
+
+    arrInserter(xs, _bounceXCalc(_originalBounceX + _bounceDeltaXHalf * 0.35), arrIndex + 3, arrLen);
+    arrInserter(xs, _nextPeakX,                                                arrIndex + 4, arrLen);
+    arrInserter(xs, _bounceXCalc(_originalBounceX + _bounceDeltaXHalf * 1.65), arrIndex + 5, arrLen);
+    
+    arrInserter(ys, _calcBounceY, arrIndex,     arrLen); 
+    arrInserter(ys, _calcBounceY, arrIndex + 1, arrLen); 
+    arrInserter(ys, _calcBounceY, arrIndex + 2, arrLen); 
+
+    arrInserter(ys, _nextSlopeY, arrIndex + 3, arrLen);
+    arrInserter(ys, _nextPeakY,  arrIndex + 4, arrLen);
+    arrInserter(ys, _nextSlopeY, arrIndex + 5, arrLen);
+    
+    arrIndex += 6;
+  }
+
+  //Defines the control points of the spline at (1,1)
+  arrInserter(xs, 1, arrIndex, arrLen);      
+  arrInserter(ys, 1, arrIndex, arrLen);    
 }
 
-const EASE_IN_BOUNCE = (duration = 900, callback) => {
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_BOUNCE", "the duration to be a positive number", duration); return;}
-  const _callback = typeof callback === "function" ? callback : () => {};
-
-  return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
-
-    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
-    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : (1 - _CUSTOM_BOUNCE(1 - _progress)) * (total - 1);
-    return Math.ceil(remaning - total + _nextPos);
-  }
+const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
+  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}
+  
+  const _xs = [];
+  const _ys = [];
+  const _inserter = (arr, el, currI, len) => arr[len - currI - 1] = 1 - el;
+  
+  _CUSTOM_BOUNCE(_xs, _ys, _inserter, bouncesNumber + 1,  1, bouncesNumber + 1);
+  
+  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, "EASE_IN_BOUNCE");
 }
 
-const EASE_OUT_BOUNCE = (duration = 900, callback) => {
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_OUT_BOUNCE", "the duration to be a positive number", duration); return;}
-  const _callback = typeof callback === "function" ? callback : () => {};
+const EASE_OUT_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
+  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {DEFAULT_ERROR_LOGGER("EASE_OUT_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}
 
-  return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
-
-    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
-    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : _CUSTOM_BOUNCE(_progress) * (total - 1);
-    return Math.ceil(remaning - total + _nextPos);
-  }
+  const _xs = [];
+  const _ys = [];
+  const _inserter = (arr, el, currI) => arr[currI] = el;
+  
+  _CUSTOM_BOUNCE(_xs, _ys, _inserter, bouncesNumber + 1, 1, bouncesNumber + 1);
+  
+  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, "EASE_OUT_BOUNCE");
 }
 
-const EASE_IN_OUT_BOUNCE = (duration = 1200, callback) => {
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_OUT_BOUNCE", "the duration to be a positive number", duration); return;}
-  const _callback = typeof callback === "function" ? callback : () => {};
+const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 5) => {
+  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 1) {DEFAULT_ERROR_LOGGER("EASE_IN_OUT_BOUNCE", "bouncesNumber to be a number >= 2", bouncesNumber); return;}
 
-  return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
+  const _xs = [];
+  const _ys = [];
+  const _initPointsNum = 10;
+  const _simpleEaseInOut = bouncesNumber === 2 ? 1 : 0; 
+  const _startBouncesNumberEaseIn  = Math.max(Math.floor((bouncesNumber - 1) / 2), 1);
+  const _startBouncesNumberEaseOut = _simpleEaseInOut ? 1 : Math.max(Math.floor((bouncesNumber) / 2), 2);
 
-    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
-    const _nextPos  = _progress <= 0 ? 0 :
-                      _progress >= 1 ? total :
-                      _progress < 0.5 ? 0.5 * (1 - _CUSTOM_BOUNCE(1 - 2 * _progress)) * (total - 1) :
-                                        0.5 * (1 + _CUSTOM_BOUNCE(2 * _progress - 1)) * (total - 1);
-    return Math.ceil(remaning - total + _nextPos);
-  }
+  const _inserterEaseIn  = (arr, el, currI, len) => arr[len - currI - 1] = 1 - el;
+  const _inserterEaseOut = _simpleEaseInOut ? (arr, el, currI) => {if(currI > _initPointsNum) arr[currI] = el;} :
+                                              (arr, el, currI) => arr[currI - 1] = el;
+                                       
+  _CUSTOM_BOUNCE(_xs, _ys, _inserterEaseIn,  bouncesNumber, _startBouncesNumberEaseIn,  bouncesNumber);
+  _CUSTOM_BOUNCE(_xs, _ys, _inserterEaseOut, bouncesNumber, _startBouncesNumberEaseOut, bouncesNumber);
+  _xs.pop();
+  _ys.pop();
+  
+  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, "EASE_IN_OUT_BOUNCE");
 }
 
 const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = () => {return 50}, debounceTime = 0) => {
