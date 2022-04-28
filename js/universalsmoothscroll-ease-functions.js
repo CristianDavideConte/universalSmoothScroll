@@ -50,20 +50,31 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0.5, duration = 500, call
   const _callback = typeof callback === "function" ? callback : () => {};
   const c = 1 - tension;
   const n = xs.length - 1;
+  const nHalf = Math.round(n / 2);
   
   //Cubic Hermite-Spline definition:
-  //p(x) = h00(t) * p_k + h10(t) * (x_k+1 - x_k) * m_k + h01(t) * p_k+1 + h11(t) * (x_k+1 - x_k) * m_k+1
+  //p(x) = h00(t) * p_k + h10(t) * (x_k+1 - x_k) * m_k + h01(t) * p_k+1 + h11(t) * (x_k+1 - x_k) * m_k+1 
   function _evalSpline(x) {
-    let t, k;
-
-    //Find t corresponding to the given x 
-    for(k = 0; k < n ; k++) {
+    let binaryMin = 0;
+    let binaryMax = n;
+    let k = nHalf;
+    let t; 
+    
+    //Find t corresponding to the given x (binary search)
+    do {
       if(x >= xs[k] && x <= xs[k + 1]) {
         t = (x - xs[k]) / (xs[k + 1] - xs[k]); //t of the given x
         break;
-      } 
-    }
-    
+      }
+      if(xs[k] > x) {
+        binaryMax = k;
+        k = Math.floor((binaryMin + k) / 2);
+      } else {
+        binaryMin = k;
+        k = Math.floor((binaryMax + k) / 2);
+      }
+    } while(binaryMin !== binaryMax);    
+
     const h_00 = +2 * t * t * t - 3 * t * t + 1;
     const h_10 =      t * t * t - 2 * t * t + t;
     const h_01 = -2 * t * t * t + 3 * t * t;
