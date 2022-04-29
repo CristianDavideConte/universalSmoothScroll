@@ -191,10 +191,10 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
 
   <tr id = "EASE_IN_BOUNCE">
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <code>EASE_IN_BOUNCE</code>
    </td>
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <img src = "./easingsGifs/9_EASE_IN_BOUNCE/X.gif" width = "40px" height = "40px"/> 
     <img src = "./easingsGifs/9_EASE_IN_BOUNCE/Y.gif" width = "40px" height = "40px"/>
    </td>
@@ -205,6 +205,11 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
    </td>
   </tr>
 
@@ -335,10 +340,10 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
 
   <tr id = "EASE_OUT_BOUNCE">
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <code>EASE_OUT_BOUNCE</code>
    </td>
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <img src = "./easingsGifs/17_EASE_OUT_BOUNCE/X.gif" width = "40px" height = "40px"/> 
     <img src = "./easingsGifs/17_EASE_OUT_BOUNCE/Y.gif" width = "40px" height = "40px"/>
    </td>
@@ -349,6 +354,11 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
    </td>
   </tr>
 
@@ -479,10 +489,10 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
     
   <tr id = "EASE_IN_OUT_BOUNCE">
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <code>EASE_IN_OUT_BOUNCE</code>
    </td>
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <img src = "./easingsGifs/25_EASE_IN_OUT_BOUNCE/X.gif" width = "40px" height = "40px"/> 
     <img src = "./easingsGifs/25_EASE_IN_OUT_BOUNCE/Y.gif" width = "40px" height = "40px"/>
    </td>
@@ -493,6 +503,11 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
    </td>
   </tr>
     
@@ -573,6 +588,12 @@ Each one of the above mentioned functions will return a [`StepLengthCalculator`]
 These [`StepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) are passed _some input parameters_. <br/> 
 The `callback` is a function which gets executed at every scroll-animation step and that is always invoked with _those same input parameters_. <br/>
 It's an optional parameter. 
+
+---
+
+## The `bouncesNumber` parameter
+It's the number of bounces the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will do before completing the scroll-animation. <br/>
+A "bounce" occurs when the scroll-animation reaches the highest scrollable value of a container and then goes back.   
 
 ---
 
