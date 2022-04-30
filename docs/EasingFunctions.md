@@ -622,7 +622,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
 ## The `xs` and `ys` parameters
 They're 2 arrays containing finite numbers between 0 _(included)_ and 1 _(included)_. <br/>
 Values at the same index will represent a single point. <br/>
-They're required parameters.
+They're required parameters but they can be empty.
 
 For instance: 
 ```javascript
