@@ -662,7 +662,7 @@ uss.setStepLengthCalculator(
 );
 ```
 
-In the case of the `CUSTOM_CUBIC_HERMITE_SPLINE` easing, successive `xs`'s values represent the generic interpolation intervals _(x<sub>k</sub> , x<sub>k+1</sub>)_ of a canonical cubic hermite spline, whereas the `ys`'s values represent the points through which the spline should pass. <br/>
+In the case of the `CUSTOM_CUBIC_HERMITE_SPLINE` easing, successive `xs`'s values represent the generic interpolation intervals _(x<sub>k</sub> , x<sub>k+1</sub>)_ of a canonical cubic hermite spline and they must be sorted, whereas the `ys`'s values represent the points through which the spline should pass. <br/>
 
 For instance: 
 ```javascript
