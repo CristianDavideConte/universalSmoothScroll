@@ -622,6 +622,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
 ## The `xs` and `ys` parameters
 They're 2 arrays containing finite numbers between 0 _(included)_ and 1 _(included)_. <br/>
 Values at the same index will represent a single point. <br/>
+They're required parameters.
 
 For instance: 
 ```javascript
@@ -692,6 +693,7 @@ uss.setStepLengthCalculator(
 ## The `tension` parameter
 It's a number between 0 _(included)_ and 1 _(included)_ which represent the [`tension`](https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline) of a canonical cubic hermite spline. <br/>
 The lesser the `tension` value is, the softer the spline will be. 
+It's an optional parameter. 
 
 ---
 
