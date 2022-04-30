@@ -638,7 +638,6 @@ const ys = [0, 0.25, 1];
 ```
 
 In the case of the `CUSTOM_BEZIER_CURVE` easing, the `xs` and `ys`'s values represent the control points of a generic n-th degree bezier curve. <br/>
-In the case of the `CUSTOM_CUBIC_HERMITE_SPLINE` easing, successive `xs`'s values represent the generic interpolation intervals (x<sub>k</sub>, x<sub>k+1</sub>) of a canonical cubic hermite spline, whereas the `ys`'s values represent the points through which the spline should pass. <br/>
 
 For example: 
 ```javascript
@@ -663,6 +662,9 @@ uss.setStepLengthCalculator(
 );
 ```
 
+In the case of the `CUSTOM_CUBIC_HERMITE_SPLINE` easing, successive `xs`'s values represent the generic interpolation intervals (x<sub>k</sub>, x<sub>k+1</sub>) of a canonical cubic hermite spline, whereas the `ys`'s values represent the points through which the spline should pass. <br/>
+
+For instance: 
 ```javascript
 /**
  * In this example:
