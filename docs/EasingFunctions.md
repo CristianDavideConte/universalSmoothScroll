@@ -689,7 +689,7 @@ uss.setStepLengthCalculator(
 ---
 
 ## The `tension` parameter
-It's a number which represent the [`tension`](https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline) of a canonical cubic hermite spline. <br/>
+It's a number between 0 _(included)_ and 1 _(included)_ which represent the [`tension`](https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline) of a canonical cubic hermite spline. <br/>
 The lesser the `tension` value is, the softer the spline will be. 
 
 ---
