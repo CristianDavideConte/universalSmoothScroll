@@ -648,12 +648,12 @@ For example:
  * - (0.33, 1.00)
  * - (0.68, 1.00)
  * - (1,1)
- * N.B. 4 control points leads to a cubic bezier curve
+ * N.B. 4 control points leads to a cubic bezier curve.
  */
 const xs = [0, 0.33, 0.68, 1];
 const ys = [0, 1.00, 1.00, 1];
 
-//This is a non-temporary EASE_OUT_CUBIC easing
+//This is a non-temporary EASE_OUT_CUBIC like easing
 //which always make the scroll-animation last 1 second.
 uss.setStepLengthCalculator(
     CUSTOM_BEZIER_CURVE(xs, ys, 1000),
@@ -662,7 +662,7 @@ uss.setStepLengthCalculator(
 );
 ```
 
-In the case of the `CUSTOM_CUBIC_HERMITE_SPLINE` easing, successive `xs`'s values represent the generic interpolation intervals (x<sub>k</sub>, x<sub>k+1</sub>) of a canonical cubic hermite spline, whereas the `ys`'s values represent the points through which the spline should pass. <br/>
+In the case of the `CUSTOM_CUBIC_HERMITE_SPLINE` easing, successive `xs`'s values represent the generic interpolation intervals _(x<sub>k</sub> , x<sub>k+1</sub>)_ of a canonical cubic hermite spline, whereas the `ys`'s values represent the points through which the spline should pass. <br/>
 
 For instance: 
 ```javascript
@@ -679,7 +679,7 @@ For instance:
 const xs = [0, 0.40, 0.60, 1];
 const ys = [0, 0.26, 0.84, 1];
 
-//This is a temporary custom EASE_IN_OUT easing
+//This is a temporary custom EASE_IN_OUT like easing
 //which always make the scroll-animation last 1.2 second.
 uss.setStepLengthCalculator(
     CUSTOM_CUBIC_HERMITE_SPLINE(xs, ys, 0, 1200),
