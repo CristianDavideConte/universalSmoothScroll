@@ -19,7 +19,7 @@
         
         } 
 
-const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0.5, duration = 500, callback, debugString = "CUSTOM_CUBIC_HERMITE_SPLINE") => {
+const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, debugString = "CUSTOM_CUBIC_HERMITE_SPLINE") => {
   if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
   if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
   if(xs.length !== ys.length) {DEFAULT_ERROR_LOGGER(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
@@ -116,7 +116,7 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
 
-  for(let i = 0; i <= n; i++) {
+  for(let i = 0; i < xs.length; i++) {
     if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
     if(!Number.isFinite(ys[i])) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number", ys[i]); return;}
     if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
@@ -165,6 +165,8 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
    
     return _getBt(ys, t);
   }
+
+  DRAW(_newtonRapson);
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
