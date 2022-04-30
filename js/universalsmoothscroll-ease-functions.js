@@ -118,7 +118,7 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
 
   for(let i = 0; i < xs.length; i++) {
     if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
-    if(!Number.isFinite(ys[i])) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number", ys[i]); return;}
+    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
     if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
     if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
   }
