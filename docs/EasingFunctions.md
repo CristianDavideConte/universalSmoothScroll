@@ -719,7 +719,7 @@ It's an optional parameter.
 
 ## The `bouncesNumber` parameter
 It's the number of bounces the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will do before completing the scroll-animation. <br/>
-A "bounce" occurs when the scroll-animation reaches the highest scrollable value of a container and then goes back.   
+A _bounce_ occurs when the scroll-animation reaches the highest scrollable value of a container and then goes back.   
 
 ---
 
