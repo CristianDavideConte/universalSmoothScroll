@@ -874,7 +874,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#stopScrollingAll"><code>callback</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Stops all the current scroll-animation on both the x and y axes of all the containers.
+    Stops all the current scroll-animations on both the x and y axes of all the containers.
    </td>
   </tr>
                         

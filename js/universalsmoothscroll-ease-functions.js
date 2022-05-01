@@ -5,7 +5,6 @@
         var canvasWidth = canvas.width;
         var canvasHeight = canvas.height;
         var ctx = canvas.getContext("2d");
-        //var canvasData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
 
         const DRAW = (f) => {
           ctx.clearRect(0, 0, canvasWidth, canvasHeight);
@@ -16,7 +15,6 @@
           }
           ctx.lineTo(canvasWidth, 0);
           ctx.fill();
-        
         } 
 
 const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, debugString = "CUSTOM_CUBIC_HERMITE_SPLINE") => {
@@ -362,7 +360,7 @@ const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6) => {
   return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, "EASE_IN_OUT_BOUNCE");
 }
 
-const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = () => {return 50}, debounceTime = 0) => {
+const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = () => 50, debounceTime = 0) => {
   if(typeof forwardEasing  !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the forwardEasing to be a function", forwardEasing);  return;}
   if(typeof backwardEasing !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the backwardEasing to be a function", backwardEasing); return;}
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
@@ -417,7 +415,7 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
   }
 }
 
-const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = () => {return 50}, debounceTime = 0) => {
+const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = () => 50, debounceTime = 0) => {
   if(typeof forwardEasing  !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the forwardEasing to be a function", forwardEasing);  return;}
   if(typeof backwardEasing !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the backwardEasing to be a function", backwardEasing); return;}
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
