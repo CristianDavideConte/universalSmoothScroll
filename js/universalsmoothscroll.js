@@ -742,11 +742,10 @@ var uss = {
     _containerData[0] = window.requestAnimationFrame(_stepX);
     uss._containersData.set(container, _containerData);
 
-    let _calculatedScrollStepLength;
-
     function _stepX(timestamp) {
       const finalXPosition = _containerData[2];
       const _direction = _containerData[4];
+      let _calculatedScrollStepLength;
 
       const _currentXPosition = _scrollXCalculator();
       const _remaningScrollAmount = (finalXPosition - _currentXPosition) * _direction;
@@ -850,12 +849,11 @@ var uss = {
     //No scroll-animations are being performed so a new one is created
     _containerData[1] = window.requestAnimationFrame(_stepY);
     uss._containersData.set(container, _containerData);
-    
-    let _calculatedScrollStepLength;
-    
+     
     function _stepY(timestamp) {
       const finalYPosition = _containerData[3];
       const _direction = _containerData[5];
+      let _calculatedScrollStepLength;
 
       const _currentYPosition = _scrollYCalculator();
       const _remaningScrollAmount = (finalYPosition - _currentYPosition) * _direction;
@@ -979,12 +977,12 @@ var uss = {
     }
     //This object is used to make sure that the passed callback function is called only
     //once all the scroll-animations for the passed container have been performed
-    let _callback = {
+    const _callback = {
       __requiredSteps: 1, //Number of the _callback.__function's calls required to trigger the passed scrollTo's callback function
-      __currentSteps: 0,  //Number of the current _callback.__function's calls
+      __currentStep:   0, //Number of the current _callback.__function's calls
       __function: typeof callback === "function" ? () => {
-        if(_callback.__currentSteps < _callback.__requiredSteps) {
-          _callback.__currentSteps++;
+        if(_callback.__currentStep < _callback.__requiredSteps) {
+          _callback.__currentStep++;
           return;
         }
         callback();
@@ -1020,7 +1018,7 @@ var uss = {
       _finalYPosition = uss.getScrollYCalculator(container)();
     }
 
-    uss.scrollTo(_finalXPosition + deltaX, _finalYPosition  + deltaY, container, callback);
+    uss.scrollTo(_finalXPosition + deltaX, _finalYPosition + deltaY, container, callback);
   },
   scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false) => {
     if(element === window) {
@@ -1268,14 +1266,13 @@ var uss = {
   },
   hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false) => {
     const _init = typeof init === "function" ? init : () => {};
-    const _pageLinks = document.links;
     const _pageURL = document.URL.split("#")[0];
     const _updateHistory = updateHistory && !!(window.history && window.history.pushState && window.history.scrollRestoration); //Check if histoy manipulation is supported
     
     if(_updateHistory) {
       window.history.scrollRestoration = "manual"; 
       window.addEventListener("popstate", _smoothHistoryNavigation, {passive:true});
-      window.addEventListener("unload", (event) => event.preventDefault(), {passive:false, once: true});
+      window.addEventListener("unload", (event) => event.preventDefault(), {passive:false, once:true});
 
       //Prevents the browser to jump-to-position,
       //when a user navigates through history
@@ -1292,10 +1289,10 @@ var uss = {
       }
     }
 
-    for(const _pageLink of _pageLinks) {
+    for(const _pageLink of document.links) {
       const _pageLinkParts = _pageLink.href.split("#"); //PageLink.href = OptionalURL#Fragment
       if(_pageLinkParts[0] !== _pageURL) continue;
-      if(_pageLinkParts[1] === "") { //href="#" scrolls the _pageScroller to its top
+      if(_pageLinkParts[1] === "") { //href="#" scrolls the _pageScroller to its top left
         _pageLink.addEventListener("click", event => {
           event.preventDefault();
           event.stopPropagation();
@@ -1331,7 +1328,7 @@ window.addEventListener("load", () => {
   document.body.appendChild(__scrollBox);
   uss._scrollbarsMaxDimension = __scrollBox.offsetHeight  - __scrollBox.clientHeight;
   document.body.removeChild(__scrollBox);
-}, {passive: true, once: true});
+}, {passive:true, once:true});
 
 try { //Chrome, Firefox & Safari >= 14
   window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
