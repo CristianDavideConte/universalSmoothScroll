@@ -975,22 +975,17 @@ var uss = {
       DEFAULT_ERROR_LOGGER("scrollTo", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    //This object is used to make sure that the passed callback function is called only
+    
+    //This function is used to make sure that the passed callback is only called
     //once all the scroll-animations for the passed container have been performed
-    const _callback = {
-      __requiredSteps: 1, //Number of the _callback.__function's calls required to trigger the passed scrollTo's callback function
-      __currentStep:   0, //Number of the current _callback.__function's calls
-      __function: typeof callback === "function" ? () => {
-        if(_callback.__currentStep < _callback.__requiredSteps) {
-          _callback.__currentStep++;
-          return;
-        }
-        callback();
-      } : null //No action if no valid scrollTo's callback function is passed
-    };
+    let _currentStep = 0 //Number of the current _callback's calls
+    const _callback = typeof callback === "function" ? () => {
+      if(_currentStep < 1) _currentStep++;
+      else callback();
+    } : null; //No action if no valid scrollTo's callback function is passed
 
-    uss.scrollXTo(finalXPosition, container, _callback.__function);
-    uss.scrollYTo(finalYPosition, container, _callback.__function);
+    uss.scrollXTo(finalXPosition, container, _callback);
+    uss.scrollYTo(finalYPosition, container, _callback);
   },
   scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true) => {
     if(!Number.isFinite(deltaX)) {
@@ -1091,7 +1086,7 @@ var uss = {
       
       uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _currentContainer, () => {
         if(_currentElement === element) {
-            if(typeof callback === "function") window.requestAnimationFrame(callback);
+            if(typeof callback === "function") callback();
             return;
         } 
         _containerIndex--;
