@@ -227,8 +227,7 @@
 
     //Used to bring the easeFunctionSelectorList to initial position
     const elasticDebounceTime = 70; //Debounce time in ms
-    uss.setStepLengthCalculator((r,o,ts,t) => t, easeFunctionSelectorList, true); //A temporary calculator that returns the total scrollAmount
-    uss.scrollYBy(2.5 * easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5), easeFunctionSelectorList);
+    easeFunctionSelectorList.scrollTop = 2.5 * easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5);
     uss.setYStepLengthCalculator(
       EASE_ELASTIC_Y(
         defaultEase,

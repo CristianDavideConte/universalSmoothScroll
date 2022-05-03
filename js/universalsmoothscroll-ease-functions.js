@@ -26,8 +26,9 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
   let xsCurrMax = null;
+  const _xsLen = xs.length;
 
-  for(let i = 0; i < xs.length; i++) {
+  for(let i = 0; i < _xsLen; i++) {
     if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
     if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
     
@@ -113,8 +114,9 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
 
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
+  const _xsLen = xs.length;
 
-  for(let i = 0; i < xs.length; i++) {
+  for(let i = 0; i < _xsLen; i++) {
     if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
     if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
     if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
@@ -263,7 +265,8 @@ const _CUSTOM_BOUNCE = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumbe
   else {
     //Force an ease-in pattern for the first initPointsNum control points
     const _initBounceDeltaX = (_bounceDeltaX - _bounceCorrectionDelta) / initPointsNum;
-    for (i = 0; i < _bounceDeltaX - 2 * _bounceCorrectionDelta; i += _initBounceDeltaX) {
+    const _closeToBounceDeltaX = _bounceDeltaX - 2 * _bounceCorrectionDelta;
+    for (i = 0; i < _closeToBounceDeltaX; i += _initBounceDeltaX) {
       arrInserter(xs, _bounceXCalc(i),                 arrIndex, arrLen);
       arrInserter(ys,  Math.pow(i * endBouncesNumber, 2), arrIndex, arrLen);
       arrIndex++;
@@ -366,51 +369,44 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
   if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the debounceTime to be a number", debounceTime); return;}
 
-  let _elasticInit = null;
-  let _elasticCallback = null;
-  let _containerData;
+  let _currentCallback = null;
+  let _originalCallback = null;
   let _scrollCalculator;
   let _debounceTimeout;
 
-  function _init(originalTimestamp, timestamp, container) {
+  function _init(originalTimestamp, timestamp, container, containerData) {
     _scrollCalculator = forwardEasing;
-
+    
     //Avoid doing any initialization if the container is not actually scrolling
-    if(typeof _containerData[0] !== "number") return;
-
-    const _originalCallback = _containerData[10];
+    if(typeof containerData[0] !== "number") return;
     clearTimeout(_debounceTimeout);
+    
+    _originalCallback = typeof containerData[10] === "function" ? containerData[10] : () => {};
+    _currentCallback = () => {
+      _debounceTimeout = setTimeout(() => {
+        const _currentPos    = uss.getScrollXCalculator(container)();
+        const _newDirection  = containerData[4];
+        const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _newDirection, container);
 
-    _elasticInit = () => {
-      const _currentPos   = uss.getScrollXCalculator(container)();
-      const _newDirection = _containerData[4];
-      let _elasticAmount  = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _newDirection, container);
-      if(!Number.isFinite(_elasticAmount)) {
-        DEFAULT_WARNING_LOGGER(_elasticAmount, "is not a valid elastic amount");
-        _elasticCallback();
-        return;
-      }
-      if(_elasticAmount === 0) {_elasticCallback(); return;}
-      if(_elasticAmount > 0) _scrollCalculator = backwardEasing; //The backward easing is used only if we change scroll-direction
-
-      _debounceTimeout = setTimeout(() => uss.scrollXTo(_currentPos - _elasticAmount * _newDirection, container, _elasticCallback),
-                                    debounceTime
-                                   );
+        if(!Number.isFinite(_elasticAmount)) {
+          DEFAULT_WARNING_LOGGER(_elasticAmount, "is not a valid elastic amount");
+          _originalCallback();
+          return;
+        } 
+        if(_elasticAmount === 0) _originalCallback();
+        else {
+            if(_elasticAmount > 0) _scrollCalculator = backwardEasing; //The backward easing is used only if we change scroll-direction
+            uss.scrollXTo(_currentPos - _elasticAmount * _newDirection, container, _originalCallback);
+        }
+      }, debounceTime);
     }
-
-    _elasticCallback = () => {
-      _containerData[10] = null;
-      if(typeof _originalCallback === "function") _originalCallback();
-    }
-
-    _containerData[10] = _elasticInit;
+    
+    containerData[10] = _currentCallback;
   }
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    _containerData = uss._containersData.get(container) || [];
-    if(!_elasticInit || !_elasticCallback || (_containerData[10] !== _elasticInit && _containerData[10] !== _elasticCallback)) {
-      _init(originalTimestamp, timestamp, container);
-    }
+    const _containerData = uss._containersData.get(container) || [];
+    if(_containerData[10] !== _originalCallback && _containerData[10] !== _currentCallback) _init(originalTimestamp, timestamp, container, _containerData);
     return _scrollCalculator(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
   }
 }
@@ -421,51 +417,44 @@ const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = 
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
   if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the debounceTime to be a number", debounceTime); return;}
 
-  let _elasticInit = null;
-  let _elasticCallback = null;
-  let _containerData;
+  let _currentCallback = null;
+  let _originalCallback = null;
   let _scrollCalculator;
   let _debounceTimeout;
 
-  function _init(originalTimestamp, timestamp, container) {
+  function _init(originalTimestamp, timestamp, container, containerData) {
     _scrollCalculator = forwardEasing;
-
+    
     //Avoid doing any initialization if the container is not actually scrolling
-    if(typeof _containerData[1] !== "number") return;
-
-    const _originalCallback = _containerData[11];
+    if(typeof containerData[1] !== "number") return;
     clearTimeout(_debounceTimeout);
+    
+    _originalCallback = typeof containerData[11] === "function" ? containerData[11] : () => {};
+    _currentCallback = () => {
+      _debounceTimeout = setTimeout(() => {
+        const _currentPos    = uss.getScrollYCalculator(container)();
+        const _newDirection  = containerData[5];
+        const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _newDirection, container);
 
-    _elasticInit = () => {
-      const _currentPos   = uss.getScrollYCalculator(container)();
-      const _newDirection = _containerData[5];
-      let _elasticAmount  = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _newDirection, container);
-      if(!Number.isFinite(_elasticAmount)) {
-        DEFAULT_WARNING_LOGGER(_elasticAmount, "is not a valid elastic amount");
-        _elasticCallback();
-        return;
-      }
-      if(_elasticAmount === 0) {_elasticCallback(); return;}
-      if(_elasticAmount > 0) _scrollCalculator = backwardEasing; //The backward easing is used only if we change scroll-direction
-
-      _debounceTimeout = setTimeout(() => uss.scrollYTo(_currentPos - _elasticAmount * _newDirection, container, _elasticCallback),
-                                    debounceTime
-                                   );
+        if(!Number.isFinite(_elasticAmount)) {
+          DEFAULT_WARNING_LOGGER(_elasticAmount, "is not a valid elastic amount");
+          _originalCallback();
+          return;
+        } 
+        if(_elasticAmount === 0) _originalCallback();
+        else {
+            if(_elasticAmount > 0) _scrollCalculator = backwardEasing; //The backward easing is used only if we change scroll-direction
+            uss.scrollYTo(_currentPos - _elasticAmount * _newDirection, container, _originalCallback);
+        }
+      }, debounceTime);
     }
-
-    _elasticCallback = () => {
-      _containerData[11] = null;
-      if(typeof _originalCallback === "function") _originalCallback();
-    }
-
-    _containerData[11] = _elasticInit;
+    
+    containerData[11] = _currentCallback;
   }
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    _containerData = uss._containersData.get(container) || [];
-    if(!_elasticInit || !_elasticCallback || (_containerData[11] !== _elasticInit && _containerData[11] !== _elasticCallback)) {
-      _init(originalTimestamp, timestamp, container);
-    }
+    const _containerData = uss._containersData.get(container) || [];
+    if(_containerData[11] !== _originalCallback && _containerData[11] !== _currentCallback) _init(originalTimestamp, timestamp, container, _containerData);
     return _scrollCalculator(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
   }
 }
