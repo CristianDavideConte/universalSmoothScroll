@@ -159,7 +159,7 @@ const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
 
   if(/legacy/i.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
-    console.error("USS ERROR\n ", functionName, "was expecting", expectedValue + ", but it received", receivedValue + ".");
+    console.error("USS ERROR\n", functionName, "was expecting", expectedValue + ", but received", receivedValue + ".");
     return;
   }
 
@@ -170,7 +170,7 @@ const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
                 "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#2dd36f; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
                 "font-family:system-ui; font-weight:600; font-size:17px; background:#2dd36f; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
                );
-    console.log("%cBut it received%c" + receivedValue,
+    console.log("%cBut received%c" + receivedValue,
                 "font-family:system-ui; font-weight:600; font-size:17px; background:#eb445a; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
                 "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#eb445a; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
                );
@@ -193,13 +193,13 @@ const DEFAULT_WARNING_LOGGER = (subject, message) => {
 
   if(/legacy/i.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
-    console.warn("USS WARNING\n ", subject, message + ".");
+    console.warn("USS WARNING\n", subject, message + ".");
     return;
   }
 
   console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 
-    console.log("%cUSS WARNING:", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
+    console.log("%cUSS WARNING", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
     console.log("%c" + subject + "%c" + message,
                 "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#fcca03; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
                 "font-family:system-ui; font-weight:600; font-size:17px; background:#fcca03; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
@@ -228,16 +228,14 @@ var uss = {
       DEFAULT_ERROR_LOGGER("isXscrolling", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
-    return typeof _containerData[0] === "number";
+    return !!uss._containersData.get(container)[0];
   },
   isYscrolling: (container = uss._pageScroller) => {
     if(container !== window && !(container instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("isYscrolling", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
-    return typeof _containerData[1] === "number";
+    return !!uss._containersData.get(container)[1];
   },
   isScrolling: (container = uss._pageScroller) => {
     if(container !== window && !(container instanceof HTMLElement)) {
@@ -245,47 +243,41 @@ var uss = {
       return;
     }
     const _containerData = uss._containersData.get(container) || [];
-    return typeof _containerData[0] === "number" || typeof _containerData[1] === "number";
+    return !!_containerData[0] || !!_containerData[1];
   },
   getFinalXPosition: (container = uss._pageScroller) => {
     if(container !== window && !(container instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getFinalXPosition", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
-
     //If there's no scroll-animation on the x-axis, the current position is returned instead
-    return typeof _containerData[0] === "number" ? _containerData[2] : uss.getScrollXCalculator(container)();
+    const _containerData = uss._containersData.get(container) || [];
+    return _containerData[2] === 0 ? 0 : _containerData[2] || uss.getScrollXCalculator(container)();
   },
   getFinalYPosition: (container = uss._pageScroller) => {
     if(container !== window && !(container instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getFinalYPosition", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
-
     //If there's no scroll-animation on the y-axis, the current position is returned instead
-    return typeof _containerData[1] === "number" ? _containerData[3] : uss.getScrollYCalculator(container)();
+    const _containerData = uss._containersData.get(container) || [];
+    return _containerData[3] === 0 ? 0 : _containerData[3] || uss.getScrollYCalculator(container)();
   },
   getScrollXDirection: (container = uss._pageScroller) => {
     if(container !== window && !(container instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getScrollXDirection", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
-
     //If there's no scroll-animation on the x-axis, 0 is returned instead
-    return typeof _containerData[0] === "number" ? _containerData[4] : 0;
+    return uss._containersData.get(container)[4] || 0;
   },
   getScrollYDirection: (container = uss._pageScroller) => {
     if(container !== window && !(container instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getScrollYDirection", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
-
     //If there's no scroll-animation on the y-axis, 0 is returned instead
-    return typeof _containerData[1] === "number" ? _containerData[5] : 0;
+    return uss._containersData.get(container)[5] || 0;
   },
   getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false) => {
     if(container !== window && !(container instanceof HTMLElement)) {
@@ -449,7 +441,7 @@ var uss = {
       let _oldMode = null;
       if(/disabled/i.test(uss._debugMode)) {
         _oldMode = uss._debugMode;
-        uss._debugMode = "legacy";
+        uss._debugMode = "legacy"; //Temporarily set the debug mode to "legacy" to show the error 
       }
       DEFAULT_ERROR_LOGGER("setDebugMode", "the newDebugMode to be \"disabled\", \"legacy\" or any other string", newDebugMode);
       if(!!_oldMode) uss._debugMode = _oldMode;
@@ -748,9 +740,13 @@ var uss = {
       const _currentXPosition = _scrollXCalculator();
       const _remaningScrollAmount = (finalXPosition - _currentXPosition) * _direction;
       if(_remaningScrollAmount <= 0) {
-        _containerData[0]  = null;
-        _containerData[14] = null;
         if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
+        const _newData = [];
+        if(!!_containerData[11]) _newData[11] = _containerData[11];
+        if(!!_containerData[12]) _newData[12] = _containerData[12];
+        if(!!_containerData[13]) _newData[13] = _containerData[13];
+        if(!!_containerData[15]) _newData[15] = _containerData[15];
+        uss._containersData.set(container, _newData);
         return;
       }
 
@@ -772,10 +768,14 @@ var uss = {
       }
 
       if(_remaningScrollAmount <= _calculatedScrollStepLength) {
-        _containerData[0]  = null;
-        _containerData[14] = null;
-        _scroll(finalXPosition);
         if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
+        const _newData = [];
+        if(!!_containerData[11]) _newData[11] = _containerData[11];
+        if(!!_containerData[12]) _newData[12] = _containerData[12];
+        if(!!_containerData[13]) _newData[13] = _containerData[13];
+        if(!!_containerData[15]) _newData[15] = _containerData[15];
+        uss._containersData.set(container, _newData);
+        _scroll(finalXPosition);
         return;
       }
 
@@ -783,9 +783,13 @@ var uss = {
 
       //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container
       if(_calculatedScrollStepLength !== 0 && _currentXPosition === _scrollXCalculator()) {
-        _containerData[0]  = null;
-        _containerData[14] = null;
         if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
+        const _newData = [];
+        if(!!_containerData[11]) _newData[11] = _containerData[11];
+        if(!!_containerData[12]) _newData[12] = _containerData[12];
+        if(!!_containerData[13]) _newData[13] = _containerData[13];
+        if(!!_containerData[15]) _newData[15] = _containerData[15];
+        uss._containersData.set(container, _newData);
         return;
       }
 
@@ -856,9 +860,13 @@ var uss = {
       const _currentYPosition = _scrollYCalculator();
       const _remaningScrollAmount = (finalYPosition - _currentYPosition) * _direction;
       if(_remaningScrollAmount <= 0) {
-        _containerData[1]  = null;
-        _containerData[15] = null;
         if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
+        const _newData = [];
+        if(!!_containerData[10]) _newData[10] = _containerData[10];
+        if(!!_containerData[12]) _newData[12] = _containerData[12];
+        if(!!_containerData[13]) _newData[13] = _containerData[13];
+        if(!!_containerData[14]) _newData[14] = _containerData[14];
+        uss._containersData.set(container, _newData);
         return;
       }
 
@@ -880,10 +888,14 @@ var uss = {
       }
 
       if(_remaningScrollAmount <= _calculatedScrollStepLength) {
-        _containerData[1]  = null;
-        _containerData[15] = null;
-        _scroll(finalYPosition);
         if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
+        const _newData = [];
+        if(!!_containerData[10]) _newData[10] = _containerData[10];
+        if(!!_containerData[12]) _newData[12] = _containerData[12];
+        if(!!_containerData[13]) _newData[13] = _containerData[13];
+        if(!!_containerData[14]) _newData[14] = _containerData[14];
+        uss._containersData.set(container, _newData);
+        _scroll(finalYPosition);
         return;
       }
 
@@ -891,9 +903,13 @@ var uss = {
 
       //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container
       if(_calculatedScrollStepLength !== 0 && _currentYPosition === _scrollYCalculator()) {
-        _containerData[1]  = null;
-        _containerData[15] = null;
         if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
+        const _newData = [];
+        if(!!_containerData[10]) _newData[10] = _containerData[10];
+        if(!!_containerData[12]) _newData[12] = _containerData[12];
+        if(!!_containerData[13]) _newData[13] = _containerData[13];
+        if(!!_containerData[14]) _newData[14] = _containerData[14];
+        uss._containersData.set(container, _newData);
         return;
       }
 
@@ -1209,9 +1225,13 @@ var uss = {
       return;
     }
     const _containerData = uss._containersData.get(container) || [];
-    window.cancelAnimationFrame(_containerData[0]);
-    _containerData[0] = null;
-    _containerData[14] = null;
+    window.cancelAnimationFrame(_containerData[0]); 
+    const _newData = [];
+    if(!!_containerData[11]) _newData[11] = _containerData[11];
+    if(!!_containerData[12]) _newData[12] = _containerData[12];
+    if(!!_containerData[13]) _newData[13] = _containerData[13];
+    if(!!_containerData[15]) _newData[15] = _containerData[15];
+    uss._containersData.set(container, _newData);
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
@@ -1222,8 +1242,12 @@ var uss = {
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[1]);
-    _containerData[1] = null;
-    _containerData[15] = null;
+    const _newData = [];
+    if(!!_containerData[10]) _newData[10] = _containerData[10];
+    if(!!_containerData[12]) _newData[12] = _containerData[12];
+    if(!!_containerData[13]) _newData[13] = _containerData[13];
+    if(!!_containerData[14]) _newData[14] = _containerData[14];
+    uss._containersData.set(container, _newData);
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
@@ -1235,10 +1259,11 @@ var uss = {
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[0]);
     window.cancelAnimationFrame(_containerData[1]);
-    _containerData[0] = null;
-    _containerData[1] = null;
-    _containerData[14] = null;
-    _containerData[15] = null;
+    
+    const _newData = [];
+    if(!!_containerData[12]) _newData[12] = _containerData[12];
+    if(!!_containerData[13]) _newData[13] = _containerData[13];
+    uss._containersData.set(container, _newData);
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
@@ -1249,10 +1274,10 @@ var uss = {
     for(let _containerData of _containersData) {
       window.cancelAnimationFrame(_containerData[0]);
       window.cancelAnimationFrame(_containerData[1]);
-      _containerData[0] = null;
-      _containerData[1] = null;
-      _containerData[14] = null;
-      _containerData[15] = null;
+      const _newData = [];
+      if(!!_containerData[12]) _newData[12] = _containerData[12];
+      if(!!_containerData[13]) _newData[13] = _containerData[13];
+      _containerData = _newData;
     }
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);

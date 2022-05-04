@@ -1301,10 +1301,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>newDebugMode</code>
   </td>
   <td rowspan = "1" align = "center">
-    <code>Number</code>
+    <code>String</code>
   </td>
   <td rowspan = "1" align = "left">
-    A number > 0.
+    `legacy`, `disabled` or any other string.
   </td>
   </tr>
       
