@@ -165,20 +165,19 @@ const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
 
   console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 
-    console.log("%cUSS ERROR",
-                "font-family: system-ui; font-weight: 800; font-size: 40px;  background: #eb445a; color:black; border-radius: 5px 5px 5px 5px; padding:0.4vh 0.5vw; margin: 1vh 0"
+    console.log("%cUSS ERROR", "font-family:system-ui; font-weight:800; font-size:40px; background:#eb445a; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
+    console.log("%c" + functionName + "%cwas expecting " + expectedValue,
+                "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#2dd36f; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+                "font-family:system-ui; font-weight:600; font-size:17px; background:#2dd36f; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
                );
-    console.log("  %c" + functionName + "%cwas expecting " + expectedValue,
-                "font-style: italic; font-family: system-ui; font-weight: 700; font-size: 17px; background: #2dd36f; color: black; border-radius: 5px 0px 0px 5px; padding:0.4vh 0.5vw",
-                "font-family: system-ui; font-weight: 600; font-size: 17px; background: #2dd36f; color:black; border-radius: 0px 5px 5px 0px; padding:0.4vh 0.5vw"
+    console.log("%cBut it received%c" + receivedValue,
+                "font-family:system-ui; font-weight:600; font-size:17px; background:#eb445a; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+                "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#eb445a; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
                );
-    console.log("  %cBut it received%c"+ receivedValue,
-                "font-family: system-ui; font-weight: 600; font-size: 17px; background: #eb445a; color:black; border-radius: 5px 0px 0px 5px; padding:0.4vh 0.5vw",
-                "font-style: italic; font-family: system-ui; font-weight: 700; font-size: 17px; background: #eb445a; color: black; border-radius: 0px 5px 5px 0px; padding:0.4vh 0.5vw"
-               );
-    console.trace("%cStack Trace",
-                  "font-family: system-ui; font-weight: 500; font-size: 17px; background: #3171e0; color: #f5f6f9; border-radius: 5px; padding:0.3vh 0.5vw; margin-left: 2px; margin-top: 1vh"
-                 );
+
+    console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
+      console.trace("");
+    console.groupEnd("Stack Trace");
 
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 }
@@ -200,16 +199,15 @@ const DEFAULT_WARNING_LOGGER = (subject, message) => {
 
   console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 
-    console.log("%cUSS WARNING:",
-                "font-family: system-ui; font-weight: 800; font-size: 40px;  background: #fcca03; color:black; border-radius: 5px 5px 5px 5px; padding:0.4vh 0.5vw; margin: 1vh 0"
+    console.log("%cUSS WARNING:", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
+    console.log("%c" + subject + "%c" + message,
+                "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#fcca03; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+                "font-family:system-ui; font-weight:600; font-size:17px; background:#fcca03; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
                );
-    console.log("  %c" + subject + "%c" + message,
-                "font-style: italic; font-family: system-ui; font-weight: 700; font-size: 17px; background: #fcca03; color: black; border-radius: 5px 0px 0px 5px; padding:0.4vh 0.5vw",
-                "font-family: system-ui; font-weight: 600; font-size: 17px; background: #fcca03; color:black; border-radius: 0px 5px 5px 0px; padding:0.4vh 0.5vw"
-               );
-    console.trace("%cStack Trace",
-                  "font-family: system-ui; font-weight: 500; font-size: 17px; background: #3171e0; color: #f5f6f9; border-radius: 5px; padding:0.3vh 0.5vw; margin-left: 2px; margin-top: 1vh"
-                 );
+
+    console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
+      console.trace("");
+    console.groupEnd("Stack Trace");
 
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 }
