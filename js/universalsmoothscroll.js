@@ -1234,16 +1234,13 @@ var uss = {
     if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
   stopScrollingAll: (callback) => {
-    const _containersData = uss._containersData.values() || [];
-
-    //Iterate directly on the container's data-arrays
-    for(let _containerData of _containersData) {
+    for(const [_container, _containerData] of uss._containersData.entries()) {
       window.cancelAnimationFrame(_containerData[0]);
       window.cancelAnimationFrame(_containerData[1]);
       const _newData = [];
       if(!!_containerData[12]) _newData[12] = _containerData[12];
       if(!!_containerData[13]) _newData[13] = _containerData[13];
-      _containerData = _newData;
+      uss._containersData.set(_container, _newData)
     }
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);

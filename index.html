@@ -463,7 +463,7 @@
       if(lastAnchorPressed && uss.isScrolling()) uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
       
       lastAnchorPressed = null;
-      uss.setStepLengthCalculator(defaultEase, pageScroller, true);
+      uss.setYStepLengthCalculator(defaultEase, pageScroller, true);
       uss.scrollYBy(event.deltaY, pageScroller, null, false);
       return false;
     }, {passive:false});
