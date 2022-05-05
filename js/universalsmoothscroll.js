@@ -741,13 +741,7 @@ var uss = {
       const _currentXPosition = _scrollXCalculator();
       const _remaningScrollAmount = (finalXPosition - _currentXPosition) * _direction;
       if(_remaningScrollAmount <= 0) {
-        if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
-        const _newData = [];
-        if(!!_containerData[11]) _newData[11] = _containerData[11];
-        if(!!_containerData[12]) _newData[12] = _containerData[12];
-        if(!!_containerData[13]) _newData[13] = _containerData[13];
-        if(!!_containerData[15]) _newData[15] = _containerData[15];
-        uss._containersData.set(container, _newData);
+        uss.stopScrollingX(container, _containerData[10]);
         return;
       }
 
@@ -769,14 +763,8 @@ var uss = {
       }
 
       if(_remaningScrollAmount <= _calculatedScrollStepLength) {
-        if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
-        const _newData = [];
-        if(!!_containerData[11]) _newData[11] = _containerData[11];
-        if(!!_containerData[12]) _newData[12] = _containerData[12];
-        if(!!_containerData[13]) _newData[13] = _containerData[13];
-        if(!!_containerData[15]) _newData[15] = _containerData[15];
-        uss._containersData.set(container, _newData);
         _scroll(finalXPosition);
+        uss.stopScrollingX(container, _containerData[10]);
         return;
       }
 
@@ -784,13 +772,7 @@ var uss = {
 
       //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container
       if(_calculatedScrollStepLength !== 0 && _currentXPosition === _scrollXCalculator()) {
-        if(typeof _containerData[10] === "function") window.requestAnimationFrame(_containerData[10]);
-        const _newData = [];
-        if(!!_containerData[11]) _newData[11] = _containerData[11];
-        if(!!_containerData[12]) _newData[12] = _containerData[12];
-        if(!!_containerData[13]) _newData[13] = _containerData[13];
-        if(!!_containerData[15]) _newData[15] = _containerData[15];
-        uss._containersData.set(container, _newData);
+        uss.stopScrollingX(container, _containerData[10]);
         return;
       }
 
@@ -862,13 +844,7 @@ var uss = {
       const _currentYPosition = _scrollYCalculator();
       const _remaningScrollAmount = (finalYPosition - _currentYPosition) * _direction;
       if(_remaningScrollAmount <= 0) {
-        if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
-        const _newData = [];
-        if(!!_containerData[10]) _newData[10] = _containerData[10];
-        if(!!_containerData[12]) _newData[12] = _containerData[12];
-        if(!!_containerData[13]) _newData[13] = _containerData[13];
-        if(!!_containerData[14]) _newData[14] = _containerData[14];
-        uss._containersData.set(container, _newData);
+        uss.stopScrollingY(container, _containerData[11]);
         return;
       }
 
@@ -890,14 +866,8 @@ var uss = {
       }
 
       if(_remaningScrollAmount <= _calculatedScrollStepLength) {
-        if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
-        const _newData = [];
-        if(!!_containerData[10]) _newData[10] = _containerData[10];
-        if(!!_containerData[12]) _newData[12] = _containerData[12];
-        if(!!_containerData[13]) _newData[13] = _containerData[13];
-        if(!!_containerData[14]) _newData[14] = _containerData[14];
-        uss._containersData.set(container, _newData);
         _scroll(finalYPosition);
+        uss.stopScrollingY(container, _containerData[11]);
         return;
       }
 
@@ -905,13 +875,7 @@ var uss = {
 
       //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container
       if(_calculatedScrollStepLength !== 0 && _currentYPosition === _scrollYCalculator()) {
-        if(typeof _containerData[11] === "function") window.requestAnimationFrame(_containerData[11]);
-        const _newData = [];
-        if(!!_containerData[10]) _newData[10] = _containerData[10];
-        if(!!_containerData[12]) _newData[12] = _containerData[12];
-        if(!!_containerData[13]) _newData[13] = _containerData[13];
-        if(!!_containerData[14]) _newData[14] = _containerData[14];
-        uss._containersData.set(container, _newData);
+        uss.stopScrollingY(container, _containerData[11]);
         return;
       }
 
