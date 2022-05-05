@@ -330,7 +330,7 @@ var uss = {
     if(isTemporary) _containerData[14] = newCalculator;
     else {
       _containerData[12] = newCalculator;
-      _containerData[14] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
+      if(!!_containerData[14]) _containerData[14] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
     }
     uss._containersData.set(container, _containerData);
   },
@@ -360,7 +360,7 @@ var uss = {
     if(isTemporary) _containerData[15] = newCalculator;
     else {
       _containerData[13] = newCalculator;
-      _containerData[15] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
+      if(!!_containerData[15]) _containerData[15] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
     }
     uss._containersData.set(container, _containerData);
   },
@@ -395,8 +395,8 @@ var uss = {
       _containerData[13] = newCalculator;
 
       //Setting a non-temporary StepLengthCalculators will unset the temporary ones
-      _containerData[14] = null;
-      _containerData[15] = null;
+      if(!!_containerData[14]) _containerData[14] = null;
+      if(!!_containerData[15]) _containerData[15] = null;
     }
     uss._containersData.set(container, _containerData);
   },
