@@ -224,76 +224,67 @@ var uss = {
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   _debugMode: "",
   isXscrolling: (container = uss._pageScroller) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      DEFAULT_ERROR_LOGGER("isXscrolling", "the container to be an HTMLElement or the Window", container);
-      return;
+    if(container === window || container instanceof HTMLElement) {
+      return !!uss._containersData.get(container)[0];
     }
-    return !!uss._containersData.get(container)[0];
+    DEFAULT_ERROR_LOGGER("isXscrolling", "the container to be an HTMLElement or the Window", container);
   },
   isYscrolling: (container = uss._pageScroller) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      DEFAULT_ERROR_LOGGER("isYscrolling", "the container to be an HTMLElement or the Window", container);
-      return;
+    if(container === window || container instanceof HTMLElement) {
+      return !!uss._containersData.get(container)[1];
     }
-    return !!uss._containersData.get(container)[1];
+    DEFAULT_ERROR_LOGGER("isYscrolling", "the container to be an HTMLElement or the Window", container);
   },
   isScrolling: (container = uss._pageScroller) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      DEFAULT_ERROR_LOGGER("isScrolling", "the container to be an HTMLElement or the Window", container);
-      return;
+    if(container === window || container instanceof HTMLElement) { 
+      const _containerData = uss._containersData.get(container) || [];
+      return !!_containerData[0] || !!_containerData[1];
     }
-    const _containerData = uss._containersData.get(container) || [];
-    return !!_containerData[0] || !!_containerData[1];
+    DEFAULT_ERROR_LOGGER("isScrolling", "the container to be an HTMLElement or the Window", container);
   },
   getFinalXPosition: (container = uss._pageScroller) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      DEFAULT_ERROR_LOGGER("getFinalXPosition", "the container to be an HTMLElement or the Window", container);
-      return;
+    if(container === window || container instanceof HTMLElement) { 
+      //If there's no scroll-animation on the x-axis, the current position is returned instead
+      const _containerData = uss._containersData.get(container) || [];
+      return _containerData[2] === 0 ? 0 : _containerData[2] || uss.getScrollXCalculator(container)();
     }
-    //If there's no scroll-animation on the x-axis, the current position is returned instead
-    const _containerData = uss._containersData.get(container) || [];
-    return _containerData[2] === 0 ? 0 : _containerData[2] || uss.getScrollXCalculator(container)();
+    DEFAULT_ERROR_LOGGER("getFinalXPosition", "the container to be an HTMLElement or the Window", container);
   },
   getFinalYPosition: (container = uss._pageScroller) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      DEFAULT_ERROR_LOGGER("getFinalYPosition", "the container to be an HTMLElement or the Window", container);
-      return;
+    if(container === window || container instanceof HTMLElement) { 
+      //If there's no scroll-animation on the y-axis, the current position is returned instead
+      const _containerData = uss._containersData.get(container) || [];
+      return _containerData[3] === 0 ? 0 : _containerData[3] || uss.getScrollYCalculator(container)();
     }
-    //If there's no scroll-animation on the y-axis, the current position is returned instead
-    const _containerData = uss._containersData.get(container) || [];
-    return _containerData[3] === 0 ? 0 : _containerData[3] || uss.getScrollYCalculator(container)();
+    DEFAULT_ERROR_LOGGER("getFinalYPosition", "the container to be an HTMLElement or the Window", container);
   },
   getScrollXDirection: (container = uss._pageScroller) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      DEFAULT_ERROR_LOGGER("getScrollXDirection", "the container to be an HTMLElement or the Window", container);
-      return;
+    if(container === window || container instanceof HTMLElement) { 
+      //If there's no scroll-animation on the x-axis, 0 is returned instead
+      return uss._containersData.get(container)[4] || 0;
     }
-    //If there's no scroll-animation on the x-axis, 0 is returned instead
-    return uss._containersData.get(container)[4] || 0;
+    DEFAULT_ERROR_LOGGER("getScrollXDirection", "the container to be an HTMLElement or the Window", container);
   },
   getScrollYDirection: (container = uss._pageScroller) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      DEFAULT_ERROR_LOGGER("getScrollYDirection", "the container to be an HTMLElement or the Window", container);
-      return;
+    if(container === window || container instanceof HTMLElement) { 
+      //If there's no scroll-animation on the y-axis, 0 is returned instead
+      return uss._containersData.get(container)[5] || 0;
     }
-    //If there's no scroll-animation on the y-axis, 0 is returned instead
-    return uss._containersData.get(container)[5] || 0;
+    DEFAULT_ERROR_LOGGER("getScrollYDirection", "the container to be an HTMLElement or the Window", container);  
   },
   getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      DEFAULT_ERROR_LOGGER("getXStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
-      return;
+    if(container === window || container instanceof HTMLElement) { 
+      const _containerData = uss._containersData.get(container) || [];
+      return getTemporary ? _containerData[14] : _containerData[12];
     }
-    const _containerData = uss._containersData.get(container) || [];
-    return getTemporary ? _containerData[14] : _containerData[12];
+    DEFAULT_ERROR_LOGGER("getXStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
   },
-  getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      DEFAULT_ERROR_LOGGER("getYStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
-      return;
+  getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false) => {    
+    if(container === window || container instanceof HTMLElement) { 
+      const _containerData = uss._containersData.get(container) || [];
+      return getTemporary ? _containerData[15] : _containerData[13];
     }
-    const _containerData = uss._containersData.get(container) || [];
-    return getTemporary ? _containerData[15] : _containerData[13];
+    DEFAULT_ERROR_LOGGER("getYStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
   },
   getXStepLength: () => uss._xStepLength,
   getYStepLength: () => uss._yStepLength,
@@ -321,7 +312,6 @@ var uss = {
                                       DEFAULT_SCROLL_CALCULATOR_TEST_VALUE, //finalXPosition
                                       container                             //container
                                      );
-
     if(!Number.isFinite(_testResult)) {
       DEFAULT_ERROR_LOGGER("setXStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
       return;
