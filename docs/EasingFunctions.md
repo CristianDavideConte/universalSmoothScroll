@@ -24,6 +24,55 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
  </thead>
  <tbody>
+  <tr id = "CUSTOM_CUBIC_HERMITE_SPLINE">
+   <td rowspan = "4" align = "center">
+    <code>CUSTOM_CUBIC_HERMITE_SPLINE</code>
+   </td>
+   <td rowspan = "4" align = "center">
+    <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>xs</code></a>, <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>ys</code></a> 
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-tension-parameter"><code>tension</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "CUSTOM_BEZIER_CURVE">
+   <td rowspan = "3" align = "center">
+    <code>CUSTOM_BEZIER_CURVE</code>
+   </td>
+   <td rowspan = "3" align = "center">
+    <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/X.gif" width = "40px" height = "40px"/> 
+    <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width = "40px" height = "40px"/>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>xs</code></a>, <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>ys</code></a> 
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+
   <tr id = "CUSTOM_CUBIC_BEZIER">
    <td rowspan = "3" align = "center">
     <code>CUSTOM_CUBIC_BEZIER</code>
@@ -191,10 +240,10 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
 
   <tr id = "EASE_IN_BOUNCE">
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <code>EASE_IN_BOUNCE</code>
    </td>
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <img src = "./easingsGifs/9_EASE_IN_BOUNCE/X.gif" width = "40px" height = "40px"/> 
     <img src = "./easingsGifs/9_EASE_IN_BOUNCE/Y.gif" width = "40px" height = "40px"/>
    </td>
@@ -205,6 +254,11 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
    </td>
   </tr>
 
@@ -335,10 +389,10 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
 
   <tr id = "EASE_OUT_BOUNCE">
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <code>EASE_OUT_BOUNCE</code>
    </td>
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <img src = "./easingsGifs/17_EASE_OUT_BOUNCE/X.gif" width = "40px" height = "40px"/> 
     <img src = "./easingsGifs/17_EASE_OUT_BOUNCE/Y.gif" width = "40px" height = "40px"/>
    </td>
@@ -349,6 +403,11 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
    </td>
   </tr>
 
@@ -479,10 +538,10 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
     
   <tr id = "EASE_IN_OUT_BOUNCE">
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <code>EASE_IN_OUT_BOUNCE</code>
    </td>
-   <td rowspan = "2" align = "center">
+   <td rowspan = "3" align = "center">
     <img src = "./easingsGifs/25_EASE_IN_OUT_BOUNCE/X.gif" width = "40px" height = "40px"/> 
     <img src = "./easingsGifs/25_EASE_IN_OUT_BOUNCE/Y.gif" width = "40px" height = "40px"/>
    </td>
@@ -493,6 +552,11 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./EasingFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
    </td>
   </tr>
     
@@ -555,6 +619,84 @@ This library cannot be used without having imported the [`universalsmoothscroll-
 ---
 <br/>
 
+## The `xs` and `ys` parameters
+They're 2 arrays containing finite numbers between 0 _(included)_ and 1 _(included)_. <br/>
+Values at the same index will represent a single point. <br/>
+They're required parameters but they can be empty.
+
+For instance: 
+```javascript
+/**
+ * In this example:
+ * xs and ys represents the 3 points
+ * - (0,0)
+ * - (0.50, 0.25)
+ * - (1,1)
+ */
+const xs = [0, 0.50, 1];
+const ys = [0, 0.25, 1];
+```
+
+In the case of the `CUSTOM_BEZIER_CURVE` easing, the `xs` and `ys`'s values represent the control points of a generic n-th degree bezier curve. <br/>
+
+For example: 
+```javascript
+/**
+ * In this example:
+ * xs and ys represents the 4 control points
+ * - (0,0)
+ * - (0.33, 1.00)
+ * - (0.68, 1.00)
+ * - (1,1)
+ * N.B. 4 control points leads to a cubic bezier curve.
+ */
+const xs = [0, 0.33, 0.68, 1];
+const ys = [0, 1.00, 1.00, 1];
+
+//This is a non-temporary EASE_OUT_CUBIC like easing
+//which always make the scroll-animation last 1 second.
+uss.setStepLengthCalculator(
+    CUSTOM_BEZIER_CURVE(xs, ys, 1000),
+    myContainer, 
+    false
+);
+```
+
+In the case of the `CUSTOM_CUBIC_HERMITE_SPLINE` easing, successive `xs`'s values represent the generic interpolation intervals _(x<sub>k</sub> , x<sub>k+1</sub>)_ of a canonical cubic hermite spline and they must be sorted, whereas the `ys`'s values represent the points through which the spline should pass. <br/>
+
+For instance: 
+```javascript
+/**
+ * In this example:
+ * xs and ys represents the 4 points
+ * - (0,0)
+ * - (0.40, 0.26)
+ * - (0.60, 0.84)
+ * - (1,1)
+ * N.B. You can add as many points as you want, 
+ *      but the API's hermite splines will always be cubic.
+ */
+const xs = [0, 0.40, 0.60, 1];
+const ys = [0, 0.26, 0.84, 1];
+
+//This is a temporary custom EASE_IN_OUT like easing
+//which always make the scroll-animation last 1.2 second.
+uss.setStepLengthCalculator(
+    CUSTOM_CUBIC_HERMITE_SPLINE(xs, ys, 0, 1200),
+    myContainer, 
+    true
+);
+```
+
+---
+
+## The `tension` parameter
+It's a number between 0 _(included)_ and 1 _(included)_ which represent the [`tension`](https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline) of a canonical cubic hermite spline. <br/>
+The lesser the `tension` value is, the softer the spline will be. 
+It's an optional parameter. 
+
+---
+
 ## The `x1`, `y1`, `x2` and `y2` parameters
 They're 4 finite numbers between 0 _(included)_ and 1 _(included)_. <br/>
 They determine the type of easing the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will have. <br/>
@@ -573,6 +715,12 @@ Each one of the above mentioned functions will return a [`StepLengthCalculator`]
 These [`StepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) are passed _some input parameters_. <br/> 
 The `callback` is a function which gets executed at every scroll-animation step and that is always invoked with _those same input parameters_. <br/>
 It's an optional parameter. 
+
+---
+
+## The `bouncesNumber` parameter
+It's the number of bounces the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will do before completing the scroll-animation. <br/>
+A _bounce_ occurs when the scroll-animation reaches the highest scrollable value of a container and then goes back.   
 
 ---
 

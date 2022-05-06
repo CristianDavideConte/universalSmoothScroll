@@ -95,6 +95,40 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    </td>
   </tr>
 
+  <tr id = "getScrollXDirectionFun">
+   <td rowspan = "1" align = "center">
+    <code>getScrollXDirection</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollXDirection"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the direction of the current scroll-animation on the x-axis of the passed container:
+    <ul>
+      <li>1 if the scrolling is from right-to-left.</li>
+      <li>-1 if the scrolling is from left-to-right.</li>
+      <li>0 if there's no scroll-animation.</li>
+    </ul>
+   </td>
+  </tr>
+
+  <tr id = "getScrollYDirectionFun">
+   <td rowspan = "1" align = "center">
+    <code>getScrollYDirection</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollYDirection"><code>container</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the direction of the current scroll-animation on the y-axis of the passed container:
+    <ul>
+      <li>1 if the scrolling is from bottom-to-top.</li>
+      <li>-1 if the scrolling is from top-to-bottom.</li>
+      <li>0 if there's no scroll-animation.</li>
+    </ul>
+   </td>
+  </tr>
+
   <tr id = "getXStepLengthCalculatorFun">
    <td rowspan = "2" align = "center">
     <code>getXStepLengthCalculator</code>
@@ -823,12 +857,24 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#stopScrolling"><code>container</code></a>
    </td>
    <td rowspan = "2" align = "left">
-    Stops the current scroll-animations on both the x and y axes of the passed container
+    Stops the current scroll-animations on both the x and y axes of the passed container.
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#stopScrolling"><code>callback</code></a>
+   </td>
+  </tr>
+
+  <tr id = "stopScrollingAllFun">
+   <td rowspan = "1" align = "center">
+    <code>stopScrollingAll</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrollingAll"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Stops all the current scroll-animations on both the x and y axes of all the containers.
    </td>
   </tr>
                         
@@ -954,6 +1000,36 @@ The following table describes every entry of the `Input Parameters` column of th
   <tr id = "getFinalYPosition">
   <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#getFinalYPositionFun"><code>getFinalYPosition</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>container</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Object</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+  </td>
+  </tr>
+
+  <tr id = "getScrollXDirection">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollXDirectionFun"><code>getScrollXDirection</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>container</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Object</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+  </td>
+  </tr>
+
+  <tr id = "getScrollYDirection">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollYDirectionFun"><code>getScrollYDirection</code></a>
   </td>
   <td rowspan = "1" align = "center">
     <code>container</code>
@@ -1225,10 +1301,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>newDebugMode</code>
   </td>
   <td rowspan = "1" align = "center">
-    <code>Number</code>
+    <code>String</code>
   </td>
   <td rowspan = "1" align = "left">
-    A number > 0.
+    `legacy`, `disabled` or any other string.
   </td>
   </tr>
       
@@ -1470,7 +1546,7 @@ The following table describes every entry of the `Input Parameters` column of th
   </td>
   <td rowspan = "1" align = "left">
     A function which is invoked every time a scrollable parent of <code>element</code> is found. <br/>
-    When <code>callback</code> is invoked, it is passed <i>(as an input parameter)</i> the found scrollable parent.
+    When <code>callback</code> is invoked, it is passed <i>(as an input parameter)</i> the scrollable parent found.
   </td>
   </tr>
           
@@ -1805,7 +1881,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when this scroll-animation is completed.
+    A function which is invoked when the passed container is successfully scrolled into view.
   </td>
   </tr>
   <tr>
@@ -1854,7 +1930,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when this scroll-animation is completed.
+    A function which is invoked when the passed container is successfully scrolled into view.
   </td>
   </tr>
   <tr>
@@ -1891,7 +1967,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when this scroll-animation is completed.
+    A function which is invoked when the current scroll-animation on the x-axis of the passed container has been stopped.
   </td>
   </tr>
               
@@ -1917,7 +1993,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when this scroll-animation is completed.
+    A function which is invoked when the current scroll-animation on the y-axis of the passed container has been stopped.
   </td>
   </tr>
               
@@ -1943,7 +2019,22 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when this scroll-animation is completed.
+    A function which is invoked when the current scroll-animations on both the x and y axes of the passed container have been stopped.
+  </td>
+  </tr>
+
+  <tr id = "stopScrollingAll">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#stopScrollingAllFun"><code>stopScrollingAll</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>callback</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Function</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    A function which is invoked when all the current scroll-animations on both the x and y axes of all the containers have been stopped.
   </td>
   </tr>
   
@@ -1990,8 +2081,8 @@ The following table describes every entry of the `Input Parameters` column of th
     If <code>init</code> returns <code>false</code>, the click is ignored. <br/>
     When invoked, <code>init</code> is always passed the following input parameters <i>(in this order)</i>: 
     <ul> 
-    <li>The anchor that has been clicked</li>
-    <li>The anchor's destination element</li>
+    <li>The anchor that has been clicked.</li>
+    <li>The anchor's destination element.</li>
     </ul>
   </td>
   </tr>
