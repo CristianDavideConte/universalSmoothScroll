@@ -153,7 +153,7 @@ const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
   
   //Convert and trim the receivedValue's string
   const _receivedValueIsString = typeof receivedValue === "string";
-  receivedValue = receivedValue === null ? "null" : receivedValue === undefined ? "undefined" : receivedValue.name || receivedValue.toString().replaceAll("\n", " ");
+  receivedValue = receivedValue === null ? "null" : receivedValue === undefined ? "undefined" : receivedValue.name || receivedValue.toString().replace(new RegExp("\n", "g"), "");
   if(receivedValue.length > 40) receivedValue = receivedValue.slice(0, 40) + " ...";
   if(_receivedValueIsString) receivedValue = "\"" + receivedValue + "\"";
 
@@ -187,7 +187,7 @@ const DEFAULT_WARNING_LOGGER = (subject, message) => {
 
   //Convert and trim the subject's string
   const _subjectIsString = typeof subject === "string";
-  subject = subject === null ? "null" : subject === undefined ? "undefined" : subject.name || subject.toString().replaceAll("\n", " ");
+  subject = subject === null ? "null" : subject === undefined ? "undefined" : subject.name || subject.toString().replace(new RegExp("\n", "g"), "");
   if(subject.length > 30) subject = subject.slice(0, 30) + " ...";
   if(_subjectIsString) subject = "\"" + subject + "\"";
 
@@ -678,6 +678,7 @@ var uss = {
 
     //The container cannot be scrolled on the x-axis
     if(uss.getMaxScrollX(container) < 1) {
+      DEFAULT_WARNING_LOGGER(container.outerHTML, "is not scrollable on the x-axis");
       uss.stopScrollingX(container, callback);
       return;
     }
@@ -781,6 +782,7 @@ var uss = {
 
     //The container cannot be scrolled on the y-axis
     if(uss.getMaxScrollY(container) < 1) {
+      DEFAULT_WARNING_LOGGER(container.outerHTML, "is not scrollable on the y-axis");
       uss.stopScrollingY(container, callback);
       return;
     }
