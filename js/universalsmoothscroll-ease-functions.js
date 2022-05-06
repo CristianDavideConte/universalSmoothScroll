@@ -1,22 +1,5 @@
 "use strict";
 
-        var canvas = document.getElementById("myCanvas");
-        canvas.style.borderRight="10px solid black";
-        var canvasWidth = canvas.width;
-        var canvasHeight = canvas.height;
-        var ctx = canvas.getContext("2d");
-
-        const DRAW = (f) => {
-          ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-          ctx.beginPath()
-          ctx.moveTo(0,0)
-          for(let i = 0; i <= 1; i += 0.001) {
-            ctx.lineTo(i * canvasWidth, canvasHeight - f(i) * canvasHeight);
-          }
-          ctx.lineTo(canvasWidth, 0);
-          ctx.fill();
-        } 
-
 const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, debugString = "CUSTOM_CUBIC_HERMITE_SPLINE") => {
   if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
   if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
@@ -95,8 +78,6 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
     return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1; //The y of the Cubic Hermite-Spline at the given x
   }
 
-  DRAW(_evalSpline);
-  
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
@@ -165,8 +146,6 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
    
     return _getBt(ys, t);
   }
-
-  DRAW(_newtonRapson);
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);

@@ -999,7 +999,7 @@ var uss = {
 
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++);
-    if(_containerIndex < 0) { //The element cannot be scrolled
+    if(_containerIndex < 0) { //The element cannot be scrolled into view
       if(typeof callback === "function") window.requestAnimationFrame(callback);
       return;
     }
@@ -1055,8 +1055,9 @@ var uss = {
       const _elementFinalY = _alignToTop  === true  ? _bordersDimensions[0] : 
                              _alignToTop  === false ? _containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] : 
                                                      (_containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] + _bordersDimensions[0]) * 0.5;
-      
-      uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _currentContainer, () => {
+      const _deltaX = _elementInitialX - _elementFinalX;
+      const _deltaY = _elementInitialY - _elementFinalY;
+      const _callback = () => {
         if(_currentElement === element) {
             if(typeof callback === "function") callback();
             return;
@@ -1065,7 +1066,11 @@ var uss = {
         _currentContainer = _containers[_containerIndex];
         _currentElement   = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
         _scrollContainer();
-      });
+      };
+      if(_deltaX !== 0 && _deltaY !== 0) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
+      else if(_deltaX !== 0) uss.scrollXBy(_deltaX, _currentContainer, _callback);
+      else if(_deltaY !== 0) uss.scrollYBy(_deltaY, _currentContainer, _callback);
+      else _callback();
     }
   },
   scrollIntoViewIfNeeded: (element, alignToCenter = true, callback, includeHiddenParents = false) => {
@@ -1080,7 +1085,7 @@ var uss = {
 
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++);
-    if(_containerIndex < 0) { //The element cannot be scrolled
+    if(_containerIndex < 0) { //The element cannot be scrolled into view
       if(typeof callback === "function") window.requestAnimationFrame(callback);
       return;
     }
@@ -1164,17 +1169,22 @@ var uss = {
                              _alignToTop  === true  ? _bordersDimensions[0] :
                              _alignToTop  === false ? _containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] : 
                                                      (_containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] + _bordersDimensions[0]) * 0.5;
-        
-      uss.scrollBy(_elementInitialX - _elementFinalX, _elementInitialY - _elementFinalY, _currentContainer, () => {
+      const _deltaX = _elementInitialX - _elementFinalX;
+      const _deltaY = _elementInitialY - _elementFinalY;
+      const _callback = () => {
         if(_currentElement === element) {
-            if(typeof callback === "function") window.requestAnimationFrame(callback);
+            if(typeof callback === "function") callback();
             return;
         } 
         _containerIndex--;
         _currentContainer = _containers[_containerIndex];
         _currentElement   = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
         _scrollContainer();
-      });
+      };
+      if(_deltaX !== 0 && _deltaY !== 0) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
+      else if(_deltaX !== 0) uss.scrollXBy(_deltaX, _currentContainer, _callback);
+      else if(_deltaY !== 0) uss.scrollYBy(_deltaY, _currentContainer, _callback);
+      else _callback();
     }
   },
   stopScrollingX: (container = uss._pageScroller, callback) => {
