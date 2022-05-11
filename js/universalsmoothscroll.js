@@ -74,9 +74,9 @@
  * getFinalYPosition: function, returns the position (in px) at which the passed container will be at the end of the scroll-animation on the y-axis.
  *                    The current position is returned if no scroll-animation is in place.
  * getScrollXDirection: function, returns the direction of the current scroll-animation on the x-axis of the passed container:
- *                      1 if the scrolling is from right-to-left, -1 if the scrolling is from left-to-right, 0 if there's no scroll-animation.
+ *                      1 if its scrollLeft/scrollX will increase, -1 if its scrollLeft/scrollX will decrease, 0 if there's no scroll-animation.
  * getScrollYDirection: function, returns the direction of the current scroll-animation on the y-axis of the passed container:
- *                      1 if the scrolling is from bottom-to-top, -1 if the scrolling is from top-to-bottom, 0 if there's no scroll-animation.
+ *                      1 if its scrollTop/scrollY will increase, -1 if its scrollTop/scrollY will decrease, 0 if there's no scroll-animation.
  * getXStepLengthCalculator: function, returns the current StepLengthCalculator which controls the animations on the x-axis of the passed container if available.
  * getYStepLengthCalculator: function, returns the current StepLengthCalculator which controls the animations on the y-axis of the passed container if available.
  * getXStepLength: function, returns the value of the "_xStepLength" property.
