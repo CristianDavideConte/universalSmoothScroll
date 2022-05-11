@@ -105,8 +105,8 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "left">
     Returns the direction of the current scroll-animation on the x-axis of the passed container:
     <ul>
-      <li>1 if the scrolling is from right-to-left.</li>
-      <li>-1 if the scrolling is from left-to-right.</li>
+      <li>1 if its scrollLeft/scrollX will increase.</li>
+      <li>-1 if its scrollLeft/scrollX will decrease.</li>
       <li>0 if there's no scroll-animation.</li>
     </ul>
    </td>
@@ -122,8 +122,8 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "left">
     Returns the direction of the current scroll-animation on the y-axis of the passed container:
     <ul>
-      <li>1 if the scrolling is from bottom-to-top.</li>
-      <li>-1 if the scrolling is from top-to-bottom.</li>
+      <li>1 if its scrollTop/scrollY will increase.</li>
+      <li>-1 if its scrollTop/scrollY will decrease.</li>
       <li>0 if there's no scroll-animation.</li>
     </ul>
    </td>
