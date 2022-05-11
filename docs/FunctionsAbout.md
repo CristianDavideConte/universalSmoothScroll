@@ -35,7 +35,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
  <tbody>
   <tr id = "isXScrollingFun">
    <td rowspan = "1" align = "center">
-    <code>isXScrolling</code>
+    <code>isXscrolling</code>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#isXScrolling"><code>container</code></a>
@@ -47,7 +47,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
 
   <tr id = "isYScrollingFun">
    <td rowspan = "1" align = "center">
-    <code>isYScrolling</code>
+    <code>isYscrolling</code>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#isYScrolling"><code>container</code></a>
