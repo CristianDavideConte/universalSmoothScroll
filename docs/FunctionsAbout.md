@@ -33,24 +33,24 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
  </thead>
  <tbody>
-  <tr id = "isXScrollingFun">
+  <tr id = "isXscrollingFun">
    <td rowspan = "1" align = "center">
     <code>isXscrolling</code>
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "./FunctionsAbout.md#isXScrolling"><code>container</code></a>
+    <a href = "./FunctionsAbout.md#isXscrolling"><code>container</code></a>
    </td>
    <td rowspan = "1" align = "left">
     Returns <code>true</code> if a scroll-animation on the x-axis of the passed container is currently being performed by this API,<code>false</code> otherwise.
    </td>
   </tr>
 
-  <tr id = "isYScrollingFun">
+  <tr id = "isYscrollingFun">
    <td rowspan = "1" align = "center">
     <code>isYscrolling</code>
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "./FunctionsAbout.md#isYScrolling"><code>container</code></a>
+    <a href = "./FunctionsAbout.md#isYscrolling"><code>container</code></a>
    </td>
    <td rowspan = "1" align = "left">
     Returns <code>true</code> if a scroll-animation on the y-axis of the passed container is currently being performed by this API,<code>false</code> otherwise.
@@ -936,9 +936,9 @@ The following table describes every entry of the `Input Parameters` column of th
   </tr>
  </thead>
  <tbody>
-  <tr id = "isXScrolling">
+  <tr id = "isXscrolling">
   <td rowspan = "1" align = "center">
-    <a href = "./FunctionsAbout.md#isXScrollingFun"><code>isXscrolling</code></a>
+    <a href = "./FunctionsAbout.md#isXscrollingFun"><code>isXscrolling</code></a>
   </td>
   <td rowspan = "1" align = "center">
     <code>container</code>
@@ -952,9 +952,9 @@ The following table describes every entry of the `Input Parameters` column of th
   </tr>
   
   </tr>
-  <tr id = "isYScrolling">
+  <tr id = "isYscrolling">
   <td rowspan = "1" align = "center">
-    <a href = "./FunctionsAbout.md#isYScrollingFun"><code>isYscrolling</code></a>
+    <a href = "./FunctionsAbout.md#isYscrollingFun"><code>isYscrolling</code></a>
   </td>
   <td rowspan = "1" align = "center">
     <code>container</code>
