@@ -182,14 +182,13 @@ const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 }
 
-const DEFAULT_WARNING_LOGGER = (subject, message) => {
+const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) => {
   if(/disabled/i.test(uss._debugMode)) return;
 
   //Convert and trim the subject's string
-  const _subjectIsString = typeof subject === "string";
   subject = subject === null ? "null" : subject === undefined ? "undefined" : subject.name || subject.toString().replace(new RegExp("\n", "g"), "");
   if(subject.length > 30) subject = subject.slice(0, 30) + " ...";
-  if(_subjectIsString) subject = "\"" + subject + "\"";
+  if(keepQuotesForString && typeof subject === "string") subject = "\"" + subject + "\"";
 
   if(/legacy/i.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
@@ -566,104 +565,190 @@ var uss = {
   },
   getXScrollableParent: (element, includeHiddenParents = false) => {
     if(element === window) return null;
-    try {
-      let _style = window.getComputedStyle(element);
-      if(_style.position === "fixed") return null;
-      const _relativePositioned = _style.position !== "absolute";
-      const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-
-      let _container = element.parentElement;
-      while(_container) {
-        _style = window.getComputedStyle(_container);
-        if(_relativePositioned || _style.position !== "static")
-          if(_overflowRegex.test(_style.overflowX))
-            if(_container.scrollWidth > _container.clientWidth)
-              return _container;
-        if(_style.position === "fixed") return null;
-        _container = _container.parentElement;
-      }
-    } catch(e) {
+    if(!(element instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getXScrollableParent", "the element to be an HTMLElement or the Window", element);
+      return null;
     }
-    return window;
+    //Initially test if the element is the body or the documentElement.
+    //These two elements consider overflow:visible as overflow:auto.
+    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
+    const _html = document.documentElement;
+    const _body = document.body;
+    if(element === _body) {
+      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowX) && uss.getMaxScrollX(_html) >= 1) return _html;
+      element = _html;
+    }
+    if(element === _html) {
+      if(uss.getMaxScrollX(window) >= 1) return window;
+      return null;
+    }
+
+    //The element is a generic HtmlElement.
+    //Test the position, the scrollWidth and the overflow property.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") return null;
+    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _relativePositioned = _style.position !== "absolute";
+
+    while(element !== _body && element !== _html) {
+      element = element.parentElement;
+      _style = window.getComputedStyle(element);
+      if(element === _body) break;
+      if((_relativePositioned || _style.position !== "static") &&
+         (element.scrollWidth > element.clientWidth) &&
+         _overflowRegex.test(_style.overflowX)
+      ) {
+        return element;
+      }
+      if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
+    }
+
+    if(_bodyOverflowRegex.test(_style.overflowX) && uss.getMaxScrollX(_body) >= 1) return _body;
+    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowX) && uss.getMaxScrollX(_html) >= 1) return _html;
+    if(uss.getMaxScrollX(window) >= 1) return window;
+    return null;
   },
   getYScrollableParent: (element, includeHiddenParents = false) => {
     if(element === window) return null;
-    try {
-      let _style = window.getComputedStyle(element);
-      if(_style.position === "fixed") return null;
-      const _relativePositioned = _style.position !== "absolute";
-      const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-
-      let _container = element.parentElement;
-      while(_container) {
-        _style = window.getComputedStyle(_container);
-        if(_relativePositioned || _style.position !== "static")
-          if(_overflowRegex.test(_style.overflowY))
-            if(_container.scrollHeight > _container.clientHeight)
-              return _container;
-        if(_style.position === "fixed") return null;
-        _container = _container.parentElement;
-      }
-    } catch(e) {
+    if(!(element instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getYScrollableParent", "the element to be an HTMLElement or the Window", element);
+      return null;
     }
-    return window;
-  },
+    //Initially test if the element is the body or the documentElement.
+    //These two elements consider overflow:visible as overflow:auto.
+    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
+    const _html = document.documentElement;
+    const _body = document.body;
+    if(element === _body) {
+      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowY) && uss.getMaxScrollY(_html) >= 1) return _html;
+      element = _html;
+    }
+    if(element === _html) {
+      if(uss.getMaxScrollY(window) >= 1) return window;
+      return null;
+    }
+
+    //The element is a generic HtmlElement.
+    //Test the position, the scrollHeight and the overflow property.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") return null;
+    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _relativePositioned = _style.position !== "absolute";
+
+    while(element !== _body && element !== _html) {
+      element = element.parentElement;
+      _style = window.getComputedStyle(element);
+      if(element === _body) break;
+      if((_relativePositioned || _style.position !== "static") &&
+         (element.scrollHeight > element.clientHeight) &&
+         _overflowRegex.test(_style.overflowY)
+      ) {
+        return element;
+      }
+      if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
+    }
+
+    if(_bodyOverflowRegex.test(_style.overflowY) && uss.getMaxScrollY(_body) >= 1) return _body;
+    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowY) && uss.getMaxScrollY(_html) >= 1) return _html;
+    if(uss.getMaxScrollY(window) >= 1) return window;
+    return null;
+  },    
   getScrollableParent: (element, includeHiddenParents = false) => {
     if(element === window) return null;
-    try {
-      let _style = window.getComputedStyle(element);
-      if(_style.position === "fixed") return null;
-      const _relativePositioned = _style.position !== "absolute";
-      const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-
-      let _container = element.parentElement;
-      while(_container) {
-        _style = window.getComputedStyle(_container);
-        if(_relativePositioned || _style.position !== "static")
-          if(_overflowRegex.test(_style.overflow))
-            if(_container.scrollWidth > _container.clientWidth || _container.scrollHeight > _container.clientHeight)
-              return _container;
-        if(_style.position === "fixed") return null;
-        _container = _container.parentElement;
-      }
-    } catch(e) {
+    if(!(element instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getScrollableParent", "the element to be an HTMLElement or the Window", element);
+      return null;
     }
-    return window;
-  },
-  getAllScrollableParents: (element, includeHiddenParents = false, callback) => {
-    const _scrollableParents = [];
-    if(element === window) return _scrollableParents;
-    try {
-      let _style = window.getComputedStyle(element);
-      if(_style.position === "fixed") return _scrollableParents;
-      const _callback = typeof callback === "function" ? callback : () => {};
-      const _relativePositioned = _style.position !== "absolute";
-      const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    //Initially test if the element is the body or the documentElement.
+    //These two elements consider overflow:visible as overflow:auto.
+    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
+    const _html = document.documentElement;
+    const _body = document.body;
+    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1 || uss.getMaxScrollY(el) >= 1;
+    if(element === _body) {
+      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) return _html;
+      element = _html;
+    }
+    if(element === _html) {
+      if(_isScrollable(window)) return window;
+      return null;
+    }
 
-      let _includeWindow = true;
-      let _container = element.parentElement;
-      while(_container) {
-        _style = window.getComputedStyle(_container);
-        if(_relativePositioned || _style.position !== "static")
-          if(_overflowRegex.test(_style.overflow))
-            if(_container.scrollWidth > _container.clientWidth || _container.scrollHeight > _container.clientHeight) {
-              if(_container === document.body || _container === document.documentElement) _includeWindow = false;
-              _scrollableParents.push(_container);
-              _callback(_container);
-            }
-        if(_style.position === "fixed") return _scrollableParents;
-        _container = _container.parentElement;
+    //The element is a generic HtmlElement.
+    //Test the position, the scrollWidth/scrollHeight and the overflow property.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") return null;
+    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _relativePositioned = _style.position !== "absolute";
+
+    while(element !== _body && element !== _html) {
+      element = element.parentElement;
+      _style = window.getComputedStyle(element);
+      if(element === _body) break;
+      if((_relativePositioned || _style.position !== "static") &&
+         (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) &&
+         _overflowRegex.test(_style.overflow)
+      ) {
+        return element;
       }
-      if(_includeWindow) {
-        _scrollableParents.push(window);
-        _callback(window);
-      }
-    } catch(e) {
-      DEFAULT_ERROR_LOGGER("getAllScrollableParents", "the element to be an HTMLElement or the Window", element);
+      if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
     }
+
+    if(_bodyOverflowRegex.test(_style.overflow) && _isScrollable(_body)) return _body;
+    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) return _html;
+    if(_isScrollable(window)) return window;
+    return null;
+  },
+  getAllScrollableParents: (element, includeHiddenParents = false, callback) => { 
+    if(element === window) return [];
+    if(!(element instanceof HTMLElement)) {
+      DEFAULT_ERROR_LOGGER("getAllScrollableParents", "the element to be an HTMLElement or the Window", element);
+      return [];
+    }
+    //Initially test if the element is the body or the documentElement.
+    //These two elements consider overflow:visible as overflow:auto.
+    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
+    const _html = document.documentElement;
+    const _body = document.body;
+    const _scrollableParents = [];
+    const _callback = typeof callback === "function" ? callback : () => {};
+    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1 || uss.getMaxScrollY(el) >= 1;
+    const _scrollableParentFound = (el) => {
+      _scrollableParents.push(el);
+      _callback(el);
+    }
+    if(element === _body) {
+      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) _scrollableParentFound(_html);
+      element = _html;
+    }
+    if(element === _html) {
+      if(_isScrollable(window)) _scrollableParentFound(window);
+      return _scrollableParents;
+    }
+
+    //The element is a generic HtmlElement.
+    //Test the position, the scrollWidth/scrollHeight and the overflow property.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") return _scrollableParents;
+    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _relativePositioned = _style.position !== "absolute";
+
+    while(element !== _body && element !== _html) {
+      element = element.parentElement;
+      _style = window.getComputedStyle(element);
+      if(element === _body) break;
+      if((_relativePositioned || _style.position !== "static") &&
+         (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) &&
+         _overflowRegex.test(_style.overflow)
+      ) {
+        _scrollableParentFound(element);
+      }
+      if(_style.position === "fixed") return _scrollableParents; //If this parent is fixed, no other parent can scroll the element
+    }
+
+    if(_bodyOverflowRegex.test(_style.overflow) && _isScrollable(_body)) _scrollableParentFound(_body);
+    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) _scrollableParentFound(_html);
+    if(_isScrollable(window)) _scrollableParentFound(window);
     return _scrollableParents;
   },
   scrollXTo: (finalXPosition, container = uss._pageScroller, callback) => {
@@ -678,9 +763,13 @@ var uss = {
 
     //The container cannot be scrolled on the x-axis
     if(uss.getMaxScrollX(container) < 1) {
-      DEFAULT_WARNING_LOGGER(container.outerHTML, "is not scrollable on the x-axis");
+      const _containerName = container === window ? "window" : 
+                                                    container.tagName.toLowerCase() + 
+                                                    (container.id ? "#" + container.id : "") + 
+                                                    (container.className ? "." + container.className : "");
+      DEFAULT_WARNING_LOGGER(_containerName, "is not scrollable on the x-axis", false);
       uss.stopScrollingX(container, callback);
-      return;
+      return; 
     }
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
@@ -746,7 +835,7 @@ var uss = {
           return;
         } 
         if(!Number.isFinite(_calculatedScrollStepLength)) {
-          DEFAULT_WARNING_LOGGER(_calculatedScrollStepLength, "is not a valid step length");
+          DEFAULT_WARNING_LOGGER(_calculatedScrollStepLength, "is not a valid step length", true);
           _calculatedScrollStepLength = uss.calcXStepLength(_totalScrollAmount);
         }
       } catch(e) {
@@ -782,7 +871,11 @@ var uss = {
 
     //The container cannot be scrolled on the y-axis
     if(uss.getMaxScrollY(container) < 1) {
-      DEFAULT_WARNING_LOGGER(container.outerHTML, "is not scrollable on the y-axis");
+      const _containerName = container === window ? "window" : 
+                                                    container.tagName.toLowerCase() + 
+                                                    (container.id ? "#" + container.id : "") + 
+                                                    (container.className ? "." + container.className : "");
+      DEFAULT_WARNING_LOGGER(_containerName, "is not scrollable on the y-axis", false);
       uss.stopScrollingY(container, callback);
       return;
     }
@@ -850,7 +943,7 @@ var uss = {
           return;
         } 
         if(!Number.isFinite(_calculatedScrollStepLength)) {
-          DEFAULT_WARNING_LOGGER(_calculatedScrollStepLength, "is not a valid step length");
+          DEFAULT_WARNING_LOGGER(_calculatedScrollStepLength, "is not a valid step length", true);
           _calculatedScrollStepLength = uss.calcYStepLength(_totalScrollAmount);
         }
       } catch(e) {
@@ -1289,7 +1382,7 @@ var uss = {
       //Look for elements with the corresponding id or "name" attribute
       const _elementToReach = document.getElementById(_pageLinkParts[1]) || document.querySelector("a[name='" + _pageLinkParts[1] + "']");
       if(_elementToReach === null) {
-        DEFAULT_WARNING_LOGGER(_pageLinkParts[1], "is not a valid anchor's destination");
+        DEFAULT_WARNING_LOGGER(_pageLinkParts[1], "is not a valid anchor's destination", true);
         continue;
       }
 
