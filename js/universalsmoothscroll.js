@@ -23,6 +23,8 @@
  * _containersData: Map(Container, Array[]), a map in which:
  *                  1) A key is a DOM element internally called "container".
  *                  2) A value is an array with 14 values, which are:
+ *                     [-2] If true, this array x-axis related values are invalid. Must be ignored otherwise.
+ *                     [-1] If true, this array y-axis related values are invalid. Must be ignored otherwise.
  *                     [0] contains the ID of a requested scroll-animation on the x-axis of this container provided by the requestAnimationFrame method.
  *                         It's null or undefined if no scroll-animation on the x-axis of this container is currently being performed.
  *                     [1] contains the ID of a requested scroll-animation on the y-axis of this container provided by the requestAnimationFrame method.
@@ -804,7 +806,8 @@ var uss = {
     //Two possible cases:
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     _containerData[2]  = finalXPosition;
     _containerData[4]  = _direction;
     _containerData[6]  = _totalScrollAmount;
@@ -817,7 +820,7 @@ var uss = {
 
     //No scroll-animation is being performed so a new one is created
     _containerData[0] = window.requestAnimationFrame(_stepX);
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
 
     function _stepX(timestamp) {
       const finalXPosition = _containerData[2];
@@ -826,16 +829,15 @@ var uss = {
 
       const _currentXPosition = _scrollXCalculator();
       const _remaningScrollAmount = (finalXPosition - _currentXPosition) * _direction;
-      if(_remaningScrollAmount <= 0) {
+      if(_remaningScrollAmount < 1) {
         uss.stopScrollingX(container, _containerData[10]);
         return;
       }
 
       try {
-        const _scrollID = _containerData[0];
         _calculatedScrollStepLength = !!_containerData[14] ? _containerData[14](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, finalXPosition, container) 
                                                            : _containerData[12](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, finalXPosition, container);
-        if(_scrollID !== _containerData[0]) return; //The current scroll-animation has been aborted by the stepLengthCalculator
+        if(_containerData[-2]) return; //The current scroll-animation has been aborted by the stepLengthCalculator
         if(finalXPosition !== _containerData[2]) {  //The current scroll-animation has been altered by the stepLengthCalculator
           _containerData[0] = window.requestAnimationFrame(_stepX); 
           return;
@@ -911,7 +913,8 @@ var uss = {
     //Two possible cases:
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     _containerData[3]  = finalYPosition;
     _containerData[5]  = _direction;
     _containerData[7]  = _totalScrollAmount;
@@ -924,7 +927,7 @@ var uss = {
 
     //No scroll-animation is being performed so a new one is created
     _containerData[1] = window.requestAnimationFrame(_stepY);
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
      
     function _stepY(timestamp) {
       const finalYPosition = _containerData[3];
@@ -933,16 +936,15 @@ var uss = {
 
       const _currentYPosition = _scrollYCalculator();
       const _remaningScrollAmount = (finalYPosition - _currentYPosition) * _direction;
-      if(_remaningScrollAmount <= 0) {
+      if(_remaningScrollAmount < 1) {
         uss.stopScrollingY(container, _containerData[11]);
         return;
       }
 
       try {
-        const _scrollID = _containerData[1];
         _calculatedScrollStepLength = !!_containerData[15] ? _containerData[15](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, finalYPosition, container) 
                                                            : _containerData[13](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, finalYPosition, container);
-        if(_scrollID !== _containerData[1]) return; //The current scroll-animation has been aborted by the stepLengthCalculator
+        if(_containerData[-1]) return; //The current scroll-animation has been aborted by the stepLengthCalculator
         if(finalYPosition !== _containerData[3]) {  //The current scroll-animation has been altered by the stepLengthCalculator
           _containerData[1] = window.requestAnimationFrame(_stepY); 
           return;
@@ -1298,6 +1300,8 @@ var uss = {
     if(!!_containerData[12]) _newData[12] = _containerData[12];
     if(!!_containerData[13]) _newData[13] = _containerData[13];
     if(!!_containerData[15]) _newData[15] = _containerData[15];
+
+    _containerData[-2] = true;
     uss._containersData.set(container, _newData);
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
@@ -1315,6 +1319,8 @@ var uss = {
     if(!!_containerData[12]) _newData[12] = _containerData[12];
     if(!!_containerData[13]) _newData[13] = _containerData[13];
     if(!!_containerData[14]) _newData[14] = _containerData[14];
+
+    _containerData[-1] = true;
     uss._containersData.set(container, _newData);
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
@@ -1331,6 +1337,9 @@ var uss = {
     const _newData = [];
     if(!!_containerData[12]) _newData[12] = _containerData[12];
     if(!!_containerData[13]) _newData[13] = _containerData[13];
+    
+    _containerData[-2] = true;
+    _containerData[-1] = true;
     uss._containersData.set(container, _newData);
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
@@ -1343,6 +1352,9 @@ var uss = {
       const _newData = [];
       if(!!_containerData[12]) _newData[12] = _containerData[12];
       if(!!_containerData[13]) _newData[13] = _containerData[13];
+
+      _containerData[-2] = true;
+      _containerData[-1] = true;
       uss._containersData.set(_container, _newData)
     }
 
