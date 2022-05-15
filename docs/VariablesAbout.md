@@ -36,8 +36,8 @@ This is what each cell contains:
 
 Index | Type | Description
 :---: | :--: | -----------
-`-2` | `Number` | If true, this array x-axis related values are invalid. Must be ignored otherwise.
-`-1` | `Number` | If true, this array y-axis related values are invalid. Must be ignored otherwise.
+`-2` | `Boolean` | If true, this array x-axis related values are invalid. Must be ignored otherwise.
+`-1` | `Boolean` | If true, this array y-axis related values are invalid. Must be ignored otherwise.
 `0` | `Number` | Contains the ID of a requested scroll-animation on the x-axis of this container provided by the [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) method.<br/> It's `null` or `undefined` if no scroll-animation on the x-axis of this container is currently being performed. 
 `1` | `Number` | Contains the ID of a requested scroll-animation on the y-axis of this container provided by the [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) method.<br/> It's `null` or `undefined` if no scroll-animation on the y-axis of this container is currently being performed. 
 `2` | `Number` | Contains the final position _(in px)_ at which this container will be at the end of the current scroll-animation on the x-axis. 
