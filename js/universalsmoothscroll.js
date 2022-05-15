@@ -224,13 +224,15 @@ var uss = {
   _debugMode: "",
   isXscrolling: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) {
-      return !!uss._containersData.get(container)[0];
+      const _containerData = uss._containersData.get(container) || [];
+      return !!_containerData[0];
     }
     DEFAULT_ERROR_LOGGER("isXscrolling", "the container to be an HTMLElement or the Window", container);
   },
   isYscrolling: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) {
-      return !!uss._containersData.get(container)[1];
+      const _containerData = uss._containersData.get(container) || [];
+      return !!_containerData[1];
     }
     DEFAULT_ERROR_LOGGER("isYscrolling", "the container to be an HTMLElement or the Window", container);
   },
@@ -260,14 +262,16 @@ var uss = {
   getScrollXDirection: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) { 
       //If there's no scroll-animation on the x-axis, 0 is returned instead
-      return uss._containersData.get(container)[4] || 0;
+      const _containerData = uss._containersData.get(container) || [];
+      return _containerData[4] || 0;
     }
     DEFAULT_ERROR_LOGGER("getScrollXDirection", "the container to be an HTMLElement or the Window", container);
   },
   getScrollYDirection: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) { 
       //If there's no scroll-animation on the y-axis, 0 is returned instead
-      return uss._containersData.get(container)[5] || 0;
+      const _containerData = uss._containersData.get(container) || [];
+      return _containerData[5] || 0;
     }
     DEFAULT_ERROR_LOGGER("getScrollYDirection", "the container to be an HTMLElement or the Window", container);  
   },
@@ -315,13 +319,14 @@ var uss = {
       DEFAULT_ERROR_LOGGER("setXStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     if(isTemporary) _containerData[14] = newCalculator;
     else {
       _containerData[12] = newCalculator;
       if(!!_containerData[14]) _containerData[14] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
     }
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
   },
   setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
     if(typeof newCalculator !== "function") {
@@ -345,13 +350,14 @@ var uss = {
       DEFAULT_ERROR_LOGGER("setYStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     if(isTemporary) _containerData[15] = newCalculator;
     else {
       _containerData[13] = newCalculator;
       if(!!_containerData[15]) _containerData[15] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
     }
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
   },
   setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
     if(typeof newCalculator !== "function") {
@@ -375,7 +381,8 @@ var uss = {
       DEFAULT_ERROR_LOGGER("setStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     if(isTemporary) {
       _containerData[14] = newCalculator;
       _containerData[15] = newCalculator;
@@ -387,7 +394,7 @@ var uss = {
       if(!!_containerData[14]) _containerData[14] = null;
       if(!!_containerData[15]) _containerData[15] = null;
     }
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
   },
   setXStepLength: (newXStepLength) => {
     if(!Number.isFinite(newXStepLength) || newXStepLength <= 0) {
@@ -797,7 +804,7 @@ var uss = {
     //Two possible cases:
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
-    let _containerData = uss._containersData.get(container) || [];
+    const _containerData = uss._containersData.get(container) || [];
     _containerData[2]  = finalXPosition;
     _containerData[4]  = _direction;
     _containerData[6]  = _totalScrollAmount;
@@ -813,7 +820,6 @@ var uss = {
     uss._containersData.set(container, _containerData);
 
     function _stepX(timestamp) {
-      _containerData = uss._containersData.get(container);
       const finalXPosition = _containerData[2];
       const _direction = _containerData[4];
       let _calculatedScrollStepLength;
@@ -905,7 +911,7 @@ var uss = {
     //Two possible cases:
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
-    let _containerData = uss._containersData.get(container) || [];
+    const _containerData = uss._containersData.get(container) || [];
     _containerData[3]  = finalYPosition;
     _containerData[5]  = _direction;
     _containerData[7]  = _totalScrollAmount;
@@ -921,7 +927,6 @@ var uss = {
     uss._containersData.set(container, _containerData);
      
     function _stepY(timestamp) {
-      _containerData = uss._containersData.get(container);
       const finalYPosition = _containerData[3];
       const _direction = _containerData[5];
       let _calculatedScrollStepLength;
@@ -981,7 +986,7 @@ var uss = {
       const _containerData = uss._containersData.get(container) || [];
 
       //A scroll-animation on the x-axis is already being performed and can be repurposed
-      if(!!_containerData[0])  {
+      if(!!_containerData[0]) {
         _containerData[8]  = performance.now();                        //originalTimestamp
         _containerData[10] = callback;                                 //callback
         
@@ -1011,7 +1016,7 @@ var uss = {
       const _containerData = uss._containersData.get(container) || [];
 
       //A scroll-animation on the y-axis is already being performed and can be repurposed
-      if(!!_containerData[1])  {
+      if(!!_containerData[1]) {
         _containerData[9]  = performance.now();                        //originalTimestamp
         _containerData[11] = callback;                                 //callback
         
@@ -1287,6 +1292,7 @@ var uss = {
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[0]); 
+
     const _newData = [];
     if(!!_containerData[1]) for(let i = 1; i < 12; i += 2) _newData[i] = _containerData[i];
     if(!!_containerData[12]) _newData[12] = _containerData[12];
@@ -1303,6 +1309,7 @@ var uss = {
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[1]);
+
     const _newData = [];
     if(!!_containerData[0]) for(let i = 0; i < 11; i += 2) _newData[i] = _containerData[i];
     if(!!_containerData[12]) _newData[12] = _containerData[12];
@@ -1332,6 +1339,7 @@ var uss = {
     for(const [_container, _containerData] of uss._containersData.entries()) {
       window.cancelAnimationFrame(_containerData[0]);
       window.cancelAnimationFrame(_containerData[1]);
+
       const _newData = [];
       if(!!_containerData[12]) _newData[12] = _containerData[12];
       if(!!_containerData[13]) _newData[13] = _containerData[13];
