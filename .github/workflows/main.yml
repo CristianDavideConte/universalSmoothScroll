@@ -24,6 +24,7 @@ jobs:
         with:
           # just perform install
           runTests: false
+          spec: cypress/integration/*.js
           command: cypress info  
 
   chrome-test:
