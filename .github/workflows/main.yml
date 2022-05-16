@@ -1,5 +1,3 @@
-# This is a basic workflow to help you get started with Actions
-
 name: uss-tests-ubuntu
 
 # Controls when the workflow will run
@@ -19,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest      
     steps:
       - name: Show installed browsers
-        run: cypress info       
+        run: echo "test"      
     
   chrome-test:
     # The type of runner that the job will run on
