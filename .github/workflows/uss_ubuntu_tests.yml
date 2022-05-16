@@ -48,27 +48,26 @@ jobs:
         with:
           build: npm i -D cypress
           browser: firefox
-"""
+
 #not available yet
-  edge-test:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v3
-      #workaround for creating the package.json file 
-      - name: Setup npm package
-        run: npm init -y && npm install
-      #install edge
-      - uses: browser-actions/setup-edge@latest
-      - name: Print Edge version
-        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
-      # Runs a single command using the runners shell
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          build: npm i -D cypress
-          browser: edge
-"""
+#  edge-test:
+#    # The type of runner that the job will run on
+#    runs-on: ubuntu-latest
+#    # Steps represent a sequence of tasks that will be executed as part of the job
+#    steps:
+#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      #workaround for creating the package.json file 
+#      - name: Setup npm package
+#        run: npm init -y && npm install
+#      #install edge
+#      - uses: browser-actions/setup-edge@latest
+#      - name: Print Edge version
+#        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
+#      # Runs a single command using the runners shell
+#      - name: Cypress run
+#        uses: cypress-io/github-action@v2
+#        with:
+#          build: npm i -D cypress
+#          browser: edge
