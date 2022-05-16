@@ -32,7 +32,7 @@ describe("getFinalYPosition-Body", function() {
 describe("getScrollYDirection-Body", function() {
     var uss;
     var scrollYDirectionUp, scrollYDirectionDown;
-    it("Checks the getFinalYPosition method", function(){
+    it("Checks the getScrollYDirection method", function(){
         cy.visit(testSite) 
         cy.window()
             .then((win) => {
@@ -109,7 +109,7 @@ describe("getYStepLength-Body", function() {
 
 describe("getMaxScrollY-Body", function() {
     var uss;
-    it("Checks the getYStepLength method", function(){
+    it("Checks the getMaxScrollY method", function(){
         cy.visit(testSite) 
         cy.window()
             .then((win) => {
