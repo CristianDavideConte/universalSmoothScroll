@@ -1,5 +1,6 @@
 {
     "env": {
-        "testSite": "https://cristiandavideconte.github.io/universalSmoothScroll/" 
+        "testSite": "https://cristiandavideconte.github.io/universalSmoothScroll/" ,
+        "preferredTimeout": 15000
     }
 }
