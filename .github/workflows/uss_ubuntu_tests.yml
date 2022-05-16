@@ -59,6 +59,10 @@ jobs:
       #workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
+      #install edge
+      - uses: browser-actions/setup-edge@latest
+      - name: Print Edge version
+        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
