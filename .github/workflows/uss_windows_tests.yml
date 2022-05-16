@@ -1,4 +1,4 @@
-name: uss-tests-ubuntu
+name: uss-tests-windows
 
 # Controls when the workflow will run
 on:
@@ -15,7 +15,7 @@ on:
 jobs:
   chrome-test:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -33,7 +33,7 @@ jobs:
           
   firefox-test:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -48,11 +48,10 @@ jobs:
         with:
           build: npm i -D cypress
           browser: firefox
-"""
-#not available yet
+          
   edge-test:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -71,4 +70,3 @@ jobs:
         with:
           build: npm i -D cypress
           browser: edge
-"""
