@@ -1,0 +1,70 @@
+# This is a basic workflow to help you get started with Actions
+
+name: uss-tests-ubuntu
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events for beta and master branches
+  push:
+    branches: [ master, beta ]
+  pull_request:
+    branches: [ master, beta ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  show-installed-browsers:
+    runs-on: ubuntu-latest      
+    steps:
+      - name: Show installed browsers
+        run: cypress info       
+    
+  chrome-test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          browser: chrome
+          
+  firefox-test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    container:
+      image: cypress/browsers:node12.18.3-chrome87-ff82
+      options: --user 1001
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          browser: firefox
+  edge-test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          browser: edge
