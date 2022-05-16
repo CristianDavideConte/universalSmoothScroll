@@ -74,9 +74,9 @@
  * getFinalYPosition: function, returns the position (in px) at which the passed container will be at the end of the scroll-animation on the y-axis.
  *                    The current position is returned if no scroll-animation is in place.
  * getScrollXDirection: function, returns the direction of the current scroll-animation on the x-axis of the passed container:
- *                      1 if the scrolling is from right-to-left, -1 if the scrolling is from left-to-right, 0 if there's no scroll-animation.
+ *                      1 if its scrollLeft/scrollX will increase, -1 if its scrollLeft/scrollX will decrease, 0 if there's no scroll-animation.
  * getScrollYDirection: function, returns the direction of the current scroll-animation on the y-axis of the passed container:
- *                      1 if the scrolling is from bottom-to-top, -1 if the scrolling is from top-to-bottom, 0 if there's no scroll-animation.
+ *                      1 if its scrollTop/scrollY will increase, -1 if its scrollTop/scrollY will decrease, 0 if there's no scroll-animation.
  * getXStepLengthCalculator: function, returns the current StepLengthCalculator which controls the animations on the x-axis of the passed container if available.
  * getYStepLengthCalculator: function, returns the current StepLengthCalculator which controls the animations on the y-axis of the passed container if available.
  * getXStepLength: function, returns the value of the "_xStepLength" property.
@@ -182,14 +182,13 @@ const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 }
 
-const DEFAULT_WARNING_LOGGER = (subject, message) => {
+const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) => {
   if(/disabled/i.test(uss._debugMode)) return;
 
   //Convert and trim the subject's string
-  const _subjectIsString = typeof subject === "string";
   subject = subject === null ? "null" : subject === undefined ? "undefined" : subject.name || subject.toString().replace(new RegExp("\n", "g"), "");
   if(subject.length > 30) subject = subject.slice(0, 30) + " ...";
-  if(_subjectIsString) subject = "\"" + subject + "\"";
+  if(keepQuotesForString && typeof subject === "string") subject = "\"" + subject + "\"";
 
   if(/legacy/i.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
@@ -225,13 +224,15 @@ var uss = {
   _debugMode: "",
   isXscrolling: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) {
-      return !!uss._containersData.get(container)[0];
+      const _containerData = uss._containersData.get(container) || [];
+      return !!_containerData[0];
     }
     DEFAULT_ERROR_LOGGER("isXscrolling", "the container to be an HTMLElement or the Window", container);
   },
   isYscrolling: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) {
-      return !!uss._containersData.get(container)[1];
+      const _containerData = uss._containersData.get(container) || [];
+      return !!_containerData[1];
     }
     DEFAULT_ERROR_LOGGER("isYscrolling", "the container to be an HTMLElement or the Window", container);
   },
@@ -261,14 +262,16 @@ var uss = {
   getScrollXDirection: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) { 
       //If there's no scroll-animation on the x-axis, 0 is returned instead
-      return uss._containersData.get(container)[4] || 0;
+      const _containerData = uss._containersData.get(container) || [];
+      return _containerData[4] || 0;
     }
     DEFAULT_ERROR_LOGGER("getScrollXDirection", "the container to be an HTMLElement or the Window", container);
   },
   getScrollYDirection: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) { 
       //If there's no scroll-animation on the y-axis, 0 is returned instead
-      return uss._containersData.get(container)[5] || 0;
+      const _containerData = uss._containersData.get(container) || [];
+      return _containerData[5] || 0;
     }
     DEFAULT_ERROR_LOGGER("getScrollYDirection", "the container to be an HTMLElement or the Window", container);  
   },
@@ -316,13 +319,14 @@ var uss = {
       DEFAULT_ERROR_LOGGER("setXStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     if(isTemporary) _containerData[14] = newCalculator;
     else {
       _containerData[12] = newCalculator;
       if(!!_containerData[14]) _containerData[14] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
     }
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
   },
   setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
     if(typeof newCalculator !== "function") {
@@ -346,13 +350,14 @@ var uss = {
       DEFAULT_ERROR_LOGGER("setYStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     if(isTemporary) _containerData[15] = newCalculator;
     else {
       _containerData[13] = newCalculator;
       if(!!_containerData[15]) _containerData[15] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
     }
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
   },
   setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
     if(typeof newCalculator !== "function") {
@@ -376,7 +381,8 @@ var uss = {
       DEFAULT_ERROR_LOGGER("setStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
       return;
     }
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     if(isTemporary) {
       _containerData[14] = newCalculator;
       _containerData[15] = newCalculator;
@@ -388,7 +394,7 @@ var uss = {
       if(!!_containerData[14]) _containerData[14] = null;
       if(!!_containerData[15]) _containerData[15] = null;
     }
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
   },
   setXStepLength: (newXStepLength) => {
     if(!Number.isFinite(newXStepLength) || newXStepLength <= 0) {
@@ -566,104 +572,190 @@ var uss = {
   },
   getXScrollableParent: (element, includeHiddenParents = false) => {
     if(element === window) return null;
-    try {
-      let _style = window.getComputedStyle(element);
-      if(_style.position === "fixed") return null;
-      const _relativePositioned = _style.position !== "absolute";
-      const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-
-      let _container = element.parentElement;
-      while(_container) {
-        _style = window.getComputedStyle(_container);
-        if(_relativePositioned || _style.position !== "static")
-          if(_overflowRegex.test(_style.overflowX))
-            if(_container.scrollWidth > _container.clientWidth)
-              return _container;
-        if(_style.position === "fixed") return null;
-        _container = _container.parentElement;
-      }
-    } catch(e) {
+    if(!(element instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getXScrollableParent", "the element to be an HTMLElement or the Window", element);
+      return null;
     }
-    return window;
+    //Initially test if the element is the body or the documentElement.
+    //These two elements consider overflow:visible as overflow:auto.
+    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
+    const _html = document.documentElement;
+    const _body = document.body;
+    if(element === _body) {
+      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowX) && uss.getMaxScrollX(_html) >= 1) return _html;
+      element = _html;
+    }
+    if(element === _html) {
+      if(uss.getMaxScrollX(window) >= 1) return window;
+      return null;
+    }
+
+    //The element is a generic HtmlElement.
+    //Test the position, the scrollWidth and the overflow property.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") return null;
+    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _relativePositioned = _style.position !== "absolute";
+
+    while(element !== _body && element !== _html) {
+      element = element.parentElement;
+      _style = window.getComputedStyle(element);
+      if(element === _body) break;
+      if((_relativePositioned || _style.position !== "static") &&
+         (element.scrollWidth > element.clientWidth) &&
+         _overflowRegex.test(_style.overflowX)
+      ) {
+        return element;
+      }
+      if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
+    }
+
+    if(_bodyOverflowRegex.test(_style.overflowX) && uss.getMaxScrollX(_body) >= 1) return _body;
+    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowX) && uss.getMaxScrollX(_html) >= 1) return _html;
+    if(uss.getMaxScrollX(window) >= 1) return window;
+    return null;
   },
   getYScrollableParent: (element, includeHiddenParents = false) => {
     if(element === window) return null;
-    try {
-      let _style = window.getComputedStyle(element);
-      if(_style.position === "fixed") return null;
-      const _relativePositioned = _style.position !== "absolute";
-      const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-
-      let _container = element.parentElement;
-      while(_container) {
-        _style = window.getComputedStyle(_container);
-        if(_relativePositioned || _style.position !== "static")
-          if(_overflowRegex.test(_style.overflowY))
-            if(_container.scrollHeight > _container.clientHeight)
-              return _container;
-        if(_style.position === "fixed") return null;
-        _container = _container.parentElement;
-      }
-    } catch(e) {
+    if(!(element instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getYScrollableParent", "the element to be an HTMLElement or the Window", element);
+      return null;
     }
-    return window;
-  },
+    //Initially test if the element is the body or the documentElement.
+    //These two elements consider overflow:visible as overflow:auto.
+    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
+    const _html = document.documentElement;
+    const _body = document.body;
+    if(element === _body) {
+      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowY) && uss.getMaxScrollY(_html) >= 1) return _html;
+      element = _html;
+    }
+    if(element === _html) {
+      if(uss.getMaxScrollY(window) >= 1) return window;
+      return null;
+    }
+
+    //The element is a generic HtmlElement.
+    //Test the position, the scrollHeight and the overflow property.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") return null;
+    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _relativePositioned = _style.position !== "absolute";
+
+    while(element !== _body && element !== _html) {
+      element = element.parentElement;
+      _style = window.getComputedStyle(element);
+      if(element === _body) break;
+      if((_relativePositioned || _style.position !== "static") &&
+         (element.scrollHeight > element.clientHeight) &&
+         _overflowRegex.test(_style.overflowY)
+      ) {
+        return element;
+      }
+      if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
+    }
+
+    if(_bodyOverflowRegex.test(_style.overflowY) && uss.getMaxScrollY(_body) >= 1) return _body;
+    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowY) && uss.getMaxScrollY(_html) >= 1) return _html;
+    if(uss.getMaxScrollY(window) >= 1) return window;
+    return null;
+  },    
   getScrollableParent: (element, includeHiddenParents = false) => {
     if(element === window) return null;
-    try {
-      let _style = window.getComputedStyle(element);
-      if(_style.position === "fixed") return null;
-      const _relativePositioned = _style.position !== "absolute";
-      const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-
-      let _container = element.parentElement;
-      while(_container) {
-        _style = window.getComputedStyle(_container);
-        if(_relativePositioned || _style.position !== "static")
-          if(_overflowRegex.test(_style.overflow))
-            if(_container.scrollWidth > _container.clientWidth || _container.scrollHeight > _container.clientHeight)
-              return _container;
-        if(_style.position === "fixed") return null;
-        _container = _container.parentElement;
-      }
-    } catch(e) {
+    if(!(element instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("getScrollableParent", "the element to be an HTMLElement or the Window", element);
+      return null;
     }
-    return window;
-  },
-  getAllScrollableParents: (element, includeHiddenParents = false, callback) => {
-    const _scrollableParents = [];
-    if(element === window) return _scrollableParents;
-    try {
-      let _style = window.getComputedStyle(element);
-      if(_style.position === "fixed") return _scrollableParents;
-      const _callback = typeof callback === "function" ? callback : () => {};
-      const _relativePositioned = _style.position !== "absolute";
-      const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    //Initially test if the element is the body or the documentElement.
+    //These two elements consider overflow:visible as overflow:auto.
+    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
+    const _html = document.documentElement;
+    const _body = document.body;
+    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1 || uss.getMaxScrollY(el) >= 1;
+    if(element === _body) {
+      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) return _html;
+      element = _html;
+    }
+    if(element === _html) {
+      if(_isScrollable(window)) return window;
+      return null;
+    }
 
-      let _includeWindow = true;
-      let _container = element.parentElement;
-      while(_container) {
-        _style = window.getComputedStyle(_container);
-        if(_relativePositioned || _style.position !== "static")
-          if(_overflowRegex.test(_style.overflow))
-            if(_container.scrollWidth > _container.clientWidth || _container.scrollHeight > _container.clientHeight) {
-              if(_container === document.body || _container === document.documentElement) _includeWindow = false;
-              _scrollableParents.push(_container);
-              _callback(_container);
-            }
-        if(_style.position === "fixed") return _scrollableParents;
-        _container = _container.parentElement;
+    //The element is a generic HtmlElement.
+    //Test the position, the scrollWidth/scrollHeight and the overflow property.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") return null;
+    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _relativePositioned = _style.position !== "absolute";
+
+    while(element !== _body && element !== _html) {
+      element = element.parentElement;
+      _style = window.getComputedStyle(element);
+      if(element === _body) break;
+      if((_relativePositioned || _style.position !== "static") &&
+         (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) &&
+         _overflowRegex.test(_style.overflow)
+      ) {
+        return element;
       }
-      if(_includeWindow) {
-        _scrollableParents.push(window);
-        _callback(window);
-      }
-    } catch(e) {
-      DEFAULT_ERROR_LOGGER("getAllScrollableParents", "the element to be an HTMLElement or the Window", element);
+      if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
     }
+
+    if(_bodyOverflowRegex.test(_style.overflow) && _isScrollable(_body)) return _body;
+    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) return _html;
+    if(_isScrollable(window)) return window;
+    return null;
+  },
+  getAllScrollableParents: (element, includeHiddenParents = false, callback) => { 
+    if(element === window) return [];
+    if(!(element instanceof HTMLElement)) {
+      DEFAULT_ERROR_LOGGER("getAllScrollableParents", "the element to be an HTMLElement or the Window", element);
+      return [];
+    }
+    //Initially test if the element is the body or the documentElement.
+    //These two elements consider overflow:visible as overflow:auto.
+    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
+    const _html = document.documentElement;
+    const _body = document.body;
+    const _scrollableParents = [];
+    const _callback = typeof callback === "function" ? callback : () => {};
+    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1 || uss.getMaxScrollY(el) >= 1;
+    const _scrollableParentFound = (el) => {
+      _scrollableParents.push(el);
+      _callback(el);
+    }
+    if(element === _body) {
+      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) _scrollableParentFound(_html);
+      element = _html;
+    }
+    if(element === _html) {
+      if(_isScrollable(window)) _scrollableParentFound(window);
+      return _scrollableParents;
+    }
+
+    //The element is a generic HtmlElement.
+    //Test the position, the scrollWidth/scrollHeight and the overflow property.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") return _scrollableParents;
+    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _relativePositioned = _style.position !== "absolute";
+
+    while(element !== _body && element !== _html) {
+      element = element.parentElement;
+      _style = window.getComputedStyle(element);
+      if(element === _body) break;
+      if((_relativePositioned || _style.position !== "static") &&
+         (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) &&
+         _overflowRegex.test(_style.overflow)
+      ) {
+        _scrollableParentFound(element);
+      }
+      if(_style.position === "fixed") return _scrollableParents; //If this parent is fixed, no other parent can scroll the element
+    }
+
+    if(_bodyOverflowRegex.test(_style.overflow) && _isScrollable(_body)) _scrollableParentFound(_body);
+    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) _scrollableParentFound(_html);
+    if(_isScrollable(window)) _scrollableParentFound(window);
     return _scrollableParents;
   },
   scrollXTo: (finalXPosition, container = uss._pageScroller, callback) => {
@@ -678,9 +770,13 @@ var uss = {
 
     //The container cannot be scrolled on the x-axis
     if(uss.getMaxScrollX(container) < 1) {
-      DEFAULT_WARNING_LOGGER(container.outerHTML, "is not scrollable on the x-axis");
+      const _containerName = container === window ? "window" : 
+                                                    container.tagName.toLowerCase() + 
+                                                    (container.id ? "#" + container.id : "") + 
+                                                    (container.className ? "." + container.className : "");
+      DEFAULT_WARNING_LOGGER(_containerName, "is not scrollable on the x-axis", false);
       uss.stopScrollingX(container, callback);
-      return;
+      return; 
     }
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
@@ -708,7 +804,8 @@ var uss = {
     //Two possible cases:
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
-    let _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     _containerData[2]  = finalXPosition;
     _containerData[4]  = _direction;
     _containerData[6]  = _totalScrollAmount;
@@ -721,17 +818,16 @@ var uss = {
 
     //No scroll-animation is being performed so a new one is created
     _containerData[0] = window.requestAnimationFrame(_stepX);
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
 
     function _stepX(timestamp) {
-      _containerData = uss._containersData.get(container);
       const finalXPosition = _containerData[2];
       const _direction = _containerData[4];
       let _calculatedScrollStepLength;
 
       const _currentXPosition = _scrollXCalculator();
       const _remaningScrollAmount = (finalXPosition - _currentXPosition) * _direction;
-      if(_remaningScrollAmount <= 0) {
+      if(_remaningScrollAmount < 1) {
         uss.stopScrollingX(container, _containerData[10]);
         return;
       }
@@ -746,7 +842,7 @@ var uss = {
           return;
         } 
         if(!Number.isFinite(_calculatedScrollStepLength)) {
-          DEFAULT_WARNING_LOGGER(_calculatedScrollStepLength, "is not a valid step length");
+          DEFAULT_WARNING_LOGGER(_calculatedScrollStepLength, "is not a valid step length", true);
           _calculatedScrollStepLength = uss.calcXStepLength(_totalScrollAmount);
         }
       } catch(e) {
@@ -782,7 +878,11 @@ var uss = {
 
     //The container cannot be scrolled on the y-axis
     if(uss.getMaxScrollY(container) < 1) {
-      DEFAULT_WARNING_LOGGER(container.outerHTML, "is not scrollable on the y-axis");
+      const _containerName = container === window ? "window" : 
+                                                    container.tagName.toLowerCase() + 
+                                                    (container.id ? "#" + container.id : "") + 
+                                                    (container.className ? "." + container.className : "");
+      DEFAULT_WARNING_LOGGER(_containerName, "is not scrollable on the y-axis", false);
       uss.stopScrollingY(container, callback);
       return;
     }
@@ -812,7 +912,8 @@ var uss = {
     //Two possible cases:
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
-    let _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
     _containerData[3]  = finalYPosition;
     _containerData[5]  = _direction;
     _containerData[7]  = _totalScrollAmount;
@@ -825,17 +926,16 @@ var uss = {
 
     //No scroll-animation is being performed so a new one is created
     _containerData[1] = window.requestAnimationFrame(_stepY);
-    uss._containersData.set(container, _containerData);
+    if(!_oldData) uss._containersData.set(container, _containerData);
      
     function _stepY(timestamp) {
-      _containerData = uss._containersData.get(container);
       const finalYPosition = _containerData[3];
       const _direction = _containerData[5];
       let _calculatedScrollStepLength;
 
       const _currentYPosition = _scrollYCalculator();
       const _remaningScrollAmount = (finalYPosition - _currentYPosition) * _direction;
-      if(_remaningScrollAmount <= 0) {
+      if(_remaningScrollAmount < 1) {
         uss.stopScrollingY(container, _containerData[11]);
         return;
       }
@@ -850,7 +950,7 @@ var uss = {
           return;
         } 
         if(!Number.isFinite(_calculatedScrollStepLength)) {
-          DEFAULT_WARNING_LOGGER(_calculatedScrollStepLength, "is not a valid step length");
+          DEFAULT_WARNING_LOGGER(_calculatedScrollStepLength, "is not a valid step length", true);
           _calculatedScrollStepLength = uss.calcYStepLength(_totalScrollAmount);
         }
       } catch(e) {
@@ -888,7 +988,7 @@ var uss = {
       const _containerData = uss._containersData.get(container) || [];
 
       //A scroll-animation on the x-axis is already being performed and can be repurposed
-      if(!!_containerData[0])  {
+      if(!!_containerData[0]) {
         _containerData[8]  = performance.now();                        //originalTimestamp
         _containerData[10] = callback;                                 //callback
         
@@ -918,7 +1018,7 @@ var uss = {
       const _containerData = uss._containersData.get(container) || [];
 
       //A scroll-animation on the y-axis is already being performed and can be repurposed
-      if(!!_containerData[1])  {
+      if(!!_containerData[1]) {
         _containerData[9]  = performance.now();                        //originalTimestamp
         _containerData[11] = callback;                                 //callback
         
@@ -1194,12 +1294,14 @@ var uss = {
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[0]); 
-    const _newData = [];
-    if(!!_containerData[1]) for(let i = 1; i < 12; i += 2) _newData[i] = _containerData[i];
-    if(!!_containerData[12]) _newData[12] = _containerData[12];
-    if(!!_containerData[13]) _newData[13] = _containerData[13];
-    if(!!_containerData[15]) _newData[15] = _containerData[15];
-    uss._containersData.set(container, _newData);
+    _containerData[0] = null;
+
+    if(!_containerData[1]) { //No scroll-animation on the y-axis is being performed
+      const _newData = [];
+      if(!!_containerData[12]) _newData[12] = _containerData[12];
+      if(!!_containerData[13]) _newData[13] = _containerData[13];
+      uss._containersData.set(container, _newData);
+    }
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
@@ -1210,12 +1312,14 @@ var uss = {
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[1]);
-    const _newData = [];
-    if(!!_containerData[0]) for(let i = 0; i < 11; i += 2) _newData[i] = _containerData[i];
-    if(!!_containerData[12]) _newData[12] = _containerData[12];
-    if(!!_containerData[13]) _newData[13] = _containerData[13];
-    if(!!_containerData[14]) _newData[14] = _containerData[14];
-    uss._containersData.set(container, _newData);
+    _containerData[1] = null;
+  
+    if(!_containerData[1]) { //No scroll-animation on the x-axis is being performed
+      const _newData = [];
+      if(!!_containerData[12]) _newData[12] = _containerData[12];
+      if(!!_containerData[13]) _newData[13] = _containerData[13];
+      uss._containersData.set(container, _newData);
+    }
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
   },
@@ -1227,10 +1331,12 @@ var uss = {
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[0]);
     window.cancelAnimationFrame(_containerData[1]);
+    _containerData[0] = null;
+    _containerData[1] = null;
     
     const _newData = [];
     if(!!_containerData[12]) _newData[12] = _containerData[12];
-    if(!!_containerData[13]) _newData[13] = _containerData[13];
+    if(!!_containerData[13]) _newData[13] = _containerData[13];  
     uss._containersData.set(container, _newData);
 
     if(typeof callback === "function") window.requestAnimationFrame(callback);
@@ -1239,6 +1345,9 @@ var uss = {
     for(const [_container, _containerData] of uss._containersData.entries()) {
       window.cancelAnimationFrame(_containerData[0]);
       window.cancelAnimationFrame(_containerData[1]);
+      _containerData[0] = null;
+      _containerData[1] = null;
+
       const _newData = [];
       if(!!_containerData[12]) _newData[12] = _containerData[12];
       if(!!_containerData[13]) _newData[13] = _containerData[13];
@@ -1289,7 +1398,7 @@ var uss = {
       //Look for elements with the corresponding id or "name" attribute
       const _elementToReach = document.getElementById(_pageLinkParts[1]) || document.querySelector("a[name='" + _pageLinkParts[1] + "']");
       if(_elementToReach === null) {
-        DEFAULT_WARNING_LOGGER(_pageLinkParts[1], "is not a valid anchor's destination");
+        DEFAULT_WARNING_LOGGER(_pageLinkParts[1], "is not a valid anchor's destination", true);
         continue;
       }
 
