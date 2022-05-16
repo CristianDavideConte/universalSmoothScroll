@@ -13,23 +13,6 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  show-installed-browsers:
-    runs-on: ubuntu-latest      
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      #workaround for creating the package.json file 
-      - name: Setup npm package
-        run: npm init -y && npm install
-      # Runs a single command using the runners shell
-      - name: Show installed browsers
-        uses: cypress-io/github-action@v2
-        with:
-          # just perform install
-          runTests: false
-          spec: cypress/integration/*.js
-          command: cypress info  
-
   chrome-test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -51,10 +34,6 @@ jobs:
   firefox-test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    container:
-      image: cypress/browsers:node12.18.3-chrome87-ff82
-      options: --user 1001
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
