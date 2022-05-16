@@ -21,7 +21,7 @@ jobs:
       #workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-
+      # Runs a single command using the runners shell
       - name: Show installed browsers
         uses: cypress-io/github-action@v2
         with:
@@ -41,11 +41,11 @@ jobs:
       #workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          build: npm i -D cypress
           browser: chrome
           
   firefox-test:
@@ -63,11 +63,11 @@ jobs:
       #workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          build: npm i -D cypress
           browser: firefox
   edge-test:
     # The type of runner that the job will run on
@@ -80,9 +80,9 @@ jobs:
       #workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          build: npm i -D cypress
           browser: edge
