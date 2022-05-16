@@ -16,6 +16,9 @@ jobs:
   show-installed-browsers:
     runs-on: ubuntu-latest      
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Show installed browsers
         uses: cypress-io/github-action@v2
         with:
