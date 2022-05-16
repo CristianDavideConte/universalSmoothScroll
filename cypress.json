@@ -1,5 +1,5 @@
 {
     "env": {
-        "testSite": "http://192.168.178.32:8080/" 
+        "testSite": "https://cristiandavideconte.github.io/universalSmoothScroll/" 
     }
 }
