@@ -14,6 +14,7 @@ describe("getFinalYPosition-Body", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                uss._containersData = new Map();
                 return new Cypress.Promise(resolve => {
                     uss.scrollYTo(100, uss.getPageScroller(), resolve);
                     finalYPosition = uss.getFinalYPosition();
@@ -36,6 +37,7 @@ describe("getScrollYDirection-Body", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                uss._containersData = new Map();
                 return new Cypress.Promise(resolve => {
                     uss.scrollYTo(100, uss.getPageScroller(), () => {
                         uss.scrollYTo(50, uss.getPageScroller(), resolve);
@@ -60,7 +62,7 @@ describe("getYStepLengthCalculator-Body", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
-                uss._containersData.get(uss.getPageScroller())[13] = undefined;
+                uss._containersData = new Map();
                 expect(uss.getYStepLengthCalculator()).to.be.undefined;
                 
                 uss.setYStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller());
@@ -87,6 +89,7 @@ describe("getYStepLength-Body", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                uss._containersData = new Map();
                 
                 expect(Number.isFinite(uss.getYStepLength())).to.be.true;
                 expect(uss.getYStepLength() > 0).to.be.true;
@@ -111,10 +114,15 @@ describe("getMaxScrollY-Body", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                uss._containersData = new Map();
                 
                 expect(Number.isFinite(uss.getMaxScrollY())).to.be.true;
                 expect(uss.getMaxScrollY() > 0).to.be.true;
                 expect(uss.getMaxScrollY()).to.equal(uss.getPageScroller().scrollHeight / 2 + uss.getScrollbarsMaxDimension());
+
+                //test elements that are unscrollable on the y-axis 
+                expect(uss.getMaxScrollY(win.document.getElementById("xScroller"))).to.equal(0);
+                expect(uss.getMaxScrollY(win.document.getElementById("stopScrollingX"))).to.equal(0);
             })     
     })
 })
@@ -127,6 +135,8 @@ describe("getYScrollableParent-Body", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                uss._containersData = new Map();
+
                 //test window, html and body
                 expect(uss.getYScrollableParent(win)).to.be.null;  
                 expect(uss.getYScrollableParent(win.document.documentElement)).to.be.null;   
@@ -138,6 +148,7 @@ describe("getYScrollableParent-Body", function() {
                 //test elements with no constraint 
                 expect(uss.getYScrollableParent(win.linear)).to.equal(win.easeFunctionSelectorList);
                 expect(uss.getYScrollableParent(win.easeFunctionSelectorList)).to.equal(win.document.body);
+                expect(uss.getYScrollableParent(win.document.getElementById("section12"))).to.equal(win.document.getElementById("yScrollerSection"));
             })     
     })
 })
