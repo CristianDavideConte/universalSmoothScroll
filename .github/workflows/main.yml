@@ -19,6 +19,8 @@ jobs:
       - name: Show installed browsers
         uses: cypress-io/github-action@v2
         with:
+          # just perform install
+          runTests: false
           command: cypress info  
 
   chrome-test:
