@@ -18,7 +18,8 @@ Name | Type | Description
 `DEFAULT_XSTEP_LENGTH` | `Number` | The initial value of the `uss._xStepLength` variable: it represents the default number of pixels scrolled in a single scroll-animation's step on the x-axis. <br/> It's **16px at 412px** of _(initial window's)_ width and **23px at 1920px** of _(initial window's)_ width.
 `DEFAULT_YSTEP_LENGTH` | `Number` | The initial value of the `uss._yStepLength` variable: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. <br/> It's **38px at 789px** of _(initial window's)_ height and **22px at 1920px** of _(initial window's)_ height.
 `DEFAULT_MIN_ANIMATION_FRAMES` | `Number` | The initial value of the `uss._minAnimationFrame` variable: it represent the default lowest number of frames any scroll-animation should last if no [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) is set for a container. <br/> It's **51 frames at 929px** of _(initial window's)_ height.
-`DEFAULT_SCROLL_CALCULATOR_TEST_VALUE` | `Number` | The default number of pixel scrolled when testing a newStepLengthCalculator.
+`DEFAULT_TEST_CALCULATOR_SCROLL_VALUE` | `Number` | The default number of pixel scrolled when testing a newStepLengthCalculator.
+`DEFAULT_TEST_CALCULATOR_DURATION` | `Number` | The default number of milliseconds the test of a newStepLengthCalculator should last.
 `DEFAULT_PAGE_SCROLLER` | `Object` | The initial value of the `uss_pageScroller` variable: it represent the default value used when an API method requires the `container` input parameter but nothing is passed.
 `DEFAULT_ERROR_LOGGER` | `Function` | A function that logs the API error messages inside the browser's console.
 `DEFAULT_WARNING_LOGGER` | `Function` | A function that logs the API warning messages inside the browser's console.
