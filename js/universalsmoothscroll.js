@@ -9,7 +9,8 @@
  *                       It's 38px at 789px of (initial window's) height and 22px at 1920px of (initial window's) height.
  * DEFAULT_MIN_ANIMATION_FRAMES: number, The initial value of the `uss._minAnimationFrame` variable: 
  *                               it represent the default lowest number of frames any scroll-animation should last if no StepLengthCalculator is set for a container.
- * DEFAULT_SCROLL_CALCULATOR_TEST_VALUE: number, the default number of pixel scrolled when testing a newScrollCalculator.
+ * DEFAULT_TEST_CALCULATOR_SCROLL_VALUE: number, the default number of pixel scrolled when testing a newScrollCalculator.
+ * DEFAULT_TEST_CALCULATOR_DURATION: number, the default number of milliseconds the test of a newStepLengthCalculator should last.
  * DEFAULT_PAGE_SCROLLER: object, the initial value of the uss_pageScroller variable: 
  *                        it represent the default value used when an API method requires the "container" input parameter but nothing is passed.
  * DEFAULT_ERROR_LOGGER: function, logs the API error messages inside the browser's console.
