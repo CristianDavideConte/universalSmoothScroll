@@ -278,7 +278,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>newCalculator</code></a>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible.
    </td>
   </tr>
@@ -305,7 +305,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>newCalculator</code></a>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible.
    </td>
   </tr>
@@ -332,7 +332,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>newCalculator</code></a>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible.
    </td>
   </tr>
