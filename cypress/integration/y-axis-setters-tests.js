@@ -13,6 +13,7 @@ describe("setYStepLengthCalculator-Body", function() {
     var _testCalculatorInvalidTypeNaN = () => {return NaN};
     var _testCalculatorValidType1 = () => 10;
     var _testCalculatorValidType2 = () => 5;
+    var _testCalculatorValidType3 = () => 0.00000001; //valid but takes more than the default testing timeout
     it("Checks the setYStepLengthCalculator method", function(){
         cy.visit(testSite) 
         cy.window()
@@ -21,32 +22,35 @@ describe("setYStepLengthCalculator-Body", function() {
                 uss._containersData = new Map();
 
                 //test invalid stepLengthCalculators
-                uss.setYStepLengthCalculator(_testCalculatorInvalidTypeString, uss.getPageScroller(), false);
+                uss.setYStepLengthCalculator(_testCalculatorInvalidTypeString, uss.getPageScroller(), false, true);
                 expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.be.undefined;
                 
-                uss.setYStepLengthCalculator(_testCalculatorInvalidTypeString, uss.getPageScroller(), true);
+                uss.setYStepLengthCalculator(_testCalculatorInvalidTypeString, uss.getPageScroller(), true, true);
                 expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
                 
-                uss.setYStepLengthCalculator(_testCalculatorInvalidTypeNaN, uss.getPageScroller(), false);
+                uss.setYStepLengthCalculator(_testCalculatorInvalidTypeNaN, uss.getPageScroller(), false, true);
                 expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.be.undefined;
                 
-                uss.setYStepLengthCalculator(_testCalculatorInvalidTypeNaN, uss.getPageScroller(), true);
+                uss.setYStepLengthCalculator(_testCalculatorInvalidTypeNaN, uss.getPageScroller(), true, true);
                 expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
 
                 //test valid stepLengthCalculators
-                uss.setYStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), false);
+                uss.setYStepLengthCalculator(_testCalculatorValidType1, uss.getPageScroller(), false, true);
+                expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType1);
+
+                uss.setYStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), false, true);
                 expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType2);
 
-                uss.setYStepLengthCalculator(_testCalculatorValidType1, uss.getPageScroller(), false);
-                expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType1);
+                uss.setYStepLengthCalculator(_testCalculatorValidType3, uss.getPageScroller(), false, true);
+                expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
                 
-                uss.setYStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true);
+                uss.setYStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true, true);
                 expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.equal(_testCalculatorValidType2);
 
                 uss.stopScrollingY();
-                expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType1);
+                expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
                 
-                uss.setYStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true);
+                uss.setYStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true, true);
                 expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.equal(_testCalculatorValidType2);
                 
                 return new Cypress.Promise(resolve => {
@@ -54,7 +58,7 @@ describe("setYStepLengthCalculator-Body", function() {
                 });
             }).then(() => {
                 bodyScrollTopShouldToBe(100);
-                expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType1);
+                expect(uss.getYStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
             })     
     })
 })

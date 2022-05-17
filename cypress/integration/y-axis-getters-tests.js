@@ -65,10 +65,10 @@ describe("getYStepLengthCalculator-Body", function() {
                 uss._containersData = new Map();
                 expect(uss.getYStepLengthCalculator()).to.be.undefined;
                 
-                uss.setYStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller());
+                uss.setYStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
                 expect(uss.getYStepLengthCalculator()).to.equal(nonTempTestCalculator);
 
-                uss.setYStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true);
+                uss.setYStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
                 expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
               
                 return new Cypress.Promise(resolve => {
