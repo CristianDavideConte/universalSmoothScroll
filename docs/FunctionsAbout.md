@@ -1157,8 +1157,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    If `true`, a dummy scroll-animation is performed _(no actual scroll takes place)_ to test the stepLengthCalculator. <br/>
-    If `false` the new calculator is directly set.
+    If <code>true</code>, a dummy scroll-animation is performed _(no actual scroll takes place)_ to test the stepLengthCalculator. <br/>
+    If <code>false</code> the new calculator is directly set.
   </td>  
   </tr>
   
@@ -1210,8 +1210,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    If `true`, a dummy scroll-animation is performed _(no actual scroll takes place)_ to test the stepLengthCalculator. <br/>
-    If `false` the new calculator is directly set.
+    If <code>true</code>, a dummy scroll-animation is performed _(no actual scroll takes place)_ to test the stepLengthCalculator. <br/>
+    If <code>false</code> the new calculator is directly set.
   </td>  
   </tr>
   
@@ -1264,8 +1264,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    If `true`, a dummy scroll-animation is performed _(no actual scroll takes place)_ to test the stepLengthCalculator. <br/>
-    If `false` the new calculator is directly set.
+    If <code>true</code>, a dummy scroll-animation is performed _(no actual scroll takes place)_ to test the stepLengthCalculator. <br/>
+    If <code>false</code> the new calculator is directly set.
   </td>  
   </tr>
 
