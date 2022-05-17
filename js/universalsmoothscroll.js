@@ -1320,8 +1320,10 @@ var uss = {
                              _alignToTop  === true  ? _bordersDimensions[0] :
                              _alignToTop  === false ? _containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] : 
                                                      (_containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] + _bordersDimensions[0]) * 0.5;
+      
       const _deltaX = _elementInitialX - _elementFinalX;
       const _deltaY = _elementInitialY - _elementFinalY;
+      
       const _callback = () => {
         if(_currentElement === element) {
             if(typeof callback === "function") callback();
