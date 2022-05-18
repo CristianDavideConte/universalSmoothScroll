@@ -118,7 +118,7 @@ describe("getMaxScrollY-Body", function() {
                 
                 expect(Number.isFinite(uss.getMaxScrollY())).to.be.true;
                 expect(uss.getMaxScrollY() > 0).to.be.true;
-                expect(uss.getMaxScrollY()).to.equal(uss.getPageScroller().scrollHeight / 2 + uss.getScrollbarsMaxDimension());
+                expect(uss.getMaxScrollY()).to.equal(Math.floor(uss.getPageScroller().scrollHeight / 2 + uss.getScrollbarsMaxDimension()));
 
                 //test elements that are unscrollable on the y-axis 
                 expect(uss.getMaxScrollY(win.document.getElementById("xScroller"))).to.equal(0);
