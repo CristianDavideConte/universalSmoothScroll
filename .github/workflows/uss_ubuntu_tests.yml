@@ -22,15 +22,12 @@ jobs:
       # Workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-      # Installs and open a local http-server to serve the tests' index file 
-      - name: Setup http-server
-        run: |
-          npm install --global http-server
-          http-server &
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          start: npm start
+          wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: chrome
           
@@ -45,15 +42,12 @@ jobs:
       # Workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-      # Installs and open a local http-server to serve the tests' index file 
-      - name: Setup http-server
-        run: |
-          npm install --global http-server
-          http-server &
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          start: npm start
+          wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: firefox
 
@@ -73,14 +67,11 @@ jobs:
 #      - uses: browser-actions/setup-edge@latest
 #      - name: Print Edge version
 #        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
-#      # Installs and open a local http-server to serve the tests' index file 
-#      - name: Setup http-server
-#        run: |
-#          npm install --global http-server
-#          http-server &
 #      # Runs a single command using the runners shell
 #      - name: Cypress run
 #        uses: cypress-io/github-action@v2
 #        with:
+#          start: npm start
+#          wait-on: "http://localhost:8080"
 #          build: npm i -D cypress
 #          browser: edge

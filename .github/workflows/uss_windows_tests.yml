@@ -22,15 +22,12 @@ jobs:
       # Workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-      # Installs and open a local http-server to serve the tests' index file 
-      - name: Setup http-server
-        run: |
-          npm install --global http-server
-          START /B http-server 
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          start-windows: npm start
+          wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: chrome
           
@@ -45,41 +42,36 @@ jobs:
       # Workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-      # Installs and open a local http-server to serve the tests' index file 
-      - name: Setup http-server
-        run: |
-          npm install --global http-server
-          START /B http-server
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          start-windows: npm start
+          wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: firefox
-          
-  edge-test:
-    # The type of runner that the job will run on
-    runs-on: windows-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Checkout
-        uses: actions/checkout@v3
-      # Workaround for creating the package.json file 
-      - name: Setup npm package
-        run: npm init -y && npm install
-      # Installs edge
-      - uses: browser-actions/setup-edge@latest
-      - name: Print Edge version
-        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
-      # Installs and open a local http-server to serve the tests' index file 
-      - name: Setup http-server
-        run: |
-          npm install --global http-server
-          START /B http-server 
-      # Runs a single command using the runners shell
-      - name: Cypress run
-        uses: cypress-io/github-action@v2
-        with:
-          build: npm i -D cypress
-          browser: edge
+
+#not available yet
+#  edge-test:
+#    # The type of runner that the job will run on
+#    runs-on: windows-latest
+#    # Steps represent a sequence of tasks that will be executed as part of the job
+#    steps:
+#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      # Workaround for creating the package.json file 
+#      - name: Setup npm package
+#        run: npm init -y && npm install
+#      # Installs edge
+#      - uses: browser-actions/setup-edge@latest
+#      - name: Print Edge version
+#        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
+#      # Runs a single command using the runners shell
+#      - name: Cypress run
+#        uses: cypress-io/github-action@v2
+#        with:
+#          start-windows: npm start
+#          wait-on: "http://localhost:8080"
+#          build: npm i -D cypress
+#          browser: edge
