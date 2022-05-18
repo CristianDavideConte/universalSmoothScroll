@@ -1,4 +1,4 @@
-name: uss-tests-windows
+name: uss-tests-macos
 
 # Controls when the workflow will run
 on:
@@ -13,7 +13,7 @@ on:
 jobs:
   chrome-test:
     # The type of runner that the job will run on
-    runs-on: windows-latest
+    runs-on: macos-10.15
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -22,12 +22,9 @@ jobs:
       # Workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-      # Installs the localhost server 
-      - name: Install Server
-        run: npm install --global http-server
-      # Runs the locahost server
-      - name: Start server
-        run: cmd /c START /b http-server
+      # Install and start the localhost server in the background
+      - name: Run server
+        run: npx http-server -c-1 &
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
@@ -38,7 +35,7 @@ jobs:
           
   firefox-test:
     # The type of runner that the job will run on
-    runs-on: windows-latest
+    runs-on: macos-10.15
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -60,7 +57,7 @@ jobs:
 
   edge-test:
     # The type of runner that the job will run on
-    runs-on: windows-latest
+    runs-on: macos-10.15
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
