@@ -25,7 +25,7 @@ jobs:
       # Installs and open a local http-server to serve the tests' index file 
       - name: Setup http-server
         run: |
-          npm install --global http-server
+          npm install http-server
           http-server
       # Runs a single command using the runners shell
       - name: Cypress run
@@ -48,7 +48,7 @@ jobs:
       # Installs and open a local http-server to serve the tests' index file 
       - name: Setup http-server
         run: |
-          npm install --global http-server
+          npm install http-server
           http-server
       # Runs a single command using the runners shell
       - name: Cypress run
@@ -76,7 +76,7 @@ jobs:
 #      # Installs and open a local http-server to serve the tests' index file 
 #      - name: Setup http-server
 #        run: |
-#          npm install --global http-server
+#          npm install http-server
 #          http-server
 #      # Runs a single command using the runners shell
 #      - name: Cypress run
