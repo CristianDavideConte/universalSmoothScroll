@@ -115,10 +115,11 @@ describe("getMaxScrollX-Body", function() {
             .then((win) => {
                 uss = win.uss;
                 uss._containersData = new Map();
-                
+                const _expectedMaxScrollX = uss.getPageScroller().scrollWidth / 2 + uss.getScrollbarsMaxDimension();
+
                 expect(Number.isFinite(uss.getMaxScrollX())).to.be.true;
                 expect(uss.getMaxScrollX() > 0).to.be.true;
-                expect(uss.getMaxScrollX()).to.equal(Math.round(uss.getPageScroller().scrollWidth / 2 + uss.getScrollbarsMaxDimension()));
+                expect(uss.getMaxScrollX()).to.be.closeTo(_expectedMaxScrollX, 1);
 
                 //test elements that are unscrollable on the x-axis 
                 expect(uss.getMaxScrollX(win.document.getElementById("yScroller"))).to.equal(0);

@@ -72,8 +72,9 @@ jobs:
       # Workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-      # Installs edge
-      - uses: browser-actions/setup-edge@latest
+      # Installs Edge
+      - name: Install Microsoft Edge
+        uses: browser-actions/setup-edge@latest
       # Installs the localhost server 
       - name: Install Server
         run: npm install --global http-server
