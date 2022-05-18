@@ -24,11 +24,12 @@ jobs:
         run: npm init -y && npm install
       # Install and start the localhost server in the background
       - name: Run server
-        run: npx http-server &
+        run: npx http-server -c-1 &
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: chrome
           
@@ -50,6 +51,7 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: firefox
 
@@ -75,5 +77,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
+          wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: edge
