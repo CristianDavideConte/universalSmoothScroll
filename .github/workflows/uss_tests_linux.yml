@@ -69,8 +69,6 @@ jobs:
 #        run: npm init -y && npm install
 #      # Installs edge
 #      - uses: browser-actions/setup-edge@latest
-#      - name: Print Edge version
-#        run: (Get-Item (Get-Command msedge).Source).VersionInfo.ProductVersion
 #      # Install and start the localhost server in the background
 #      - name: Run server
 #        run: npx http-server -c-1 &
