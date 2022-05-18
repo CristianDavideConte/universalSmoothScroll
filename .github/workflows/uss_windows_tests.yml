@@ -22,30 +22,12 @@ jobs:
       # Workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-      # Install the localhost server 
-      - name: Serve Files
-        uses: Eun/http-server-action@v1
-        with:
-          directory: ${{ github.workspace }}
-          port: 8080
-          no-cache: false
-          content-types: |
-            {
-              "appcache": "text/cache-manifest",
-              "css": "text/css",
-              "gif": "image/gif",
-              "html": "text/html",
-              "ico": "image/x-icon",
-              "jpeg": "image/jpeg",
-              "jpg": "image/jpeg",
-              "js": "text/javascript",
-              "json": "application/json",
-              "png": "image/png",
-              "txt": "text/plain",
-              "xml": "text/xml"
-            }
-      # Run the localhost server in background 
-      - run: curl -vvvv http://localhost:8080/index.html
+      # Installs the localhost server 
+      - name: Install Server
+        run: npm install --global http-server
+      # Runs the locahost server
+      - name: Start server
+        run: http-server &
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
