@@ -1,6 +1,6 @@
 {
     "env": {
-        "testSite": "http://192.168.178.32:8080/",
+        "testSite": "http://127.0.0.1:8080/",
         "preferredTimeout": 15000
     }
 }
