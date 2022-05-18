@@ -24,7 +24,7 @@ jobs:
         run: npm init -y && npm install
       # Install and start the localhost server in the background
       - name: Run server
-        run: npx http-server -c-1 &
+        run: npx http-server &
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
