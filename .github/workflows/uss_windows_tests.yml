@@ -27,7 +27,7 @@ jobs:
         run: npm install --global http-server
       # Runs the locahost server
       - name: Start server
-        run: http-server &
+        run: cmd /c START /b http-server
       # Runs a single command using the runners shell
       - name: Cypress run
         uses: cypress-io/github-action@v2
