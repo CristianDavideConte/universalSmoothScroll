@@ -73,10 +73,11 @@ describe("scrollXTo-StoppedScrollingWhileAnimating-Body", function() {
     var uss;
     var _resolve;
     const _testCalculator = (i = 0) => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ < 10) return total / 10;
-            uss.stopScrollingX();
-            _resolve();
+        return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
+            if(!uss.isXscrolling()) return total; //testing phase of the setXStepLengthCalculator
+            i++;
+            if(i < 10) return total / 10;
+            uss.stopScrollingX(container, _resolve);
         }
     }
     it("Checks the scrollXTo method whenever a scroll animation is stopped inside a stepLengthCalculator", function(){
@@ -85,12 +86,12 @@ describe("scrollXTo-StoppedScrollingWhileAnimating-Body", function() {
             .then((win) => {
                 uss = win.uss;
                 uss._containersData = new Map();
-                uss.setXStepLengthCalculator(_testCalculator());
-
+            
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);   
                 return new Cypress.Promise(resolve => {
                     _resolve = resolve;
                     uss.scrollXTo(100, uss.getPageScroller());
-                });
+                });     
             }).then(() => {
                 bodyScrollLeftShouldToBe(90);
             })         
@@ -165,7 +166,7 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
             .then((win) => {
                 uss = win.uss;
                 uss._containersData = new Map();
-                uss.setXStepLengthCalculator(_testCalculator());
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
                 return new Cypress.Promise(resolve => {
                     _resolve = resolve;
                     uss.scrollXTo(100, uss.getPageScroller());
@@ -192,7 +193,7 @@ describe("scrollXTo-scrollXTo-ReplaceScrollingWhileAnimating-Body", function() {
             .then((win) => {
                 uss = win.uss;
                 uss._containersData = new Map();
-                uss.setXStepLengthCalculator(_testCalculator());
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
                 return new Cypress.Promise(resolve => {
                     _resolve = resolve;
                     uss.scrollXTo(100, uss.getPageScroller());
@@ -248,7 +249,7 @@ describe("isXScrolling-StoppedScrollingWhileAnimating-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
                 expect(uss.isXscrolling()).to.be.false;
-                uss.setXStepLengthCalculator(_testCalculator());
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
                 return new Cypress.Promise(resolve => {
                     _resolve = resolve;
                     uss.scrollXTo(100, uss.getPageScroller());

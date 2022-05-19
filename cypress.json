@@ -1,6 +1,6 @@
 {
     "env": {
-        "testSite": "https://cristiandavideconte.github.io/universalSmoothScroll/" ,
-        "preferredTimeout": 15000
+        "testSite": "http://127.0.0.1:8080/",
+        "preferredTimeout": 4000
     }
 }

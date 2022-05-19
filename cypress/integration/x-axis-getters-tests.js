@@ -66,10 +66,10 @@ describe("getXStepLengthCalculator-Body", function() {
                 uss._containersData = new Map();
                 expect(uss.getXStepLengthCalculator()).to.be.undefined;
                 
-                uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller());
+                uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
                 expect(uss.getXStepLengthCalculator()).to.equal(nonTempTestCalculator);
 
-                uss.setXStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true);
+                uss.setXStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
                 expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
               
                 return new Cypress.Promise(resolve => {
@@ -116,10 +116,11 @@ describe("getMaxScrollX-Body", function() {
             .then((win) => {
                 uss = win.uss;
                 uss._containersData = new Map();
-                
+                const _expectedMaxScrollX = uss.getPageScroller().scrollWidth / 2 + uss.getScrollbarsMaxDimension();
+
                 expect(Number.isFinite(uss.getMaxScrollX())).to.be.true;
                 expect(uss.getMaxScrollX() > 0).to.be.true;
-                expect(uss.getMaxScrollX()).to.equal(uss.getPageScroller().scrollWidth / 2 + uss.getScrollbarsMaxDimension());
+                expect(uss.getMaxScrollX()).to.be.closeTo(_expectedMaxScrollX, 1);
 
                 //test elements that are unscrollable on the x-axis 
                 expect(uss.getMaxScrollX(win.document.getElementById("yScroller"))).to.equal(0);

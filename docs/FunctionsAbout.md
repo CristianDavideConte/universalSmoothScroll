@@ -272,13 +272,13 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
  
   <tr id = "setXStepLengthCalculatorFun">
-   <td rowspan = "3" align = "center">
+   <td rowspan = "4" align = "center">
     <code>setXStepLengthCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>newCalculator</code></a>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible.
    </td>
   </tr>
@@ -292,15 +292,20 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>isTemporary</code></a>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>shouldBeTested</code></a>
+   </td>
+  </tr>
   
   <tr id = "setYStepLengthCalculatorFun">
-   <td rowspan = "3" align = "center">
+   <td rowspan = "4" align = "center">
     <code>setYStepLengthCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>newCalculator</code></a>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible.
    </td>
   </tr>
@@ -314,15 +319,20 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>isTemporary</code></a>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>shouldBeTested</code></a>
+   </td>
+  </tr>
 
   <tr id = "setStepLengthCalculatorFun">
-   <td rowspan = "3" align = "center">
+   <td rowspan = "4" align = "center">
     <code>setStepLengthCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>newCalculator</code></a>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible.
    </td>
   </tr>
@@ -334,6 +344,11 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>isTemporary</code></a>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>shouldBeTested</code></a>
    </td>
   </tr>
     
@@ -1095,7 +1110,7 @@ The following table describes every entry of the `Input Parameters` column of th
   </tr>
   
   <tr id = "setXStepLengthCalculator">
-  <td rowspan = "3" align = "center">
+  <td rowspan = "4" align = "center">
     <a href = "./FunctionsAbout.md#setXStepLengthCalculatorFun"><code>setXStepLengthCalculator</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -1134,9 +1149,21 @@ The following table describes every entry of the `Input Parameters` column of th
     Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>shouldBeTested</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    If <code>true</code>, a dummy scroll-animation is performed <i>(no actual scroll takes place)</i> to test the stepLengthCalculator. <br/>
+    If <code>false</code> the new calculator is directly set.
+  </td>  
+  </tr>
   
   <tr id = "setYStepLengthCalculator">
-  <td rowspan = "3" align = "center">
+  <td rowspan = "4" align = "center">
     <a href = "./FunctionsAbout.md#setYStepLengthCalculatorFun"><code>setYStepLengthCalculator</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -1175,9 +1202,21 @@ The following table describes every entry of the `Input Parameters` column of th
     Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
   </td>
   </tr> 
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>shouldBeTested</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    If <code>true</code>, a dummy scroll-animation is performed <i>(no actual scroll takes place)</i> to test the stepLengthCalculator. <br/>
+    If <code>false</code> the new calculator is directly set.
+  </td>  
+  </tr>
   
   <tr id = "setStepLengthCalculator">
-  <td rowspan = "3" align = "center">
+  <td rowspan = "4" align = "center">
     <a href = "./FunctionsAbout.md#setStepLengthCalculatorFun"><code>setStepLengthCalculator</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -1217,7 +1256,19 @@ The following table describes every entry of the `Input Parameters` column of th
     Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
   </td>
   </tr> 
-  
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>shouldBeTested</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    If <code>true</code>, a dummy scroll-animation is performed <i>(no actual scroll takes place)</i> to test the stepLengthCalculator. <br/>
+    If <code>false</code> the new calculator is directly set.
+  </td>  
+  </tr>
+
   <tr id = "setXStepLength">
   <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#setXStepLengthFun"><code>setXStepLength</code></a>
@@ -2100,7 +2151,7 @@ The following table describes every entry of the `Input Parameters` column of th
   <tr>
   <td rowspan = "1" align = "center">
     <code>includeHiddenParents</code>
-  </td>
+  </td> 
   <td rowspan = "1" align = "center">
     <code>Boolean</code>
   </td>

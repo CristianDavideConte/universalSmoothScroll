@@ -86,7 +86,8 @@ A: Yes, you can create a custom [`StepLengthCalculator`](./FAQ.md#q-what-is-a-st
 For example:<br/>
 ```javascript
 uss.setYStepLengthCalculator(
-    (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => { //A custom StepLengthCalculator
+    //This function is a custom StepLengthCalculator
+    (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => { 
         return remaning / 15 + 1;
     }
 );
@@ -154,8 +155,11 @@ const myStepLengthCalculator = (remaning, originalTimestamp, currentTimestamp, t
     return traveledDistance + 1; //+1 because at first traveledDistance = 0 and we would never start moving without it
 };
 
-//myStepLengthCalculator will controll only the easing on the y axis of myContainer
-uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer); 
+//myStepLengthCalculator:
+//- will controll only the easing on the y axis of myContainer (first 2 parameters)
+//- it won't be discarded after just one animation (3rd parameter)
+//- it won't be tested by the API because we know it works (4th parameter)
+uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer, false, false); 
 ```
 <br/>
 
@@ -174,6 +178,49 @@ uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 ```
 <br/>
 
+If you're not sure to have a valid StepLengthCalculator just ask the API to test it for you with the [`shouldBeTested`](./FunctionsAbout.md#setXStepLengthCalculator) parameter. <br/>
+
+E.g.:<br/>
+```javascript
+/*
+ * This StepLengthCalculator won't return a valid stepLength after
+ * the value of i is greater than 10.
+ * Unfortunately we didn't catch this bug at first. 
+ */
+const myBrokenCalculator = (i = 0) => {
+  if(i++ <= 10) return 50; 
+}
+const isTemporary = false;
+const shouldBeTested = true;
+
+/*
+ * Since we set the shouldBeTested paramenter to true, the API will test our StepLengthCalculator with a 
+ * dummy scroll-animation (no scroll actually takes place) and at the end of it, 
+ * an error message that informs us that myBrokenCalculator didn't return a valid stepLength will be printed in the console. 
+ * Thus the StepLengthCalculator won't be set for now.
+ */
+uss.setXStepLengthCalculator(myBrokenCalculator, myContainer, isTemporary, shouldBeTested);
+
+const myPerfectlyWorkingCalculator = (i = 0) => {
+  if(i++ <= 10) return 50; 
+  i = 0;
+  return 49;
+}
+/**
+ * Once our StepLengthCalculator is fixed we can tell the API to trust us and not test it anymore. 
+ */
+uss.setXStepLengthCalculator(myBrokenCalculator, myContainer, isTemporary, false);
+
+
+/*
+ * Keeping to true the shouldBeTested parameter will force the API to test the StepLengthCalculator.
+ * In the example below the setXStepLengthCalculator method will take 3seconds to complete instead of 1ms
+ * because it's waiting the EASE_LINEAR method to complete the test dummy scroll-animation.
+ */
+uss.setXStepLengthCalculator(EASE_LINEAR(3000), myContainer, isTemporary, true);
+```
+<br/>
+
 On [`easings.net`](https://easings.net/) you can find out more about the way the StepLengthCalculators provided by [`universalsmoothscroll-ease-functions`](./Download.md) library will affect your scroll-animations.
 
 ---
@@ -187,7 +234,7 @@ _`stillStart = false`_ means that even if other scroll-animations on the same ax
 This is an example of how different these 2 kind of scroll-animations are:<br/>
 ```javascript
 const ourEaseFunction = (remaning) => {return remaning / 15 + 1;};
-uss.setYStepLengthCalculator(ourEaseFunction, myContainer);
+uss.setYStepLengthCalculator(ourEaseFunction, myContainer, false, false);
 
 //CASE A: stillStart = true
 const stillStartTrueBehavior = wheelEvent => {
