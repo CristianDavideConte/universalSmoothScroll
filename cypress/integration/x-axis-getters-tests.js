@@ -1,3 +1,4 @@
+Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
 var testSite = Cypress.env("testSite")
 
 function bodyScrollLeftShouldToBe(value) {

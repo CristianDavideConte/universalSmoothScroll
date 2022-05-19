@@ -1,3 +1,4 @@
+Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
 var testSite = Cypress.env("testSite")
 
 function bodyScrollLeftShouldToBe(value) {
@@ -33,7 +34,7 @@ describe("scrollXTo-immediatelyStoppedScrolling-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
                 return new Cypress.Promise(resolve => {
-                    uss.scrollXTo(500, uss.getPageScroller(), () => count++);
+                    uss.scrollXTo(500, uss.getPageScroller(), () => {count += 1;});
                     uss.stopScrollingX(uss.getPageScroller(), resolve);
                 });
             }).then(() => {
@@ -54,10 +55,10 @@ describe("scrollXToBy-immediatelyStoppedScrolling-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
                 return new Cypress.Promise(resolve => {
-                    uss.scrollXTo(500, uss.getPageScroller(), () => count++);
+                    uss.scrollXTo(500, uss.getPageScroller(), () => {count += 1;});
                     uss.stopScrollingX(uss.getPageScroller());
                     uss.scrollXTo(250, uss.getPageScroller(), () => {
-                        count++;
+                        count += 1;
                         resolve();
                     });
                 });
@@ -132,6 +133,23 @@ describe("scrollXToBy-StillStart-True-Body", function() {
     })
 })
 
+describe("scrollXToBy-StillStart-False-Body", function() {
+    var uss;
+    it("Horizontally scrolls the body to n1 pixels and then extends that animation by n2 pixels", function(){
+        cy.visit(testSite) 
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
+                return new Cypress.Promise(resolve => {
+                    uss.scrollXTo(100);
+                    uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
+                });
+            }).then(() => {
+                bodyScrollLeftShouldToBe(300);
+            })         
+    })
+})
 
 describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", function() {
     var uss;
@@ -182,24 +200,6 @@ describe("scrollXTo-scrollXTo-ReplaceScrollingWhileAnimating-Body", function() {
                 });
             }).then(() => {
                 bodyScrollLeftShouldToBe(50);
-            })         
-    })
-})
-
-describe("scrollXToBy-StillStart-False-Body", function() {
-    var uss;
-    it("Horizontally scrolls the body to n1 pixels and then extends that animation by n2 pixels", function(){
-        cy.visit(testSite) 
-        cy.window()
-            .then((win) => {
-                uss = win.uss;
-                uss._containersData = new Map();
-                return new Cypress.Promise(resolve => {
-                    uss.scrollXTo(100);
-                    uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
-                });
-            }).then(() => {
-                bodyScrollLeftShouldToBe(300);
             })         
     })
 })

@@ -1,3 +1,4 @@
+Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
 var testSite = Cypress.env("testSite")
 
 function bodyScrollTopShouldToBe(value) {
@@ -132,6 +133,23 @@ describe("scrollYToBy-StillStart-True-Body", function() {
     })
 })
 
+describe("scrollYToBy-StillStart-False-Body", function() {
+    var uss;
+    it("Vertically scrolls the body to n1 pixels and then extends that animation by n2 pixels", function(){
+        cy.visit(testSite) 
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
+                return new Cypress.Promise(resolve => {
+                    uss.scrollYTo(100);
+                    uss.scrollYBy(200, uss.getPageScroller(), resolve, false);
+                });
+            }).then(() => {
+                bodyScrollTopShouldToBe(300);
+            })         
+    })
+})
 
 describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", function() {
     var uss;
@@ -182,24 +200,6 @@ describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating-Body", function() {
                 });
             }).then(() => {
                 bodyScrollTopShouldToBe(50);
-            })         
-    })
-})
-
-describe("scrollYToBy-StillStart-False-Body", function() {
-    var uss;
-    it("Vertically scrolls the body to n1 pixels and then extends that animation by n2 pixels", function(){
-        cy.visit(testSite) 
-        cy.window()
-            .then((win) => {
-                uss = win.uss;
-                uss._containersData = new Map();
-                return new Cypress.Promise(resolve => {
-                    uss.scrollYTo(100);
-                    uss.scrollYBy(200, uss.getPageScroller(), resolve, false);
-                });
-            }).then(() => {
-                bodyScrollTopShouldToBe(300);
             })         
     })
 })
