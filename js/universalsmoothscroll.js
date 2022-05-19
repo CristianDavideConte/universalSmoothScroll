@@ -11,8 +11,6 @@
  *                               it represent the default lowest number of frames any scroll-animation should last if no StepLengthCalculator is set for a container.
  * DEFAULT_TEST_CALCULATOR_SCROLL_VALUE: number, the default number of pixel scrolled when testing a newScrollCalculator.
  * DEFAULT_TEST_CALCULATOR_DURATION: number, the default number of milliseconds the test of a newStepLengthCalculator should last.
- * DEFAULT_PAGE_SCROLLER: object, the initial value of the uss_pageScroller variable: 
- *                        it represent the default value used when an API method requires the "container" input parameter but nothing is passed.
  * DEFAULT_ERROR_LOGGER: function, logs the API error messages inside the browser's console.
  * DEFAULT_WARNING_LOGGER: function, logs the API warning messages inside the browser's console.
  */
@@ -149,7 +147,6 @@ const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDO
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_TEST_CALCULATOR_SCROLL_VALUE = 100; //in px
 const DEFAULT_TEST_CALCULATOR_DURATION = 5000;    //in ms
-const DEFAULT_PAGE_SCROLLER = window;
 const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
   if(/disabled/i.test(uss._debugMode)) return;
   
@@ -221,7 +218,7 @@ var uss = {
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _windowWidth:  INITIAL_WINDOW_WIDTH,
   _scrollbarsMaxDimension: 0,
-  _pageScroller: DEFAULT_PAGE_SCROLLER,
+  _pageScroller: document.scrollingElement || window,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   _debugMode: "",
   isXscrolling: (container = uss._pageScroller) => {
@@ -511,13 +508,15 @@ var uss = {
     return deltaY >= uss._minAnimationFrame * uss._yStepLength ? uss._yStepLength : Math.ceil(deltaY / uss._minAnimationFrame);
   },
   calcScrollbarsDimensions: (element) => {
-    if(element === window) return [0, 0]; //[Vertical scrollbar's width, Horizontal scrollbar's height]
-    if(!(element instanceof HTMLElement)) {
+    if(element === window) {
+      element = document.scrollingElement || uss.getPageScroller();
+      if(element === window) return [0,0];
+    } else if(!(element instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("calcScrollbarsDimensions", "the element to be an HTMLElement or the Window", element);
       throw "USS fatal error (execution stopped)";
     }
 
-    if(uss._scrollbarsMaxDimension === 0) return [0, 0]; //[Vertical scrollbar's width, Horizontal scrollbar's height]
+    if(uss._scrollbarsMaxDimension === 0) return [0,0]; //[Vertical scrollbar's width, Horizontal scrollbar's height]
 
     const _scrollbarsDimensions = [];
     const _elementStyle = window.getComputedStyle(element);
@@ -556,7 +555,10 @@ var uss = {
     return _scrollbarsDimensions;
   },
   calcBordersDimensions: (element) => {
-    if(element === window) return [0,0,0,0]; //[top, right, bottom, left]
+    if(element === window) {
+      element = document.scrollingElement || uss.getPageScroller();
+      if(element === window) return [0,0,0,0]; //[top, right, bottom, left]
+    }
     if(!(element instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("calcBordersDimensions", "the element to be an HTMLElement or the Window", element);
       throw "USS fatal error (execution stopped)";
@@ -648,7 +650,7 @@ var uss = {
     const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
     const _relativePositioned = _style.position !== "absolute";
 
-    while(element !== _body && element !== _html) {
+    do {
       element = element.parentElement;
       _style = window.getComputedStyle(element);
       if(element === _body) break;
@@ -659,7 +661,7 @@ var uss = {
         return element;
       }
       if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
-    }
+    } while(true); //Until body is reached
 
     if(_bodyOverflowRegex.test(_style.overflowX) && uss.getMaxScrollX(_body) >= 1) return _body;
     if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowX) && uss.getMaxScrollX(_html) >= 1) return _html;
@@ -693,7 +695,7 @@ var uss = {
     const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
     const _relativePositioned = _style.position !== "absolute";
 
-    while(element !== _body && element !== _html) {
+    do {
       element = element.parentElement;
       _style = window.getComputedStyle(element);
       if(element === _body) break;
@@ -704,7 +706,7 @@ var uss = {
         return element;
       }
       if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
-    }
+    } while(true); //Until body is reached
 
     if(_bodyOverflowRegex.test(_style.overflowY) && uss.getMaxScrollY(_body) >= 1) return _body;
     if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowY) && uss.getMaxScrollY(_html) >= 1) return _html;
@@ -739,7 +741,7 @@ var uss = {
     const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
     const _relativePositioned = _style.position !== "absolute";
 
-    while(element !== _body && element !== _html) {
+    do {
       element = element.parentElement;
       _style = window.getComputedStyle(element);
       if(element === _body) break;
@@ -750,7 +752,7 @@ var uss = {
         return element;
       }
       if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
-    }
+    } while(true); //Until body is reached
 
     if(_bodyOverflowRegex.test(_style.overflow) && _isScrollable(_body)) return _body;
     if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) return _html;
@@ -791,7 +793,7 @@ var uss = {
     const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
     const _relativePositioned = _style.position !== "absolute";
 
-    while(element !== _body && element !== _html) {
+    do {
       element = element.parentElement;
       _style = window.getComputedStyle(element);
       if(element === _body) break;
@@ -802,7 +804,7 @@ var uss = {
         _scrollableParentFound(element);
       }
       if(_style.position === "fixed") return _scrollableParents; //If this parent is fixed, no other parent can scroll the element
-    }
+    } while(true); //Until body is reached
 
     if(_bodyOverflowRegex.test(_style.overflow) && _isScrollable(_body)) _scrollableParentFound(_body);
     if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) _scrollableParentFound(_html);
@@ -1154,36 +1156,44 @@ var uss = {
       if(typeof callback === "function") window.requestAnimationFrame(callback);
       return;
     }
-
+    
     let _alignToTop  = alignToTop;
     let _alignToLeft = alignToLeft;
-    let _currentElement, _currentContainer;
-
-    _currentContainer = _containers[_containerIndex];
-    _currentElement   = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
+    let _currentContainer = _containers[_containerIndex];
+    let _currentElement   = _containers[_containerIndex - 1];
+    
+    //The window can scroll the body and/or the html,
+    //there's no need to scroll them after having scrolled the window.
+    if(_currentContainer === window && 
+      (_currentElement === document.body || _currentElement === document.documentElement)
+    ) {
+      _containerIndex--;
+      _containers[_containerIndex] = window;
+    }
+    _currentElement = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
 
     _scrollContainer();
 
     function _scrollContainer() {   
-      //_scrollbarsDimensions[0] = current __container's vertical scrollbar's width
-      //_scrollbarsDimensions[1] = current __container's horizontal scrollbar's height
+      //_scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
+      //_scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
       const _scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer);
 
-      //_bordersDimensions[0] = current __container's top border size
-      //_bordersDimensions[1] = current __container's right border size
-      //_bordersDimensions[2] = current __container's bottom border size
-      //_bordersDimensions[3] = current __container's left border size
+      //_bordersDimensions[0] = _currentContainer's top border size
+      //_bordersDimensions[1] = _currentContainer's right border size
+      //_bordersDimensions[2] = _currentContainer's bottom border size
+      //_bordersDimensions[3] = _currentContainer's left border size
       const _bordersDimensions = uss.calcBordersDimensions(_currentContainer);   
 
       const _containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
       const _containerWidth  = _containerRect.width;
       const _containerHeight = _containerRect.height;
 
-      const _elementRect = _currentElement.getBoundingClientRect(); //The element can never be the window
+      const _elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the window
       const _elementWidth  = _elementRect.width;
       const _elementHeight = _elementRect.height;
-      const _elementInitialX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
-      const _elementInitialY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
+      const _elementInitialX = _elementRect.left - _containerRect.left; //_currentElement's x-coordinate relative to it's container
+      const _elementInitialY = _elementRect.top  - _containerRect.top;  //_currentElement's y-coordinate relative to it's container
 
       //Align to "nearest" is an indirect way to say: Align to "top" / "bottom" / "center"
       if(alignToLeft === "nearest") {
@@ -1243,33 +1253,41 @@ var uss = {
 
     let _alignToTop  = null;
     let _alignToLeft = null;
-    let _currentElement, _currentContainer;
-
-    _currentContainer = _containers[_containerIndex];
-    _currentElement   = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
+    let _currentContainer = _containers[_containerIndex];
+    let _currentElement   = _containers[_containerIndex - 1];
+    
+    //The window can scroll the body and/or the html,
+    //there's no need to scroll them after having scrolled the window.
+    if(_currentContainer === window && 
+      (_currentElement === document.body || _currentElement === document.documentElement)
+    ) {
+      _containerIndex--;
+      _containers[_containerIndex] = window;
+    }
+    _currentElement = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
 
     _scrollContainer();
 
     function _scrollContainer() {   
-      //_scrollbarsDimensions[0] = current __container's vertical scrollbar's width
-      //_scrollbarsDimensions[1] = current __container's horizontal scrollbar's height
+      //_scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
+      //_scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
       const _scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer);
 
-      //_bordersDimensions[0] = current __container's top border size
-      //_bordersDimensions[1] = current __container's right border size
-      //_bordersDimensions[2] = current __container's bottom border size
-      //_bordersDimensions[3] = current __container's left border size
+      //_bordersDimensions[0] = _currentContainer's top border size
+      //_bordersDimensions[1] = _currentContainer's right border size
+      //_bordersDimensions[2] = _currentContainer's bottom border size
+      //_bordersDimensions[3] = _currentContainer's left border size
       const _bordersDimensions = uss.calcBordersDimensions(_currentContainer);   
 
       const _containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
       const _containerWidth  = _containerRect.width;
       const _containerHeight = _containerRect.height;
 
-      const _elementRect = _currentElement.getBoundingClientRect(); //The element can never be the window
+      const _elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the window
       const _elementWidth  = _elementRect.width;
       const _elementHeight = _elementRect.height;
-      const _elementInitialX = _elementRect.left - _containerRect.left; //Element's x-coordinate relative to it's container
-      const _elementInitialY = _elementRect.top  - _containerRect.top;  //Element's y-coordinate relative to it's container
+      const _elementInitialX = _elementRect.left - _containerRect.left; //_currentElement's x-coordinate relative to it's container
+      const _elementInitialY = _elementRect.top  - _containerRect.top;  //_currentElement's y-coordinate relative to it's container
       
       const _elementIntoViewX = _elementInitialX > -1 && _elementInitialX + _elementWidth  - _containerWidth  + _scrollbarsDimensions[0] < 1;  //Checks if the element is already in the viewport on the x-axis
       const _elementIntoViewY = _elementInitialY > -1 && _elementInitialY + _elementHeight - _containerHeight + _scrollbarsDimensions[1] < 1;  //Checks if the element is already in the viewport on the y-axis    
