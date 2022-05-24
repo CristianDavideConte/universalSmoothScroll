@@ -558,8 +558,7 @@ var uss = {
     if(element === window) {
       element = document.scrollingElement || uss.getPageScroller();
       if(element === window) return [0,0,0,0]; //[top, right, bottom, left]
-    }
-    if(!(element instanceof HTMLElement)) {
+    } else if(!(element instanceof HTMLElement)) {
       DEFAULT_ERROR_LOGGER("calcBordersDimensions", "the element to be an HTMLElement or the Window", element);
       throw "USS fatal error (execution stopped)";
     }
