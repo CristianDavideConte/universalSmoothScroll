@@ -1,5 +1,4 @@
 Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
-var testSite = Cypress.env("testSite")
 
 function bodyScrollLeftShouldToBe(value) {
     cy.get("body")
@@ -10,7 +9,7 @@ function bodyScrollLeftShouldToBe(value) {
 describe("scrollXTo-Body", function() {
     var uss;
     it("Horizontally scrolls the body to n pixels", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -29,7 +28,7 @@ describe("scrollXTo-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
     it("Checks the scrollXTo method whenever a scroll animation is immediately stopped", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -50,7 +49,7 @@ describe("scrollXToBy-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
     it("Checks the scrollXTo method whenever a scroll animation is immediately stopped and restarted with the scrollXBy method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -83,7 +82,7 @@ describe("scrollXTo-StoppedScrollingWhileAnimating-Body", function() {
         }
     }
     it("Checks the scrollXTo method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -104,7 +103,7 @@ describe("scrollXTo-StoppedScrollingWhileAnimating-Body", function() {
 describe("scrollXBy-Body", function() {
     var uss;
     it("Horizontally scrolls the body by n pixels", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -122,7 +121,7 @@ describe("scrollXBy-Body", function() {
 describe("scrollXToBy-StillStart-True-Body", function() {
     var uss;
     it("Horizontally scrolls the body to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -141,7 +140,7 @@ describe("scrollXToBy-StillStart-True-Body", function() {
 describe("scrollXToBy-StillStart-False-Body", function() {
     var uss;
     it("Horizontally scrolls the body to n1 pixels and then extends that animation by n2 pixels", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -167,7 +166,7 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
         }
     }
     it("Checks if the scrollYBy method with stillStart = \"false\" can extend a scroll animation from inside a stepLengthCalculator", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -195,7 +194,7 @@ describe("scrollXTo-scrollXTo-ReplaceScrollingWhileAnimating-Body", function() {
         }
     }
     it("Checks if the scrollXTo method can replace the current scroll animation from inside a stepLengthCalculator", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -218,7 +217,7 @@ describe("isXScrolling-Body", function() {
     var wasXScrolling;
     var isXscrolling;
     it("Checks the isXScrolling method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -254,7 +253,7 @@ describe("isXScrolling-StoppedScrollingWhileAnimating-Body", function() {
         }
     }
     it("Checks the isXScrolling method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;

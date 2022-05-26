@@ -1,5 +1,4 @@
 Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
-var testSite = Cypress.env("testSite")
 
 function bodyScrollTopShouldToBe(value) {
     cy.get("body")
@@ -15,7 +14,7 @@ describe("setYStepLengthCalculator-Body", function() {
     var _testCalculatorValidType2 = () => 5;
     var _testCalculatorValidType3 = () => 0.00000001; //valid but takes more than the default testing timeout
     it("Checks the setYStepLengthCalculator method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -70,7 +69,7 @@ describe("setYStepLength-Body", function() {
     var _testStepValidType1 = 10;
     var _testStepValidType2 = 5;
     it("Checks the setYStepLength method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;

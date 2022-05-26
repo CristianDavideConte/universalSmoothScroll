@@ -1,5 +1,4 @@
 Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
-var testSite = Cypress.env("testSite")
 
 function bodyScrollTopShouldToBe(value) {
     cy.get("body")
@@ -11,7 +10,7 @@ describe("getFinalYPosition-Body", function() {
     var uss;
     var finalYPosition;
     it("Checks the getFinalYPosition method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -34,7 +33,7 @@ describe("getScrollYDirection-Body", function() {
     var uss;
     var scrollYDirectionUp, scrollYDirectionDown;
     it("Checks the getScrollYDirection method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -60,7 +59,7 @@ describe("getYStepLengthCalculator-Body", function() {
     var nonTempTestCalculator = () => 10;
     var tempTestCalculator = r => r / 20 + 1;
     it("Checks the getYStepLengthCalculator method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -87,7 +86,7 @@ describe("getYStepLengthCalculator-Body", function() {
 describe("getYStepLength-Body", function() {
     var uss;
     it("Checks the getYStepLength method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -110,7 +109,7 @@ describe("getYStepLength-Body", function() {
 describe("getMaxScrollY-Body", function() {
     var uss;
     it("Checks the getMaxScrollY method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
@@ -131,7 +130,7 @@ describe("getMaxScrollY-Body", function() {
 describe("getYScrollableParent-Body", function() {
     var uss;
     it("Checks the getYScrollableParent method", function() {
-        cy.visit(testSite); 
+        cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
