@@ -15,6 +15,7 @@ describe("getFinalXPosition-Body", function() {
           .then((win) => {
               uss = win.uss;
               uss._containersData = new Map();
+
               new Cypress.Promise(resolve => {
                   uss.scrollXTo(100, uss.getPageScroller(), resolve);
                   finalXPosition = uss.getFinalXPosition();
@@ -37,6 +38,7 @@ describe("getScrollXDirection-Body", function() {
           .then((win) => {
             uss = win.uss;
             uss._containersData = new Map();
+
             new Cypress.Promise(resolve => {
                 uss.scrollXTo(100, uss.getPageScroller(), () => {
                     uss.scrollXTo(50, uss.getPageScroller(), resolve);
@@ -62,10 +64,12 @@ describe("getXStepLengthCalculator-Body", function() {
           .then((win) => {
               uss = win.uss;
               uss._containersData = new Map();
+
               expect(uss.getXStepLengthCalculator()).to.be.undefined;
               
               uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
               expect(uss.getXStepLengthCalculator()).to.equal(nonTempTestCalculator);  
+
               uss.setXStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
               expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
             
