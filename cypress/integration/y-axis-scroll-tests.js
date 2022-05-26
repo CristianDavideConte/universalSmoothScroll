@@ -3,24 +3,24 @@ var testSite = Cypress.env("testSite")
 
 function bodyScrollTopShouldToBe(value) {
     cy.get("body")
-    .invoke("scrollTop")
-    .should("equal", value);
+      .invoke("scrollTop")
+      .should("equal", value);
 }
 
 describe("scrollYTo-Body", function() {
     var uss;
     it("Vertically scrolls the body to n pixels", function(){
-        cy.visit(testSite) 
+        cy.visit(testSite); 
         cy.window()
-            .then((win) => {
-                uss = win.uss;
-                uss._containersData = new Map();
-                return new Cypress.Promise(resolve => {
-                    uss.scrollYTo(500, uss.getPageScroller(), resolve);
-                });
-            }).then(() => {
-                bodyScrollTopShouldToBe(500);
-            })         
+          .then((win) => {
+              uss = win.uss;
+              uss._containersData = new Map();
+              new Cypress.Promise(resolve => {
+                  uss.scrollYTo(500, uss.getPageScroller(), resolve);
+              }).then(() => {
+                  bodyScrollTopShouldToBe(500);
+              });
+          });       
     })
 })
 

@@ -1,17 +1,18 @@
 Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
-var testSite = Cypress.env("testSite")
+beforeEach(() => {
+    cy.visit(Cypress.env("testSite")) 
+});
 
 function bodyScrollLeftShouldToBe(value) {
     cy.get("body")
-    .invoke("scrollLeft")
-    .should("equal", value);
+      .invoke("scrollLeft")
+      .should("equal", value);
 }
 
 describe("getFinalXPosition-Body", function() {
     var uss;
     var finalXPosition;
     it("Checks the getFinalXPosition method", function(){
-        cy.visit(testSite) 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -34,23 +35,22 @@ describe("getScrollXDirection-Body", function() {
     var uss;
     var scrollYDirectionLeft, scrollYDirectionRight;
     it("Checks the getScrollXDirection method", function(){
-        cy.visit(testSite) 
         cy.window()
-            .then((win) => {
-                uss = win.uss;
-                uss._containersData = new Map();
-                return new Cypress.Promise(resolve => {
-                    uss.scrollXTo(100, uss.getPageScroller(), () => {
-                        uss.scrollXTo(50, uss.getPageScroller(), resolve);
-                        scrollYDirectionLeft = uss.getScrollXDirection();
-                    });
-                    scrollYDirectionRight = uss.getScrollXDirection();
+          .then((win) => {
+            uss = win.uss;
+            uss._containersData = new Map();
+            new Cypress.Promise(resolve => {
+                uss.scrollXTo(100, uss.getPageScroller(), () => {
+                    uss.scrollXTo(50, uss.getPageScroller(), resolve);
+                    scrollYDirectionLeft = uss.getScrollXDirection();
                 });
+                scrollYDirectionRight = uss.getScrollXDirection();
             }).then(() => {
                 expect(scrollYDirectionLeft).to.equal(-1);
                 expect(scrollYDirectionRight).to.equal(1);
                 expect(uss.getScrollXDirection()).to.equal(0);
-            })         
+            });
+          })         
     })
 })
 
@@ -59,7 +59,6 @@ describe("getXStepLengthCalculator-Body", function() {
     var nonTempTestCalculator = () => 10;
     var tempTestCalculator = r => r / 20 + 1;
     it("Checks the getXStepLengthCalculator method", function(){
-        cy.visit(testSite) 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -86,7 +85,6 @@ describe("getXStepLengthCalculator-Body", function() {
 describe("getXStepLength-Body", function() {
     var uss;
     it("Checks the getXStepLength method", function(){
-        cy.visit(testSite) 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -111,7 +109,6 @@ describe("getXStepLength-Body", function() {
 describe("getMaxScrollX-Body", function() {
     var uss;
     it("Checks the getMaxScrollX method", function(){
-        cy.visit(testSite) 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -133,7 +130,6 @@ describe("getMaxScrollX-Body", function() {
 describe("getXScrollableParent-Body", function() {
     var uss;
     it("Checks the getXScrollableParent method", function(){
-        cy.visit(testSite) 
         cy.window()
             .then((win) => {
                 uss = win.uss;
