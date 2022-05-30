@@ -55,8 +55,6 @@ jobs:
           build: npm i -D cypress
           browser: firefox
 
-#not available yet
-#testing
   edge-test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
