@@ -56,27 +56,33 @@ jobs:
           browser: firefox
 
 #not available yet
-#  edge-test:
-#    # The type of runner that the job will run on
-#    runs-on: ubuntu-latest
-#    # Steps represent a sequence of tasks that will be executed as part of the job
-#    steps:
-#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#      - name: Checkout
-#        uses: actions/checkout@v3
-#      # Workaround for creating the package.json file 
-#      - name: Setup npm package
-#        run: npm init -y && npm install
-#      # Installs Edge
-#      - name: Install Microsoft Edge
-#        uses: browser-actions/setup-edge@latest
-#      # Install and start the localhost server in the background
-#      - name: Run server
-#        run: npx http-server -c-1 &
-#      # Runs a single command using the runners shell
-#      - name: Cypress run
-#        uses: cypress-io/github-action@v2
-#        with:
-#          wait-on: "http://localhost:8080"
-#          build: npm i -D cypress
-#          browser: edge
+#testing
+  edge-test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+      # Workaround for creating the package.json file 
+      - name: Setup npm package
+        run: npm init -y && npm install
+      # Installs Edge
+      - name: Install Microsoft Edge
+        run: | 
+          curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+          sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+          sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft-edge-dev.list'
+          sudo rm microsoft.gpg
+          sudo apt update && sudo apt install microsoft-edge-stable
+      # Install and start the localhost server in the background
+      - name: Run server
+        run: npx http-server -c-1 &
+      # Runs a single command using the runners shell
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
+        with:
+          wait-on: "http://localhost:8080"
+          build: npm i -D cypress
+          browser: edge

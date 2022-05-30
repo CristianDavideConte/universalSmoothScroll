@@ -13,7 +13,7 @@ describe("setXStepLengthCalculator-Body", function() {
     var _testCalculatorValidType1 = () => 10;
     var _testCalculatorValidType2 = () => 5;
     var _testCalculatorValidType3 = () => 0.00000001; //valid but takes more than the default testing timeout
-    it("Checks the setXStepLengthCalculator method", function() {
+    it("Tests the setXStepLengthCalculator method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -59,7 +59,7 @@ describe("setXStepLengthCalculator-Body", function() {
                   expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
               });
           });     
-    })
+    });
 })
 
 describe("setXStepLength-Body", function() {
@@ -68,7 +68,7 @@ describe("setXStepLength-Body", function() {
     var _testStepInvalidTypeNaN = NaN;
     var _testStepValidType1 = 10;
     var _testStepValidType2 = 5;
-    it("Checks the setXStepLength method", function() {
+    it("Tests the setXStepLength method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -103,5 +103,5 @@ describe("setXStepLength-Body", function() {
                   expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
               });
           });     
-    })
+    });
 })

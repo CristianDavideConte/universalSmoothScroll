@@ -21,13 +21,13 @@ describe("scrollYTo-Body", function() {
                   bodyScrollTopShouldToBe(500);
               });
           });       
-    })
+    });
 })
 
 describe("scrollYTo-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
-    it("Checks the scrollYTo method whenever a scroll animation is immediately stopped", function() {
+    it("Tests the scrollYTo method whenever a scroll animation is immediately stopped", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -42,13 +42,13 @@ describe("scrollYTo-immediatelyStoppedScrolling-Body", function() {
                 expect(count).to.equal(0);
             });
           });         
-    })
+    });
 })
 
 describe("scrollYToBy-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
-    it("Checks the scrollYTo method whenever a scroll animation is immediately stopped and restarted with the scrollYBy method", function() {
+    it("Tests the scrollYTo method whenever a scroll animation is immediately stopped and restarted with the scrollYBy method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -67,7 +67,7 @@ describe("scrollYToBy-immediatelyStoppedScrolling-Body", function() {
                   expect(count).to.equal(1);
               });
           });         
-    })
+    });
 })
 
 describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
@@ -81,7 +81,7 @@ describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
             uss.stopScrollingY(container, _resolve);
         }
     }
-    it("Checks the scrollYTo method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
+    it("Tests the scrollYTo method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -97,7 +97,7 @@ describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
                   bodyScrollTopShouldToBe(90);
               });     
           });         
-    })
+    });
 })
 
 describe("scrollYBy-Body", function() {
@@ -115,7 +115,7 @@ describe("scrollYBy-Body", function() {
                   bodyScrollTopShouldToBe(100);
               });
           });         
-    })
+    });
 })
 
 describe("scrollYToBy-StillStart-True-Body", function() {
@@ -134,7 +134,7 @@ describe("scrollYToBy-StillStart-True-Body", function() {
                   bodyScrollTopShouldToBe(200);
               });
           });         
-    })
+    });
 })
 
 describe("scrollYToBy-StillStart-False-Body", function() {
@@ -153,7 +153,7 @@ describe("scrollYToBy-StillStart-False-Body", function() {
                   bodyScrollTopShouldToBe(300);
               });
           });         
-    })
+    });
 })
 
 describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", function() {
@@ -165,7 +165,7 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
             return total / 10;
         }
     }
-    it("Checks if the scrollYBy method with stillStart = \"false\" can extend a scroll animation from inside a stepLengthCalculator", function() {
+    it("Tests if the scrollYBy method with stillStart = \"false\" can extend a scroll animation from inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -181,7 +181,7 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
                   bodyScrollTopShouldToBe(190);
               });
           });         
-    })
+    });
 })
 
 
@@ -194,7 +194,7 @@ describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating-Body", function() {
             return total / 10;
         }
     }
-    it("Checks if the scrollYTo method can replace the current scroll animation from inside a stepLengthCalculator", function() {
+    it("Tests if the scrollYTo method can replace the current scroll animation from inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -210,14 +210,14 @@ describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating-Body", function() {
                   bodyScrollTopShouldToBe(50);
               });
           });         
-    })
+    });
 })
 
 describe("isYScrolling-Body", function() {
     var uss;
     var wasYScrolling;
     var isYScrolling;
-    it("Checks the isYScrolling method", function() {
+    it("Tests the isYScrolling method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -237,7 +237,7 @@ describe("isYScrolling-Body", function() {
                   expect(isYScrolling).to.be.false;
               });
           });         
-    })
+    });
 })
 
 describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
@@ -253,7 +253,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
             _resolve();
         }
     }
-    it("Checks the isYScrolling method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
+    it("Tests the isYScrolling method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -272,5 +272,5 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
                   expect(isYScrolling).to.be.false;
               });
           });         
-    })
+    });
 })

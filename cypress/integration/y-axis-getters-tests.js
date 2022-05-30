@@ -9,7 +9,7 @@ function bodyScrollTopShouldToBe(value) {
 describe("getFinalYPosition-Body", function() {
     var uss;
     var finalYPosition;
-    it("Checks the getFinalYPosition method", function() {
+    it("Tests the getFinalYPosition method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -26,13 +26,13 @@ describe("getFinalYPosition-Body", function() {
                   expect(finalYPosition).to.equal(uss.getScrollYCalculator()());
               });
           });         
-    })
+    });
 })
 
 describe("getScrollYDirection-Body", function() {
     var uss;
     var scrollYDirectionUp, scrollYDirectionDown;
-    it("Checks the getScrollYDirection method", function() {
+    it("Tests the getScrollYDirection method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -51,14 +51,14 @@ describe("getScrollYDirection-Body", function() {
                   expect(uss.getScrollYDirection()).to.equal(0);
               });
           });         
-    })
+    });
 })
 
 describe("getYStepLengthCalculator-Body", function() {
     var uss;
     var nonTempTestCalculator = () => 10;
     var tempTestCalculator = r => r / 20 + 1;
-    it("Checks the getYStepLengthCalculator method", function() {
+    it("Tests the getYStepLengthCalculator method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -80,12 +80,12 @@ describe("getYStepLengthCalculator-Body", function() {
                   expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
               });
           });         
-    })
+    });
 })
 
 describe("getYStepLength-Body", function() {
     var uss;
-    it("Checks the getYStepLength method", function() {
+    it("Tests the getYStepLength method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -103,12 +103,12 @@ describe("getYStepLength-Body", function() {
                   expect(uss.getYStepLength()).to.equal(10);
               });
           });        
-    })
+    });
 })
 
 describe("getMaxScrollY-Body", function() {
     var uss;
-    it("Checks the getMaxScrollY method", function() {
+    it("Tests the getMaxScrollY method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -124,12 +124,12 @@ describe("getMaxScrollY-Body", function() {
               expect(uss.getMaxScrollY(win.document.getElementById("xScroller"))).to.equal(0);
               expect(uss.getMaxScrollY(win.document.getElementById("stopScrollingX"))).to.equal(0);
           });     
-    })
+    });
 })
 
 describe("getYScrollableParent-Body", function() {
     var uss;
-    it("Checks the getYScrollableParent method", function() {
+    it("Tests the getYScrollableParent method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -149,5 +149,5 @@ describe("getYScrollableParent-Body", function() {
               expect(uss.getYScrollableParent(win.easeFunctionSelectorList)).to.equal(win.document.body);
               expect(uss.getYScrollableParent(win.document.getElementById("section12"))).to.equal(win.document.getElementById("yScrollerSection"));
           })     
-    })
+    });
 })
