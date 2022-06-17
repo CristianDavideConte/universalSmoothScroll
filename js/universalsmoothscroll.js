@@ -50,6 +50,7 @@
  * _windowHeight: number, the current window's inner heigth (in px).
  * _windowWidth: number, the current window's inner width (in px).
  * _scrollbarsMaxDimension: number, the highest amount of pixels any scrollbar on the page can occupy (it's browser dependent).
+ * _framesTime: number, the time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
  * _pageScroller: object, the value used when an API method requires the "container" input parameter but nothing is passed: 
  *                it should be used to tell the USS API which is the element that scrolls the document.
  * _reducedMotion: boolean, true if the user has enabled any reduce-motion setting devicewise, false otherwise. 
@@ -218,6 +219,7 @@ var uss = {
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _windowWidth:  INITIAL_WINDOW_WIDTH,
   _scrollbarsMaxDimension: 0,
+  _framesTime: 0,
   _pageScroller: document.scrollingElement || window,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   _debugMode: "",
@@ -861,7 +863,7 @@ var uss = {
     _containerData[2]  = finalXPosition;
     _containerData[4]  = _direction;
     _containerData[6]  = _totalScrollAmount;
-    _containerData[8]  = performance.now();
+    _containerData[8]  = null;
     _containerData[10] = callback;
 
     //A scroll-animation is already being performed and
@@ -873,6 +875,8 @@ var uss = {
     if(!_oldData) uss._containersData.set(container, _containerData);
 
     function _stepX(timestamp) {
+      //The originalTimeStamp is null at the beginning of a scroll-animation
+      if(!_containerData[8]) _containerData[8] = timestamp;
       const finalXPosition = _containerData[2];
       const _direction = _containerData[4];
       let _calculatedScrollStepLength;
@@ -969,7 +973,7 @@ var uss = {
     _containerData[3]  = finalYPosition;
     _containerData[5]  = _direction;
     _containerData[7]  = _totalScrollAmount;
-    _containerData[9]  = performance.now();
+    _containerData[9]  = null;
     _containerData[11] = callback;
 
     //A scroll-animation is already being performed and
@@ -981,6 +985,8 @@ var uss = {
     if(!_oldData) uss._containersData.set(container, _containerData);
      
     function _stepY(timestamp) {
+      //The originalTimeStamp is null at the beginning of a scroll-animation
+      if(!_containerData[9]) _containerData[9] = timestamp;
       const finalYPosition = _containerData[3];
       const _direction = _containerData[5];
       let _calculatedScrollStepLength;
@@ -1035,26 +1041,44 @@ var uss = {
       DEFAULT_ERROR_LOGGER("scrollXBy", "the container to be an HTMLElement or the Window", container);
       return;
     }
-
+    
+    const _currentXPosition = uss.getScrollXCalculator(container)();
     if(!stillStart) {
       const _containerData = uss._containersData.get(container) || [];
 
       //A scroll-animation on the x-axis is already being performed and can be repurposed
-      if(!!_containerData[0]) {
-        _containerData[8]  = performance.now();                        //originalTimestamp
-        _containerData[10] = callback;                                 //callback
-        
-        if(deltaX !== 0) {                                             //An actual scroll has been requested
-          _containerData[2] += deltaX;                                 //finalXPosition
-          const _totalScrollAmount = _containerData[2] - uss.getScrollXCalculator(container)(); //This can be negative, but we want it to always be positive
-          _containerData[4]  = _totalScrollAmount > 0 ? 1 : -1;        //direction
-          _containerData[6]  = _totalScrollAmount * _containerData[4]; //totalScrollAmount
-        } 
+      if(!!_containerData[0]) {     
+
+        //An actual scroll has been requested   
+        if(deltaX !== 0) { 
+          const _finalXPosition = _containerData[2] + deltaX;
+          const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _containerData[4];
+          
+          //The scroll-animation has to scroll less than 1px 
+          if(_remaningScrollAmount * _remaningScrollAmount < 1) { 
+            uss.stopScrollingX(container, callback);
+            return;
+          }
+
+          //Thanks to the new deltaX, the current scroll-animation 
+          //has already surpassed the old finalXPosition 
+          if(_remaningScrollAmount < 0) {
+            uss.scrollXTo(_finalXPosition, container, callback);
+            return;
+          }
+          
+          const _totalScrollAmount = _containerData[6] * _containerData[4] + deltaX; 
+          _containerData[2] = _finalXPosition;                        //finalXPosition
+          _containerData[4] = _totalScrollAmount > 0 ? 1 : -1;        //direction
+          _containerData[6] = _totalScrollAmount * _containerData[4]; //totalScrollAmount (always positive)
+        }
+        _containerData[8]  = null;                                    //originalTimestamp
+        _containerData[10] = callback;                                //callback
         return;
       }
     }
 
-    uss.scrollXTo(uss.getScrollXCalculator(container)() + deltaX, container, callback);
+    uss.scrollXTo(_currentXPosition + deltaX, container, callback);
   },
   scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true) => {
     if(!Number.isFinite(deltaY)) {
@@ -1066,25 +1090,43 @@ var uss = {
       return;
     }
 
+    const _currentYPosition = uss.getScrollYCalculator(container)();
     if(!stillStart) {
       const _containerData = uss._containersData.get(container) || [];
 
       //A scroll-animation on the y-axis is already being performed and can be repurposed
-      if(!!_containerData[1]) {
-        _containerData[9]  = performance.now();                        //originalTimestamp
-        _containerData[11] = callback;                                 //callback
-        
-        if(deltaY !== 0) {                                             //An actual scroll has been requested
-          _containerData[3] += deltaY;                                 //finalYPosition
-          const _totalScrollAmount = _containerData[3] - uss.getScrollYCalculator(container)(); //This can be negative, but we want it to always be positive
-          _containerData[5]  = _totalScrollAmount > 0 ? 1 : -1;        //direction
-          _containerData[7]  = _totalScrollAmount * _containerData[5]; //totalScrollAmount
+      if(!!_containerData[1]) {     
+
+        //An actual scroll has been requested   
+        if(deltaY !== 0) { 
+          const _finalYPosition = _containerData[3] + deltaY;
+          const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _containerData[5];
+          
+          //The scroll-animation has to scroll less than 1px 
+          if(_remaningScrollAmount * _remaningScrollAmount < 1) { 
+            uss.stopScrollingY(container, callback);
+            return;
+          }
+
+          //Thanks to the new deltaY, the current scroll-animation 
+          //has already surpassed the old finalYPosition 
+          if(_remaningScrollAmount < 0) {
+            uss.scrollYTo(_finalYPosition, container, callback);
+            return;
+          }
+          
+          const _totalScrollAmount = _containerData[7] * _containerData[5] + deltaY; 
+          _containerData[3] = _finalYPosition;                        //finalYPosition
+          _containerData[5] = _totalScrollAmount > 0 ? 1 : -1;        //direction
+          _containerData[7] = _totalScrollAmount * _containerData[5]; //totalScrollAmount (always positive)
         }
+        _containerData[9]  = null;                                    //originalTimestamp
+        _containerData[11] = callback;                                //callback
         return;
       }
     }
 
-    uss.scrollYTo(uss.getScrollYCalculator(container)() + deltaY, container, callback);
+    uss.scrollYTo(_currentYPosition + deltaY, container, callback);
   },
   scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback) => {
     if(!Number.isFinite(finalXPosition)) {
@@ -1106,7 +1148,7 @@ var uss = {
     const _callback = typeof callback === "function" ? () => {
       if(_currentStep < 1) _currentStep++;
       else callback();
-    } : null; //No action if no valid scrollTo's callback function is passed
+    } : null; //No action if no valid callback function is passed
 
     uss.scrollXTo(finalXPosition, container, _callback);
     uss.scrollYTo(finalYPosition, container, _callback);
@@ -1125,19 +1167,16 @@ var uss = {
       return;
     }
 
-    let _finalXPosition;
-    let _finalYPosition;
+    //This function is used to make sure that the passed callback is only called
+    //once all the scroll-animations for the passed container have been performed
+    let _currentStep = 0 //Number of the current _callback's calls
+    const _callback = typeof callback === "function" ? () => {
+      if(_currentStep < 1) _currentStep++;
+      else callback();
+    } : null; //No action if no valid callback function is passed
 
-    if(!stillStart) {
-      const _containerData = uss._containersData.get(container) || [];
-      _finalXPosition = !!_containerData[0] ? _containerData[2] : uss.getScrollXCalculator(container)();
-      _finalYPosition = !!_containerData[1] ? _containerData[3] : uss.getScrollYCalculator(container)();
-    } else {
-      _finalXPosition = uss.getScrollXCalculator(container)();
-      _finalYPosition = uss.getScrollYCalculator(container)();
-    }
-
-    uss.scrollTo(_finalXPosition + deltaX, _finalYPosition + deltaY, container, callback);
+    uss.scrollXBy(deltaX, container, _callback, stillStart);
+    uss.scrollYBy(deltaY, container, _callback, stillStart);
   },
   scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false) => {
     if(element === window) {
@@ -1433,7 +1472,7 @@ var uss = {
     
     if(_updateHistory) {
       window.history.scrollRestoration = "manual"; 
-      window.addEventListener("popstate", _smoothHistoryNavigation, {passive:true});
+      window.addEventListener("popstate", _smoothHistoryNavigation, {passive:true}); //Try with document.body.addEventListener("popstate", ...)
       window.addEventListener("unload", (event) => event.preventDefault(), {passive:false, once:true});
 
       //Prevents the browser to jump-to-position,
@@ -1485,11 +1524,34 @@ var uss = {
 
 window.addEventListener("resize", () => {uss._windowHeight = window.innerHeight; uss._windowWidth = window.innerWidth;}, {passive:true});
 window.addEventListener("load", () => {
+  //Calculate the maximum sizes of scrollbars on the webpage
   const __scrollBox = document.createElement("div");
   __scrollBox.style.overflowX = "scroll";
   document.body.appendChild(__scrollBox);
   uss._scrollbarsMaxDimension = __scrollBox.offsetHeight  - __scrollBox.clientHeight;
   document.body.removeChild(__scrollBox);
+
+  //Calculate the average frames' time of the user's screen and the corresponding minAnimationFrame
+  const _totalFrameCount = 60;
+  const _totalMeasurementsLeft = 3;
+  let _currentFrameCount = _totalFrameCount;
+  let _currentMeasurementsLeft = _totalMeasurementsLeft; 
+  let _startFrameTime = performance.now();
+  window.requestAnimationFrame(function _calcFrameTime(_currentFrameTime) {
+    _currentFrameCount--;
+    if(_currentFrameCount < 0) {
+      uss._framesTime = uss._framesTime > 0 ? 0.5 * (uss._framesTime + (_currentFrameTime - _startFrameTime) / _totalFrameCount) :
+                                                                       (_currentFrameTime - _startFrameTime) / _totalFrameCount;     
+      //uss._minAnimationFrame = 1000 / uss._framesTime;
+      _currentMeasurementsLeft--;
+      if(_currentMeasurementsLeft < 1) return;
+      
+      //Start a new measurement
+      _currentFrameCount = _totalFrameCount;
+      _startFrameTime = performance.now();
+    }
+    window.requestAnimationFrame(_calcFrameTime);
+  });
 }, {passive:true, once:true});
 
 try { //Chrome, Firefox & Safari >= 14

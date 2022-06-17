@@ -189,7 +189,7 @@
 
   function init() {
     const pageScroller = document.body;
-    const defaultEase = (remaning) => {return remaning / 20 + 1;};
+    const defaultEase = EASE_OUT_CUBIC(1000);
 
     let yScroller = document.getElementsByClassName("scrollerSections")[0];
     let yScrollerUpButton = document.getElementById("yScrollerUp");
@@ -464,6 +464,7 @@
       uss.scrollYBy(event.deltaY, pageScroller, null, false);
       return false;
     }, {passive:false});
+
     document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(pageScroller, () => console.log("scrollX stopped"));}, {passive:true});
     document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(pageScroller, () => console.log("scrollY stopped"));}, {passive:true});
 

@@ -1,221 +1,31 @@
 "use strict";
 
-const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, debugString = "CUSTOM_CUBIC_HERMITE_SPLINE") => {
-  if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
-  if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
-  if(xs.length !== ys.length) {DEFAULT_ERROR_LOGGER(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
-  
-  let _isXDefinedIn0 = false;
-  let _isXDefinedIn1 = false;
-  let xsCurrMax = null;
-  const _xsLen = xs.length;
-
-  for(let i = 0; i < _xsLen; i++) {
-    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
-    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
-    
-    //Checks if the passed points are sorted
-    if(!xsCurrMax || xsCurrMax < xs[i]) xsCurrMax = xs[i]; 
-    else {
-      DEFAULT_ERROR_LOGGER(debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
-      return;
-    } 
-    if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
-    if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
-  } 
-
-  //The control points must be defined at x = 0 and x = 1
-  if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
-  if(!_isXDefinedIn1) {xs.push(1); ys.push(1);}
-
+/**
+ * Internally used to define the standard behavior of a stepLengthCalculator.
+ * The progressEvaluator parameter defines at which % of the total duration the scroll-animation is at.
+ * The duration is the total amount in ms the scroll-animation should last.
+ * The callback is a function that is executed every time the stepLengthCalculator is invoked.  
+ */
+const _DEFAULT_STEPLENGTHCALCULATOR = (progressEvaluator, duration, callback) => {
   const _callback = typeof callback === "function" ? callback : () => {};
-  const c = 1 - tension;
-  const n = xs.length - 1;
-  const nHalf = Math.round(n / 2);
-  
-  //Cubic Hermite-Spline definition:
-  //p(x) = h00(t) * p_k + h10(t) * (x_k+1 - x_k) * m_k + h01(t) * p_k+1 + h11(t) * (x_k+1 - x_k) * m_k+1 
-  function _evalSpline(x) {
-    let binaryMin = 0;
-    let binaryMax = n;
-    let k = nHalf;
-    let t; 
-    
-    //Find t corresponding to the given x (binary search)
-    do {
-      if(x >= xs[k] && x <= xs[k + 1]) {
-        t = (x - xs[k]) / (xs[k + 1] - xs[k]); //t of the given x
-        break;
-      }
-      if(xs[k] > x) {
-        binaryMax = k;
-        k = Math.floor((binaryMin + k) / 2);
-      } else {
-        binaryMin = k;
-        k = Math.floor((binaryMax + k) / 2);
-      }
-    } while(binaryMin !== binaryMax);    
-
-    const h_00 = +2 * t * t * t - 3 * t * t + 1;
-    const h_10 =      t * t * t - 2 * t * t + t;
-    const h_01 = -2 * t * t * t + 3 * t * t;
-    const h_11 =      t * t * t -     t * t;
-
-    const p_k0 = ys[k - 1] || ys[0];
-    const p_k1 = ys[k];
-    const p_k2 = ys[k + 1];
-    const p_k3 = ys[k + 2] || ys[n];
-
-    const x_k0 = xs[k - 1] || xs[0];
-    const x_k1 = xs[k];
-    const x_k2 = xs[k + 1];
-    const x_k3 = xs[k + 2] || xs[n];
-    
-    const m_k0 = c * (p_k2 - p_k0) / (x_k2 - x_k0); 
-    const m_k1 = c * (p_k3 - p_k1) / (x_k3 - x_k1); 
-
-    return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1; //The y of the Cubic Hermite-Spline at the given x
-  }
-
+  let _startingPos = 0;
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
-    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
-    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : _evalSpline(_progress) * (total - 1);
-    return Math.ceil(remaning - total + _nextPos);
-  }
-}
+    let _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
 
-const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CUSTOM_BEZIER_CURVE") => {
-  if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
-  if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
-  if(xs.length !== ys.length) {DEFAULT_ERROR_LOGGER(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
-
-  let _isXDefinedIn0 = false;
-  let _isXDefinedIn1 = false;
-  const _xsLen = xs.length;
-
-  for(let i = 0; i < _xsLen; i++) {
-    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
-    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
-    if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
-    if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
-  }
-
-  //The control points must be defined at x = 0 and x = 1
-  if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
-  if(!_isXDefinedIn1) {xs.push(1); ys.push(1);}
-  
-  const _callback = typeof callback === "function" ? callback : () => {};
-  const n = xs.length - 1;
-  const nFact = _factorial(n);
-  
-  function _factorial(num) {
-    let fact = 1;
-    for (let i = 1; i <= num; i++) fact *= i;
-    return fact;
-  }
-
-  //Returns B'(t): the first derivative of B(t)
-  function _derivativeBt(t) {
-    let _derivativeBt = 0;
-    for(let i = 0; i <= n; i++) {
-      _derivativeBt += nFact / (_factorial(i) * _factorial(n - i)) * xs[i] * Math.pow(1 - t, n - i - 1) * Math.pow(t, i - 1) * (i - n * t) ;
+    if(_progress >= 1) return remaning;
+    if(_progress <= 0) {
+      //The elapsed time of a scroll-animation is always >= uss._frameTime / 2 
+      //because the first step length is always 0 at elapsed time = 0 and this would break
+      //scroll-animations with stillStart = true on touchpad enabled devices.
+      _startingPos = 1 - remaning / total;
+      _progress = 0.5 * uss._framesTime / duration; 
     }
-    return _derivativeBt;
-  }
-
-  //Returns B(t): the parametric form of a n-th degree bezier curve
-  function _getBt(arr, t) {
-    let _Bt = 0;
-    for (let i = 0; i <= n; i++) {
-      _Bt += nFact / (_factorial(i) * _factorial(n - i)) * arr[i] * Math.pow(1 - t, n - i) * Math.pow(t, i);      
-    }
-    return _Bt;
-  }
-
-  function _newtonRapson(x) {
-    let prev;
-    let t = x;
-    do {
-      prev = t;
-      t -= (_getBt(xs, t) - x) / _derivativeBt(t);
-    } while (Math.abs(t - prev) > 0.001);   //Precision of 1^(-3)
-   
-    return _getBt(ys, t);
-  }
-
-  return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
-
-    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
-    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : _newtonRapson(_progress) * (total - 1);
+    const _nextPos = (progressEvaluator(_progress) * (1 - _startingPos) + _startingPos) * (total - 1);
     return Math.ceil(remaning - total + _nextPos);
   }
-}
-
-const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
-  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {DEFAULT_ERROR_LOGGER(debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
-  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {DEFAULT_ERROR_LOGGER(debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
-  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {DEFAULT_ERROR_LOGGER(debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
-  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {DEFAULT_ERROR_LOGGER(debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
-
-  const _callback = typeof callback === "function" ? callback : () => {};
-  const aX = 1 + 3 * (x1 - x2);
-  const aY = 1 + 3 * (y1 - y2);
-  const bX = 3 * (x2 - 2 * x1);
-  const bY = 3 * (y2 - 2 * y1);
-  const cX = 3 * x1;
-  const cY = 3 * y1;
-  
-  function _newtonRapson(x) {
-    let prev;
-    let t = x;
-    do {
-      prev = t;
-      t -= ((t * (cX + t * (bX + t * aX)) - x) / (cX + t * (2 * bX + 3 * aX * t)));
-    } while (Math.abs(t - prev) > 0.001);   //Precision of 1^(-3)
-
-    return t * ( cY + t * ( bY + t * aY )); //This is y given t on the bezier curve (0 <= y <= 1 && 0 <= t <= 1)
-  }
-
-  return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
-
-    const _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
-    const _nextPos  = _progress <= 0 ? 0 : _progress >= 1 ? total : _newtonRapson(_progress) * (total - 1);
-    return Math.ceil(remaning - total + _nextPos);
-  }
-}
-
-const EASE_LINEAR = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, duration, callback, "EASE_LINEAR");
-
-const EASE_IN_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, duration, callback, "EASE_IN_SINE");
-const EASE_IN_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.11, 0, 0.5,  0, duration, callback, "EASE_IN_QUAD");
-const EASE_IN_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.32, 0, 0.67, 0, duration, callback, "EASE_IN_CUBIC");
-const EASE_IN_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5,  0, 0.75, 0, duration, callback, "EASE_IN_QUART");
-const EASE_IN_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.64, 0, 0.78, 0, duration, callback, "EASE_IN_QUINT");
-const EASE_IN_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.7,  0, 0.84, 0, duration, callback, "EASE_IN_EXPO");
-const EASE_IN_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.55, 0, 1, 0.45, duration, callback, "EASE_IN_CIRC");
-
-const EASE_OUT_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.61, 1, 0.88, 1, duration, callback, "EASE_OUT_SINE");
-const EASE_OUT_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5,  1, 0.89, 1, duration, callback, "EASE_OUT_QUAD");
-const EASE_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.33, 1, 0.68, 1, duration, callback, "EASE_OUT_CUBIC");
-const EASE_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.25, 1, 0.5,  1, duration, callback, "EASE_OUT_QUART");
-const EASE_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.22, 1, 0.36, 1, duration, callback, "EASE_OUT_QUINT");
-const EASE_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.16, 1, 0.3,  1, duration, callback, "EASE_OUT_EXPO");
-const EASE_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0.55, 0.45, 1, duration, callback, "EASE_OUT_CIRC");
-
-const EASE_IN_OUT_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.37, 0, 0.63, 1, duration, callback, "EASE_IN_OUT_SINE");
-const EASE_IN_OUT_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.45, 0, 0.55, 1, duration, callback, "EASE_IN_OUT_QUAD");
-const EASE_IN_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.65, 0, 0.35, 1, duration, callback, "EASE_IN_OUT_CUBIC");
-const EASE_IN_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.76, 0, 0.24, 1, duration, callback, "EASE_IN_OUT_QUART");
-const EASE_IN_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.83, 0, 0.17, 1, duration, callback, "EASE_IN_OUT_QUINT");
-const EASE_IN_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.87, 0, 0.13, 1, duration, callback, "EASE_IN_OUT_EXPO");
-const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, duration, callback, "EASE_IN_OUT_CIRC");
+}  
 
 /*
  * Internally used to setup the control points' arrays for bounce-type StepLengthCalculators.
@@ -282,6 +92,202 @@ const _CUSTOM_BOUNCE = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumbe
   arrInserter(xs, 1, arrIndex, arrLen);      
   arrInserter(ys, 1, arrIndex, arrLen);    
 }
+
+const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, debugString = "CUSTOM_CUBIC_HERMITE_SPLINE") => {
+  if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
+  if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
+  if(xs.length !== ys.length) {DEFAULT_ERROR_LOGGER(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
+  
+  let _isXDefinedIn0 = false;
+  let _isXDefinedIn1 = false;
+  let xsCurrMax = null;
+  const _xsLen = xs.length;
+
+  for(let i = 0; i < _xsLen; i++) {
+    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
+    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
+    
+    //Checks if the passed points are sorted
+    if(!xsCurrMax || xsCurrMax < xs[i]) xsCurrMax = xs[i]; 
+    else {
+      DEFAULT_ERROR_LOGGER(debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
+      return;
+    } 
+    if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
+    if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
+  } 
+
+  //The control points must be defined at x = 0 and x = 1
+  if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
+  if(!_isXDefinedIn1) {xs.push(1); ys.push(1);}
+
+  const c = 1 - tension;
+  const n = xs.length - 1;
+  const nHalf = Math.round(n / 2);
+  
+  //Cubic Hermite-Spline definition:
+  //p(x) = h00(t) * p_k + h10(t) * (x_k+1 - x_k) * m_k + h01(t) * p_k+1 + h11(t) * (x_k+1 - x_k) * m_k+1 
+  function _evalSpline(x) {
+    let binaryMin = 0;
+    let binaryMax = n;
+    let k = nHalf;
+    let t; 
+    
+    //Find t corresponding to the given x (binary search)
+    do {
+      if(x >= xs[k] && x <= xs[k + 1]) {
+        t = (x - xs[k]) / (xs[k + 1] - xs[k]); //t of the given x
+        break;
+      }
+      if(xs[k] > x) {
+        binaryMax = k;
+        k = Math.floor((binaryMin + k) / 2);
+      } else {
+        binaryMin = k;
+        k = Math.floor((binaryMax + k) / 2);
+      }
+    } while(binaryMin !== binaryMax);    
+
+    const h_00 = +2 * t * t * t - 3 * t * t + 1;
+    const h_10 =      t * t * t - 2 * t * t + t;
+    const h_01 = -2 * t * t * t + 3 * t * t;
+    const h_11 =      t * t * t -     t * t;
+
+    const p_k0 = ys[k - 1] || ys[0];
+    const p_k1 = ys[k];
+    const p_k2 = ys[k + 1];
+    const p_k3 = ys[k + 2] || ys[n];
+
+    const x_k0 = xs[k - 1] || xs[0];
+    const x_k1 = xs[k];
+    const x_k2 = xs[k + 1];
+    const x_k3 = xs[k + 2] || xs[n];
+    
+    const m_k0 = c * (p_k2 - p_k0) / (x_k2 - x_k0); 
+    const m_k1 = c * (p_k3 - p_k1) / (x_k3 - x_k1); 
+
+    return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1; //The y of the Cubic Hermite-Spline at the given x
+  }
+
+  return _DEFAULT_STEPLENGTHCALCULATOR(_evalSpline, duration, callback);
+}
+
+const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CUSTOM_BEZIER_CURVE") => {
+  if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
+  if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
+  if(xs.length !== ys.length) {DEFAULT_ERROR_LOGGER(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
+
+  let _isXDefinedIn0 = false;
+  let _isXDefinedIn1 = false;
+  const _xsLen = xs.length;
+
+  for(let i = 0; i < _xsLen; i++) {
+    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
+    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
+    if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
+    if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
+  }
+
+  //The control points must be defined at x = 0 and x = 1
+  if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
+  if(!_isXDefinedIn1) {xs.push(1); ys.push(1);}
+  
+  const n = xs.length - 1;
+  const nFact = _factorial(n);
+  
+  function _factorial(num) {
+    let fact = 1;
+    for (let i = 1; i <= num; i++) fact *= i;
+    return fact;
+  }
+
+  //Returns B'(t): the first derivative of B(t)
+  function _derivativeBt(t) {
+    let _derivativeBt = 0;
+    for(let i = 0; i <= n; i++) {
+      _derivativeBt += nFact / (_factorial(i) * _factorial(n - i)) * xs[i] * Math.pow(1 - t, n - i - 1) * Math.pow(t, i - 1) * (i - n * t) ;
+    }
+    return _derivativeBt;
+  }
+
+  //Returns B(t): the parametric form of a n-th degree bezier curve
+  function _getBt(arr, t) {
+    let _Bt = 0;
+    for (let i = 0; i <= n; i++) {
+      _Bt += nFact / (_factorial(i) * _factorial(n - i)) * arr[i] * Math.pow(1 - t, n - i) * Math.pow(t, i);      
+    }
+    return _Bt;
+  }
+
+  function _newtonRapson(x) {
+    let prev;
+    let t = x;
+    do {
+      prev = t;
+      t -= (_getBt(xs, t) - x) / _derivativeBt(t);
+    } while (Math.abs(t - prev) > 0.001);   //Precision of 1^(-3)
+   
+    return _getBt(ys, t);
+  }
+
+  return _DEFAULT_STEPLENGTHCALCULATOR(_newtonRapson, duration, callback);
+}
+
+const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
+  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
+  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {DEFAULT_ERROR_LOGGER(debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
+  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {DEFAULT_ERROR_LOGGER(debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
+  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {DEFAULT_ERROR_LOGGER(debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
+  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {DEFAULT_ERROR_LOGGER(debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
+
+  const aX = 1 + 3 * (x1 - x2);
+  const aY = 1 + 3 * (y1 - y2);
+  const bX = 3 * (x2 - 2 * x1);
+  const bY = 3 * (y2 - 2 * y1);
+  const cX = 3 * x1;
+  const cY = 3 * y1;
+  
+  function _newtonRapson(x) {
+    let prev;
+    let t = x;
+    do {
+      prev = t;
+      t -= ((t * (cX + t * (bX + t * aX)) - x) / (cX + t * (2 * bX + 3 * aX * t)));
+    } while (Math.abs(t - prev) > 0.001);   //Precision of 1^(-3)
+
+    return t * ( cY + t * ( bY + t * aY )); //This is y given t on the bezier curve (0 <= y <= 1 && 0 <= t <= 1)
+  }
+
+  return _DEFAULT_STEPLENGTHCALCULATOR(_newtonRapson, duration, callback);
+}
+
+const EASE_LINEAR = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, duration, callback, "EASE_LINEAR");
+
+const EASE_IN_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, duration, callback, "EASE_IN_SINE");
+const EASE_IN_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.11, 0, 0.5,  0, duration, callback, "EASE_IN_QUAD");
+const EASE_IN_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.32, 0, 0.67, 0, duration, callback, "EASE_IN_CUBIC");
+const EASE_IN_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5,  0, 0.75, 0, duration, callback, "EASE_IN_QUART");
+const EASE_IN_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.64, 0, 0.78, 0, duration, callback, "EASE_IN_QUINT");
+const EASE_IN_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.7,  0, 0.84, 0, duration, callback, "EASE_IN_EXPO");
+const EASE_IN_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.55, 0, 1, 0.45, duration, callback, "EASE_IN_CIRC");
+
+const EASE_OUT_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.61, 1, 0.88, 1, duration, callback, "EASE_OUT_SINE");
+const EASE_OUT_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5,  1, 0.89, 1, duration, callback, "EASE_OUT_QUAD");
+const EASE_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.33, 1, 0.68, 1, duration, callback, "EASE_OUT_CUBIC");
+const EASE_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.25, 1, 0.5,  1, duration, callback, "EASE_OUT_QUART");
+const EASE_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.22, 1, 0.36, 1, duration, callback, "EASE_OUT_QUINT");
+const EASE_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.16, 1, 0.3,  1, duration, callback, "EASE_OUT_EXPO");
+const EASE_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0.55, 0.45, 1, duration, callback, "EASE_OUT_CIRC");
+
+const EASE_IN_OUT_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.37, 0, 0.63, 1, duration, callback, "EASE_IN_OUT_SINE");
+const EASE_IN_OUT_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.45, 0, 0.55, 1, duration, callback, "EASE_IN_OUT_QUAD");
+const EASE_IN_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.65, 0, 0.35, 1, duration, callback, "EASE_IN_OUT_CUBIC");
+const EASE_IN_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.76, 0, 0.24, 1, duration, callback, "EASE_IN_OUT_QUART");
+const EASE_IN_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.83, 0, 0.17, 1, duration, callback, "EASE_IN_OUT_QUINT");
+const EASE_IN_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.87, 0, 0.13, 1, duration, callback, "EASE_IN_OUT_EXPO");
+const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, duration, callback, "EASE_IN_OUT_CIRC");
 
 const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
   if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}

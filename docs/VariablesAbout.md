@@ -21,6 +21,7 @@ Name | Type | Description
 `_windowHeight` | `Number` | The current window's inner height _(in px)_.
 `_windowWidth` | `Number` | The current window's inner width _(in px)_.
 `_scrollbarsMaxDimension` | `Number` | The highest amount of pixels any scrollbar on the page can occupy (it's browser dependent).
+`_framesTime` | `Number` | The time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
 `_pageScroller` | `Object` | The value used when an API method requires the `container` input parameter but nothing is passed: it should be used to tell the USS API which is the element that scrolls the document.
 `_reducedMotion` | `Boolean` | True if the user has enabled any `reduce-motion` setting devicewise, false otherwise. <br/> Internally used by the API to follow the user's accessibility preferences, reverting back every scroll-animation to the default _jump-to-position_ behavior.  
 `_debugMode` | `String` | Controls the way the warning and error messages are logged in the browser's console. <br/> If it's set to: <ul> <li> "disabled" _(case insensitive)_ the API won't show any warning or error message. </li> <li> "legacy" _(case insensitive)_ the API won't style any warning or error message. </li> </ul> Any other value will make the warning and error messages be displayed with the default API's styling.
