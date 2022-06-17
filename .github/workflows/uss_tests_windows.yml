@@ -30,7 +30,7 @@ jobs:
         run: cmd /c START /b http-server
       # Runs a single command using the runners shell
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4.1.0
         with:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
@@ -55,7 +55,7 @@ jobs:
         run: cmd /c START /b http-server
       # Runs a single command using the runners shell
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4.1.0
         with:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
@@ -83,7 +83,7 @@ jobs:
         run: cmd /c START /b http-server
       # Runs a single command using the runners shell
       - name: Cypress run
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v4.1.0
         with:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
