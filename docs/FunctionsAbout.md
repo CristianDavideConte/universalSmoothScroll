@@ -183,7 +183,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     /
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <code>_yStepLength</code> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_yStepLength"><code>_yStepLength</code></a> property.
    </td>
   </tr> 
     
@@ -195,7 +195,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     /
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <code>_minAnimationFrame</code> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property.
    </td>
   </tr> 
       
@@ -207,7 +207,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     /
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <code>_windowHeight</code> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_windowHeight"><code>_windowHeight</code></a> property.
    </td>
   </tr> 
            
@@ -219,7 +219,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     /
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <code>_windowWidth</code> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_windowWidth"><code>_windowWidth</code></a> property.
    </td>
   </tr> 
           
@@ -231,7 +231,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     /
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <code>_scrollbarsMaxDimension</code> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_scrollbarsMaxDimension"><code>_scrollbarsMaxDimension</code></a> property.
    </td>
   </tr> 
          
@@ -243,7 +243,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     /
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <code>_pageScroller</code> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a> property.
    </td>
   </tr> 
       
@@ -255,7 +255,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     /
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <code>_reducedMotion</code> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_reducedMotion"><code>_reducedMotion</code></a> property.
    </td>
   </tr> 
     
@@ -267,7 +267,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     /
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <code>_debugMode</code> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property.
    </td>
   </tr> 
  
@@ -360,7 +360,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setXStepLength"><code>newXStepLength</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Sets the <code>_xStepLength</code> property to the passed value if compatible.
+    Sets the <a href = "./VariablesAbout.md#_xStepLength"><code>_xStepLength</code></a> property to the passed value if compatible.
    </td>
   </tr> 
      
@@ -372,7 +372,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setYStepLength"><code>newYStepLength</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Sets the <code>_yStepLength</code> property to the passed value if compatible.
+    Sets the <a href = "./VariablesAbout.md#_yStepLength"><code>_yStepLength</code></a> property to the passed value if compatible.
    </td>
   </tr> 
        
@@ -384,7 +384,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setStepLength"><code>newStepLength</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Sets both the <code>_xStepLength</code> and <code>_yStepLength</code> properties to the passed value if compatible.
+    Sets both the <a href = "./VariablesAbout.md#_xStepLength"><code>_xStepLength</code></a> and <a href = "./VariablesAbout.md#_yStepLength"><code>_yStepLength</code></a> properties to the passed value if compatible.
    </td>
   </tr> 
         
@@ -396,7 +396,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setMinAnimationFrame"><code>newMinAnimationFrame</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Sets the <code>_minAnimationFrame</code> property to the passed value if compatible.
+    Sets the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property to the passed value if compatible.
    </td>
   </tr> 
        
@@ -408,7 +408,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setPageScroller"><code>newPageScroller</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Sets the <code>_pageScroller</code> property to the passed value if compatible.
+    Sets the <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a> property to the passed value if compatible.
    </td>
   </tr> 
        
@@ -420,7 +420,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setDebugMode"><code>newDebugMode</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Sets the <code>_debugMode</code> property to the passed value if compatible.
+    Sets the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property to the passed value if compatible.
    </td>
   </tr> 
          
@@ -432,7 +432,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#calcXStepLength"><code>deltaX</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Returns how long each animation-step on the x-axis must be in order to target the <code>_minAnimationFrame</code> property value. <br/>
+    Returns how long each animation-step on the x-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
     This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for any scroll-animation on the x-axis of any container.
    </td>
   </tr> 
@@ -445,7 +445,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#calcYStepLength"><code>deltaY</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Returns how long each animation-step on the y-axis must be in order to target the <code>_minAnimationFrame</code> property value. <br/>
+    Returns how long each animation-step on the y-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
     This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for any scroll-animation on the y-axis of any container.
    </td>
   </tr> 
