@@ -2,8 +2,8 @@ Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
 
 function bodyScrollTopShouldToBe(value) {
     cy.get("body")
-      .invoke("scrollTop")
-      .should("equal", value);
+      .should("have.prop", "scrollTop")
+      .and("eq", value);
 }
 
 describe("getFinalYPosition-Body", function() {
@@ -16,7 +16,7 @@ describe("getFinalYPosition-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(100, uss.getPageScroller(), resolve);
                   finalYPosition = uss.getFinalYPosition();
               }).then(() => {
@@ -39,7 +39,7 @@ describe("getScrollYDirection-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(100, uss.getPageScroller(), () => {
                       uss.scrollYTo(50, uss.getPageScroller(), resolve);
                       scrollYDirectionUp = uss.getScrollYDirection();
@@ -73,7 +73,7 @@ describe("getYStepLengthCalculator-Body", function() {
               uss.setYStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
               expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
             
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(100, uss.getPageScroller(), resolve);
               }).then(() => {
                   expect(uss.getYStepLengthCalculator()).to.equal(nonTempTestCalculator);
@@ -97,7 +97,7 @@ describe("getYStepLength-Body", function() {
               uss.setYStepLength(10);
               expect(uss.getYStepLength()).to.equal(10);
             
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(100, uss.getPageScroller(), resolve);
               }).then(() => {
                   expect(uss.getYStepLength()).to.equal(10);

@@ -2,8 +2,8 @@ Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
 
 function bodyScrollLeftShouldToBe(value) {
     cy.get("body")
-      .invoke("scrollLeft")
-      .should("equal", value);
+      .should("have.prop", "scrollLeft")
+      .and("eq", value);
 }
 
 describe("setXStepLengthCalculator-Body", function() {
@@ -52,7 +52,7 @@ describe("setXStepLengthCalculator-Body", function() {
               uss.setXStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true, true);
               expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(_testCalculatorValidType2);
               
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollXTo(100, uss.getPageScroller(), resolve);
               }).then(() => {
                   bodyScrollLeftShouldToBe(100);
@@ -96,7 +96,7 @@ describe("setXStepLength-Body", function() {
               uss.setXStepLength(_testStepInvalidTypeString, uss.getPageScroller());
               expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
               
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollXTo(100, uss.getPageScroller(), resolve);
               }).then(() => {
                   bodyScrollLeftShouldToBe(100);

@@ -2,8 +2,8 @@ Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
 
 function bodyScrollLeftShouldToBe(value) {
     cy.get("body")
-      .invoke("scrollLeft")
-      .should("equal", value);
+      .should("have.prop", "scrollLeft")
+      .and("eq", value);
 }
 
 function bodyScrollTopShouldToBe(value) {

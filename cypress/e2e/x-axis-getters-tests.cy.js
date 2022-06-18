@@ -2,8 +2,8 @@ Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
 
 function bodyScrollLeftShouldToBe(value) {
     cy.get("body")
-      .invoke("scrollLeft")
-      .should("equal", value);
+      .should("have.prop", "scrollLeft")
+      .and("eq", value);
 }
 
 describe("getFinalXPosition-Body", function() {
@@ -16,7 +16,7 @@ describe("getFinalXPosition-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollXTo(100, uss.getPageScroller(), resolve);
                   finalXPosition = uss.getFinalXPosition();
               }).then(() => {
@@ -39,7 +39,7 @@ describe("getScrollXDirection-Body", function() {
             uss = win.uss;
             uss._containersData = new Map();
 
-            new Cypress.Promise(resolve => {
+            return new Cypress.Promise(resolve => {
                 uss.scrollXTo(100, uss.getPageScroller(), () => {
                     uss.scrollXTo(50, uss.getPageScroller(), resolve);
                     scrollYDirectionLeft = uss.getScrollXDirection();
@@ -73,7 +73,7 @@ describe("getXStepLengthCalculator-Body", function() {
               uss.setXStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
               expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
             
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollXTo(100, uss.getPageScroller(), resolve);
               }).then(() => {
                   expect(uss.getXStepLengthCalculator()).to.equal(nonTempTestCalculator);
@@ -97,7 +97,7 @@ describe("getXStepLength-Body", function() {
               uss.setXStepLength(10);
               expect(uss.getXStepLength()).to.equal(10);
             
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollXTo(100, uss.getPageScroller(), resolve);
               }).then(() => {
                   expect(uss.getXStepLength()).to.equal(10);

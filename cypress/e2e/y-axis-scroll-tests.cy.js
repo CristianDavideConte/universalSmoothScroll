@@ -2,8 +2,8 @@ Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
 
 function bodyScrollTopShouldToBe(value) {
     cy.get("body")
-      .invoke("scrollTop")
-      .should("equal", value);
+      .should("have.prop", "scrollTop")
+      .and("eq", value);
 }
 
 describe("scrollYTo-Body", function() {
@@ -15,7 +15,7 @@ describe("scrollYTo-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(500, uss.getPageScroller(), resolve);
               }).then(() => {
                   bodyScrollTopShouldToBe(500);
@@ -34,7 +34,7 @@ describe("scrollYTo-immediatelyStoppedScrolling-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(500, uss.getPageScroller(), () => count++);
                   uss.stopScrollingY(uss.getPageScroller(), resolve);
               }).then(() => {
@@ -55,7 +55,32 @@ describe("scrollYToBy-immediatelyStoppedScrolling-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
+                  uss.scrollYTo(500, uss.getPageScroller(), () => count++);
+                  uss.stopScrollingY(uss.getPageScroller());
+                  uss.scrollYBy(250, uss.getPageScroller(), () => {
+                      count++;
+                      resolve();
+                  });
+              }).then(() => {
+                  bodyScrollTopShouldToBe(250);
+                  expect(count).to.equal(1);
+              });
+          });         
+    });
+})
+
+describe("scrollYToTo-immediatelyStoppedScrolling-Body", function() {
+    var uss;
+    var count = 0;
+    it("Tests the scrollYTo method whenever a scroll animation is immediately stopped and restarted with the scrollYTo method", function() {
+        cy.visit("index.html"); 
+        cy.window()
+          .then((win) => {
+              uss = win.uss;
+              uss._containersData = new Map();
+
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(500, uss.getPageScroller(), () => count++);
                   uss.stopScrollingY(uss.getPageScroller());
                   uss.scrollYTo(250, uss.getPageScroller(), () => {
@@ -90,7 +115,7 @@ describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
           
               uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);   
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   _resolve = resolve;
                   uss.scrollYTo(100, uss.getPageScroller());
               }).then(() => {
@@ -109,7 +134,7 @@ describe("scrollYBy-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYBy(100, uss.getPageScroller(), resolve);
               }).then(() => {
                   bodyScrollTopShouldToBe(100);
@@ -127,7 +152,7 @@ describe("scrollYToBy-StillStart-True-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(500);
                   uss.scrollYBy(200, uss.getPageScroller(), resolve);
               }).then(() => {
@@ -146,7 +171,7 @@ describe("scrollYToBy-StillStart-False-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(100);
                   uss.scrollYBy(200, uss.getPageScroller(), resolve, false);
               }).then(() => {
@@ -174,7 +199,7 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
 
               uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   _resolve = resolve;
                   uss.scrollYTo(100, uss.getPageScroller());
               }).then(() => {
@@ -203,7 +228,7 @@ describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating-Body", function() {
 
               uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   _resolve = resolve;
                   uss.scrollYTo(100, uss.getPageScroller());
               }).then(() => {
@@ -226,7 +251,7 @@ describe("isYScrolling-Body", function() {
 
               expect(uss.isYscrolling()).to.be.false;
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(100, uss.getPageScroller(), () => {
                       isYScrolling = uss.isYscrolling();
                       resolve();
@@ -263,7 +288,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
               expect(uss.isYscrolling()).to.be.false;
               uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   _resolve = resolve;
                   uss.scrollYTo(100, uss.getPageScroller());
                   wasYScrolling = uss.isYscrolling();

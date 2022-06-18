@@ -2,8 +2,8 @@ Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
 
 function bodyScrollTopShouldToBe(value) {
     cy.get("body")
-      .invoke("scrollTop")
-      .should("equal", value);
+      .should("have.prop", "scrollTop")
+      .and("eq", value);
 }
 
 describe("setYStepLengthCalculator-Body", function() {
@@ -52,7 +52,7 @@ describe("setYStepLengthCalculator-Body", function() {
               uss.setYStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true, true);
               expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.equal(_testCalculatorValidType2);
               
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(100, uss.getPageScroller(), resolve);
               }).then(() => {
                   bodyScrollTopShouldToBe(100);
@@ -96,7 +96,7 @@ describe("setYStepLength-Body", function() {
               uss.setYStepLength(_testStepInvalidTypeString, uss.getPageScroller());
               expect(uss.getYStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
               
-              new Cypress.Promise(resolve => {
+              return new Cypress.Promise(resolve => {
                   uss.scrollYTo(100, uss.getPageScroller(), resolve);
               }).then(() => {
                   bodyScrollTopShouldToBe(100);
