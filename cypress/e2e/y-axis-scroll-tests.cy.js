@@ -38,10 +38,10 @@ describe("scrollYTo-immediatelyStoppedScrolling-Body", function() {
                   uss.scrollYTo(500, uss.getPageScroller(), () => count++);
                   uss.stopScrollingY(uss.getPageScroller(), resolve);
               }).then(() => {
-                bodyScrollTopShouldToBe(0);
-                expect(count).to.equal(0);
-            });
-          });         
+                  bodyScrollTopShouldToBe(0);
+                  expect(count).to.equal(0);
+              });
+          });        
     });
 })
 
@@ -145,39 +145,79 @@ describe("scrollYBy-Body", function() {
 
 describe("scrollYToBy-StillStart-True-Body", function() {
     var uss;
+    var _originalTimestampEqualsTimeStamp, _remaning, _total;
+    
+    const _testCalculator = () => {
+        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
+            if(!uss.isYscrolling()) return total; //testing phase of the setYStepLengthCalculator
+            if(!_remaning) _remaning = remaning;
+            if(!_originalTimestampEqualsTimeStamp) _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
+            if(!_total) _total = total;
+            return total / 10;
+        }
+    }
     it("Vertically scrolls the body to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
-              uss._containersData = new Map();
-
+              uss._containersData = new Map(); 
+              
+              uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
+              
               return new Cypress.Promise(resolve => {
-                  uss.scrollYTo(500);
-                  uss.scrollYBy(200, uss.getPageScroller(), resolve);
+                  uss.scrollYTo(500, uss.getPageScroller()); 
+                  uss.scrollYBy(200, uss.getPageScroller(), resolve, true);
               }).then(() => {
+                  expect(_originalTimestampEqualsTimeStamp).to.be.true;
+                  expect(_remaning).to.equal(200);
+                  expect(_total).to.equal(200);
                   bodyScrollTopShouldToBe(200);
               });
-          });         
+          });        
     });
 })
 
 describe("scrollYToBy-StillStart-False-Body", function() {
     var uss;
+    var _secondPhase = false;
+    var _originalTimestampEqualsTimeStamp, _remaning, _total;
+    
+    const _testCalculator = () => {
+        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
+            if(!uss.isYscrolling()) return total; //testing phase of the setYStepLengthCalculator
+            if(_secondPhase) {
+                _remaning = remaning;
+                _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
+                _total = total;
+                _secondPhase = false;
+            }
+            return total / 10;
+        }
+    }
     it("Vertically scrolls the body to n1 pixels and then extends that animation by n2 pixels", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
-              uss._containersData = new Map();
-
+              uss._containersData = new Map(); 
+              
+              uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
+              
               return new Cypress.Promise(resolve => {
-                  uss.scrollYTo(100);
-                  uss.scrollYBy(200, uss.getPageScroller(), resolve, false);
+                  uss.scrollYTo(100, uss.getPageScroller()); 
+                  setTimeout(() => {
+                    _secondPhase = true;
+                    uss.scrollYBy(200, uss.getPageScroller(), resolve, false);
+                  }, 10);
               }).then(() => {
+                  expect(_originalTimestampEqualsTimeStamp).to.be.true;
+                  expect(_remaning).to.be.greaterThan(100);
+                  expect(_remaning).to.be.lessThan(300);
+                  expect(_total).to.equal(300);
                   bodyScrollTopShouldToBe(300);
               });
-          });         
+          });        
     });
 })
 
@@ -208,7 +248,6 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
           });         
     });
 })
-
 
 describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating-Body", function() {
     var uss;

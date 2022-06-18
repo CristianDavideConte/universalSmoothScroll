@@ -59,7 +59,7 @@ describe("scrollXToBy-immediatelyStoppedScrolling-Body", function() {
                   uss.scrollXTo(500, uss.getPageScroller(), () => count++);
                   uss.stopScrollingX(uss.getPageScroller());
                   uss.scrollXBy(250, uss.getPageScroller(), () => {
-                      count += 1;
+                      count++;
                       resolve();
                   });
               }).then(() => {
@@ -84,7 +84,7 @@ describe("scrollXToTo-immediatelyStoppedScrolling-Body", function() {
                   uss.scrollXTo(500, uss.getPageScroller(), () => count++);
                   uss.stopScrollingX(uss.getPageScroller());
                   uss.scrollXTo(250, uss.getPageScroller(), () => {
-                      count += 1;
+                      count++;
                       resolve();
                   });
               }).then(() => {
@@ -145,17 +145,33 @@ describe("scrollXBy-Body", function() {
 
 describe("scrollXToBy-StillStart-True-Body", function() {
     var uss;
+    var _originalTimestampEqualsTimeStamp, _remaning, _total;
+    
+    const _testCalculator = () => {
+        return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
+            if(!uss.isXscrolling()) return total; //testing phase of the setXStepLengthCalculator
+            if(!_remaning) _remaning = remaning;
+            if(!_originalTimestampEqualsTimeStamp) _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
+            if(!_total) _total = total;
+            return total / 10;
+        }
+    }
     it("Horizontally scrolls the body to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
-              uss._containersData = new Map();
-
+              uss._containersData = new Map(); 
+              
+              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
+              
               return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(500);
-                  uss.scrollXBy(200, uss.getPageScroller(), resolve);
+                  uss.scrollXTo(500, uss.getPageScroller()); 
+                  uss.scrollXBy(200, uss.getPageScroller(), resolve, true);
               }).then(() => {
+                  expect(_originalTimestampEqualsTimeStamp).to.be.true;
+                  expect(_remaning).to.equal(200);
+                  expect(_total).to.equal(200);
                   bodyScrollLeftShouldToBe(200);
               });
           });        
@@ -164,20 +180,44 @@ describe("scrollXToBy-StillStart-True-Body", function() {
 
 describe("scrollXToBy-StillStart-False-Body", function() {
     var uss;
+    var _secondPhase = false;
+    var _originalTimestampEqualsTimeStamp, _remaning, _total;
+    
+    const _testCalculator = () => {
+        return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
+            if(!uss.isXscrolling()) return total; //testing phase of the setXStepLengthCalculator
+            if(_secondPhase) {
+                _remaning = remaning;
+                _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
+                _total = total;
+                _secondPhase = false;
+            }
+            return total / 10;
+        }
+    }
     it("Horizontally scrolls the body to n1 pixels and then extends that animation by n2 pixels", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;
-              uss._containersData = new Map();
-
+              uss._containersData = new Map(); 
+              
+              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
+              
               return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(100);
-                  uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
+                  uss.scrollXTo(100, uss.getPageScroller()); 
+                  setTimeout(() => {
+                    _secondPhase = true;
+                    uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
+                  }, 10);
               }).then(() => {
+                  expect(_originalTimestampEqualsTimeStamp).to.be.true;
+                  expect(_remaning).to.be.greaterThan(100);
+                  expect(_remaning).to.be.lessThan(300);
+                  expect(_total).to.equal(300);
                   bodyScrollLeftShouldToBe(300);
               });
-          });         
+          });        
     });
 })
 
