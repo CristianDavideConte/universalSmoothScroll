@@ -151,7 +151,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <li> <strong>"disabled"</strong> <i>(case insensitive)</i> the API won't show any warning or error message. </li> 
     <li> <strong>"legacy"</strong> <i>(case insensitive)</i> the API won't style any warning or error message. </li> 
    </ul> 
-   Any other value will make the warnings and error messages be displayed with the default API's styling.
+   Any other `String` will make the warnings and error messages be displayed with the default API's styling.
    </td>
   </tr>
  </tbody>

@@ -10,7 +10,7 @@ describe("getFinalXPosition-Body", function() {
     var uss;
     var finalXPosition;
     it("Tests the getFinalXPosition method", function() {
-        cy.visit("index.html") 
+        cy.visit("index.html");
         cy.window()
           .then((win) => {
               uss = win.uss;
