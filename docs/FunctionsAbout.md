@@ -171,7 +171,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     /
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <code>_xStepLength</code> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_xStepLength"><code>_xStepLength</code></a> property.
    </td>
   </tr>   
   

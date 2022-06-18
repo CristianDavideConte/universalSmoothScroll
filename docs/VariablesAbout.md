@@ -12,19 +12,150 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
 <br/>
 <br/>
 
-Name | Type | Description
-:--: | :--: | -----------
-`_containersData` | `Map` | A Map in which: <ul> <li> The keys are DOM elements internally called `container`. </li> <li> The values are [`arrays of 16 values`](./VariablesAbout.md#the-_containersdata-arrays). </li></ul>
-`_xStepLength` | `Number` | If there's no [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
-`_yStepLength` | `Number` | If there's no [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
-`_minAnimationFrame` | `Number` | If there's no [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
-`_windowHeight` | `Number` | The current window's inner height _(in px)_.
-`_windowWidth` | `Number` | The current window's inner width _(in px)_.
-`_scrollbarsMaxDimension` | `Number` | The highest amount of pixels any scrollbar on the page can occupy (it's browser dependent).
-`_framesTime` | `Number` | The time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
-`_pageScroller` | `Object` | The value used when an API method requires the `container` input parameter but nothing is passed: it should be used to tell the USS API which is the element that scrolls the document.
-`_reducedMotion` | `Boolean` | True if the user has enabled any `reduce-motion` setting devicewise, false otherwise. <br/> Internally used by the API to follow the user's accessibility preferences, reverting back every scroll-animation to the default _jump-to-position_ behavior.  
-`_debugMode` | `String` | Controls the way the warning and error messages are logged in the browser's console. <br/> If it's set to: <ul> <li> "disabled" _(case insensitive)_ the API won't show any warning or error message. </li> <li> "legacy" _(case insensitive)_ the API won't style any warning or error message. </li> </ul> Any other value will make the warning and error messages be displayed with the default API's styling.
+<table>
+ <thead>
+  <tr>
+   <th>Name</th>
+   <th>Type</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr id = "_containersData">
+   <td rowspan = "1" align = "center">
+    <code>_containersData</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Map</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A Map in which: 
+    <ul> 
+     <li> The keys are DOM elements internally called <code>container</code>. </li> 
+     <li> The values are <a href = "./VariablesAbout.md#the-_containersdata-arrays"><code>arrays of 16 values</code></a>. </li>
+    </ul>
+   </td>
+  </tr>
+    <tr id = "_xStepLength">
+   <td rowspan = "1" align = "center">
+    <code>_xStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
+   </td>
+  </tr>
+  </tr>
+  <tr id = "_yStepLength">
+   <td rowspan = "1" align = "center">
+    <code>_yStepLength</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
+   </td>
+  </tr>
+  <tr id = "_minAnimationFrame">
+   <td rowspan = "1" align = "center">
+    <code>_minAnimationFrame</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
+   </td>
+  </tr>
+  <tr id = "_windowHeight">
+   <td rowspan = "1" align = "center">
+    <code>_windowHeight</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    The current window's inner height <i>(in px)</i>.
+   </td>
+  </tr>
+  <tr id = "_windowWidth">
+   <td rowspan = "1" align = "center">
+    <code>_windowWidth</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    The current window's inner width <i>(in px)</i>.
+   </td>
+  </tr>
+  <tr id = "_scrollbarsMaxDimension">
+   <td rowspan = "1" align = "center">
+    <code>_scrollbarsMaxDimension</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    The highest amount of pixels any scrollbar on the page can occupy (it's browser dependent).
+   </td>
+  </tr>
+  <tr id = "_framesTime">
+   <td rowspan = "1" align = "center">
+    <code>_framesTime</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    The time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
+   </td>
+  </tr>
+  <tr id = "_pageScroller">
+   <td rowspan = "1" align = "center">
+    <code>_pageScroller</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    The value used when an API method requires the <code>container</code> input parameter but nothing is passed: it should be used to tell the USS API which is the element that scrolls the document.
+   </td>
+  </tr>
+  <tr id = "_reducedMotion">
+   <td rowspan = "1" align = "center">
+    <code>_reducedMotion</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    True if the user has enabled any <code>reduce-motion</code> setting devicewise, false otherwise. <br/> 
+    Internally used by the API to follow the user's accessibility preferences, reverting back every scroll-animation to the default <i>jump-to-position</i> behavior. 
+   </td>
+  </tr>
+  <tr id = "_debugMode">
+   <td rowspan = "1" align = "center">
+    <code>_debugMode</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>String</code>
+   </td>
+   <td rowspan = "1" align = "left">
+   Controls the way the warning and error messages are logged in the browser's console. <br/> 
+   If it's set to: 
+   <ul> 
+    <li> <strong>"disabled"</strong> <i>(case insensitive)</i> the API won't show any warning or error message. </li> 
+    <li> <strong>"legacy"</strong> <i>(case insensitive)</i> the API won't style any warning or error message. </li> 
+   </ul> 
+   Any other value will make the warnings and error messages be displayed with the default API's styling.
+   </td>
+  </tr>
+ </tbody>
+</table>
 
 ---
 <br/>
@@ -45,8 +176,8 @@ Index | Type | Description
 `5` | `Number` | Contains the direction of the current scroll-animation on the y-axis of this container: <br/> 1 if the scrolling is from bottom-to-top, -1 otherwise.
 `6` | `Number` | Contains the total amount of pixels that have to be scrolled by current scroll-animation on the x-axis of this container. 
 `7` | `Number` | Contains the total amount of pixels that have to be scrolled by current scroll-animation on the y-axis of this container. 
-`8` | `Number` | Contains the starting time in milliseconds _(as a [`DOMHighResTimeStamp`](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp))_ of the current scroll-animation on the x-axis of this container. 
-`9` | `Number` | Contains the starting time in milliseconds _(as a [`DOMHighResTimeStamp`](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp))_ of the current scroll-animation on the y-axis of this container.
+`8` | `Number` | Contains the starting time in milliseconds _(as a [`DOMHighResTimeStamp`](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp))_ of the current scroll-animation on the x-axis of this container. <br/> It's `null` if a scroll-animation on the x-axis of this container has been scheduled but has not been performed yet or if a scroll-animation with [`stillStart = false`](FunctionsAbout.md#scrollXBy) has been requested.
+`9` | `Number` | Contains the starting time in milliseconds _(as a [`DOMHighResTimeStamp`](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp))_ of the current scroll-animation on the y-axis of this container. <br/> It's `null` if a scroll-animation on the y-axis of this container has been scheduled but has not been performed yet or if a scroll-animation with [`stillStart = false`](FunctionsAbout.md#scrollYBy) has been requested.
 `10` | `Function` | Contains a callback function that will be executed when the current scroll-animation on the x-axis of this container has been performed.
 `11` | `Function` | Contains a callback function that will be executed when the current scroll-animation on the y-axis of this container has been performed.
 `12` | `Function` | Contains the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the x-axis of this container. 
