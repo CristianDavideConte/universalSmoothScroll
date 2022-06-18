@@ -132,7 +132,7 @@ describe("getScrollbarsMaxDimension-Body", function() {
 
               if(browserIsChrome(win)) expect(uss.getScrollbarsMaxDimension()).to.equal(17);
               else if(browserIsEdgeChromium(win)) expect(uss.getScrollbarsMaxDimension()).to.equal(17);
-              else if(browserIsFirefox(win)) expect(uss.getScrollbarsMaxDimension()).to.equal(0);
+              else if(browserIsFirefox(win)) expect(uss.getScrollbarsMaxDimension()).to.be.oneOf([0,12,15]);
               else if(browserIsSafari(win)) expect(uss.getScrollbarsMaxDimension()).to.equal(0);       
           });        
     });   
