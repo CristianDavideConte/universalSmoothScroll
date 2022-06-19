@@ -1,16 +1,61 @@
-Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
+/**
+ * This file contains the tests for the following USS API functions:
+ *  - getXStepLength
+ *  - getYStepLength
+ *  - getMinAnimationFrame
+ *  - getWindowHeight
+ *  - getWindowWidth
+ *  - getScrollbarsMaxDimension
+ *  - getPageScroller
+ *  - getReducedMotionState (TODO)
+ *  - getDebugMode
+ */
 
-function bodyScrollLeftShouldToBe(value) {
-    cy.get("body")
-      .should("have.prop", "scrollLeft")
-      .and("eq", value);
-}
+describe("getXStepLength-Body", function() {
+    var uss;
+    it("Tests the getXStepLength method", function() {
+        cy.visit("index.html"); 
+        cy.window()
+          .then((win) => {
+              uss = win.uss;
+              uss._containersData = new Map();
+              
+              expect(Number.isFinite(uss.getXStepLength())).to.be.true;
+              expect(uss.getXStepLength() > 0).to.be.true;    
+              uss.setXStepLength(10);
+              expect(uss.getXStepLength()).to.equal(10);
+            
+              return new Cypress.Promise(resolve => {
+                  uss.scrollXTo(100, uss.getPageScroller(), resolve);
+              }).then(() => {
+                  expect(uss.getXStepLength()).to.equal(10);
+              });
+          });        
+    });
+})
 
-function bodyScrollTopShouldToBe(value) {
-    cy.get("body")
-      .should("have.prop", "scrollTop")
-      .and("eq", value);
-}
+describe("getYStepLength-Body", function() {
+    var uss;
+    it("Tests the getYStepLength method", function() {
+        cy.visit("index.html"); 
+        cy.window()
+          .then((win) => {
+              uss = win.uss;
+              uss._containersData = new Map();
+              
+              expect(Number.isFinite(uss.getYStepLength())).to.be.true;
+              expect(uss.getYStepLength() > 0).to.be.true;  
+              uss.setYStepLength(10);
+              expect(uss.getYStepLength()).to.equal(10);
+            
+              return new Cypress.Promise(resolve => {
+                  uss.scrollYTo(100, uss.getPageScroller(), resolve);
+              }).then(() => {
+                  expect(uss.getYStepLength()).to.equal(10);
+              });
+          });        
+    });
+})
 
 describe("getMinAnimationFrame-Body", function() {
     var uss;

@@ -1,10 +1,8 @@
-Cypress.config("defaultCommandTimeout", Cypress.env("preferredTimeout"));
-
-function bodyScrollLeftShouldToBe(value) {
-    cy.get("body")
-      .should("have.prop", "scrollLeft")
-      .and("eq", value);
-}
+/**
+ * This file contains the tests for the following USS API functions:
+ *  - setXStepLengthCalculator
+ *  - setXStepLength
+ */
 
 describe("setXStepLengthCalculator-Body", function() {
     var uss;
@@ -20,45 +18,53 @@ describe("setXStepLengthCalculator-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();  
 
-              //test invalid stepLengthCalculators
-              uss.setXStepLengthCalculator(_testCalculatorInvalidTypeString, uss.getPageScroller(), false, true);
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.be.undefined;
-              
-              uss.setXStepLengthCalculator(_testCalculatorInvalidTypeString, uss.getPageScroller(), true, true);
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
-              
-              uss.setXStepLengthCalculator(_testCalculatorInvalidTypeNaN, uss.getPageScroller(), false, true);
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.be.undefined;
-              
-              uss.setXStepLengthCalculator(_testCalculatorInvalidTypeNaN, uss.getPageScroller(), true, true);
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;  
+              cy.testFailingValues(uss.setXStepLengthCalculator, {
+                0: [Infinity],
+                1: [-Infinity],
+                2: [true],
+                3: [false],
+                4: [NaN],
+                61: [10],
+                62: [-1],
+                7: [0],
+                8: [null],
+                9: [undefined],
+                10: [],
+                11: [Object],
+                12: [win],
+                13: [_testCalculatorInvalidTypeString, false, true],
+                14: [_testCalculatorInvalidTypeString, true, true],
+                15: [_testCalculatorInvalidTypeNaN, false, true],
+                15: [_testCalculatorInvalidTypeNaN, true, true],
+              })
+              .then(() => {
+                //test valid stepLengthCalculators
+                uss.setXStepLengthCalculator(_testCalculatorValidType1, uss.getPageScroller(), false, true);
+                expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType1);  
 
-              //test valid stepLengthCalculators
-              uss.setXStepLengthCalculator(_testCalculatorValidType1, uss.getPageScroller(), false, true);
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType1);  
+                uss.setXStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), false, true);
+                expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType2);  
 
-              uss.setXStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), false, true);
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType2);  
+                uss.setXStepLengthCalculator(_testCalculatorValidType3, uss.getPageScroller(), false, true);
+                expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
+                
+                uss.setXStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true, true);
+                expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(_testCalculatorValidType2); 
 
-              uss.setXStepLengthCalculator(_testCalculatorValidType3, uss.getPageScroller(), false, true);
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
-              
-              uss.setXStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true, true);
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(_testCalculatorValidType2); 
-
-              uss.stopScrollingY();
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
-              
-              uss.setXStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true, true);
-              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(_testCalculatorValidType2);
-              
-              return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(100, uss.getPageScroller(), resolve);
-              }).then(() => {
-                  bodyScrollLeftShouldToBe(100);
-                  expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
-              });
-          });     
+                uss.stopScrollingY();
+                expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
+                
+                uss.setXStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true, true);
+                expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(_testCalculatorValidType2);
+                
+                return new Cypress.Promise(resolve => {
+                    uss.scrollXTo(100, uss.getPageScroller(), resolve);
+                }).then(() => {
+                    cy.bodyScrollLeftShouldToBe(100);
+                    expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
+                });
+            });
+        });     
     });
 })
 
@@ -76,32 +82,48 @@ describe("setXStepLength-Body", function() {
               uss._containersData = new Map();
               const _initialStepLength = uss.getXStepLength(); 
 
-              //test invalid step lengths
-              uss.setXStepLength(_testStepInvalidTypeString, uss.getPageScroller());
-              expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_initialStepLength);
-              
-              uss.setXStepLength(_testStepInvalidTypeNaN, uss.getPageScroller());
-              expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_initialStepLength);  
+              cy.testFailingValues(uss.setXStepLength, {
+                0: [Infinity],
+                1: [-Infinity],
+                2: [true],
+                3: [false],
+                4: [NaN],
+                62: [-1],
+                7: [0],
+                8: [null],
+                9: [undefined],
+                10: [],
+                11: [Object],
+                12: [win],
+                13: [_testStepInvalidTypeString],
+                14: [_testStepInvalidTypeString, uss.getPageScroller()],
+                15: [_testStepInvalidTypeNaN],
+                16: [_testStepInvalidTypeNaN, uss.getPageScroller()],
+              }, 
+              (res, v1, v2, v3, v4, v5, v6, v7) => {
+                expect(uss.getXStepLength()).to.equal(_initialStepLength);
+              })
+              .then(() => {
+                //test valid step lengths
+                uss.setXStepLength(_testStepValidType1, uss.getPageScroller());
+                expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType1);  
 
-              //test valid step lengths
-              uss.setXStepLength(_testStepValidType1, uss.getPageScroller());
-              expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType1);  
+                uss.setXStepLength(_testStepValidType2, uss.getPageScroller());
+                expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2); 
 
-              uss.setXStepLength(_testStepValidType2, uss.getPageScroller());
-              expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2); 
-
-              uss.stopScrollingY();
-              expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
-              
-              uss.setXStepLength(_testStepInvalidTypeString, uss.getPageScroller());
-              expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
-              
-              return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(100, uss.getPageScroller(), resolve);
-              }).then(() => {
-                  bodyScrollLeftShouldToBe(100);
-                  expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
-              });
-          });     
+                uss.stopScrollingY();
+                expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
+                
+                uss.setXStepLength(_testStepInvalidTypeString, uss.getPageScroller());
+                expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
+                
+                return new Cypress.Promise(resolve => {
+                    uss.scrollXTo(100, uss.getPageScroller(), resolve);
+                }).then(() => {
+                    cy.bodyScrollLeftShouldToBe(100);
+                    expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
+                });
+            });
+        });     
     });
 })

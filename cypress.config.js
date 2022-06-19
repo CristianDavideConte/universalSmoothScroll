@@ -1,8 +1,6 @@
 module.exports = {
-  retries: 10,
-  env: {
-    preferredTimeout: 10000,
-  },
+  retries: 5,
+  defaultCommandTimeout: 4000,
   e2e: {
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
