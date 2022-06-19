@@ -52,7 +52,7 @@ const _CUSTOM_BOUNCE = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumbe
 
   if(startBouncesNumber !== 1) arrIndex = initPointsNum + (startBouncesNumber - 1) * 5;
   else {
-    //Force an ease-in pattern for the first initPointsNum control points
+    //Force an ease-in pattern for the first initPointsNum control points.
     const _initBounceDeltaX = (_bounceDeltaX - _bounceCorrectionDelta) / initPointsNum;
     const _closeToBounceDeltaX = _bounceDeltaX - 2 * _bounceCorrectionDelta;
     for (i = 0; i < _closeToBounceDeltaX; i += _initBounceDeltaX) {
@@ -62,7 +62,7 @@ const _CUSTOM_BOUNCE = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumbe
     }
   }
 
-  //Defines the control points of the spline between the first and the last bounce
+  //Defines the control points of the spline between the first and the last bounce.
   for(i = startBouncesNumber; i < endBouncesNumber; i++) {
     const _originalBounceX = _bounceDeltaX * i;
     const _calcBounceX = _bounceXCalc(_originalBounceX);
@@ -88,7 +88,7 @@ const _CUSTOM_BOUNCE = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumbe
     arrIndex += 5;
   }
 
-  //Defines the control points of the spline at (1,1)
+  //Defines the control points of the spline at (1,1).
   arrInserter(xs, 1, arrIndex, arrLen);      
   arrInserter(ys, 1, arrIndex, arrLen);    
 }
@@ -108,7 +108,7 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
     if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
     if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
     
-    //Checks if the passed points are sorted
+    //Checks if the passed points are sorted.
     if(!xsCurrMax || xsCurrMax < xs[i]) xsCurrMax = xs[i]; 
     else {
       DEFAULT_ERROR_LOGGER(debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
@@ -118,7 +118,7 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
     if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
   } 
 
-  //The control points must be defined at x = 0 and x = 1
+  //The control points must be defined at x = 0 and x = 1.
   if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
   if(!_isXDefinedIn1) {xs.push(1); ys.push(1);}
 
@@ -134,7 +134,7 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
     let k = nHalf;
     let t; 
     
-    //Find t corresponding to the given x (binary search)
+    //Find t corresponding to the given x (binary search).
     do {
       if(x >= xs[k] && x <= xs[k + 1]) {
         t = (x - xs[k]) / (xs[k + 1] - xs[k]); //t of the given x
@@ -190,7 +190,7 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
     if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
   }
 
-  //The control points must be defined at x = 0 and x = 1
+  //The control points must be defined at x = 0 and x = 1.
   if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
   if(!_isXDefinedIn1) {xs.push(1); ys.push(1);}
   
@@ -203,7 +203,7 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
     return fact;
   }
 
-  //Returns B'(t): the first derivative of B(t)
+  //Returns B'(t): the first derivative of B(t).
   function _derivativeBt(t) {
     let _derivativeBt = 0;
     for(let i = 0; i <= n; i++) {
@@ -212,7 +212,7 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
     return _derivativeBt;
   }
 
-  //Returns B(t): the parametric form of a n-th degree bezier curve
+  //Returns B(t): the parametric form of a n-th degree bezier curve.
   function _getBt(arr, t) {
     let _Bt = 0;
     for (let i = 0; i <= n; i++) {
@@ -335,14 +335,14 @@ const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6) => {
   _CUSTOM_BOUNCE(_xs, _ys, _inserterEaseIn,  _startBouncesNumberEaseIn,  bouncesNumber);
   _CUSTOM_BOUNCE(_xs, _ys, _inserterEaseOut, _startBouncesNumberEaseOut, bouncesNumber);
   
-  //Force an ease-in-out transition between ease-in-bounce and the ease-out-bounce
+  //Force an ease-in-out transition between ease-in-bounce and the ease-out-bounce.
   const transitionPoint = _initPointsNum + (_startBouncesNumberEaseOut - 1) * 5 - 3;
   _xs[transitionPoint - 1] = 0.75 * _xs[transitionPoint] + 0.25 * _xs[transitionPoint + 1];
   _xs[transitionPoint]     = 0.25 * _xs[transitionPoint] + 0.75 * _xs[transitionPoint + 1];
   _ys[transitionPoint -1] = 0.47;
   _ys[transitionPoint]    = 0.63;
 
-  //Remove the duplicate definitions of the control points at (1,1)
+  //Remove the duplicate definitions of the control points at (1,1).
   _xs.pop(); _xs.pop();
   _ys.pop(); _ys.pop();
   return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, "EASE_IN_OUT_BOUNCE");
@@ -354,44 +354,51 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
   if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the debounceTime to be a number", debounceTime); return;}
 
-  let _currentCallback = null;
-  let _originalCallback = null;
+  let _backwardPhase;
   let _scrollCalculator;
   let _debounceTimeout;
 
-  function _init(originalTimestamp, timestamp, container, containerData) {
-    _scrollCalculator = forwardEasing;
+  function init(originalTimestamp, timestamp, container) {
+    const _containerData = uss._containersData.get(container) || [];
+
+    //The init function has been triggered by the backward phase
+    //of this scroll-animation (same id), no action required.
+    if(_backwardPhase === _containerData[0]) {
+      _backwardPhase = null;
+      return;
+    }
     
-    //Avoid doing any initialization if the container is not actually scrolling
-    if(typeof containerData[0] !== "number") return;
+    //Avoid doing any initialization if the container is not actually scrolling.
+    _scrollCalculator = forwardEasing;
+    if(!_containerData[0]) return;
+
+    //Avoid double-triggering the backward phase.
     clearTimeout(_debounceTimeout);
     
-    _originalCallback = typeof containerData[10] === "function" ? containerData[10] : () => {};
-    _currentCallback = () => {
+    const _originalCallback = typeof _containerData[10] === "function" ? _containerData[10] : () => {};
+    _containerData[10] = () => {
       _debounceTimeout = setTimeout(() => {
-        const _currentPos    = uss.getScrollXCalculator(container)();
-        const _newDirection  = containerData[4];
-        const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _newDirection, container);
-
+        const _currentPos    = container === window ? window.scrollX : container.scrollLeft;
+        const _oldDirection  = _containerData[4];
+        const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _oldDirection, container);
+        
         if(!Number.isFinite(_elasticAmount)) {
           DEFAULT_WARNING_LOGGER(_elasticAmount, "is not a valid elastic amount");
           _originalCallback();
-          return;
-        } 
-        if(_elasticAmount === 0) _originalCallback();
-        else {
-            if(_elasticAmount > 0) _scrollCalculator = backwardEasing; //The backward easing is used only if we change scroll-direction
-            uss.scrollXTo(_currentPos - _elasticAmount * _newDirection, container, _originalCallback);
+        } else if(_elasticAmount === 0) {
+          _originalCallback();
+        } else {
+          //The backward easing is used only if the new scroll-animations goes backward.
+          if(_elasticAmount > 0) _scrollCalculator = backwardEasing; 
+          uss.scrollXTo(_currentPos - _elasticAmount * _oldDirection, container, _originalCallback);
+          _backwardPhase = uss._containersData.get(container)[0];
         }
       }, debounceTime);
     }
-    
-    containerData[10] = _currentCallback;
   }
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    const _containerData = uss._containersData.get(container) || [];
-    if(_containerData[10] !== _originalCallback && _containerData[10] !== _currentCallback) _init(originalTimestamp, timestamp, container, _containerData);
+    if(originalTimestamp === timestamp) init(originalTimestamp, timestamp, container);
     return _scrollCalculator(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
   }
 }
@@ -402,44 +409,51 @@ const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = 
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
   if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the debounceTime to be a number", debounceTime); return;}
 
-  let _currentCallback = null;
-  let _originalCallback = null;
+  let _backwardPhase;
   let _scrollCalculator;
   let _debounceTimeout;
 
-  function _init(originalTimestamp, timestamp, container, containerData) {
-    _scrollCalculator = forwardEasing;
+  function init(originalTimestamp, timestamp, container) {
+    const _containerData = uss._containersData.get(container) || [];
+
+    //The init function has been triggered by the backward phase
+    //of this scroll-animation (same id), no action required.
+    if(_backwardPhase === _containerData[1]) {
+      _backwardPhase = null;
+      return;
+    }
     
-    //Avoid doing any initialization if the container is not actually scrolling
-    if(typeof containerData[1] !== "number") return;
+    //Avoid doing any initialization if the container is not actually scrolling.
+    _scrollCalculator = forwardEasing;
+    if(!_containerData[1]) return;
+
+    //Avoid double-triggering the backward phase.
     clearTimeout(_debounceTimeout);
     
-    _originalCallback = typeof containerData[11] === "function" ? containerData[11] : () => {};
-    _currentCallback = () => {
+    const _originalCallback = typeof _containerData[11] === "function" ? _containerData[11] : () => {};
+    _containerData[11] = () => {
       _debounceTimeout = setTimeout(() => {
-        const _currentPos    = uss.getScrollYCalculator(container)();
-        const _newDirection  = containerData[5];
-        const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _newDirection, container);
-
+        const _currentPos    = container === window ? window.scrollY : container.scrollTop;
+        const _oldDirection  = _containerData[5];
+        const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _oldDirection, container);
+        
         if(!Number.isFinite(_elasticAmount)) {
           DEFAULT_WARNING_LOGGER(_elasticAmount, "is not a valid elastic amount");
           _originalCallback();
-          return;
-        } 
-        if(_elasticAmount === 0) _originalCallback();
-        else {
-            if(_elasticAmount > 0) _scrollCalculator = backwardEasing; //The backward easing is used only if we change scroll-direction
-            uss.scrollYTo(_currentPos - _elasticAmount * _newDirection, container, _originalCallback);
+        } else if(_elasticAmount === 0) {
+          _originalCallback();
+        } else {
+          //The backward easing is used only if the new scroll-animations goes backward.
+          if(_elasticAmount > 0) _scrollCalculator = backwardEasing; 
+          uss.scrollYTo(_currentPos - _elasticAmount * _oldDirection, container, _originalCallback);
+          _backwardPhase = uss._containersData.get(container)[1];
         }
       }, debounceTime);
     }
-    
-    containerData[11] = _currentCallback;
   }
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    const _containerData = uss._containersData.get(container) || [];
-    if(_containerData[11] !== _originalCallback && _containerData[11] !== _currentCallback) _init(originalTimestamp, timestamp, container, _containerData);
+    if(originalTimestamp === timestamp) init(originalTimestamp, timestamp, container);
     return _scrollCalculator(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
   }
 }

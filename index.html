@@ -227,8 +227,8 @@
     easeFunctionSelectorList.scrollTop = 2.5 * easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5);
     uss.setYStepLengthCalculator(
       EASE_ELASTIC_Y(
-        defaultEase,
-        EASE_OUT_CUBIC(),
+        (r) => r / 20 + 1,
+        EASE_OUT_BOUNCE(),
         (originalTimestamp, timestamp, currentPos, direction, container) => {
           if(isFingerDown) return 0;
           backwardPhase = true;

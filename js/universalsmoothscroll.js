@@ -308,7 +308,7 @@ var uss = {
       DEFAULT_ERROR_LOGGER("setXStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    //If requested, a full scroll-animation is simulated to test newCalculator
+    //If requested, a full scroll-animation is simulated to test newCalculator.
     if(shouldBeTested) {
       const _originalTimestamp = performance.now();
       let _remaningScrollAmount = DEFAULT_TEST_CALCULATOR_SCROLL_VALUE;
@@ -330,7 +330,7 @@ var uss = {
         }
         _remaningScrollAmount -= _testResult;    
       } while(_remaningScrollAmount > 0 && _currentTimestamp - _originalTimestamp <= DEFAULT_TEST_CALCULATOR_DURATION);
-      //The passed stepLengthCalculator may have entered a loop
+      //The passed stepLengthCalculator may have entered a loop.
       if(_currentTimestamp - _originalTimestamp > DEFAULT_TEST_CALCULATOR_DURATION) {
         DEFAULT_WARNING_LOGGER(newCalculator.name || "the passed calculator", 
                               "didn't complete the test scroll-animation within " + DEFAULT_TEST_CALCULATOR_DURATION + "ms", 
@@ -355,7 +355,7 @@ var uss = {
       DEFAULT_ERROR_LOGGER("setYStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    //If requested, a full scroll-animation is simulated to test newCalculator
+    //If requested, a full scroll-animation is simulated to test newCalculator.
     if(shouldBeTested) {
       const _originalTimestamp = performance.now();
       let _remaningScrollAmount = DEFAULT_TEST_CALCULATOR_SCROLL_VALUE;
@@ -377,7 +377,7 @@ var uss = {
         }
         _remaningScrollAmount -= _testResult;     
       } while(_remaningScrollAmount > 0 && _currentTimestamp - _originalTimestamp <= DEFAULT_TEST_CALCULATOR_DURATION);
-      //The passed stepLengthCalculator may have entered a loop
+      //The passed stepLengthCalculator may have entered a loop.
       if(_currentTimestamp - _originalTimestamp > DEFAULT_TEST_CALCULATOR_DURATION) {
         DEFAULT_WARNING_LOGGER(newCalculator.name || "the passed calculator", 
                               "didn't complete the test scroll-animation within " + DEFAULT_TEST_CALCULATOR_DURATION + "ms", 
@@ -402,7 +402,7 @@ var uss = {
       DEFAULT_ERROR_LOGGER("setStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
       return;
     }
-    //If requested, a full scroll-animation is simulated to test newCalculator
+    //If requested, a full scroll-animation is simulated to test newCalculator.
     if(shouldBeTested) {
       const _originalTimestamp = performance.now();
       let _remaningScrollAmount = DEFAULT_TEST_CALCULATOR_SCROLL_VALUE;
@@ -424,7 +424,7 @@ var uss = {
         }
         _remaningScrollAmount -= _testResult;     
       } while(_remaningScrollAmount > 0 && _currentTimestamp - _originalTimestamp <= DEFAULT_TEST_CALCULATOR_DURATION);
-      //The passed stepLengthCalculator may have entered a loop
+      //The passed stepLengthCalculator may have entered a loop.
       if(_currentTimestamp - _originalTimestamp > DEFAULT_TEST_CALCULATOR_DURATION) {
         DEFAULT_WARNING_LOGGER(newCalculator.name || "the passed calculator", 
                               "didn't complete the test scroll-animation within " + DEFAULT_TEST_CALCULATOR_DURATION + "ms", 
@@ -440,7 +440,7 @@ var uss = {
       _containerData[12] = newCalculator;
       _containerData[13] = newCalculator;
 
-      //Setting a non-temporary StepLengthCalculators will unset the temporary ones
+      //Setting a non-temporary StepLengthCalculators will unset the temporary ones.
       if(!!_containerData[14]) _containerData[14] = null;
       if(!!_containerData[15]) _containerData[15] = null;
     }
@@ -531,18 +531,18 @@ var uss = {
     const _originalScrollLeft = element.scrollLeft;
     const _originalScrollTop  = element.scrollTop;
 
-    //The properties of _elementStyle are automatically updated whenever the style is changed 
+    //The properties of _elementStyle are automatically updated whenever the style is changed.
     element.style.overflowX = "hidden"; //The element is forced to hide its vertical scrollbars
     element.style.overflowY = "hidden"; //The element is forced to hide its horizontal scrollbars
    
     //When the scrollbars are hidden the element's width/height increase only if 
-    //it was originally showing scrollbars, otherwise they remain the same 
+    //it was originally showing scrollbars, otherwise they remain the same. 
     _scrollbarsDimensions[0] = Number.parseInt(_elementStyle.width)  - _originalWidth;  //Vertical scrollbar's width
     _scrollbarsDimensions[1] = Number.parseInt(_elementStyle.height) - _originalHeight; //Horizontal scrollbar's height
 
     //If the element is not scrollable but has "overflow:scroll"
     //the dimensions can only be calculated by using clientWidth/clientHeight.
-    //If the overflow is "visible" the dimensions are < 0
+    //If the overflow is "visible" the dimensions are < 0.
     if(_scrollbarsDimensions[0] === 0)    _scrollbarsDimensions[0] = element.clientWidth - _clientWidth;
     else if(_scrollbarsDimensions[0] < 0) _scrollbarsDimensions[0] = 0;
     
@@ -630,6 +630,7 @@ var uss = {
       DEFAULT_ERROR_LOGGER("getXScrollableParent", "the element to be an HTMLElement or the Window", element);
       return null;
     }
+
     //Initially test if the element is the body or the documentElement.
     //These two elements consider overflow:visible as overflow:auto.
     const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
@@ -675,6 +676,7 @@ var uss = {
       DEFAULT_ERROR_LOGGER("getYScrollableParent", "the element to be an HTMLElement or the Window", element);
       return null;
     }
+
     //Initially test if the element is the body or the documentElement.
     //These two elements consider overflow:visible as overflow:auto.
     const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
@@ -720,6 +722,7 @@ var uss = {
       DEFAULT_ERROR_LOGGER("getScrollableParent", "the element to be an HTMLElement or the Window", element);
       return null;
     }
+
     //Initially test if the element is the body or the documentElement.
     //These two elements consider overflow:visible as overflow:auto.
     const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
@@ -766,6 +769,7 @@ var uss = {
       DEFAULT_ERROR_LOGGER("getAllScrollableParents", "the element to be an HTMLElement or the Window", element);
       return [];
     }
+
     //Initially test if the element is the body or the documentElement.
     //These two elements consider overflow:visible as overflow:auto.
     const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
@@ -822,7 +826,7 @@ var uss = {
       return;
     }
 
-    //The container cannot be scrolled on the x-axis
+    //The container cannot be scrolled on the x-axis.
     if(uss.getMaxScrollX(container) < 1) {
       const _containerName = container === window ? "window" : 
                                                     container.tagName.toLowerCase() + 
@@ -847,7 +851,7 @@ var uss = {
     const _scroll = container !== window ? finalPos => container.scrollLeft = finalPos : finalPos => container.scroll(finalPos, window.scrollY);
 
     //If user prefers reduced motion
-    //the API rolls back to the default "jump-to-position" behavior
+    //the API rolls back to the default "jump-to-position" behavior.
     if(uss._reducedMotion) {
       _scroll(finalXPosition);
       uss.stopScrollingX(container, callback);
@@ -860,22 +864,22 @@ var uss = {
     //  2) No scroll-animations are being performed, no optimization can be done.
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    _containerData[2]  = finalXPosition;
-    _containerData[4]  = _direction;
-    _containerData[6]  = _totalScrollAmount;
-    _containerData[8]  = null;
-    _containerData[10] = callback;
+    _containerData[2]  = finalXPosition;     //finalXPosition
+    _containerData[4]  = _direction;         //direction
+    _containerData[6]  = _totalScrollAmount; //totalScrollAmount
+    _containerData[8]  = null;               //originalTimestamp
+    _containerData[10] = callback;           //callback
 
     //A scroll-animation is already being performed and
-    //the scroll-animation's informations have already been updated
+    //the scroll-animation's informations have already been updated.
     if(!!_containerData[0]) return;
 
-    //No scroll-animation is being performed so a new one is created
+    //No scroll-animation is being performed so a new one is created.
     _containerData[0] = window.requestAnimationFrame(_stepX);
     if(!_oldData) uss._containersData.set(container, _containerData);
 
     function _stepX(timestamp) {
-      //The originalTimeStamp is null at the beginning of a scroll-animation
+      //The originalTimeStamp is null at the beginning of a scroll-animation.
       if(!_containerData[8]) _containerData[8] = timestamp;
       const finalXPosition = _containerData[2];
       const _direction = _containerData[4];
@@ -913,7 +917,7 @@ var uss = {
 
       _scroll(_currentXPosition + _calculatedScrollStepLength * _direction);
 
-      //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container
+      //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container.
       if(_calculatedScrollStepLength !== 0 && _currentXPosition === _scrollXCalculator()) {
         uss.stopScrollingX(container, _containerData[10]);
         return;
@@ -932,7 +936,7 @@ var uss = {
       return;
     }
 
-    //The container cannot be scrolled on the y-axis
+    //The container cannot be scrolled on the y-axis.
     if(uss.getMaxScrollY(container) < 1) {
       const _containerName = container === window ? "window" : 
                                                     container.tagName.toLowerCase() + 
@@ -957,7 +961,7 @@ var uss = {
     const _scroll = container !== window ? finalPos => container.scrollTop = finalPos : finalPos => container.scroll(window.scrollX, finalPos);
 
     //If user prefers reduced motion
-    //the API rolls back to the default "jump-to-position" behavior
+    //the API rolls back to the default "jump-to-position" behavior.
     if(uss._reducedMotion) {
       _scroll(finalYPosition);
       uss.stopScrollingY(container, callback);
@@ -970,22 +974,22 @@ var uss = {
     //  2) No scroll-animations are being performed, no optimization can be done.
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    _containerData[3]  = finalYPosition;
-    _containerData[5]  = _direction;
-    _containerData[7]  = _totalScrollAmount;
-    _containerData[9]  = null;
-    _containerData[11] = callback;
+    _containerData[3]  = finalYPosition;     //finalYPosition
+    _containerData[5]  = _direction;         //direction
+    _containerData[7]  = _totalScrollAmount; //totalScrollAmount
+    _containerData[9]  = null;               //originalTimestamp
+    _containerData[11] = callback;           //callback
 
     //A scroll-animation is already being performed and
-    //the scroll-animation's informations have already been updated
+    //the scroll-animation's informations have already been updated.
     if(!!_containerData[1]) return;
 
-    //No scroll-animation is being performed so a new one is created
+    //No scroll-animation is being performed so a new one is created.
     _containerData[1] = window.requestAnimationFrame(_stepY);
     if(!_oldData) uss._containersData.set(container, _containerData);
      
     function _stepY(timestamp) {
-      //The originalTimeStamp is null at the beginning of a scroll-animation
+      //The originalTimeStamp is null at the beginning of a scroll-animation.
       if(!_containerData[9]) _containerData[9] = timestamp;
       const finalYPosition = _containerData[3];
       const _direction = _containerData[5];
@@ -1023,7 +1027,7 @@ var uss = {
 
       _scroll(_currentYPosition + _calculatedScrollStepLength * _direction);
 
-      //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container
+      //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container.
       if(_calculatedScrollStepLength !== 0 && _currentYPosition === _scrollYCalculator()) {
         uss.stopScrollingY(container, _containerData[11]);
         return;
@@ -1046,22 +1050,22 @@ var uss = {
     if(!stillStart) {
       const _containerData = uss._containersData.get(container) || [];
 
-      //A scroll-animation on the x-axis is already being performed and can be repurposed
+      //A scroll-animation on the x-axis is already being performed and can be repurposed.
       if(!!_containerData[0]) {     
 
-        //An actual scroll has been requested   
+        //An actual scroll has been requested.   
         if(deltaX !== 0) { 
           const _finalXPosition = _containerData[2] + deltaX;
           const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _containerData[4];
           
-          //The scroll-animation has to scroll less than 1px 
+          //The scroll-animation has to scroll less than 1px.
           if(_remaningScrollAmount * _remaningScrollAmount < 1) { 
             uss.stopScrollingX(container, callback);
             return;
           }
 
           //Thanks to the new deltaX, the current scroll-animation 
-          //has already surpassed the old finalXPosition 
+          //has already surpassed the old finalXPosition.
           if(_remaningScrollAmount < 0) {
             uss.scrollXTo(_finalXPosition, container, callback);
             return;
@@ -1094,22 +1098,22 @@ var uss = {
     if(!stillStart) {
       const _containerData = uss._containersData.get(container) || [];
 
-      //A scroll-animation on the y-axis is already being performed and can be repurposed
+      //A scroll-animation on the y-axis is already being performed and can be repurposed.
       if(!!_containerData[1]) {     
 
-        //An actual scroll has been requested   
+        //An actual scroll has been requested.   
         if(deltaY !== 0) { 
           const _finalYPosition = _containerData[3] + deltaY;
           const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _containerData[5];
           
-          //The scroll-animation has to scroll less than 1px 
+          //The scroll-animation has to scroll less than 1px. 
           if(_remaningScrollAmount * _remaningScrollAmount < 1) { 
             uss.stopScrollingY(container, callback);
             return;
           }
 
           //Thanks to the new deltaY, the current scroll-animation 
-          //has already surpassed the old finalYPosition 
+          //has already surpassed the old finalYPosition. 
           if(_remaningScrollAmount < 0) {
             uss.scrollYTo(_finalYPosition, container, callback);
             return;
@@ -1143,7 +1147,7 @@ var uss = {
     }
     
     //This function is used to make sure that the passed callback is only called
-    //once all the scroll-animations for the passed container have been performed
+    //once all the scroll-animations for the passed container have been performed.
     let _currentStep = 0 //Number of the current _callback's calls
     const _callback = typeof callback === "function" ? () => {
       if(_currentStep < 1) _currentStep++;
@@ -1168,7 +1172,7 @@ var uss = {
     }
 
     //This function is used to make sure that the passed callback is only called
-    //once all the scroll-animations for the passed container have been performed
+    //once all the scroll-animations for the passed container have been performed.
     let _currentStep = 0 //Number of the current _callback's calls
     const _callback = typeof callback === "function" ? () => {
       if(_currentStep < 1) _currentStep++;
@@ -1347,8 +1351,8 @@ var uss = {
         return;
       } 
         
-      //Possible alignments for the original element: center or nearest
-      //Possible alignments for its containers: nearest
+      //Possible alignments for the original element: center or nearest.
+      //Possible alignments for its containers: nearest.
       if(_isOriginalElement && alignToCenter === true) { 
           _scrollNotNeededX = false;
           _scrollNotNeededY = false;
@@ -1423,7 +1427,7 @@ var uss = {
     window.cancelAnimationFrame(_containerData[1]);
     _containerData[1] = null;
   
-    if(!_containerData[1]) { //No scroll-animation on the x-axis is being performed
+    if(!_containerData[0]) { //No scroll-animation on the x-axis is being performed
       const _newData = [];
       if(!!_containerData[12]) _newData[12] = _containerData[12];
       if(!!_containerData[13]) _newData[13] = _containerData[13];
@@ -1476,7 +1480,7 @@ var uss = {
       window.addEventListener("unload", (event) => event.preventDefault(), {passive:false, once:true});
 
       //Prevents the browser to jump-to-position,
-      //when a user navigates through history
+      //when a user navigates through history.
       function _smoothHistoryNavigation () {
         const _fragment = document.URL.split("#")[1];
         if(!_fragment) { //The URL is just "URL/#" or "URL/"
@@ -1504,7 +1508,7 @@ var uss = {
         continue;
       }
 
-      //Look for elements with the corresponding id or "name" attribute
+      //Look for elements with the corresponding id or "name" attribute.
       const _elementToReach = document.getElementById(_pageLinkParts[1]) || document.querySelector("a[name='" + _pageLinkParts[1] + "']");
       if(_elementToReach === null) {
         DEFAULT_WARNING_LOGGER(_pageLinkParts[1], "is not a valid anchor's destination", true);
@@ -1524,14 +1528,14 @@ var uss = {
 
 window.addEventListener("resize", () => {uss._windowHeight = window.innerHeight; uss._windowWidth = window.innerWidth;}, {passive:true});
 window.addEventListener("load", () => {
-  //Calculate the maximum sizes of scrollbars on the webpage
+  //Calculate the maximum sizes of scrollbars on the webpage.
   const __scrollBox = document.createElement("div");
   __scrollBox.style.overflowX = "scroll";
   document.body.appendChild(__scrollBox);
   uss._scrollbarsMaxDimension = __scrollBox.offsetHeight  - __scrollBox.clientHeight;
   document.body.removeChild(__scrollBox);
 
-  //Calculate the average frames' time of the user's screen and the corresponding minAnimationFrame
+  //Calculate the average frames' time of the user's screen and the corresponding minAnimationFrame.
   const _totalFrameCount = 60;
   const _totalMeasurementsLeft = 3;
   let _currentFrameCount = _totalFrameCount;
@@ -1546,7 +1550,7 @@ window.addEventListener("load", () => {
       _currentMeasurementsLeft--;
       if(_currentMeasurementsLeft < 1) return;
       
-      //Start a new measurement
+      //Start a new measurement.
       _currentFrameCount = _totalFrameCount;
       _startFrameTime = performance.now();
     }
