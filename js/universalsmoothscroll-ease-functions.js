@@ -129,7 +129,7 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
   //Cubic Hermite-Spline definition:
   //p(x) = h00(t) * p_k + h10(t) * (x_k+1 - x_k) * m_k + h01(t) * p_k+1 + h11(t) * (x_k+1 - x_k) * m_k+1 
   function _evalSpline(x) {
-    if(x === 0) x = 0.5 * uss._framesTime;
+    //if(x === 0) x = 0.5 * uss._framesTime;
     let binaryMin = 0;
     let binaryMax = n;
     let k = nHalf;
@@ -223,7 +223,7 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
   }
 
   function _newtonRapson(x) {
-    if(x === 0) x = 0.5 * uss._framesTime;
+    //if(x === 0) x = 0.5 * uss._framesTime;
     let prev;
     let t = x;
     do {
@@ -252,7 +252,7 @@ const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, cal
   const cY = 3 * y1;
   
   function _newtonRapson(x) {
-    if(x === 0) x = 0.5 * uss._framesTime;
+    //if(x === 0) x = 0.5 * uss._framesTime;
     let prev;
     let t = x;
     do {
@@ -357,32 +357,34 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
   if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the debounceTime to be a number", debounceTime); return;}
 
-  let _backwardPhase = null;
+  let _finalXPositionBackwardPhase = null;
   let _scrollCalculator;
   let _debounceTimeout;
 
   function init(originalTimestamp, timestamp, container) {
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container) || [];
 
     //The init function has been triggered by the backward phase
-    //of this scroll-animation (same id), no action required.
-    if(_backwardPhase === _containerData[0]) {
-      _backwardPhase = null;
+    //of this scroll-animation (or by one that has same final position), 
+    //no action required.
+    if(_finalXPositionBackwardPhase === _oldData[2]) {
+      _finalXPositionBackwardPhase = null;
       return;
     }
     
-    //Avoid doing any initialization if the container is not actually scrolling.
+    //Avoid setting up the backward phase if the container is not actually scrolling.
     _scrollCalculator = forwardEasing;
-    if(!_containerData[0]) return;
+    _finalXPositionBackwardPhase = null;
+    if(!_oldData[0]) return;
 
     //Avoid double-triggering the backward phase.
     clearTimeout(_debounceTimeout);
     
-    const _originalCallback = typeof _containerData[10] === "function" ? _containerData[10] : () => {};
-    _containerData[10] = () => {
+    const _originalCallback = typeof _oldData[10] === "function" ? _oldData[10] : () => {};
+    _oldData[10] = () => {
       _debounceTimeout = setTimeout(() => {
         const _currentPos    = container === window ? window.scrollX : container.scrollLeft;
-        const _oldDirection  = _containerData[4];
+        const _oldDirection  = _oldData[4];
         const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _oldDirection, container);
         
         if(!Number.isFinite(_elasticAmount)) {
@@ -394,7 +396,7 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
           //The backward easing is used only if the new scroll-animations goes backward.
           if(_elasticAmount > 0) _scrollCalculator = backwardEasing; 
           uss.scrollXTo(_currentPos - _elasticAmount * _oldDirection, container, _originalCallback);
-          _backwardPhase = uss._containersData.get(container)[0];
+          _finalXPositionBackwardPhase = uss._containersData.get(container)[2]
         }
       }, debounceTime);
     }
@@ -412,32 +414,34 @@ const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = 
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
   if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the debounceTime to be a number", debounceTime); return;}
 
-  let _backwardPhase = null;
+  let _finalYPositionBackwardPhase = null;
   let _scrollCalculator;
   let _debounceTimeout;
 
   function init(originalTimestamp, timestamp, container) {
-    const _containerData = uss._containersData.get(container) || [];
+    const _oldData = uss._containersData.get(container) || [];
 
     //The init function has been triggered by the backward phase
-    //of this scroll-animation (same id), no action required.
-    if(_backwardPhase === _containerData[1]) {
-      _backwardPhase = null;
+    //of this scroll-animation (or by one that has same final position), 
+    //no action required.
+    if(_finalYPositionBackwardPhase === _oldData[3]) {
+      _finalYPositionBackwardPhase = null;
       return;
     }
     
-    //Avoid doing any initialization if the container is not actually scrolling.
+    //Avoid setting up the backward phase if the container is not actually scrolling.
     _scrollCalculator = forwardEasing;
-    if(!_containerData[1]) return;
+    _finalYPositionBackwardPhase = null;
+    if(!_oldData[1]) return;
 
     //Avoid double-triggering the backward phase.
     clearTimeout(_debounceTimeout);
     
-    const _originalCallback = typeof _containerData[11] === "function" ? _containerData[11] : () => {};
-    _containerData[11] = () => {
+    const _originalCallback = typeof _oldData[11] === "function" ? _oldData[11] : () => {};
+    _oldData[11] = () => {
       _debounceTimeout = setTimeout(() => {
         const _currentPos    = container === window ? window.scrollY : container.scrollTop;
-        const _oldDirection  = _containerData[5];
+        const _oldDirection  = _oldData[5];
         const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _oldDirection, container);
         
         if(!Number.isFinite(_elasticAmount)) {
@@ -449,7 +453,7 @@ const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = 
           //The backward easing is used only if the new scroll-animations goes backward.
           if(_elasticAmount > 0) _scrollCalculator = backwardEasing; 
           uss.scrollYTo(_currentPos - _elasticAmount * _oldDirection, container, _originalCallback);
-          _backwardPhase = uss._containersData.get(container)[1];
+          _finalYPositionBackwardPhase = uss._containersData.get(container)[3]
         }
       }, debounceTime);
     }

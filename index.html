@@ -170,13 +170,13 @@
     const _maxScroll = uss.getMaxScrollY(container);
 
     if(_finalPos < scrollLimit && delta < 0) {
-      delta *= _finalPos <= 0 ? 0 : 0.25;
-      return delta * _finalPos / scrollLimit;
+      const _progress = _finalPos / scrollLimit;
+      return delta * Math.pow(_progress, 4);
     }
 
     if(_finalPos > _maxScroll - scrollLimit && delta > 0) {
-      delta *= _finalPos >= _maxScroll ? 0 : 0.25;
-      return delta * (_maxScroll - _finalPos) / scrollLimit;
+      const _progress = (_maxScroll - _finalPos) / scrollLimit;
+      return delta * Math.pow(_progress, 4);
     }
 
     return delta;
@@ -191,11 +191,11 @@
     const pageScroller = document.body;
     const defaultEase = EASE_OUT_CUBIC(1000);
 
-    let yScroller = document.getElementsByClassName("scrollerSections")[0];
+    let yScrollerSection = document.getElementsByClassName("scrollerSections")[0];
     let yScrollerUpButton = document.getElementById("yScrollerUp");
     let yScrollerDownButton = document.getElementById("yScrollerDown");
 
-    let xScroller = document.getElementsByClassName("scrollerSections")[1];
+    let xScrollerSection = document.getElementsByClassName("scrollerSections")[1];
     let xScrollerLeftButton = document.getElementById("xScrollerLeft");
     let xScrollerRightButton = document.getElementById("xScrollerRight");
 
@@ -248,10 +248,9 @@
     easeFunctionSelectorList.addEventListener("wheel", event => {
       event.preventDefault();
       event.stopPropagation();
-      const _scrollDistance  = calcScrollDistance(easeFunctionSelectorList, 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)) - 1, event.deltaY);
-      const _scrollDirection = _scrollDistance > 0 ? 1 : -1;
-      if(_scrollDistance * _scrollDirection < 2) return;
-      uss.scrollYBy(_scrollDistance, easeFunctionSelectorList, () => backwardPhase = false, false);
+      const _scrollDistance = calcScrollDistance(easeFunctionSelectorList, 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)) - 1, event.deltaY);
+      uss.scrollYBy(_scrollDistance, easeFunctionSelectorList, () => backwardPhase = false, backwardPhase);
+      backwardPhase = false;
     }, {passive:false});
 
 
@@ -367,18 +366,18 @@
 
 
     function scrollListX(direction) {
-      const finalXPosition = direction === -1 ? 0 : uss.getMaxScrollX(xScroller);
-      uss.scrollXTo(finalXPosition, xScroller, null, true);
+      const finalXPosition = direction === -1 ? 0 : uss.getMaxScrollX(xScrollerSection);
+      uss.scrollXTo(finalXPosition, xScrollerSection, null, true);
     }
 
-    uss.setXStepLengthCalculator(EASE_IN_OUT_QUAD(1000), xScroller);
-    xScroller.addEventListener("wheel", event => {
+    uss.setXStepLengthCalculator(EASE_IN_OUT_QUAD(1000), xScrollerSection);
+    xScrollerSection.addEventListener("wheel", event => {
       event.preventDefault();
       event.stopPropagation();
-      uss.setXStepLengthCalculator(defaultEase, xScroller, true);
-      uss.scrollXBy(event.deltaY, xScroller, null, false);
+      uss.setXStepLengthCalculator(defaultEase, xScrollerSection, true);
+      uss.scrollXBy(event.deltaY, xScrollerSection, null, false);
     }, {passive:false});
-    xScroller.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
+    xScrollerSection.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
 
     xScrollerLeftButton.addEventListener("mousedown",   () => scrollListX(-1), {passive: false});
     xScrollerRightButton.addEventListener("mousedown",  () => scrollListX(+1), {passive: false});
@@ -388,27 +387,27 @@
     xScrollerLeftButton.addEventListener("touchmove",  event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
     xScrollerRightButton.addEventListener("touchmove", event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
 
-    xScrollerLeftButton.addEventListener("touchend",  () => uss.stopScrollingX(xScroller), {passive:false});
-    xScrollerRightButton.addEventListener("touchend", () => uss.stopScrollingX(xScroller), {passive:false});
-    xScrollerLeftButton.addEventListener("mouseup",   () => uss.stopScrollingX(xScroller), {passive:false});
-    xScrollerRightButton.addEventListener("mouseup",  () => uss.stopScrollingX(xScroller), {passive:false});
-    xScrollerLeftButton.addEventListener("mouseout",  () => uss.stopScrollingX(xScroller), {passive:false});
-    xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScroller), {passive:false});
+    xScrollerLeftButton.addEventListener("touchend",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
+    xScrollerRightButton.addEventListener("touchend", () => uss.stopScrollingX(xScrollerSection), {passive:false});
+    xScrollerLeftButton.addEventListener("mouseup",   () => uss.stopScrollingX(xScrollerSection), {passive:false});
+    xScrollerRightButton.addEventListener("mouseup",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
+    xScrollerLeftButton.addEventListener("mouseout",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
+    xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScrollerSection), {passive:false});
 
 
     function scrollListY(direction) {
-      const finalYPosition = direction === -1 ? 0 : uss.getMaxScrollY(yScroller);
-      uss.scrollYTo(finalYPosition, yScroller, null, true);
+      const finalYPosition = direction === -1 ? 0 : uss.getMaxScrollY(yScrollerSection);
+      uss.scrollYTo(finalYPosition, yScrollerSection, null, true);
     }
 
-    uss.setYStepLengthCalculator(EASE_OUT_EXPO(2000), yScroller);
-    yScroller.addEventListener("wheel", event => {
+    uss.setYStepLengthCalculator(EASE_OUT_EXPO(2000), yScrollerSection);
+    yScrollerSection.addEventListener("wheel", event => {
       event.preventDefault();
       event.stopPropagation();
-      uss.setYStepLengthCalculator(defaultEase, yScroller, true);
-      uss.scrollYBy(event.deltaY, yScroller, null, false);
+      uss.setYStepLengthCalculator(defaultEase, yScrollerSection, true);
+      uss.scrollYBy(event.deltaY, yScrollerSection, null, false);
     }, {passive:false});
-    yScroller.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
+    yScrollerSection.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
 
     yScrollerUpButton.addEventListener("mousedown",    () => scrollListY(-1), {passive: false});
     yScrollerDownButton.addEventListener("mousedown",  () => scrollListY(+1), {passive: false});
@@ -418,12 +417,12 @@
     yScrollerUpButton.addEventListener("touchmove",   event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
     yScrollerDownButton.addEventListener("touchmove", event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
 
-    yScrollerUpButton.addEventListener("touchend",   () => uss.stopScrollingY(yScroller), {passive:false});
-    yScrollerDownButton.addEventListener("touchend", () => uss.stopScrollingY(yScroller), {passive:false});
-    yScrollerUpButton.addEventListener("mouseup",    () => uss.stopScrollingY(yScroller), {passive:false});
-    yScrollerDownButton.addEventListener("mouseup",  () => uss.stopScrollingY(yScroller), {passive:false});
-    yScrollerUpButton.addEventListener("mouseout",   () => uss.stopScrollingY(yScroller), {passive:false});
-    yScrollerDownButton.addEventListener("mouseout", () => uss.stopScrollingY(yScroller), {passive:false});
+    yScrollerUpButton.addEventListener("touchend",   () => uss.stopScrollingY(yScrollerSection), {passive:false});
+    yScrollerDownButton.addEventListener("touchend", () => uss.stopScrollingY(yScrollerSection), {passive:false});
+    yScrollerUpButton.addEventListener("mouseup",    () => uss.stopScrollingY(yScrollerSection), {passive:false});
+    yScrollerDownButton.addEventListener("mouseup",  () => uss.stopScrollingY(yScrollerSection), {passive:false});
+    yScrollerUpButton.addEventListener("mouseout",   () => uss.stopScrollingY(yScrollerSection), {passive:false});
+    yScrollerDownButton.addEventListener("mouseout", () => uss.stopScrollingY(yScrollerSection), {passive:false});
 
     let bezierTitleTimeout = 0;
     cubicBezierCustomInputParameters[4].addEventListener("click", () => {
