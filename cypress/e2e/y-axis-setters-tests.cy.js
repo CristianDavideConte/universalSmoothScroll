@@ -19,23 +19,12 @@ describe("setYStepLengthCalculator-Body", function() {
               uss._containersData = new Map();  
               
               cy.testFailingValues(uss.setYStepLengthCalculator, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                9: [undefined],
-                10: [],
-                11: [Object],
-                12: [win],
-                13: [_testCalculatorInvalidTypeString, false, true],
-                14: [_testCalculatorInvalidTypeString, true, true],
-                15: [_testCalculatorInvalidTypeNaN, false, true],
-                15: [_testCalculatorInvalidTypeNaN, true, true],
+                0: [[_testCalculatorInvalidTypeString, _testCalculatorInvalidTypeNaN, Infinity, -Infinity, true, false, NaN, 10, -1, 0, null, undefined, Object, win]],
+                1: [[_testCalculatorValidType1, _testCalculatorValidType2, _testCalculatorValidType3], 
+                    [Infinity, -Infinity, true, false, NaN, 10, -1, 0, null, undefined, Object, win],
+                    [true, false],
+                    [true, false]
+                   ]
               })
               .then(() => {
                 //test valid stepLengthCalculators
@@ -83,22 +72,7 @@ describe("setYStepLength-Body", function() {
               const _initialStepLength = uss.getYStepLength();  
               
               cy.testFailingValues(uss.setYStepLength, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                62: [-1],
-                7: [0],
-                8: [null],
-                9: [undefined],
-                10: [],
-                11: [Object],
-                12: [win],
-                13: [_testStepInvalidTypeString],
-                14: [_testStepInvalidTypeString, uss.getPageScroller()],
-                15: [_testStepInvalidTypeNaN],
-                16: [_testStepInvalidTypeNaN, uss.getPageScroller()],
+                0: [[_testStepInvalidTypeString, _testStepInvalidTypeNaN, Infinity, -Infinity, true, false, NaN, -1, 0, null, undefined, Object, win]],
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(uss.getYStepLength()).to.equal(_initialStepLength);

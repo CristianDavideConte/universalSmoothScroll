@@ -18,18 +18,8 @@ describe("getFinalXPosition-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
                             
-              cy.testFailingValues(uss.getFinalXPosition, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                11: [Object]
+              cy.testFailingValues(console.log, {
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
               })
               .then(() => {
                 return new Cypress.Promise(resolve => {
@@ -57,30 +47,20 @@ describe("getScrollXDirection-Body", function() {
             uss._containersData = new Map();
 
             cy.testFailingValues(uss.getScrollXDirection, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                11: [Object]
-              })
-              .then(() => {
-                return new Cypress.Promise(resolve => {
-                    uss.scrollXTo(100, uss.getPageScroller(), () => {
-                        uss.scrollXTo(50, uss.getPageScroller(), resolve);
-                        scrollYDirectionLeft = uss.getScrollXDirection();
-                    });
-                    scrollYDirectionRight = uss.getScrollXDirection();
-                }).then(() => {
-                    expect(scrollYDirectionLeft).to.equal(-1);
-                    expect(scrollYDirectionRight).to.equal(1);
-                    expect(uss.getScrollXDirection()).to.equal(0);
-                });
+              0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+            })
+            .then(() => {
+              return new Cypress.Promise(resolve => {
+                  uss.scrollXTo(100, uss.getPageScroller(), () => {
+                      uss.scrollXTo(50, uss.getPageScroller(), resolve);
+                      scrollYDirectionLeft = uss.getScrollXDirection();
+                  });
+                  scrollYDirectionRight = uss.getScrollXDirection();
+              }).then(() => {
+                  expect(scrollYDirectionLeft).to.equal(-1);
+                  expect(scrollYDirectionRight).to.equal(1);
+                  expect(uss.getScrollXDirection()).to.equal(0);
+              });
             });
           });         
     });
@@ -98,19 +78,7 @@ describe("getXStepLengthCalculator-Body", function() {
               uss._containersData = new Map();
                                           
               cy.testFailingValues(uss.getXStepLengthCalculator, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                9: [undefined],
-                10: [],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, undefined, Object], [true, false]]
               })
               .then(() => {
                 uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
@@ -152,17 +120,7 @@ describe("getScrollXCalculator-Body", function() {
               uss._containersData = new Map();
                                
               cy.testFailingValues(uss.getScrollXCalculator, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
               },
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.throw("USS fatal error (execution stopped)");
@@ -208,17 +166,7 @@ describe("getMaxScrollX-Body", function() {
               uss._containersData = new Map();
                             
               cy.testFailingValues(uss.getMaxScrollX, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
               })
               .then(() => {
                 const _expectedMaxScrollX = uss.getPageScroller().scrollWidth / 2 + uss.getScrollbarsMaxDimension(); 
@@ -245,19 +193,7 @@ describe("getXScrollableParent-Body", function() {
               uss._containersData = new Map();  
                             
               cy.testFailingValues(uss.getXScrollableParent, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                9: [undefined],
-                10: [],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, undefined, Object]]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.equal(null);

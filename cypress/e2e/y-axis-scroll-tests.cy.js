@@ -17,16 +17,7 @@ describe("isYScrolling-Body", function() {
               uss._containersData = new Map();
 
               cy.testFailingValues(uss.isYscrolling, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.be.undefined;
@@ -93,22 +84,9 @@ describe("scrollYTo-Body", function() {
               uss._containersData = new Map();
  
               cy.testFailingValues(uss.scrollYTo, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                8: [null],
-                9: [undefined],
-                10: [],
-                11: [Object],
-                12: [10, Infinity],
-                12: [10, -Infinity],
-                12: [10, true],
-                12: [10, false],
-                12: [10, NaN],
-                12: [10, null],
-                12: [10, Object],
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object],
+                    [Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]
+                   ]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(uss.isYscrolling()).to.be.false;
@@ -235,22 +213,9 @@ describe("scrollYBy-Body", function() {
               uss._containersData = new Map();
               
               cy.testFailingValues(uss.scrollYBy, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                8: [null],
-                9: [undefined],
-                10: [],
-                11: [Object],
-                12: [10, Infinity],
-                12: [10, -Infinity],
-                12: [10, true],
-                12: [10, false],
-                12: [10, NaN],
-                12: [10, null],
-                12: [10, Object],
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object],
+                    [Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]
+                   ]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(uss.isYscrolling()).to.be.false;

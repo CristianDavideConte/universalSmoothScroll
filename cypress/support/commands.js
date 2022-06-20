@@ -47,12 +47,30 @@ Cypress.Commands.addAll({
      *  actionAftertest = (res, v1, v2, v3, v4, v5, v6, v7) => {expect(...).to...}
      */
     testFailingValues(command, failingValues = {}, actionAfterTest = (res) => expect(res).to.be.undefined) {  
-        for(let [key, failingValueArr] of Object.entries(failingValues)) {
-            const [v1, v2, v3, v4, v5, v6, v7] = failingValueArr;
+        function loopThroughFailingValuesArr(failingValueArr, outerIndex = 0, innerIndex = 0, currentFailingValues = []) {
+            while(Array.isArray(failingValueArr[outerIndex])) {
+                if(failingValueArr[outerIndex].length <= innerIndex) {
+                    outerIndex++;
+                    innerIndex = 0;
+                    continue;
+                }
+                const newFailingValues = currentFailingValues.slice();
+                newFailingValues.push(failingValueArr[outerIndex][innerIndex]);
+                loopThroughFailingValuesArr(failingValueArr, outerIndex + 1, 0, newFailingValues);
+                innerIndex++;                                  
+            }
+            if(currentFailingValues.length !== outerIndex) return;
+
+            //Test the current failing values combination
+            const [v1, v2, v3, v4, v5, v6, v7] = currentFailingValues;
             actionAfterTest(
                 command(v1, v2, v3, v4, v5, v6, v7),
                 v1, v2, v3, v4, v5, v6, v7
             );
+        }
+
+        for(let [key, failingValueArr] of Object.entries(failingValues)) {
+            loopThroughFailingValuesArr(failingValueArr);
         }
     }
 });

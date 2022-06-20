@@ -19,17 +19,7 @@ describe("getFinalYPosition-Body", function() {
               uss._containersData = new Map();
 
               cy.testFailingValues(uss.getFinalYPosition, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
               })
               .then(() => {
                 return new Cypress.Promise(resolve => {
@@ -57,30 +47,20 @@ describe("getScrollYDirection-Body", function() {
               uss._containersData = new Map();
               
             cy.testFailingValues(uss.getScrollYDirection, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                11: [Object]
-              })
-              .then(() => {
-                return new Cypress.Promise(resolve => {
-                    uss.scrollYTo(100, uss.getPageScroller(), () => {
-                        uss.scrollYTo(50, uss.getPageScroller(), resolve);
-                        scrollYDirectionUp = uss.getScrollYDirection();
-                    });
-                    scrollYDirectionDown = uss.getScrollYDirection();
-                }).then(() => {
-                    expect(scrollYDirectionUp).to.equal(-1);
-                    expect(scrollYDirectionDown).to.equal(1);
-                    expect(uss.getScrollYDirection()).to.equal(0);
-                });
+              0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+            })
+            .then(() => {
+              return new Cypress.Promise(resolve => {
+                  uss.scrollYTo(100, uss.getPageScroller(), () => {
+                      uss.scrollYTo(50, uss.getPageScroller(), resolve);
+                      scrollYDirectionUp = uss.getScrollYDirection();
+                  });
+                  scrollYDirectionDown = uss.getScrollYDirection();
+              }).then(() => {
+                  expect(scrollYDirectionUp).to.equal(-1);
+                  expect(scrollYDirectionDown).to.equal(1);
+                  expect(uss.getScrollYDirection()).to.equal(0);
+              });
             });
           });         
     });
@@ -98,19 +78,7 @@ describe("getYStepLengthCalculator-Body", function() {
               uss._containersData = new Map();
                                
               cy.testFailingValues(uss.getYStepLengthCalculator, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                9: [undefined],
-                10: [],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, undefined, Object], [true, false]]
               })
               .then(() => {
                 uss.setYStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
@@ -152,17 +120,7 @@ describe("getScrollYCalculator-Body", function() {
               uss._containersData = new Map();
 
               cy.testFailingValues(uss.getScrollYCalculator, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
               },
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.throw("USS fatal error (execution stopped)");
@@ -208,17 +166,7 @@ describe("getMaxScrollY-Body", function() {
               uss._containersData = new Map();
                              
               cy.testFailingValues(uss.getMaxScrollY, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
               })
               .then(() => {
                 const _expectedMaxScrollY = uss.getPageScroller().scrollHeight / 2 + uss.getScrollbarsMaxDimension();
@@ -245,19 +193,7 @@ describe("getYScrollableParent-Body", function() {
               uss._containersData = new Map();  
 
               cy.testFailingValues(uss.getYScrollableParent, {
-                0: [Infinity],
-                1: [-Infinity],
-                2: [true],
-                3: [false],
-                4: [NaN],
-                5: [""],
-                61: [10],
-                62: [-1],
-                7: [0],
-                8: [null],
-                9: [undefined],
-                10: [],
-                11: [Object]
+                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, undefined, Object]]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.equal(null);
