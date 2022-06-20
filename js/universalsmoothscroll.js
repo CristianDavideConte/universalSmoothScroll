@@ -3,14 +3,15 @@
  *
  * INITIAL_WINDOW_HEIGHT: number, the window's inner height (in px) when the page is first loaded.
  * INITIAL_WINDOW_WIDTH: number, the window's inner width (in px) when the page is first loaded.
- * DEFAULT_XSTEP_LENGTH: number, the initial value of the uss._xStepLength variable: it represents the default number of pixels scrolled in a single scroll-animation's step on the x-axis. 
+ * DEFAULT_XSTEP_LENGTH: number, the initial value of the "_xStepLength" property: it represents the default number of pixels scrolled in a single scroll-animation's step on the x-axis. 
  *                       It's 16px at 412px of (initial window's) width and 23px at 1920px of (initial window's) width.
- * DEFAULT_YSTEP_LENGTH: number, The initial value of the uss._yStepLength variable: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. 
+ * DEFAULT_YSTEP_LENGTH: number, The initial value of the "_yStepLength" property: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. 
  *                       It's 38px at 789px of (initial window's) height and 22px at 1920px of (initial window's) height.
- * DEFAULT_MIN_ANIMATION_FRAMES: number, The initial value of the `uss._minAnimationFrame` variable: 
+ * DEFAULT_MIN_ANIMATION_FRAMES: number, The initial value of the "_minAnimationFrame" property: 
  *                               it represent the default lowest number of frames any scroll-animation should last if no StepLengthCalculator is set for a container.
  * DEFAULT_TEST_CALCULATOR_SCROLL_VALUE: number, the default number of pixel scrolled when testing a newScrollCalculator.
  * DEFAULT_TEST_CALCULATOR_DURATION: number, the default number of milliseconds the test of a newStepLengthCalculator should last.
+ * DEFAULT_FRAME_TIME: number, the initial value of the "_framesTime" property: it initially assumes that the user's browser/screen is refreshing at 60fps. 
  * DEFAULT_ERROR_LOGGER: function, logs the API error messages inside the browser's console.
  * DEFAULT_WARNING_LOGGER: function, logs the API warning messages inside the browser's console.
  */
@@ -35,7 +36,11 @@
  *                     [6] contains the total amount of pixels that have to be scrolled by current scroll-animation on the x-axis of this container.
  *                     [7] contains the total amount of pixels that have to be scrolled by current scroll-animation on the y-axis of this container.
  *                     [8] contains the starting time in milliseconds (as a DOMHighResTimeStamp) of the current scroll-animation on the x-axis of this container.
+ *                         It's null if a scroll-animation on the x-axis of this container has been scheduled but has not been performed yet or 
+ *                         if a scroll-animation with "stillStart = false" has been requested.
  *                     [9] contains the starting time in milliseconds (as a DOMHighResTimeStamp) of the current scroll-animation on the y-axis of this container.
+ *                         It's null if a scroll-animation on the y-axis of this container has been scheduled but has not been performed yet or 
+ *                         if a scroll-animation with "stillStart = false" has been requested.
  *                     [10] contains a callback function that will be executed when the current scroll-animation on the x-axis of this container has been performed.
  *                     [11] contains a callback function that will be executed when the current scroll-animation on the y-axis of this container has been performed.
  *                     [12] contains the StepLengthCalculator that controls the scroll-animations on the x-axis of this container.
@@ -148,6 +153,7 @@ const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDO
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_TEST_CALCULATOR_SCROLL_VALUE = 100; //in px
 const DEFAULT_TEST_CALCULATOR_DURATION = 5000;    //in ms
+const DEFAULT_FRAME_TIME = 16.6;                  //in ms
 const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
   if(/disabled/i.test(uss._debugMode)) return;
   
@@ -219,7 +225,7 @@ var uss = {
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _windowWidth:  INITIAL_WINDOW_WIDTH,
   _scrollbarsMaxDimension: 0,
-  _framesTime: 0,
+  _framesTime: DEFAULT_FRAME_TIME,
   _pageScroller: document.scrollingElement || window,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   _debugMode: "",

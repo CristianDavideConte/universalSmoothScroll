@@ -100,7 +100,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <code>Number</code>
    </td>
    <td rowspan = "1" align = "left">
-    The highest amount of pixels any scrollbar on the page can occupy (it's browser dependent).
+    The highest amount of pixels any scrollbar on the page can occupy <i>(it's browser dependent)</i>.
    </td>
   </tr>
   <tr id = "_framesTime">
@@ -111,7 +111,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <code>Number</code>
    </td>
    <td rowspan = "1" align = "left">
-    The time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
+    The time in milliseconds between two consecutive browser's frame repaints <i>(e.g. at 60fps this is 16.6ms)</i>.
    </td>
   </tr>
   <tr id = "_pageScroller">

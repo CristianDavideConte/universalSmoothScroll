@@ -6,7 +6,7 @@
  * The duration is the total amount in ms the scroll-animation should last.
  * The callback is a function that is executed every time the stepLengthCalculator is invoked.  
  */
-const _DEFAULT_STEPLENGTHCALCULATOR = (progressEvaluator, duration, callback) => {
+const _DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) => {
   const _callback = typeof callback === "function" ? callback : () => {};
   let _startingPos = 0;
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
@@ -129,6 +129,7 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
   //Cubic Hermite-Spline definition:
   //p(x) = h00(t) * p_k + h10(t) * (x_k+1 - x_k) * m_k + h01(t) * p_k+1 + h11(t) * (x_k+1 - x_k) * m_k+1 
   function _evalSpline(x) {
+    if(x === 0) x = 0.5 * uss._framesTime;
     let binaryMin = 0;
     let binaryMax = n;
     let k = nHalf;
@@ -170,7 +171,7 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
     return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1; //The y of the Cubic Hermite-Spline at the given x
   }
 
-  return _DEFAULT_STEPLENGTHCALCULATOR(_evalSpline, duration, callback);
+  return _DEFAULT_STEP_LENGTH_CALCULATOR(_evalSpline, duration, callback);
 }
 
 const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CUSTOM_BEZIER_CURVE") => {
@@ -222,6 +223,7 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
   }
 
   function _newtonRapson(x) {
+    if(x === 0) x = 0.5 * uss._framesTime;
     let prev;
     let t = x;
     do {
@@ -232,7 +234,7 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
     return _getBt(ys, t);
   }
 
-  return _DEFAULT_STEPLENGTHCALCULATOR(_newtonRapson, duration, callback);
+  return _DEFAULT_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
 }
 
 const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
@@ -250,6 +252,7 @@ const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, cal
   const cY = 3 * y1;
   
   function _newtonRapson(x) {
+    if(x === 0) x = 0.5 * uss._framesTime;
     let prev;
     let t = x;
     do {
@@ -260,7 +263,7 @@ const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, cal
     return t * ( cY + t * ( bY + t * aY )); //This is y given t on the bezier curve (0 <= y <= 1 && 0 <= t <= 1)
   }
 
-  return _DEFAULT_STEPLENGTHCALCULATOR(_newtonRapson, duration, callback);
+  return _DEFAULT_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
 }
 
 const EASE_LINEAR = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, duration, callback, "EASE_LINEAR");
@@ -354,7 +357,7 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
   if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the debounceTime to be a number", debounceTime); return;}
 
-  let _backwardPhase;
+  let _backwardPhase = null;
   let _scrollCalculator;
   let _debounceTimeout;
 
@@ -409,7 +412,7 @@ const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = 
   if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
   if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the debounceTime to be a number", debounceTime); return;}
 
-  let _backwardPhase;
+  let _backwardPhase = null;
   let _scrollCalculator;
   let _debounceTimeout;
 
