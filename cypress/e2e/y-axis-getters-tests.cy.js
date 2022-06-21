@@ -19,7 +19,7 @@ describe("getFinalYPosition-Body", function() {
               uss._containersData = new Map();
 
               cy.testFailingValues(uss.getFinalYPosition, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+                0: [Cypress.env("failingValuesNoUndefined")]
               })
               .then(() => {
                 return new Cypress.Promise(resolve => {
@@ -47,7 +47,7 @@ describe("getScrollYDirection-Body", function() {
               uss._containersData = new Map();
               
             cy.testFailingValues(uss.getScrollYDirection, {
-              0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+              0: [Cypress.env("failingValuesNoUndefined")]
             })
             .then(() => {
               return new Cypress.Promise(resolve => {
@@ -78,7 +78,7 @@ describe("getYStepLengthCalculator-Body", function() {
               uss._containersData = new Map();
                                
               cy.testFailingValues(uss.getYStepLengthCalculator, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, undefined, Object], [true, false]]
+                0: [[Cypress.env("failingValuesAll")], [true, false]]
               })
               .then(() => {
                 uss.setYStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
@@ -98,7 +98,7 @@ describe("getYStepLengthCalculator-Body", function() {
     });
 })
 
-describe("getScrollYCalculator-Body", function() {
+describe("getScrollYCalculator", function() {
     var uss;
 
     //This function is used to make sure that the passed callback is only called
@@ -120,7 +120,7 @@ describe("getScrollYCalculator-Body", function() {
               uss._containersData = new Map();
 
               cy.testFailingValues(uss.getScrollYCalculator, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+                0: [Cypress.env("failingValuesNoUndefined")]
               },
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.throw("USS fatal error (execution stopped)");
@@ -156,7 +156,7 @@ describe("getScrollYCalculator-Body", function() {
     });
 })
 
-describe("getMaxScrollY-Body", function() {
+describe("getMaxScrollY", function() {
     var uss;
     it("Tests the getMaxScrollY method", function() {
         cy.visit("index.html"); 
@@ -166,7 +166,7 @@ describe("getMaxScrollY-Body", function() {
               uss._containersData = new Map();
                              
               cy.testFailingValues(uss.getMaxScrollY, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+                0: [Cypress.env("failingValuesNoUndefined")]
               })
               .then(() => {
                 const _expectedMaxScrollY = uss.getPageScroller().scrollHeight / 2 + uss.getScrollbarsMaxDimension();
@@ -183,7 +183,7 @@ describe("getMaxScrollY-Body", function() {
     });
 })
 
-describe("getYScrollableParent-Body", function() {
+describe("getYScrollableParent", function() {
     var uss;
     it("Tests the getYScrollableParent method", function() {
         cy.visit("index.html"); 
@@ -193,7 +193,7 @@ describe("getYScrollableParent-Body", function() {
               uss._containersData = new Map();  
 
               cy.testFailingValues(uss.getYScrollableParent, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, undefined, Object]]
+                0: [Cypress.env("failingValuesAll")]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.equal(null);

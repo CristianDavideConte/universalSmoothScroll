@@ -17,7 +17,7 @@ describe("isYScrolling-Body", function() {
               uss._containersData = new Map();
 
               cy.testFailingValues(uss.isYscrolling, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+                0: [Cypress.env("failingValuesNoUndefined")]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.be.undefined;
@@ -47,8 +47,8 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
             if(i++ < 10) return total / 10;
-            uss.stopScrollingY();
-            isYScrolling = uss.isYscrolling();
+            uss.stopScrollingY(container);
+            isYScrolling = uss.isYscrolling(container);
             _resolve();
         }
     }
@@ -84,8 +84,8 @@ describe("scrollYTo-Body", function() {
               uss._containersData = new Map();
  
               cy.testFailingValues(uss.scrollYTo, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object],
-                    [Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]
+                0: [[Cypress.env("failingValuesNoUndefined")],
+                    [Cypress.env("failingValuesNoUndefined")]
                    ]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
@@ -213,8 +213,8 @@ describe("scrollYBy-Body", function() {
               uss._containersData = new Map();
               
               cy.testFailingValues(uss.scrollYBy, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object],
-                    [Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]
+                0: [[Cypress.env("failingValuesNoUndefined")],
+                    [Cypress.env("failingValuesNoUndefined")]
                    ]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {

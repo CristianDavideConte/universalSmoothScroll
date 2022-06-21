@@ -18,8 +18,8 @@ describe("getFinalXPosition-Body", function() {
               uss = win.uss;
               uss._containersData = new Map();
                             
-              cy.testFailingValues(console.log, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+              cy.testFailingValues(uss.getFinalXPosition, {
+                0: [Cypress.env("failingValuesNoUndefined")]
               })
               .then(() => {
                 return new Cypress.Promise(resolve => {
@@ -47,7 +47,7 @@ describe("getScrollXDirection-Body", function() {
             uss._containersData = new Map();
 
             cy.testFailingValues(uss.getScrollXDirection, {
-              0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+              0: [Cypress.env("failingValuesNoUndefined")]
             })
             .then(() => {
               return new Cypress.Promise(resolve => {
@@ -78,7 +78,7 @@ describe("getXStepLengthCalculator-Body", function() {
               uss._containersData = new Map();
                                           
               cy.testFailingValues(uss.getXStepLengthCalculator, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, undefined, Object], [true, false]]
+                0: [[Cypress.env("failingValuesAll")], [true, false]]
               })
               .then(() => {
                 uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
@@ -98,7 +98,7 @@ describe("getXStepLengthCalculator-Body", function() {
     });
 })
 
-describe("getScrollXCalculator-Body", function() {
+describe("getScrollXCalculator", function() {
     var uss;
 
     //This function is used to make sure that the passed callback is only called
@@ -120,7 +120,7 @@ describe("getScrollXCalculator-Body", function() {
               uss._containersData = new Map();
                                
               cy.testFailingValues(uss.getScrollXCalculator, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+                0: [Cypress.env("failingValuesNoUndefined")]
               },
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.throw("USS fatal error (execution stopped)");
@@ -156,7 +156,7 @@ describe("getScrollXCalculator-Body", function() {
     });
 })
 
-describe("getMaxScrollX-Body", function() {
+describe("getMaxScrollX", function() {
     var uss;
     it("Tests the getMaxScrollX method", function() {
         cy.visit("index.html"); 
@@ -166,7 +166,7 @@ describe("getMaxScrollX-Body", function() {
               uss._containersData = new Map();
                             
               cy.testFailingValues(uss.getMaxScrollX, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, Object]]
+                0: [Cypress.env("failingValuesNoUndefined")]
               })
               .then(() => {
                 const _expectedMaxScrollX = uss.getPageScroller().scrollWidth / 2 + uss.getScrollbarsMaxDimension(); 
@@ -183,7 +183,7 @@ describe("getMaxScrollX-Body", function() {
     });
 })
 
-describe("getXScrollableParent-Body", function() {
+describe("getXScrollableParent", function() {
     var uss;
     it("Tests the getXScrollableParent method", function() {
         cy.visit("index.html"); 
@@ -193,7 +193,7 @@ describe("getXScrollableParent-Body", function() {
               uss._containersData = new Map();  
                             
               cy.testFailingValues(uss.getXScrollableParent, {
-                0: [[Infinity, -Infinity, true, false, NaN, "", 10, -1, 0, null, undefined, Object]]
+                0: [Cypress.env("failingValuesAll")]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.equal(null);

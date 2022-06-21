@@ -11,7 +11,7 @@
  *  - getDebugMode
  */
 
-describe("getXStepLength-Body", function() {
+describe("getXStepLength", function() {
     var uss;
     it("Tests the getXStepLength method", function() {
         cy.visit("index.html"); 
@@ -34,7 +34,7 @@ describe("getXStepLength-Body", function() {
     });
 })
 
-describe("getYStepLength-Body", function() {
+describe("getYStepLength", function() {
     var uss;
     it("Tests the getYStepLength method", function() {
         cy.visit("index.html"); 
@@ -57,7 +57,7 @@ describe("getYStepLength-Body", function() {
     });
 })
 
-describe("getMinAnimationFrame-Body", function() {
+describe("getMinAnimationFrame", function() {
     var uss;
     it("Tests the getMinAnimationFrame method", function() {
         cy.visit("index.html"); 
@@ -78,7 +78,7 @@ describe("getMinAnimationFrame-Body", function() {
     })
 })
 
-describe("getWindowHeight-Body", function() {
+describe("getWindowHeight", function() {
     var uss;
     const resolutions = [[640, 480],
                          [1280, 720], 
@@ -99,7 +99,7 @@ describe("getWindowHeight-Body", function() {
     });    
 })
 
-describe("getWindowWidth-Body", function() {
+describe("getWindowWidth", function() {
     var uss;
     const resolutions = [[640, 480],
                          [1280, 720], 
@@ -120,7 +120,7 @@ describe("getWindowWidth-Body", function() {
     });    
 })
 
-describe("getScrollbarsMaxDimension-Body", function() {
+describe("getScrollbarsMaxDimension", function() {
     var uss;
 
     //Source: https://stackoverflow.com/questions/4565112/javascript-how-to-find-out-if-the-user-browser-is-chrome
@@ -183,7 +183,7 @@ describe("getScrollbarsMaxDimension-Body", function() {
     });   
 })
 
-describe("getPageScroller-Body", function() {
+describe("getPageScroller", function() {
     var uss;
     it("Tests the getPageScroller method", function() {
         cy.visit("index.html"); 
@@ -204,7 +204,7 @@ describe("getPageScroller-Body", function() {
     });
 })
 
-describe("getReducedMotionState-Body", function() {
+describe("getReducedMotionState", function() {
     var uss;
     it("Tests the getReducedMotionState method", function() {
         cy.visit("index.html"); 
@@ -218,7 +218,7 @@ describe("getReducedMotionState-Body", function() {
     });
 })
 
-describe("getDebugMode-Body", function() {
+describe("getDebugMode", function() {
     var uss;
     it("Tests the getDebugMode method", function() {
         cy.visit("index.html"); 

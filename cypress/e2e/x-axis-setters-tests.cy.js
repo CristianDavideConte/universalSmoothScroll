@@ -19,9 +19,9 @@ describe("setXStepLengthCalculator-Body", function() {
               uss._containersData = new Map();  
 
               cy.testFailingValues(uss.setXStepLengthCalculator, {
-                0: [[_testCalculatorInvalidTypeString, _testCalculatorInvalidTypeNaN, Infinity, -Infinity, true, false, NaN, 10, -1, 0, null, undefined, Object, win]],
+                0: [Cypress.env("failingValuesAll").concat([_testCalculatorInvalidTypeString, _testCalculatorInvalidTypeNaN])],
                 1: [[_testCalculatorValidType1, _testCalculatorValidType2, _testCalculatorValidType3], 
-                    [Infinity, -Infinity, true, false, NaN, 10, -1, 0, null, undefined, Object, win],
+                    Cypress.env("failingValuesAll"),
                     [true, false],
                     [true, false]
                    ]
@@ -57,7 +57,7 @@ describe("setXStepLengthCalculator-Body", function() {
     });
 })
 
-describe("setXStepLength-Body", function() {
+describe("setXStepLength", function() {
     var uss;
     var _testStepInvalidTypeString = "";
     var _testStepInvalidTypeNaN = NaN;
@@ -72,7 +72,7 @@ describe("setXStepLength-Body", function() {
               const _initialStepLength = uss.getXStepLength(); 
 
               cy.testFailingValues(uss.setXStepLength, {
-                0: [[_testStepInvalidTypeString, _testStepInvalidTypeNaN, Infinity, -Infinity, true, false, NaN, -1, 0, null, undefined, Object, win]],
+                0: [Cypress.env("failingValuesNoPositiveNumber").concat([_testStepInvalidTypeString, _testStepInvalidTypeNaN])],
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(uss.getXStepLength()).to.equal(_initialStepLength);
