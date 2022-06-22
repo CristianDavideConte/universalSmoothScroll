@@ -1818,7 +1818,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when this scroll-animation is completed.
+    A function which is invoked when this scroll-animation is completed. <br/>
+    If one of the two scroll-animations triggered by <a href = "./FunctionsAbout.md#scrollToFun"><code>scrollTo</code></a> (one for each axis) is <strong><i>interrupted/altered</i></strong>, the <code>callback</code> is executed whenever the remaning/unaltered one is completed.
   </td>
   </tr>
               
@@ -1866,7 +1867,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when this scroll-animation is completed.
+    A function which is invoked when this scroll-animation is completed. <br/>
+    If one of the two scroll-animations triggered by <a href = "./FunctionsAbout.md#scrollByFun"><code>scrollBy</code></a> (one for each axis) is <strong><i>interrupted/altered</i></strong>, the <code>callback</code> is executed whenever the remaning/unaltered one is completed.
   </td>
   </tr>
   <tr>

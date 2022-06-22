@@ -52,7 +52,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
             _resolve();
         }
     }
-    it("Tests the isYScrolling method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
+    it("Tests the isYScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -105,7 +105,7 @@ describe("scrollYTo-Body", function() {
 describe("scrollYTo-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
-    it("Tests the scrollYTo method whenever a scroll animation is immediately stopped", function() {
+    it("Tests the scrollYTo method whenever a scroll-animation is immediately stopped", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -126,7 +126,7 @@ describe("scrollYTo-immediatelyStoppedScrolling-Body", function() {
 describe("scrollYToBy-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
-    it("Tests the scrollYTo method whenever a scroll animation is immediately stopped and restarted with the scrollYBy method", function() {
+    it("Tests the scrollYTo method whenever a scroll-animation is immediately stopped and restarted with the scrollYBy method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -151,7 +151,7 @@ describe("scrollYToBy-immediatelyStoppedScrolling-Body", function() {
 describe("scrollYToTo-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
-    it("Tests the scrollYTo method whenever a scroll animation is immediately stopped and restarted with the scrollYTo method", function() {
+    it("Tests the scrollYTo method whenever a scroll-animation is immediately stopped and restarted with the scrollYTo method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -184,7 +184,7 @@ describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
             uss.stopScrollingY(container, _resolve);
         }
     }
-    it("Tests the scrollYTo method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
+    it("Tests the scrollYTo method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -199,6 +199,34 @@ describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
               }).then(() => {
                   cy.bodyScrollTopShouldToBe(90);
               });     
+          });         
+    });
+})
+
+describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating-Body", function() {
+    var uss;
+    var _resolve;
+    const _testCalculator = (i = 0) => {
+        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
+            if(i++ === 10) uss.scrollYTo(50, uss.getPageScroller(), _resolve);
+            return total / 10;
+        }
+    }
+    it("Tests if the scrollYTo method can replace the current scroll-animation from inside a stepLengthCalculator", function() {
+        cy.visit("index.html"); 
+        cy.window()
+          .then((win) => {
+              uss = win.uss;
+              uss._containersData = new Map();
+
+              uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+
+              return new Cypress.Promise(resolve => {
+                  _resolve = resolve;
+                  uss.scrollYTo(100, uss.getPageScroller());
+              }).then(() => {
+                  cy.bodyScrollTopShouldToBe(50);
+              });
           });         
     });
 })
@@ -318,7 +346,7 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
             return total / 10;
         }
     }
-    it("Tests if the scrollYBy method with stillStart = \"false\" can extend a scroll animation from inside a stepLengthCalculator", function() {
+    it("Tests if the scrollYBy method with stillStart = \"false\" can extend a scroll-animation from inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -332,34 +360,6 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
                   uss.scrollYTo(100, uss.getPageScroller());
               }).then(() => {
                   cy.bodyScrollTopShouldToBe(190);
-              });
-          });         
-    });
-})
-
-describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating-Body", function() {
-    var uss;
-    var _resolve;
-    const _testCalculator = (i = 0) => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ === 10) uss.scrollYTo(50, uss.getPageScroller(), _resolve);
-            return total / 10;
-        }
-    }
-    it("Tests if the scrollYTo method can replace the current scroll animation from inside a stepLengthCalculator", function() {
-        cy.visit("index.html"); 
-        cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-
-              uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
-
-              return new Cypress.Promise(resolve => {
-                  _resolve = resolve;
-                  uss.scrollYTo(100, uss.getPageScroller());
-              }).then(() => {
-                  cy.bodyScrollTopShouldToBe(50);
               });
           });         
     });

@@ -1152,16 +1152,38 @@ var uss = {
       return;
     }
     
-    //This function is used to make sure that the passed callback is only called
-    //once all the scroll-animations for the passed container have been performed.
-    let _currentStep = 0 //Number of the current _callback's calls
-    const _callback = typeof callback === "function" ? () => {
-      if(_currentStep < 1) _currentStep++;
-      else callback();
-    } : null; //No action if no valid callback function is passed
+    uss.scrollXTo(finalXPosition, container);
+    uss.scrollYTo(finalYPosition, container);
 
-    uss.scrollXTo(finalXPosition, container, _callback);
-    uss.scrollYTo(finalYPosition, container, _callback);
+    //This functions are used to make sure that the passed callback is only called
+    //once all the scroll-animations for the passed container have been performed.
+    //If one of the scroll-animations' callback is altered this it's taken into consideration.
+    if(typeof callback === "function") {
+      const _containerData = uss._containersData.get(container) || [];
+      const _isXScrolling = !!_containerData[0];
+      const _isYScrolling = !!_containerData[1];
+      
+      //The container was already in place, directly execute the callback
+      if(!_isXScrolling && !_isYScrolling) {
+        callback();
+        return;
+      }
+      //Execute the callback only if the scroll-animation on the y-axis 
+      //has finished or has been altered.
+      const _scrollXCallback = () => {
+        _containerData[10] = null; 
+        if(!_containerData[1] || _containerData[11] !== _scrollYCallback) callback();
+      }
+      //Execute the callback only if the scroll-animation on the x-axis 
+      //has finished or has been altered.
+      const _scrollYCallback = () => {
+        _containerData[11] = null; 
+        if(!_containerData[0] || _containerData[10] !== _scrollXCallback) callback();
+      }
+      
+      if(_isXScrolling) _containerData[10] = _scrollXCallback; 
+      if(_isYScrolling) _containerData[11] = _scrollYCallback; 
+    }
   },
   scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true) => {
     if(!Number.isFinite(deltaX)) {
@@ -1177,20 +1199,42 @@ var uss = {
       return;
     }
 
-    //This function is used to make sure that the passed callback is only called
+    uss.scrollXBy(deltaX, container, null, stillStart);
+    uss.scrollYBy(deltaY, container, null, stillStart);
+    
+    //This functions are used to make sure that the passed callback is only called
     //once all the scroll-animations for the passed container have been performed.
-    let _currentStep = 0 //Number of the current _callback's calls
-    const _callback = typeof callback === "function" ? () => {
-      if(_currentStep < 1) _currentStep++;
-      else callback();
-    } : null; //No action if no valid callback function is passed
-
-    uss.scrollXBy(deltaX, container, _callback, stillStart);
-    uss.scrollYBy(deltaY, container, _callback, stillStart);
+    //If one of the scroll-animations' callback is altered this it's taken into consideration.
+    if(typeof callback === "function") {
+      const _containerData = uss._containersData.get(container) || [];
+      const _isXScrolling = !!_containerData[0];
+      const _isYScrolling = !!_containerData[1];
+      
+      //The container was already in place, directly execute the callback
+      if(!_isXScrolling && !_isYScrolling) {
+        callback();
+        return;
+      }
+      //Execute the callback only if the scroll-animation on the y-axis 
+      //has finished or has been altered.
+      const _scrollXCallback = () => {
+        _containerData[10] = null; 
+        if(!_containerData[1] || _containerData[11] !== _scrollYCallback) callback();
+      }
+      //Execute the callback only if the scroll-animation on the x-axis 
+      //has finished or has been altered.
+      const _scrollYCallback = () => {
+        _containerData[11] = null; 
+        if(!_containerData[0] || _containerData[10] !== _scrollXCallback) callback();
+      }
+      
+      if(_isXScrolling) _containerData[10] = _scrollXCallback; 
+      if(_isYScrolling) _containerData[11] = _scrollYCallback; 
+    }
   },
   scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false) => {
     if(element === window) {
-      if(typeof callback === "function") window.requestAnimationFrame(callback);
+      if(typeof callback === "function") callback();
       return;
     }
     if(!(element instanceof HTMLElement)) {
@@ -1201,7 +1245,7 @@ var uss = {
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++);
     if(_containerIndex < 0) { //The element cannot be scrolled into view
-      if(typeof callback === "function") window.requestAnimationFrame(callback);
+      if(typeof callback === "function") callback();
       return;
     }
     
@@ -1284,7 +1328,7 @@ var uss = {
   },
   scrollIntoViewIfNeeded: (element, alignToCenter = true, callback, includeHiddenParents = false) => {
     if(element === window) {
-      if(typeof callback === "function") window.requestAnimationFrame(callback);
+      if(typeof callback === "function") callback();
       return;
     }
     if(!(element instanceof HTMLElement)) {
@@ -1295,7 +1339,7 @@ var uss = {
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++);
     if(_containerIndex < 0) { //The element cannot be scrolled into view
-      if(typeof callback === "function") window.requestAnimationFrame(callback);
+      if(typeof callback === "function") callback();
       return;
     }
 
@@ -1347,7 +1391,7 @@ var uss = {
 
       if(_scrollNotNeededX && _scrollNotNeededY) { 
         if(_isOriginalElement) {
-          if(typeof callback === "function") window.requestAnimationFrame(callback);
+          if(typeof callback === "function") callback();
         } else {
           _containerIndex--;
           _currentContainer = _containers[_containerIndex];
@@ -1422,7 +1466,7 @@ var uss = {
       uss._containersData.set(container, _newData);
     }
 
-    if(typeof callback === "function") window.requestAnimationFrame(callback);
+    if(typeof callback === "function") callback();
   },
   stopScrollingY: (container = uss._pageScroller, callback) => {
     if(container !== window && !(container instanceof HTMLElement)) {
@@ -1440,7 +1484,7 @@ var uss = {
       uss._containersData.set(container, _newData);
     }
 
-    if(typeof callback === "function") window.requestAnimationFrame(callback);
+    if(typeof callback === "function") callback();
   },
   stopScrolling: (container = uss._pageScroller, callback) => {
     if(container !== window && !(container instanceof HTMLElement)) {
@@ -1458,7 +1502,7 @@ var uss = {
     if(!!_containerData[13]) _newData[13] = _containerData[13];  
     uss._containersData.set(container, _newData);
 
-    if(typeof callback === "function") window.requestAnimationFrame(callback);
+    if(typeof callback === "function") callback();
   },
   stopScrollingAll: (callback) => {
     for(const [_container, _containerData] of uss._containersData.entries()) {
@@ -1473,7 +1517,7 @@ var uss = {
       uss._containersData.set(_container, _newData)
     }
 
-    if(typeof callback === "function") window.requestAnimationFrame(callback);
+    if(typeof callback === "function") callback();
   },
   hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false) => {
     const _init = typeof init === "function" ? init : () => {};

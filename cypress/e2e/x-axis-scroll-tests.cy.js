@@ -52,7 +52,7 @@ describe("isXScrolling-StoppedScrollingWhileAnimating-Body", function() {
             _resolve();
         }
     }
-    it("Tests the isXScrolling method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
+    it("Tests the isXScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -105,7 +105,7 @@ describe("scrollXTo-Body", function() {
 describe("scrollXTo-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
-    it("Tests the scrollXTo method whenever a scroll animation is immediately stopped", function() {
+    it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -126,7 +126,7 @@ describe("scrollXTo-immediatelyStoppedScrolling-Body", function() {
 describe("scrollXToBy-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
-    it("Tests the scrollXTo method whenever a scroll animation is immediately stopped and restarted with the scrollXBy method", function() {
+    it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped and restarted with the scrollXBy method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -151,7 +151,7 @@ describe("scrollXToBy-immediatelyStoppedScrolling-Body", function() {
 describe("scrollXToTo-immediatelyStoppedScrolling-Body", function() {
     var uss;
     var count = 0;
-    it("Tests the scrollXTo method whenever a scroll animation is immediately stopped and restarted with the scrollXTo method", function() {
+    it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped and restarted with the scrollXTo method", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -184,7 +184,7 @@ describe("scrollXTo-StoppedScrollingWhileAnimating-Body", function() {
             uss.stopScrollingX(container, _resolve);
         }
     }
-    it("Tests the scrollXTo method whenever a scroll animation is stopped inside a stepLengthCalculator", function() {
+    it("Tests the scrollXTo method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -199,6 +199,34 @@ describe("scrollXTo-StoppedScrollingWhileAnimating-Body", function() {
               }).then(() => {
                   cy.bodyScrollLeftShouldToBe(90);
               });     
+          });         
+    });
+})
+
+describe("scrollXTo-scrollXTo-ReplaceScrollingWhileAnimating-Body", function() {
+    var uss;
+    var _resolve;
+    const _testCalculator = (i = 0) => {
+        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
+            if(i++ === 10) uss.scrollXTo(50, uss.getPageScroller(), _resolve);
+            return total / 10;
+        }
+    }
+    it("Tests if the scrollXTo method can replace the current scroll-animation from inside a stepLengthCalculator", function() {
+        cy.visit("index.html"); 
+        cy.window()
+          .then((win) => {
+              uss = win.uss;
+              uss._containersData = new Map();
+
+              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+
+              return new Cypress.Promise(resolve => {
+                  _resolve = resolve;
+                  uss.scrollXTo(100, uss.getPageScroller());
+              }).then(() => {
+                  cy.bodyScrollLeftShouldToBe(50);
+              });
           });         
     });
 })
@@ -318,7 +346,7 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
             return total / 10;
         }
     }
-    it("Tests if the scrollYBy method with stillStart = \"false\" can extend a scroll animation from inside a stepLengthCalculator", function() {
+    it("Tests if the scrollYBy method with stillStart = \"false\" can extend a scroll-animation from inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
           .then((win) => {
@@ -332,34 +360,6 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
                   uss.scrollXTo(100, uss.getPageScroller());
               }).then(() => {
                   cy.bodyScrollLeftShouldToBe(190);
-              });
-          });         
-    });
-})
-
-describe("scrollXTo-scrollXTo-ReplaceScrollingWhileAnimating-Body", function() {
-    var uss;
-    var _resolve;
-    const _testCalculator = (i = 0) => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ === 10) uss.scrollXTo(50, uss.getPageScroller(), _resolve);
-            return total / 10;
-        }
-    }
-    it("Tests if the scrollXTo method can replace the current scroll animation from inside a stepLengthCalculator", function() {
-        cy.visit("index.html"); 
-        cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-
-              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
-
-              return new Cypress.Promise(resolve => {
-                  _resolve = resolve;
-                  uss.scrollXTo(100, uss.getPageScroller());
-              }).then(() => {
-                  cy.bodyScrollLeftShouldToBe(50);
               });
           });         
     });

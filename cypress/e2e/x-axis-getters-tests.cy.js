@@ -31,7 +31,7 @@ describe("getFinalXPosition-Body", function() {
                     expect(finalXPosition).to.equal(uss.getFinalXPosition());
                     expect(finalXPosition).to.equal(uss.getScrollXCalculator()());
                 });
-              });
+            });
           });        
     });
 })
