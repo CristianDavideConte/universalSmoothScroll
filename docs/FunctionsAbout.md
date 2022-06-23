@@ -600,7 +600,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#getAllScrollableParents"><code>element</code></a>
    </td>
    <td rowspan = "3" align = "left">
-    Returns an array containing all the scrollable containers <i>(on either the x or y axis)</i> of the passed element.
+    Returns an array of all the scrollable containers <i>(on either the x or y axis)</i> of the passed element.
    </td>
   </tr> 
   <tr>

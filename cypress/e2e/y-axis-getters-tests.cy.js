@@ -78,7 +78,9 @@ describe("getYStepLengthCalculator-Body", function() {
               uss._containersData = new Map();
                                
               cy.testFailingValues(uss.getYStepLengthCalculator, {
-                0: [[Cypress.env("failingValuesAll")], [true, false]]
+                0: [Cypress.env("failingValuesAll"), 
+                    [true, false]
+                   ]
               })
               .then(() => {
                 uss.setYStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
@@ -100,18 +102,7 @@ describe("getYStepLengthCalculator-Body", function() {
 
 describe("getScrollYCalculator", function() {
     var uss;
-
-    //This function is used to make sure that the passed callback is only called
-    //once all the scroll-animations have been performed
-    function createCallback(callback, requiredSteps) {
-        let _currentStep = 0 //Number of the current _callback's calls
-        const _callback = typeof callback === "function" ? () => {
-        if(_currentStep < requiredSteps - 1) _currentStep++;
-        else callback();
-        } : null; //No action if no valid callback function is passed
-        return _callback;
-    }
-
+    var result;
     it("Tests the getScrollYCalculator method", function() {
         cy.visit("index.html"); 
         cy.window()
@@ -144,12 +135,18 @@ describe("getScrollYCalculator", function() {
                 _elements.forEach(el => expect(uss.getScrollYCalculator(el)()).to.equal(el.scrollTop));
                 expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
 
+                _elements.forEach(el => uss.scrollYTo(Math.random() * el.scrollHeight, 
+                                                      el, 
+                                                      () => {
+                                                        result = uss.getScrollYCalculator(el)() === el.scrollTop;
+                                                        if(!result) uss.stopScrollingAll();
+                                                      }
+                ));
                 return new Cypress.Promise(resolve => {
-                    const callback = createCallback(resolve, _elements.length);
-                    _elements.forEach(el =>uss.scrollYTo(Math.random() * el.scrollHeight, el, callback));
+                    setTimeout(resolve, 3500);
                 }).then(() => {
-                    _elements.forEach(el => expect(uss.getScrollYCalculator(el)()).to.equal(el.scrollTop));
-                    expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
+                  expect(result).to.be.true;
+                  expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
                 });
             });
           });        
@@ -193,23 +190,25 @@ describe("getYScrollableParent", function() {
               uss._containersData = new Map();  
 
               cy.testFailingValues(uss.getYScrollableParent, {
-                0: [Cypress.env("failingValuesAll")]
+                0: [Cypress.env("failingValuesAll"), 
+                    [true, false]
+                   ]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.equal(null);
               })
-                .then(() => {
+              .then(() => {
                 //test window, html and body
                 expect(uss.getYScrollableParent(win)).to.be.null;  
                 expect(uss.getYScrollableParent(win.document.documentElement)).to.be.null;   
                 expect(uss.getYScrollableParent(uss.getPageScroller())).to.be.null;
                 
                 //test element with position:fixed
-                expect(uss.getYScrollableParent(win.stopScrollingX)).to.be.null;
+                expect(uss.getYScrollableParent(win.stopScrollingY)).to.be.null;
                 
                 //test elements with no constraint 
-                expect(uss.getYScrollableParent(win.linear)).to.equal(win.easeFunctionSelectorList);
-                expect(uss.getYScrollableParent(win.easeFunctionSelectorList)).to.equal(win.document.body);
+                expect(uss.getYScrollableParent(win.document.getElementById("linear"))).to.equal(win.document.getElementById("easeFunctionSelectorList"));
+                expect(uss.getYScrollableParent(win.document.getElementById("easeFunctionSelectorList"))).to.equal(win.document.body);
                 expect(uss.getYScrollableParent(win.document.getElementById("section12"))).to.equal(win.document.getElementById("yScrollerSection"));
             });
         })     

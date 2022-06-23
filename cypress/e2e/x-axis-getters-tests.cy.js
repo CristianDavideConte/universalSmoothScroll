@@ -78,7 +78,9 @@ describe("getXStepLengthCalculator-Body", function() {
               uss._containersData = new Map();
                                           
               cy.testFailingValues(uss.getXStepLengthCalculator, {
-                0: [[Cypress.env("failingValuesAll")], [true, false]]
+                0: [Cypress.env("failingValuesAll"), 
+                    [true, false]
+                   ]
               })
               .then(() => {
                 uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
@@ -100,18 +102,7 @@ describe("getXStepLengthCalculator-Body", function() {
 
 describe("getScrollXCalculator", function() {
     var uss;
-
-    //This function is used to make sure that the passed callback is only called
-    //once all the scroll-animations have been performed
-    function createCallback(callback, requiredSteps) {
-        let _currentStep = 0 //Number of the current _callback's calls
-        const _callback = typeof callback === "function" ? () => {
-        if(_currentStep < requiredSteps - 1) _currentStep++;
-        else callback();
-        } : null; //No action if no valid callback function is passed
-        return _callback;
-    }
-
+    var result;
     it("Tests the getScrollXCalculator method", function() {
         cy.visit("index.html"); 
         cy.window()
@@ -144,12 +135,18 @@ describe("getScrollXCalculator", function() {
                 _elements.forEach(el => expect(uss.getScrollXCalculator(el)()).to.equal(el.scrollLeft));
                 expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
 
+                _elements.forEach(el => uss.scrollXTo(Math.random() * el.scrollWidth, 
+                                                      el, 
+                                                      () => {
+                                                        result = uss.getScrollXCalculator(el)() === el.scrollLeft;
+                                                        if(!result) uss.stopScrollingAll();
+                                                      }
+                ));
                 return new Cypress.Promise(resolve => {
-                    const callback = createCallback(resolve, _elements.length);
-                    _elements.forEach(el =>uss.scrollXTo(Math.random() * el.scrollWidth, el, callback));
+                    setTimeout(resolve, 3500);
                 }).then(() => {
-                    _elements.forEach(el => expect(uss.getScrollXCalculator(el)()).to.equal(el.scrollLeft));
-                    expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
+                  expect(result).to.be.true;
+                  expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
                 });
             });
           });        
@@ -193,7 +190,9 @@ describe("getXScrollableParent", function() {
               uss._containersData = new Map();  
                             
               cy.testFailingValues(uss.getXScrollableParent, {
-                0: [Cypress.env("failingValuesAll")]
+                0: [Cypress.env("failingValuesAll"), 
+                    [true, false]
+                    ]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(res).to.equal(null);
@@ -208,8 +207,8 @@ describe("getXScrollableParent", function() {
                 expect(uss.getXScrollableParent(win.stopScrollingX)).to.be.null;
                 
                 //test elements with no constraint 
-                expect(uss.getXScrollableParent(win.linear)).to.equal(win.document.body);
-                expect(uss.getXScrollableParent(win.easeFunctionSelectorList)).to.equal(win.document.body);
+                expect(uss.getXScrollableParent(win.document.getElementById("linear"))).to.equal(win.document.body);
+                expect(uss.getXScrollableParent(win.document.getElementById("easeFunctionSelectorList"))).to.equal(win.document.body);
                 expect(uss.getXScrollableParent(win.document.getElementById("section11"))).to.equal(win.document.getElementById("xScrollerSection"));
             });
         });     
