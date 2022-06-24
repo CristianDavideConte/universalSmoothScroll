@@ -7,7 +7,7 @@
  *  - getWindowWidth
  *  - getScrollbarsMaxDimension
  *  - getPageScroller
- *  - getReducedMotionState (TODO)
+ *  - getReducedMotionState <------------- (TODO)  
  *  - getDebugMode
  */
 

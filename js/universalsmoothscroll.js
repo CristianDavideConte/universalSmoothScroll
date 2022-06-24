@@ -602,14 +602,13 @@ var uss = {
       container.scroll(_originalXPosition, window.scrollY);
       return _maxScroll;
     }
-    if(container === document.documentElement || container === document.body) {
+    if(container instanceof HTMLElement) {
       const _originalXPosition = container.scrollLeft;
       container.scrollLeft = 1073741824; //highest safe scroll value: 2^30 = 1073741824
       const _maxScroll = container.scrollLeft;
       container.scrollLeft = _originalXPosition;
       return _maxScroll;
     }
-    if(container instanceof HTMLElement) return container.scrollWidth - container.clientWidth;
     DEFAULT_ERROR_LOGGER("getMaxScrollX", "the container to be an HTMLElement or the Window", container);
   },
   getMaxScrollY: (container = uss._pageScroller) => {
@@ -620,14 +619,13 @@ var uss = {
       container.scroll(window.scrollX, _originalYPosition);
       return _maxScroll;
     }
-    if(container === document.documentElement || container === document.body) {
+    if(container instanceof HTMLElement) {
       const _originalYPosition = container.scrollTop;
       container.scrollTop = 1073741824; //highest safe scroll value: 2^30 = 1073741824
       const _maxScroll = container.scrollTop;
       container.scrollTop = _originalYPosition;
       return _maxScroll;
     }
-    if(container instanceof HTMLElement) return container.scrollHeight - container.clientHeight;
     DEFAULT_ERROR_LOGGER("getMaxScrollY", "the container to be an HTMLElement or the Window", container);
   },
   getXScrollableParent: (element, includeHiddenParents = false) => {

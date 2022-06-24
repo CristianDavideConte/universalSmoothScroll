@@ -3,6 +3,7 @@
  *  - isXScrolling
  *  - scrollXTo
  *  - scrollXBy
+ *  - stopScrollingX
  */
 
 describe("isXScrolling-Body", function() {
@@ -362,5 +363,85 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
                   cy.bodyScrollLeftShouldToBe(190);
               });
           });         
+    });
+})
+
+describe("stopScrollingX-Body", function() {
+    var uss;
+    it("Tests the stopScrollingX method", function() {
+        cy.visit("index.html"); 
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
+
+                cy.testFailingValues(uss.stopScrollingX, {
+                    0: [Cypress.env("failingValuesNoUndefined")]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.be.undefined;
+                    expect(uss.isXscrolling()).to.be.false;
+                })
+                .then(() => {
+                    const _elements = Array.from(win.document.getElementsByTagName("*"))
+                                            .filter(el => uss.getMaxScrollX(el) > 0);
+
+                    _elements.forEach(el => expect(uss.getScrollXCalculator(el)()).to.equal(el.scrollLeft));
+                    expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
+
+                    _elements.forEach(el => {
+                        const _randomBetween0and1 = Math.min(Math.random(), 0.5);
+                        uss.scrollXTo(_randomBetween0and1 * el.scrollWidth, el); 
+                        expect(uss.isXscrolling(el)).to.be.true;
+                        win.setTimeout(() => uss.stopScrollingX(el), _randomBetween0and1 * 100);
+                    });
+
+                    return new Cypress.Promise((resolve) => {
+                        win.setTimeout(resolve, 1000);
+                    })
+                    .then(() => {
+                        _elements.forEach(el => {
+                            expect(uss.isXscrolling(el)).to.be.false;
+                            expect(uss.getScrollXCalculator(el)()).to.be.greaterThan(0);
+                        })
+                    });
+                });
+            });         
+    });
+})
+
+
+describe("stopScrollingX-immediatelyStopped-Body", function() {
+    var uss;
+    it("Initialize a series of scroll-animations on the x-axis of all scrollable containers and immediately stop them", function() {
+        cy.visit("index.html"); 
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
+
+                cy.testFailingValues(uss.stopScrollingX, {
+                    0: [Cypress.env("failingValuesNoUndefined")]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.be.undefined;
+                    expect(uss.isXscrolling()).to.be.false;
+                })
+                .then(() => {
+                    const _elements = Array.from(win.document.getElementsByTagName("*"))
+                                            .filter(el => uss.getMaxScrollX(el) > 0);
+
+                    _elements.forEach(el => expect(uss.getScrollXCalculator(el)()).to.equal(el.scrollLeft));
+                    expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
+
+                    _elements.forEach(el => {
+                        const _randomBetween0and1 = Math.min(Math.random(), 0.5);
+                        uss.scrollXTo(_randomBetween0and1 * el.scrollWidth, el); 
+                        expect(uss.isXscrolling(el)).to.be.true;
+                        uss.stopScrollingX(el);
+                        expect(uss.isXscrolling(el)).to.be.false;
+                    });
+                });
+            });         
     });
 })
