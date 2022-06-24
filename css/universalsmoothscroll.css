@@ -10,16 +10,18 @@ a {
   -webkit-user-drag: none;
 }
 
+h2,
+input,
+button {
+  text-align: center;
+}
+
 input,
 textarea,
 button,
 select,
 a {
   -webkit-tap-highlight-color: rgba(0,0,0,0);
-}
-
-body::-webkit-scrollbar {
-  /*display: none;*/
 }
 
 body {
@@ -250,7 +252,6 @@ li > a {
   z-index: 0;
   position: absolute;
   color:white;
-  text-align: center;
   font-size: 10vmin;
   height: 20vmin;
   width: 70vmin;
@@ -290,7 +291,6 @@ li > a {
 
 #customBezierParameterSection > h2 {
   color: black;
-  text-align: center;
 }
 
 #customBezierParameterSection > ul {
@@ -302,7 +302,6 @@ input {
   width: 100%;
   height: 100%;
   color: white;
-  text-align: center;
   border: none;
   outline: none;
 }

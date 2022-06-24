@@ -171,12 +171,12 @@
 
     if(_finalPos < scrollLimit && delta < 0) {
       const _progress = _finalPos / scrollLimit;
-      return delta * Math.pow(_progress, 4);
+      return delta * Math.pow(_progress, 4); //delta * (1-x)^4
     }
 
     if(_finalPos > _maxScroll - scrollLimit && delta > 0) {
       const _progress = (_maxScroll - _finalPos) / scrollLimit;
-      return delta * Math.pow(_progress, 4);
+      return delta * Math.pow(_progress, 4); //delta * (1-x)^4
     }
 
     return delta;
