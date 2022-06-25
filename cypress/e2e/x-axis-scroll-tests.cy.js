@@ -6,6 +6,13 @@
  *  - stopScrollingX
  */
 
+function waitForUssCallback(fun) {   
+    return new Cypress.Promise((resolve, reject) => {
+        window.setTimeout(resolve, 3500);
+        fun(resolve, reject);
+    });
+}
+
 describe("isXScrolling-Body", function() {
     var uss;
     var wasXScrolling;
@@ -13,28 +20,32 @@ describe("isXScrolling-Body", function() {
     it("Tests the isXScrolling method", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
 
-              cy.testFailingValues(uss.isXscrolling, {
-                0: [Cypress.env("failingValuesNoUndefined")]
-              }, 
-              (res, v1, v2, v3, v4, v5, v6, v7) => {
-                expect(res).to.be.undefined;
-                expect(uss.isXscrolling()).to.be.false;
-              })
-              .then(() => {
-                return new Cypress.Promise(resolve => {
-                    uss.scrollXTo(100, uss.getPageScroller(), () => {
-                        isXscrolling = uss.isXscrolling();
-                        resolve();
+                cy.testFailingValues(uss.isXscrolling, {
+                    0: [Cypress.env("failingValuesNoUndefined")]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.be.undefined;
+                    expect(uss.isXscrolling()).to.be.false;
+                })
+                .then(() => {
+                    cy.wrap(null).then(() => {
+                        return waitForUssCallback(
+                            (resolve) => {
+                                uss.scrollXTo(100, uss.getPageScroller(), () => {
+                                    isXscrolling = uss.isXscrolling();
+                                    resolve();
+                                });
+                                wasXScrolling = uss.isXscrolling();
+                            }
+                        ).then(() => {
+                            expect(wasXScrolling).to.be.true;
+                            expect(isXscrolling).to.be.false;
+                        });
                     });
-                    wasXScrolling = uss.isXscrolling();
-                }).then(() => {
-                    expect(wasXScrolling).to.be.true;
-                    expect(isXscrolling).to.be.false;
-                });
             });
         });         
     });
@@ -56,22 +67,26 @@ describe("isXScrolling-StoppedScrollingWhileAnimating-Body", function() {
     it("Tests the isXScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
 
-              expect(uss.isXscrolling()).to.be.false;
-              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                expect(uss.isXscrolling()).to.be.false;
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
-              return new Cypress.Promise(resolve => {
-                  _resolve = resolve;
-                  uss.scrollXTo(100, uss.getPageScroller());
-                  wasXScrolling = uss.isXscrolling();
-              }).then(() => {
-                  expect(wasXScrolling).to.be.true;
-                  expect(isXScrolling).to.be.false;
-              });
-          });         
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            _resolve = resolve;
+                            uss.scrollXTo(100, uss.getPageScroller());
+                            wasXScrolling = uss.isXscrolling();
+                        }
+                    ).then(() => {
+                        expect(wasXScrolling).to.be.true;
+                        expect(isXScrolling).to.be.false;
+                    });
+                });
+            });         
     });
 })
 
@@ -80,26 +95,30 @@ describe("scrollXTo-Body", function() {
     it("Horizontally scrolls the body to n pixels", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-              
-              cy.testFailingValues(uss.scrollXTo, {
-                0: [[Cypress.env("failingValuesNoUndefined")],
-                    [Cypress.env("failingValuesNoUndefined")]
-                   ]
-              }, 
-              (res, v1, v2, v3, v4, v5, v6, v7) => {
-                expect(uss.isXscrolling()).to.be.false;
-              })
-              .then(() => {
-                return new Cypress.Promise(resolve => {
-                    uss.scrollXTo(500, uss.getPageScroller(), resolve);
-                }).then(() => {
-                    cy.bodyScrollLeftShouldToBe(500);
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
+                
+                cy.testFailingValues(uss.scrollXTo, {
+                    0: [[Cypress.env("failingValuesNoUndefined")],
+                        [Cypress.env("failingValuesNoUndefined")]
+                        ]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(uss.isXscrolling()).to.be.false;
+                })
+                .then(() => {
+                    cy.wrap(null).then(() => {
+                        return waitForUssCallback(
+                            (resolve) => {
+                                uss.scrollXTo(500, uss.getPageScroller(), resolve);
+                            }
+                        ).then(() => {
+                            cy.bodyScrollLeftShouldToBe(500);
+                        });
+                    });
                 });
-            });
-          });        
+            });        
     });
 })
 
@@ -109,18 +128,22 @@ describe("scrollXTo-immediatelyStoppedScrolling-Body", function() {
     it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
 
-              return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(500, uss.getPageScroller(), () => count++);
-                  uss.stopScrollingX(uss.getPageScroller(), resolve);
-              }).then(() => {
-                  cy.bodyScrollLeftShouldToBe(0);
-                  expect(count).to.equal(0);
-              });
-          });         
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(500, uss.getPageScroller(), () => count++);
+                            uss.stopScrollingX(uss.getPageScroller(), resolve);
+                        }
+                    ).then(() => {
+                        cy.bodyScrollLeftShouldToBe(0);
+                        expect(count).to.equal(0);
+                    });
+                });
+            });         
     });
 })
 
@@ -130,22 +153,26 @@ describe("scrollXToBy-immediatelyStoppedScrolling-Body", function() {
     it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped and restarted with the scrollXBy method", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
 
-              return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(500, uss.getPageScroller(), () => count++);
-                  uss.stopScrollingX(uss.getPageScroller());
-                  uss.scrollXBy(250, uss.getPageScroller(), () => {
-                      count++;
-                      resolve();
-                  });
-              }).then(() => {
-                  cy.bodyScrollLeftShouldToBe(250);
-                  expect(count).to.equal(1);
-              });
-          });         
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(500, uss.getPageScroller(), () => count++);
+                            uss.stopScrollingX(uss.getPageScroller());
+                            uss.scrollXBy(250, uss.getPageScroller(), () => {
+                                count++;
+                                resolve();
+                            });
+                        }
+                    ).then(() => {
+                        cy.bodyScrollLeftShouldToBe(250);
+                        expect(count).to.equal(1);
+                    });
+                });
+            });         
     });
 })
 
@@ -155,22 +182,26 @@ describe("scrollXToTo-immediatelyStoppedScrolling-Body", function() {
     it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped and restarted with the scrollXTo method", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
 
-              return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(500, uss.getPageScroller(), () => count++);
-                  uss.stopScrollingX(uss.getPageScroller());
-                  uss.scrollXTo(250, uss.getPageScroller(), () => {
-                      count++;
-                      resolve();
-                  });
-              }).then(() => {
-                  cy.bodyScrollLeftShouldToBe(250);
-                  expect(count).to.equal(1);
-              });
-          });         
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(500, uss.getPageScroller(), () => count++);
+                            uss.stopScrollingX(uss.getPageScroller());
+                            uss.scrollXTo(250, uss.getPageScroller(), () => {
+                                count++;
+                                resolve();
+                            });
+                        }
+                    ).then(() => {
+                        cy.bodyScrollLeftShouldToBe(250);
+                        expect(count).to.equal(1);
+                    });
+                });
+            });         
     });
 })
 
@@ -188,19 +219,23 @@ describe("scrollXTo-StoppedScrollingWhileAnimating-Body", function() {
     it("Tests the scrollXTo method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-          
-              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
 
-              return new Cypress.Promise(resolve => {
-                  _resolve = resolve;
-                  uss.scrollXTo(100, uss.getPageScroller());
-              }).then(() => {
-                  cy.bodyScrollLeftShouldToBe(90);
-              });     
-          });         
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
+
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            _resolve = resolve;
+                            uss.scrollXTo(100, uss.getPageScroller());
+                        }
+                    ).then(() => {
+                        cy.bodyScrollLeftShouldToBe(90);
+                    });    
+                }); 
+            });         
     });
 })
 
@@ -216,19 +251,23 @@ describe("scrollXTo-scrollXTo-ReplaceScrollingWhileAnimating-Body", function() {
     it("Tests if the scrollXTo method can replace the current scroll-animation from inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
 
-              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
-              return new Cypress.Promise(resolve => {
-                  _resolve = resolve;
-                  uss.scrollXTo(100, uss.getPageScroller());
-              }).then(() => {
-                  cy.bodyScrollLeftShouldToBe(50);
-              });
-          });         
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            _resolve = resolve;
+                            uss.scrollXTo(100, uss.getPageScroller());
+                        }
+                    ).then(() => {
+                        cy.bodyScrollLeftShouldToBe(50);
+                    });
+                });
+            });         
     });
 })
 
@@ -237,26 +276,30 @@ describe("scrollXBy-Body", function() {
     it("Horizontally scrolls the body by n pixels", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-              
-              cy.testFailingValues(uss.scrollXBy, {
-                0: [[Cypress.env("failingValuesNoUndefined")],
-                    [Cypress.env("failingValuesNoUndefined")]
-                   ]
-              }, 
-              (res, v1, v2, v3, v4, v5, v6, v7) => {
-                expect(uss.isXscrolling()).to.be.false;
-              })
-              .then(() => {
-                return new Cypress.Promise(resolve => {
-                    uss.scrollXBy(100, uss.getPageScroller(), resolve);
-                }).then(() => {
-                    cy.bodyScrollLeftShouldToBe(100);
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
+                
+                cy.testFailingValues(uss.scrollXBy, {
+                    0: [[Cypress.env("failingValuesNoUndefined")],
+                        [Cypress.env("failingValuesNoUndefined")]
+                        ]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(uss.isXscrolling()).to.be.false;
+                })
+                .then(() => {
+                    cy.wrap(null).then(() => {
+                        return waitForUssCallback(
+                            (resolve) => {
+                                uss.scrollXBy(100, uss.getPageScroller(), resolve);
+                            }
+                        ).then(() => {
+                            cy.bodyScrollLeftShouldToBe(100);
+                        });
+                    });
                 });
-            });
-        });         
+            });         
     });
 })
 
@@ -276,22 +319,26 @@ describe("scrollXToBy-StillStart-True-Body", function() {
     it("Horizontally scrolls the body to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map(); 
-              
-              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
-              
-              return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(500, uss.getPageScroller()); 
-                  uss.scrollXBy(200, uss.getPageScroller(), resolve, true);
-              }).then(() => {
-                  expect(_originalTimestampEqualsTimeStamp).to.be.true;
-                  expect(_remaning).to.equal(200);
-                  expect(_total).to.equal(200);
-                  cy.bodyScrollLeftShouldToBe(200);
-              });
-          });        
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map(); 
+                
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
+                
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(500, uss.getPageScroller()); 
+                            uss.scrollXBy(200, uss.getPageScroller(), resolve, true);
+                        }
+                    ).then(() => {
+                        expect(_originalTimestampEqualsTimeStamp).to.be.true;
+                        expect(_remaning).to.equal(200);
+                        expect(_total).to.equal(200);
+                        cy.bodyScrollLeftShouldToBe(200);
+                    });
+                });
+            });        
     });
 })
 
@@ -315,26 +362,30 @@ describe("scrollXToBy-StillStart-False-Body", function() {
     it("Horizontally scrolls the body to n1 pixels and then extends that animation by n2 pixels", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map(); 
-              
-              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
-              
-              return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(100, uss.getPageScroller()); 
-                  setTimeout(() => {
-                    _secondPhase = true;
-                    uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
-                  }, 10);
-              }).then(() => {
-                  expect(_originalTimestampEqualsTimeStamp).to.be.true;
-                  expect(_remaning).to.be.greaterThan(100);
-                  expect(_remaning).to.be.lessThan(300);
-                  expect(_total).to.equal(300);
-                  cy.bodyScrollLeftShouldToBe(300);
-              });
-          });        
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map(); 
+                
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
+                
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(100, uss.getPageScroller()); 
+                            setTimeout(() => {
+                                _secondPhase = true;
+                                uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
+                            }, 10);
+                        }
+                    ).then(() => {
+                        expect(_originalTimestampEqualsTimeStamp).to.be.true;
+                        expect(_remaning).to.be.greaterThan(100);
+                        expect(_remaning).to.be.lessThan(300);
+                        expect(_total).to.equal(300);
+                        cy.bodyScrollLeftShouldToBe(300);
+                    });
+                });
+            });        
     });
 })
 
@@ -350,19 +401,23 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
     it("Tests if the scrollYBy method with stillStart = \"false\" can extend a scroll-animation from inside a stepLengthCalculator", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
 
-              uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
-              return new Cypress.Promise(resolve => {
-                  _resolve = resolve;
-                  uss.scrollXTo(100, uss.getPageScroller());
-              }).then(() => {
-                  cy.bodyScrollLeftShouldToBe(190);
-              });
-          });         
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            _resolve = resolve;
+                            uss.scrollXTo(100, uss.getPageScroller());
+                        }
+                    ).then(() => {
+                        cy.bodyScrollLeftShouldToBe(190);
+                    });
+                });
+            });         
     });
 })
 
@@ -396,14 +451,15 @@ describe("stopScrollingX-Body", function() {
                         win.setTimeout(() => uss.stopScrollingX(el), _randomBetween0and1 * 100);
                     });
 
-                    return new Cypress.Promise((resolve) => {
-                        win.setTimeout(resolve, 1000);
-                    })
-                    .then(() => {
-                        _elements.forEach(el => {
-                            expect(uss.isXscrolling(el)).to.be.false;
-                            expect(uss.getScrollXCalculator(el)()).to.be.greaterThan(0);
-                        })
+                    cy.wrap(null).then(() => {
+                        return waitForUssCallback(
+                            (resolve) => {}
+                        ).then(() => {
+                            _elements.forEach(el => {
+                                expect(uss.isXscrolling(el)).to.be.false;
+                                expect(uss.getScrollXCalculator(el)()).to.be.greaterThan(0);
+                            });
+                        });
                     });
                 });
             });         

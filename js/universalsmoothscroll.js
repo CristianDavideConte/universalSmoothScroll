@@ -506,14 +506,20 @@ var uss = {
       DEFAULT_ERROR_LOGGER("calcXStepLength", "the deltaX to be a positive number", deltaX);
       throw "USS fatal error (execution stopped)";
     }
-    return deltaX >= uss._minAnimationFrame * uss._xStepLength ? uss._xStepLength : Math.ceil(deltaX / uss._minAnimationFrame);
+    const _stepLength = deltaX / uss._minAnimationFrame;
+    if(_stepLength < 1) return deltaX;
+    if(_stepLength > uss._xStepLength) return uss._xStepLength;
+    return _stepLength;
   },
   calcYStepLength: (deltaY) => {
     if(!Number.isFinite(deltaY) || deltaY < 0) {
       DEFAULT_ERROR_LOGGER("calcYStepLength", "the deltaY to be a positive number", deltaY);
       throw "USS fatal error (execution stopped)";
     }
-    return deltaY >= uss._minAnimationFrame * uss._yStepLength ? uss._yStepLength : Math.ceil(deltaY / uss._minAnimationFrame);
+    const _stepLength = deltaY / uss._minAnimationFrame;
+    if(_stepLength < 1) return deltaY;
+    if(_stepLength > uss._yStepLength) return uss._yStepLength;
+    return _stepLength;
   },
   calcScrollbarsDimensions: (element) => {
     if(element === window) {
@@ -1576,12 +1582,23 @@ var uss = {
 
 window.addEventListener("resize", () => {uss._windowHeight = window.innerHeight; uss._windowWidth = window.innerWidth;}, {passive:true});
 window.addEventListener("load", () => {
-  //Calculate the maximum sizes of scrollbars on the webpage.
+  //Calculate the maximum sizes of scrollbars on the webpage by:
+  // - creating a <div> with id = "__ussScrollBox"
+  // - giving that <div> a mini-stylesheet that forces it to show the scrollbars
+  const __scrollBoxStyle = document.createElement("style");
   const __scrollBox = document.createElement("div");
-  __scrollBox.style.overflowX = "scroll";
+  __scrollBox.id = "__ussScrollBox";
+  __scrollBoxStyle.appendChild(
+    document.createTextNode(
+      "#__ussScrollBox { display:block; width:100px; height:100px; overflow-x:scroll; }"  + 
+      "#__ussScrollBox::-webkit-scrollbar { display:block; width:initial; }"
+    )
+  );
+  document.head.appendChild(__scrollBoxStyle);
   document.body.appendChild(__scrollBox);
-  uss._scrollbarsMaxDimension = __scrollBox.offsetHeight  - __scrollBox.clientHeight;
+  uss._scrollbarsMaxDimension = __scrollBox.offsetHeight - __scrollBox.clientHeight;
   document.body.removeChild(__scrollBox);
+  document.head.removeChild(__scrollBoxStyle);
 
   //Calculate the average frames' time of the user's screen and the corresponding minAnimationFrame.
   const _totalFrameCount = 60;

@@ -2,6 +2,7 @@ module.exports = {
   retries: 5,
   defaultCommandTimeout: 4000,
   env: {
+    defaultUssException: "USS fatal error (execution stopped)",
     failingValuesAll: [Infinity, -Infinity, true, false, NaN, "fail", "", 10, -10, 0, null, undefined],
     failingValuesNoString: [Infinity, -Infinity, true, false, NaN, 10, -10, 0, null, undefined],
     failingValuesNoStringNoUndefined: [Infinity, -Infinity, true, false, NaN, 10, -10, 0, null],

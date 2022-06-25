@@ -63,10 +63,20 @@ Cypress.Commands.addAll({
 
             //Test the current failing values combination
             const [v1, v2, v3, v4, v5, v6, v7] = currentFailingValues;
-            actionAfterTest(
-                command(v1, v2, v3, v4, v5, v6, v7),
-                v1, v2, v3, v4, v5, v6, v7
-            );
+            let result;
+            try {
+                actionAfterTest(
+                    command(v1, v2, v3, v4, v5, v6, v7),
+                    v1, v2, v3, v4, v5, v6, v7
+                );
+            } catch(error) { 
+                //Never throw directly, always wrap the error inside a function
+                //so that it can be later analyzed. 
+                actionAfterTest(
+                    () => {throw error},
+                    v1, v2, v3, v4, v5, v6, v7
+                );
+            }
         }
 
         for(let [key, failingValueArr] of Object.entries(failingValues)) {

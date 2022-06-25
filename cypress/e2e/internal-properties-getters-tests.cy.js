@@ -11,26 +11,37 @@
  *  - getDebugMode
  */
 
+function waitForUssCallback(fun) {   
+    return new Cypress.Promise((resolve, reject) => {
+        window.setTimeout(resolve, 3500);
+        fun(resolve, reject);
+    });
+}
+
 describe("getXStepLength", function() {
     var uss;
     it("Tests the getXStepLength method", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-              
-              expect(Number.isFinite(uss.getXStepLength())).to.be.true;
-              expect(uss.getXStepLength() > 0).to.be.true;    
-              uss.setXStepLength(10);
-              expect(uss.getXStepLength()).to.equal(10);
-            
-              return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(100, uss.getPageScroller(), resolve);
-              }).then(() => {
-                  expect(uss.getXStepLength()).to.equal(10);
-              });
-          });        
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
+                
+                expect(Number.isFinite(uss.getXStepLength())).to.be.true;
+                expect(uss.getXStepLength() > 0).to.be.true;    
+                uss.setXStepLength(10);
+                expect(uss.getXStepLength()).to.equal(10);
+
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(100, uss.getPageScroller(), resolve);
+                        }
+                    ).then(() => {
+                        expect(uss.getXStepLength()).to.equal(10);
+                    });
+                });
+            });        
     });
 })
 
@@ -39,21 +50,25 @@ describe("getYStepLength", function() {
     it("Tests the getYStepLength method", function() {
         cy.visit("index.html"); 
         cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-              
-              expect(Number.isFinite(uss.getYStepLength())).to.be.true;
-              expect(uss.getYStepLength() > 0).to.be.true;  
-              uss.setYStepLength(10);
-              expect(uss.getYStepLength()).to.equal(10);
+            .then((win) => {
+                uss = win.uss;
+                uss._containersData = new Map();
+                
+                expect(Number.isFinite(uss.getYStepLength())).to.be.true;
+                expect(uss.getYStepLength() > 0).to.be.true;  
+                uss.setYStepLength(10);
+                expect(uss.getYStepLength()).to.equal(10);
             
-              return new Cypress.Promise(resolve => {
-                  uss.scrollYTo(100, uss.getPageScroller(), resolve);
-              }).then(() => {
-                  expect(uss.getYStepLength()).to.equal(10);
-              });
-          });        
+                cy.wrap(null).then(() => {
+                    return waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollYTo(100, uss.getPageScroller(), resolve);
+                        }
+                    ).then(() => {
+                        expect(uss.getYStepLength()).to.equal(10);
+                    });
+                });
+            });        
     });
 })
 

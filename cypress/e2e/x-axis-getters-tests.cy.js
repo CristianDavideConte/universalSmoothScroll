@@ -8,31 +8,42 @@
  *  - getXScrollableParent
  */
 
+function waitForUssCallback(fun) {   
+  return new Cypress.Promise((resolve, reject) => {
+      window.setTimeout(resolve, 3500);
+      fun(resolve, reject);
+  });
+}
+
 describe("getFinalXPosition-Body", function() {
     var uss;
     var finalXPosition;
     it("Tests the getFinalXPosition method", function() {
-        cy.visit("index.html");
-        cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-                            
-              cy.testFailingValues(uss.getFinalXPosition, {
-                0: [Cypress.env("failingValuesNoUndefined")]
-              })
-              .then(() => {
-                return new Cypress.Promise(resolve => {
+      cy.visit("index.html");
+      cy.window()
+        .then((win) => {
+          uss = win.uss;
+          uss._containersData = new Map();
+                      
+          cy.testFailingValues(uss.getFinalXPosition, {
+            0: [Cypress.env("failingValuesNoUndefined")]
+          })
+          .then(() => {
+            cy.wrap(null).then(() => {
+              return waitForUssCallback(
+                  (resolve) => {
                     uss.scrollXTo(100, uss.getPageScroller(), resolve);
                     finalXPosition = uss.getFinalXPosition();
-                }).then(() => {
-                    cy.bodyScrollLeftShouldToBe(100);
-                    expect(finalXPosition).to.equal(100);
-                    expect(finalXPosition).to.equal(uss.getFinalXPosition());
-                    expect(finalXPosition).to.equal(uss.getScrollXCalculator()());
-                });
+                  }
+              ).then(() => {
+                cy.bodyScrollLeftShouldToBe(100);
+                expect(finalXPosition).to.equal(100);
+                expect(finalXPosition).to.equal(uss.getFinalXPosition());
+                expect(finalXPosition).to.equal(uss.getScrollXCalculator()());
+              });
             });
-          });        
+          });
+        });        
     });
 })
 
@@ -40,29 +51,33 @@ describe("getScrollXDirection-Body", function() {
     var uss;
     var scrollYDirectionLeft, scrollYDirectionRight;
     it("Tests the getScrollXDirection method", function() {
-        cy.visit("index.html"); 
-        cy.window()
-          .then((win) => {
-            uss = win.uss;
-            uss._containersData = new Map();
+      cy.visit("index.html"); 
+      cy.window()
+        .then((win) => {
+          uss = win.uss;
+          uss._containersData = new Map();
 
-            cy.testFailingValues(uss.getScrollXDirection, {
-              0: [Cypress.env("failingValuesNoUndefined")]
-            })
-            .then(() => {
-              return new Cypress.Promise(resolve => {
-                  uss.scrollXTo(100, uss.getPageScroller(), () => {
-                      uss.scrollXTo(50, uss.getPageScroller(), resolve);
-                      scrollYDirectionLeft = uss.getScrollXDirection();
-                  });
-                  scrollYDirectionRight = uss.getScrollXDirection();
-              }).then(() => {
-                  expect(scrollYDirectionLeft).to.equal(-1);
-                  expect(scrollYDirectionRight).to.equal(1);
-                  expect(uss.getScrollXDirection()).to.equal(0);
+          cy.testFailingValues(uss.getScrollXDirection, {
+            0: [Cypress.env("failingValuesNoUndefined")]
+          })
+          .then(() => {
+            cy.wrap(null).then(() => {
+              return waitForUssCallback(
+                  (resolve) => {
+                    uss.scrollXTo(100, uss.getPageScroller(), () => {
+                        uss.scrollXTo(50, uss.getPageScroller(), resolve);
+                        scrollYDirectionLeft = uss.getScrollXDirection();
+                    });
+                    scrollYDirectionRight = uss.getScrollXDirection();
+                  }
+              ).then(() => {
+                expect(scrollYDirectionLeft).to.equal(-1);
+                expect(scrollYDirectionRight).to.equal(1);
+                expect(uss.getScrollXDirection()).to.equal(0);
               });
             });
-          });         
+          });
+        });         
     });
 })
 
@@ -71,32 +86,36 @@ describe("getXStepLengthCalculator-Body", function() {
     var nonTempTestCalculator = () => 10;
     var tempTestCalculator = r => r / 20 + 1;
     it("Tests the getXStepLengthCalculator method", function() {
-        cy.visit("index.html"); 
-        cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-                                          
-              cy.testFailingValues(uss.getXStepLengthCalculator, {
-                0: [Cypress.env("failingValuesAll"), 
-                    [true, false]
-                   ]
-              })
-              .then(() => {
-                uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
-                expect(uss.getXStepLengthCalculator()).to.equal(nonTempTestCalculator);  
-  
-                uss.setXStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
-                expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
-              
-                return new Cypress.Promise(resolve => {
-                    uss.scrollXTo(100, uss.getPageScroller(), resolve);
-                }).then(() => {
+      cy.visit("index.html"); 
+      cy.window()
+        .then((win) => {
+            uss = win.uss;
+            uss._containersData = new Map();
+                                        
+            cy.testFailingValues(uss.getXStepLengthCalculator, {
+              0: [Cypress.env("failingValuesAll"), 
+                  [true, false]
+                  ]
+            })
+            .then(() => {
+              uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
+              expect(uss.getXStepLengthCalculator()).to.equal(nonTempTestCalculator);  
+
+              uss.setXStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
+              expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
+            
+              cy.wrap(null).then(() => {
+                return waitForUssCallback(
+                    (resolve) => {
+                      uss.scrollXTo(100, uss.getPageScroller(), resolve);
+                    }
+                ).then(() => {
                     expect(uss.getXStepLengthCalculator()).to.equal(nonTempTestCalculator);
                     expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
                 });
+              });
             });
-          });        
+        });        
     });
 })
 
@@ -104,52 +123,55 @@ describe("getScrollXCalculator", function() {
     var uss;
     var result;
     it("Tests the getScrollXCalculator method", function() {
-        cy.visit("index.html"); 
-        cy.window()
-          .then((win) => {
-              uss = win.uss;
-              uss._containersData = new Map();
-                               
-              cy.testFailingValues(uss.getScrollXCalculator, {
-                0: [Cypress.env("failingValuesNoUndefined")]
-              },
-              (res, v1, v2, v3, v4, v5, v6, v7) => {
-                expect(res).to.throw("USS fatal error (execution stopped)");
-              })
-              .then(() => {
-                const _document = win.document.documentElement;
-                const _body = win.document.body;
-                const _positionFixedElement = win.document.getElementById("stopScrollingY");
-                const divElements = Array.from(win.document.getElementsByTagName("div"))
-                                        .filter(el => el !== _positionFixedElement);
-                const _randomElement = divElements[Math.round((divElements.length - 1) * Math.random())];
+      cy.visit("index.html"); 
+      cy.window()
+        .then((win) => {
+            uss = win.uss;
+            uss._containersData = new Map();
+                              
+            cy.testFailingValues(uss.getScrollXCalculator, {
+              0: [Cypress.env("failingValuesNoUndefined")]
+            },
+            (res, v1, v2, v3, v4, v5, v6, v7) => {
+              expect(res).to.throw(Cypress.env("defaultUssException"));
+            })
+            .then(() => {
+              const _document = win.document.documentElement;
+              const _body = win.document.body;
+              const _positionFixedElement = win.document.getElementById("stopScrollingY");
+              const divElements = Array.from(win.document.getElementsByTagName("div"))
+                                      .filter(el => el !== _positionFixedElement);
+              const _randomElement = divElements[Math.round((divElements.length - 1) * Math.random())];
 
-                const _elements = [
-                    _document,
-                    _body,
-                    win.document.getElementById("easeFunctionSelectorList"),
-                    _positionFixedElement,
-                    _randomElement
-                ].concat(divElements);
+              const _elements = [
+                  _document,
+                  _body,
+                  win.document.getElementById("easeFunctionSelectorList"),
+                  _positionFixedElement,
+                  _randomElement
+              ].concat(divElements);
 
-                _elements.forEach(el => expect(uss.getScrollXCalculator(el)()).to.equal(el.scrollLeft));
-                expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
+              _elements.forEach(el => expect(uss.getScrollXCalculator(el)()).to.equal(el.scrollLeft));
+              expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
 
-                _elements.forEach(el => uss.scrollXTo(Math.random() * el.scrollWidth, 
-                                                      el, 
-                                                      () => {
-                                                        result = uss.getScrollXCalculator(el)() === el.scrollLeft;
-                                                        if(!result) uss.stopScrollingAll();
-                                                      }
-                ));
-                return new Cypress.Promise(resolve => {
-                    setTimeout(resolve, 3500);
-                }).then(() => {
+              _elements.forEach(el => uss.scrollXTo(Math.random() * el.scrollWidth, 
+                                                    el, 
+                                                    () => {
+                                                      result = uss.getScrollXCalculator(el)() === el.scrollLeft;
+                                                      if(!result) uss.stopScrollingAll();
+                                                    }
+              ));
+
+              cy.wrap(null).then(() => {
+                return waitForUssCallback(
+                    (resolve) => {}
+                ).then(() => {
                   expect(result).to.be.true;
                   expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
                 });
+              });
             });
-          });        
+        });        
     });
 })
 
