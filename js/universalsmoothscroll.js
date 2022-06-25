@@ -507,7 +507,7 @@ var uss = {
       throw "USS fatal error (execution stopped)";
     }
     const _stepLength = deltaX / uss._minAnimationFrame;
-    if(_stepLength < 1) return deltaX;
+    if(_stepLength < 1) return 1;
     if(_stepLength > uss._xStepLength) return uss._xStepLength;
     return _stepLength;
   },
@@ -517,7 +517,7 @@ var uss = {
       throw "USS fatal error (execution stopped)";
     }
     const _stepLength = deltaY / uss._minAnimationFrame;
-    if(_stepLength < 1) return deltaY;
+    if(_stepLength < 1) return 1;
     if(_stepLength > uss._yStepLength) return uss._yStepLength;
     return _stepLength;
   },
@@ -1591,7 +1591,7 @@ window.addEventListener("load", () => {
   __scrollBoxStyle.appendChild(
     document.createTextNode(
       "#__ussScrollBox { display:block; width:100px; height:100px; overflow-x:scroll; }"  + 
-      "#__ussScrollBox::-webkit-scrollbar { display:block; width:initial; }"
+      "#__ussScrollBox::-webkit-scrollbar { display:block; width:initial; height:initial; }"
     )
   );
   document.head.appendChild(__scrollBoxStyle);
