@@ -640,18 +640,22 @@ describe("scrollToBy-StillStart-False-Body", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollTo(170, 100, uss.getPageScroller()); 
-                        setTimeout(() => {
-                        _secondPhaseX = true;
-                        _secondPhaseY = true;
-                        uss.scrollBy(130, 200, uss.getPageScroller(), resolve, false);
-                        }, 10);
+                        win.requestAnimationFrame(function activateSecondPhase(i = 0) {
+                            if(i < 2) win.requestAnimationFrame(() => activateSecondPhase(i + 1));
+                            else {
+                                _secondPhaseX = true;
+                                _secondPhaseY = true;
+                                uss.scrollBy(130, 200, uss.getPageScroller(), resolve, false);
+                            }
+                        });
                     }
                 ).then(
                     () => {
                         expect(_originalTimestampEqualsTimeStampX).to.be.true;
+                        expect(_originalTimestampEqualsTimeStampY).to.be.true;
                         expect(_remaningX).to.be.greaterThan(170);
-                        expect(_remaningX).to.be.lessThan(300);
                         expect(_remaningY).to.be.greaterThan(100);
+                        expect(_remaningX).to.be.lessThan(300);
                         expect(_remaningY).to.be.lessThan(300);
                         expect(_totalX).to.equal(300);
                         expect(_totalY).to.equal(300);

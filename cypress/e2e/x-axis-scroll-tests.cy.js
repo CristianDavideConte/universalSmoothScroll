@@ -364,10 +364,13 @@ describe("scrollXToBy-StillStart-False-Body", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollXTo(100, uss.getPageScroller()); 
-                        setTimeout(() => {
-                            _secondPhase = true;
-                            uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
-                        }, 10);
+                        win.requestAnimationFrame(function activateSecondPhase(i = 0) {
+                            if(i < 2) win.requestAnimationFrame(() => activateSecondPhase(i + 1));
+                            else {
+                                _secondPhase = true;
+                                uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
+                            }
+                        });
                     }
                 ).then(
                     () => {
