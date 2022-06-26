@@ -43,7 +43,7 @@ describe("isXScrolling-Body", function() {
             });         
     });
 })
-/*
+
 describe("isXScrolling-StoppedScrollingWhileAnimating-Body", function() {
     var uss;
     var wasXScrolling;
@@ -67,18 +67,18 @@ describe("isXScrolling-StoppedScrollingWhileAnimating-Body", function() {
                 expect(uss.isXscrolling()).to.be.false;
                 uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            _resolve = resolve;
-                            uss.scrollXTo(100, uss.getPageScroller());
-                            wasXScrolling = uss.isXscrolling();
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        _resolve = resolve;
+                        uss.scrollXTo(100, uss.getPageScroller());
+                        wasXScrolling = uss.isXscrolling();
+                    }
+                ).then(
+                    () => {
                         expect(wasXScrolling).to.be.true;
                         expect(isXScrolling).to.be.false;
-                    });
-                });
+                    }
+                );
             });         
     });
 })
@@ -101,15 +101,15 @@ describe("scrollXTo-Body", function() {
                     expect(uss.isXscrolling()).to.be.false;
                 })
                 .then(() => {
-                    cy.wrap(null).then(() => {
-                        return waitForUssCallback(
-                            (resolve) => {
-                                uss.scrollXTo(500, uss.getPageScroller(), resolve);
-                            }
-                        ).then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(500, uss.getPageScroller(), resolve);
+                        }
+                    ).then(
+                        () => {
                             cy.bodyScrollLeftShouldToBe(500);
-                        });
-                    });
+                        }
+                    );
                 });
             });        
     });
@@ -125,17 +125,17 @@ describe("scrollXTo-immediatelyStoppedScrolling-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            uss.scrollXTo(500, uss.getPageScroller(), () => count++);
-                            uss.stopScrollingX(uss.getPageScroller(), resolve);
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollXTo(500, uss.getPageScroller(), () => count++);
+                        uss.stopScrollingX(uss.getPageScroller(), resolve);
+                    }
+                ).then(
+                    () => {
                         cy.bodyScrollLeftShouldToBe(0);
                         expect(count).to.equal(0);
-                    });
-                });
+                    }
+                );
             });         
     });
 })
@@ -150,21 +150,21 @@ describe("scrollXToBy-immediatelyStoppedScrolling-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            uss.scrollXTo(500, uss.getPageScroller(), () => count++);
-                            uss.stopScrollingX(uss.getPageScroller());
-                            uss.scrollXBy(250, uss.getPageScroller(), () => {
-                                count++;
-                                resolve();
-                            });
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollXTo(500, uss.getPageScroller(), () => count++);
+                        uss.stopScrollingX(uss.getPageScroller());
+                        uss.scrollXBy(250, uss.getPageScroller(), () => {
+                            count++;
+                            resolve();
+                        });
+                    }
+                ).then(
+                    () => {
                         cy.bodyScrollLeftShouldToBe(250);
                         expect(count).to.equal(1);
-                    });
-                });
+                    }
+                );
             });         
     });
 })
@@ -179,21 +179,21 @@ describe("scrollXToTo-immediatelyStoppedScrolling-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            uss.scrollXTo(500, uss.getPageScroller(), () => count++);
-                            uss.stopScrollingX(uss.getPageScroller());
-                            uss.scrollXTo(250, uss.getPageScroller(), () => {
-                                count++;
-                                resolve();
-                            });
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollXTo(500, uss.getPageScroller(), () => count++);
+                        uss.stopScrollingX(uss.getPageScroller());
+                        uss.scrollXTo(250, uss.getPageScroller(), () => {
+                            count++;
+                            resolve();
+                        });
+                    }
+                ).then(
+                    () => {
                         cy.bodyScrollLeftShouldToBe(250);
                         expect(count).to.equal(1);
-                    });
-                });
+                    }
+                );
             });         
     });
 })
@@ -218,16 +218,16 @@ describe("scrollXTo-StoppedScrollingWhileAnimating-Body", function() {
 
                 uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            _resolve = resolve;
-                            uss.scrollXTo(100, uss.getPageScroller());
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        _resolve = resolve;
+                        uss.scrollXTo(100, uss.getPageScroller());
+                    }
+                ).then(
+                    () => {
                         cy.bodyScrollLeftShouldToBe(90);
-                    });    
-                }); 
+                    }
+                );
             });         
     });
 })
@@ -250,16 +250,16 @@ describe("scrollXTo-scrollXTo-ReplaceScrollingWhileAnimating-Body", function() {
 
                 uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            _resolve = resolve;
-                            uss.scrollXTo(100, uss.getPageScroller());
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        _resolve = resolve;
+                        uss.scrollXTo(100, uss.getPageScroller());
+                    }
+                ).then(
+                    () => {
                         cy.bodyScrollLeftShouldToBe(50);
-                    });
-                });
+                    }
+                );
             });         
     });
 })
@@ -282,15 +282,15 @@ describe("scrollXBy-Body", function() {
                     expect(uss.isXscrolling()).to.be.false;
                 })
                 .then(() => {
-                    cy.wrap(null).then(() => {
-                        return waitForUssCallback(
-                            (resolve) => {
-                                uss.scrollXBy(100, uss.getPageScroller(), resolve);
-                            }
-                        ).then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXBy(100, uss.getPageScroller(), resolve);
+                        }
+                    ).then(
+                        () => {
                             cy.bodyScrollLeftShouldToBe(100);
-                        });
-                    });
+                        }
+                    );
                 });
             });         
     });
@@ -318,19 +318,19 @@ describe("scrollXToBy-StillStart-True-Body", function() {
                 
                 uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
                 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            uss.scrollXTo(500, uss.getPageScroller()); 
-                            uss.scrollXBy(200, uss.getPageScroller(), resolve, true);
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollXTo(500, uss.getPageScroller()); 
+                        uss.scrollXBy(200, uss.getPageScroller(), resolve, true);
+                    }
+                ).then(
+                    () => {
                         expect(_originalTimestampEqualsTimeStamp).to.be.true;
                         expect(_remaning).to.equal(200);
                         expect(_total).to.equal(200);
                         cy.bodyScrollLeftShouldToBe(200);
-                    });
-                });
+                    }
+                );
             });        
     });
 })
@@ -361,23 +361,23 @@ describe("scrollXToBy-StillStart-False-Body", function() {
                 
                 uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
                 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            uss.scrollXTo(100, uss.getPageScroller()); 
-                            setTimeout(() => {
-                                _secondPhase = true;
-                                uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
-                            }, 10);
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollXTo(100, uss.getPageScroller()); 
+                        setTimeout(() => {
+                            _secondPhase = true;
+                            uss.scrollXBy(200, uss.getPageScroller(), resolve, false);
+                        }, 10);
+                    }
+                ).then(
+                    () => {
                         expect(_originalTimestampEqualsTimeStamp).to.be.true;
                         expect(_remaning).to.be.greaterThan(100);
                         expect(_remaning).to.be.lessThan(300);
                         expect(_total).to.equal(300);
                         cy.bodyScrollLeftShouldToBe(300);
-                    });
-                });
+                    }
+                );
             });        
     });
 })
@@ -400,16 +400,16 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
 
                 uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            _resolve = resolve;
-                            uss.scrollXTo(100, uss.getPageScroller());
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        _resolve = resolve;
+                        uss.scrollXTo(100, uss.getPageScroller());
+                    }
+                ).then(
+                    () => {
                         cy.bodyScrollLeftShouldToBe(190);
-                    });
-                });
+                    }
+                );
             });         
     });
 })
@@ -444,16 +444,16 @@ describe("stopScrollingX-Body", function() {
                         win.setTimeout(() => uss.stopScrollingX(el), _randomBetween0and1 * 100);
                     });
 
-                    cy.wrap(null).then(() => {
-                        return waitForUssCallback(
-                            (resolve) => {}
-                        ).then(() => {
+                    cy.waitForUssCallback(
+                        undefined //default value: resolve after timeout
+                    ).then(
+                        () => {
                             _elements.forEach(el => {
                                 expect(uss.isXscrolling(el)).to.be.false;
                                 expect(uss.getScrollXCalculator(el)()).to.be.greaterThan(0);
                             });
-                        });
-                    });
+                        }
+                    );
                 });
             });         
     });
@@ -494,4 +494,3 @@ describe("stopScrollingX-immediatelyStopped-Body", function() {
             });         
     });
 })
-*/
