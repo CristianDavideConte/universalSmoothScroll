@@ -71,8 +71,8 @@
 /*
  * FUNCTIONS (PUBLIC USE):
  *
- * isXscrolling: function, returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
- * isYscrolling: function, returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
+ * isXScrolling: function, returns true if a scroll-animation on the x-axis of the passed container is currently being performed by this API, false otherwise.
+ * isYScrolling: function, returns true if a scroll-animation on the y-axis of the passed container is currently being performed by this API, false otherwise.
  * isScrolling:  function, returns true if a scroll-animation on any axis of the passed container is currently being performed by this API, false otherwise.
  * getFinalXPosition: function, returns the position (in px) at which the passed container will be at the end of the scroll-animation on the x-axis.
  *                    The current position is returned if no scroll-animation is in place.
@@ -229,19 +229,19 @@ var uss = {
   _pageScroller: document.scrollingElement || window,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   _debugMode: "",
-  isXscrolling: (container = uss._pageScroller) => {
+  isXScrolling: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) {
       const _containerData = uss._containersData.get(container) || [];
       return !!_containerData[0];
     }
-    DEFAULT_ERROR_LOGGER("isXscrolling", "the container to be an HTMLElement or the Window", container);
+    DEFAULT_ERROR_LOGGER("isXScrolling", "the container to be an HTMLElement or the Window", container);
   },
-  isYscrolling: (container = uss._pageScroller) => {
+  isYScrolling: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) {
       const _containerData = uss._containersData.get(container) || [];
       return !!_containerData[1];
     }
-    DEFAULT_ERROR_LOGGER("isYscrolling", "the container to be an HTMLElement or the Window", container);
+    DEFAULT_ERROR_LOGGER("isYScrolling", "the container to be an HTMLElement or the Window", container);
   },
   isScrolling: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) { 

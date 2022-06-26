@@ -9,7 +9,7 @@
 describe("isXScrolling-Body", function() {
     var uss;
     var wasXScrolling;
-    var isXscrolling;
+    var isXScrolling;
     it("Tests the isXScrolling method", function() {
         cy.visit("index.html"); 
         cy.window()
@@ -17,26 +17,26 @@ describe("isXScrolling-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                cy.testFailingValues(uss.isXscrolling, {
+                cy.testFailingValues(uss.isXScrolling, {
                     0: [Cypress.env("failingValuesNoUndefined")]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
-                    expect(uss.isXscrolling()).to.be.false;
+                    expect(uss.isXScrolling()).to.be.false;
                 })
                 .then(() => {
                     cy.waitForUssCallback(
                         (resolve) => {
                             uss.scrollXTo(100, uss.getPageScroller(), () => {
-                                isXscrolling = uss.isXscrolling();
+                                isXScrolling = uss.isXScrolling();
                                 resolve();
                             });
-                            wasXScrolling = uss.isXscrolling();
+                            wasXScrolling = uss.isXScrolling();
                         }, 
                     ).then(
                         () => {
                             expect(wasXScrolling).to.be.true;
-                            expect(isXscrolling).to.be.false;
+                            expect(isXScrolling).to.be.false;
                         }
                     );
                 });
@@ -53,7 +53,7 @@ describe("isXScrolling-StoppedScrollingWhileAnimating-Body", function() {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
             if(i++ < 10) return total / 10;
             uss.stopScrollingX(container);
-            isXScrolling = uss.isXscrolling(container);
+            isXScrolling = uss.isXScrolling(container);
             _resolve();
         }
     }
@@ -64,14 +64,14 @@ describe("isXScrolling-StoppedScrollingWhileAnimating-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                expect(uss.isXscrolling()).to.be.false;
+                expect(uss.isXScrolling()).to.be.false;
                 uss.setXStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
                         uss.scrollXTo(100, uss.getPageScroller());
-                        wasXScrolling = uss.isXscrolling();
+                        wasXScrolling = uss.isXScrolling();
                     }
                 ).then(
                     () => {
@@ -98,7 +98,7 @@ describe("scrollXTo-Body", function() {
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(uss.isXscrolling()).to.be.false;
+                    expect(uss.isXScrolling()).to.be.false;
                 })
                 .then(() => {
                     cy.waitForUssCallback(
@@ -203,7 +203,7 @@ describe("scrollXTo-StoppedScrollingWhileAnimating-Body", function() {
     var _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
-            if(!uss.isXscrolling()) return total; //testing phase of the setXStepLengthCalculator
+            if(!uss.isXScrolling()) return total; //testing phase of the setXStepLengthCalculator
             i++;
             if(i < 10) return total / 10;
             uss.stopScrollingX(container, _resolve);
@@ -279,7 +279,7 @@ describe("scrollXBy-Body", function() {
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(uss.isXscrolling()).to.be.false;
+                    expect(uss.isXScrolling()).to.be.false;
                 })
                 .then(() => {
                     cy.waitForUssCallback(
@@ -302,7 +302,7 @@ describe("scrollXToBy-StillStart-True-Body", function() {
     
     const _testCalculator = () => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
-            if(!uss.isXscrolling()) return total; //testing phase of the setXStepLengthCalculator
+            if(!uss.isXScrolling()) return total; //testing phase of the setXStepLengthCalculator
             if(!_remaning) _remaning = remaning;
             if(!_originalTimestampEqualsTimeStamp) _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
             if(!_total) _total = total;
@@ -342,7 +342,7 @@ describe("scrollXToBy-StillStart-False-Body", function() {
     
     const _testCalculator = () => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
-            if(!uss.isXscrolling()) return total; //testing phase of the setXStepLengthCalculator
+            if(!uss.isXScrolling()) return total; //testing phase of the setXStepLengthCalculator
             if(_secondPhase) {
                 _remaning = remaning;
                 _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
@@ -431,7 +431,7 @@ describe("stopScrollingX-Body", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
-                    expect(uss.isXscrolling()).to.be.false;
+                    expect(uss.isXScrolling()).to.be.false;
                 })
                 .then(() => {
                     const _elements = Array.from(win.document.getElementsByTagName("*"))
@@ -443,7 +443,7 @@ describe("stopScrollingX-Body", function() {
                     _elements.forEach(el => {
                         const _randomBetween0and1 = Math.min(Math.random(), 0.5);
                         uss.scrollXTo(_randomBetween0and1 * el.scrollWidth, el); 
-                        expect(uss.isXscrolling(el)).to.be.true;
+                        expect(uss.isXScrolling(el)).to.be.true;
                         win.setTimeout(() => uss.stopScrollingX(el), _randomBetween0and1 * 100);
                     });
 
@@ -452,7 +452,7 @@ describe("stopScrollingX-Body", function() {
                     ).then(
                         () => {
                             _elements.forEach(el => {
-                                expect(uss.isXscrolling(el)).to.be.false;
+                                expect(uss.isXScrolling(el)).to.be.false;
                                 expect(uss.getScrollXCalculator(el)()).to.be.greaterThan(0);
                             });
                         }
@@ -477,7 +477,7 @@ describe("stopScrollingX-immediatelyStopped-Body", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
-                    expect(uss.isXscrolling()).to.be.false;
+                    expect(uss.isXScrolling()).to.be.false;
                 })
                 .then(() => {
                     const _elements = Array.from(win.document.getElementsByTagName("*"))
@@ -489,9 +489,9 @@ describe("stopScrollingX-immediatelyStopped-Body", function() {
                     _elements.forEach(el => {
                         const _randomBetween0and1 = Math.min(Math.random(), 0.5);
                         uss.scrollXTo(_randomBetween0and1 * el.scrollWidth, el); 
-                        expect(uss.isXscrolling(el)).to.be.true;
+                        expect(uss.isXScrolling(el)).to.be.true;
                         uss.stopScrollingX(el);
-                        expect(uss.isXscrolling(el)).to.be.false;
+                        expect(uss.isXScrolling(el)).to.be.false;
                     });
                 });
             });         

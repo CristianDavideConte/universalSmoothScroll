@@ -17,21 +17,21 @@ describe("isYScrolling-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                cy.testFailingValues(uss.isYscrolling, {
+                cy.testFailingValues(uss.isYScrolling, {
                     0: [Cypress.env("failingValuesNoUndefined")]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
-                    expect(uss.isYscrolling()).to.be.false;
+                    expect(uss.isYScrolling()).to.be.false;
                 })
                 .then(() => {
                     cy.waitForUssCallback(
                         (resolve) => {
                             uss.scrollYTo(100, uss.getPageScroller(), () => {
-                                isYScrolling = uss.isYscrolling();
+                                isYScrolling = uss.isYScrolling();
                                 resolve();
                             });
-                            wasYScrolling = uss.isYscrolling();
+                            wasYScrolling = uss.isYScrolling();
                         }
                     ).then(
                         () => {
@@ -53,7 +53,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
             if(i++ < 10) return total / 10;
             uss.stopScrollingY(container);
-            isYScrolling = uss.isYscrolling(container);
+            isYScrolling = uss.isYScrolling(container);
             _resolve();
         }
     }
@@ -64,7 +64,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                expect(uss.isYscrolling()).to.be.false;
+                expect(uss.isYScrolling()).to.be.false;
                 uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
 
 
@@ -72,7 +72,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
                     (resolve) => {
                         _resolve = resolve;
                         uss.scrollYTo(100, uss.getPageScroller());
-                        wasYScrolling = uss.isYscrolling();
+                        wasYScrolling = uss.isYScrolling();
                     }
                 ).then(
                     () => {
@@ -99,7 +99,7 @@ describe("scrollYTo-Body", function() {
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(uss.isYscrolling()).to.be.false;
+                    expect(uss.isYScrolling()).to.be.false;
                 })
                 .then(() => {                        
                     cy.waitForUssCallback(
@@ -204,7 +204,7 @@ describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
     var _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(!uss.isYscrolling()) return total; //testing phase of the setYStepLengthCalculator
+            if(!uss.isYScrolling()) return total; //testing phase of the setYStepLengthCalculator
             i++;
             if(i < 10) return total / 10;
             uss.stopScrollingY(container, _resolve);
@@ -280,7 +280,7 @@ describe("scrollYBy-Body", function() {
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(uss.isYscrolling()).to.be.false;
+                    expect(uss.isYScrolling()).to.be.false;
                 })
                 .then(() => {
                     cy.waitForUssCallback(
@@ -303,7 +303,7 @@ describe("scrollYToBy-StillStart-True-Body", function() {
     
     const _testCalculator = () => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(!uss.isYscrolling()) return total; //testing phase of the setYStepLengthCalculator
+            if(!uss.isYScrolling()) return total; //testing phase of the setYStepLengthCalculator
             if(!_remaning) _remaning = remaning;
             if(!_originalTimestampEqualsTimeStamp) _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
             if(!_total) _total = total;
@@ -343,7 +343,7 @@ describe("scrollYToBy-StillStart-False-Body", function() {
     
     const _testCalculator = () => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(!uss.isYscrolling()) return total; //testing phase of the setYStepLengthCalculator
+            if(!uss.isYScrolling()) return total; //testing phase of the setYStepLengthCalculator
             if(_secondPhase) {
                 _remaning = remaning;
                 _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
@@ -432,7 +432,7 @@ describe("stopScrollingY-Body", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
-                    expect(uss.isYscrolling()).to.be.false;
+                    expect(uss.isYScrolling()).to.be.false;
                 })
                 .then(() => {
                     const _elements = Array.from(win.document.getElementsByTagName("*"))
@@ -444,7 +444,7 @@ describe("stopScrollingY-Body", function() {
                     _elements.forEach(el => {
                         const _randomBetween0and1 = Math.min(Math.random(), 0.5);
                         uss.scrollYTo(_randomBetween0and1 * el.scrollHeight, el); 
-                        expect(uss.isYscrolling(el)).to.be.true;
+                        expect(uss.isYScrolling(el)).to.be.true;
                         win.setTimeout(() => uss.stopScrollingY(el), _randomBetween0and1 * 100);
                     });
 
@@ -453,7 +453,7 @@ describe("stopScrollingY-Body", function() {
                     ).then(
                         () => {
                             _elements.forEach(el => {
-                                expect(uss.isYscrolling(el)).to.be.false;
+                                expect(uss.isYScrolling(el)).to.be.false;
                                 expect(uss.getScrollYCalculator(el)()).to.be.greaterThan(0);
                             })
                         }
@@ -477,7 +477,7 @@ describe("stopScrollingY-immediatelyStopped-Body", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
-                    expect(uss.isYscrolling()).to.be.false;
+                    expect(uss.isYScrolling()).to.be.false;
                 })
                 .then(() => {
                     const _elements = Array.from(win.document.getElementsByTagName("*"))
@@ -489,9 +489,9 @@ describe("stopScrollingY-immediatelyStopped-Body", function() {
                     _elements.forEach(el => {
                         const _randomBetween0and1 = Math.min(Math.random(), 0.5);
                         uss.scrollYTo(_randomBetween0and1 * el.scrollHeight, el); 
-                        expect(uss.isYscrolling(el)).to.be.true;
+                        expect(uss.isYScrolling(el)).to.be.true;
                         uss.stopScrollingY(el);
-                        expect(uss.isYscrolling(el)).to.be.false;
+                        expect(uss.isYScrolling(el)).to.be.false;
                     });
                 });
             });         

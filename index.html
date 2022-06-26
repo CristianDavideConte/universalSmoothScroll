@@ -257,7 +257,7 @@
 
     let scrollbarTimeout;
     easeFunctionSelectorList.addEventListener("scroll", (event) => {
-      if(isFingerDown || backwardPhase || uss.isYscrolling(easeFunctionSelectorList)) return;
+      if(isFingerDown || backwardPhase || uss.isYScrolling(easeFunctionSelectorList)) return;
       clearTimeout(scrollbarTimeout);
 
       const _elasticLimit = 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)); //Container's padding-top/bottom
@@ -265,7 +265,7 @@
 
       if(_currentPos < _elasticLimit - 1) {
         scrollbarTimeout = setTimeout(() => {
-                            if(isFingerDown || backwardPhase || uss.isYscrolling(easeFunctionSelectorList)) return;
+                            if(isFingerDown || backwardPhase || uss.isYScrolling(easeFunctionSelectorList)) return;
                             easeFunctionSelectorList.style.pointerEvents = "none";
                             easeFunctionSelectorList.style.overflowY = "hidden";
                             window.requestAnimationFrame(() => {easeFunctionSelectorList.style.overflowY = "scroll"});
@@ -277,7 +277,7 @@
       const maxScroll = uss.getMaxScrollY(easeFunctionSelectorList);
       if(_currentPos > maxScroll - _elasticLimit + 1) {
         scrollbarTimeout = setTimeout(() => {
-                            if(isFingerDown || backwardPhase || uss.isYscrolling(easeFunctionSelectorList)) return;
+                            if(isFingerDown || backwardPhase || uss.isYScrolling(easeFunctionSelectorList)) return;
                             easeFunctionSelectorList.style.pointerEvents = "none";
                             easeFunctionSelectorList.style.overflowY = "hidden";
                             window.requestAnimationFrame(() => {easeFunctionSelectorList.style.overflowY = "scroll"});

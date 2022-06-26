@@ -549,7 +549,7 @@ describe("scrollToBy-StillStart-True-Body", function() {
     
     const _testCalculatorX = () => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(!uss.isXscrolling()) return total; //testing phase of the setXStepLengthCalculator
+            if(!uss.isXScrolling()) return total; //testing phase of the setXStepLengthCalculator
             if(!_remaningX) _remaningX = remaning;
             if(!_originalTimestampEqualsTimeStampX) _originalTimestampEqualsTimeStampX = originalTimestamp === currentTimestamp;
             if(!_totalX) _totalX = total;
@@ -558,7 +558,7 @@ describe("scrollToBy-StillStart-True-Body", function() {
     }
     const _testCalculatorY = () => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(!uss.isYscrolling()) return total; //testing phase of the setYStepLengthCalculator
+            if(!uss.isYScrolling()) return total; //testing phase of the setYStepLengthCalculator
             if(!_remaningY) _remaningY = remaning;
             if(!_originalTimestampEqualsTimeStampY) _originalTimestampEqualsTimeStampY = originalTimestamp === currentTimestamp;
             if(!_totalY) _totalY = total;
