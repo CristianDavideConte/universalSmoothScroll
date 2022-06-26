@@ -8,13 +8,6 @@
  *  - getYScrollableParent
  */
 
-function waitForUssCallback(fun) {   
-  return new Cypress.Promise((resolve, reject) => {
-      window.setTimeout(resolve, 3500);
-      fun(resolve, reject);
-  });
-}
-
 describe("getFinalYPosition-Body", function() {
     var uss;
     var finalYPosition;
@@ -29,19 +22,18 @@ describe("getFinalYPosition-Body", function() {
               0: [Cypress.env("failingValuesNoUndefined")]
             })
             .then(() => {
-              cy.wrap(null).then(() => {
-                  return waitForUssCallback(
-                      (resolve) => {
-                          uss.scrollYTo(100, uss.getPageScroller(), resolve);
-                          finalYPosition = uss.getFinalYPosition();
-                      }
-                  ).then(() => {
-                    cy.bodyScrollTopShouldToBe(100);
-                    expect(finalYPosition).to.equal(100);
-                    expect(finalYPosition).to.equal(uss.getFinalYPosition());
-                    expect(finalYPosition).to.equal(uss.getScrollYCalculator()());
-                  });
-              });
+              cy.waitForUssCallback(
+                (resolve) => {
+                    uss.scrollYTo(100, uss.getPageScroller(), resolve);
+                    finalYPosition = uss.getFinalYPosition();
+                },
+                () => {
+                  cy.bodyScrollTopShouldToBe(100);
+                  expect(finalYPosition).to.equal(100);
+                  expect(finalYPosition).to.equal(uss.getFinalYPosition());
+                  expect(finalYPosition).to.equal(uss.getScrollYCalculator()());
+                }
+              );
             });
         });         
     });
@@ -61,21 +53,20 @@ describe("getScrollYDirection-Body", function() {
               0: [Cypress.env("failingValuesNoUndefined")]
             })
             .then(() => {
-              cy.wrap(null).then(() => {
-                  return waitForUssCallback(
-                      (resolve) => {
-                          uss.scrollYTo(100, uss.getPageScroller(), () => {
-                              uss.scrollYTo(50, uss.getPageScroller(), resolve);
-                              scrollYDirectionUp = uss.getScrollYDirection();
-                          });
-                          scrollYDirectionDown = uss.getScrollYDirection();
-                      }
-                  ).then(() => {
-                      expect(scrollYDirectionUp).to.equal(-1);
-                      expect(scrollYDirectionDown).to.equal(1);
-                      expect(uss.getScrollYDirection()).to.equal(0);
+              cy.waitForUssCallback(
+                (resolve) => {
+                  uss.scrollYTo(100, uss.getPageScroller(), () => {
+                      uss.scrollYTo(50, uss.getPageScroller(), resolve);
+                      scrollYDirectionUp = uss.getScrollYDirection();
                   });
-              });
+                  scrollYDirectionDown = uss.getScrollYDirection();
+                },
+                () => {
+                  expect(scrollYDirectionUp).to.equal(-1);
+                  expect(scrollYDirectionDown).to.equal(1);
+                  expect(uss.getScrollYDirection()).to.equal(0);
+                }
+              );
             });
           });         
     });
@@ -104,16 +95,15 @@ describe("getYStepLengthCalculator-Body", function() {
             uss.setYStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
             expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
             
-            cy.wrap(null).then(() => {
-              return waitForUssCallback(
-                  (resolve) => {
-                    uss.scrollYTo(100, uss.getPageScroller(), resolve);
-                  }
-              ).then(() => {
-                  expect(uss.getYStepLengthCalculator()).to.equal(nonTempTestCalculator);
-                  expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
-              });
-            });
+            cy.waitForUssCallback(
+              (resolve) => {
+                uss.scrollYTo(100, uss.getPageScroller(), resolve);
+              },
+              () => {
+                expect(uss.getYStepLengthCalculator()).to.equal(nonTempTestCalculator);
+                expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
+              }
+            );
           });
         });         
     });
@@ -162,14 +152,13 @@ describe("getScrollYCalculator", function() {
                                                       }
                 ));
 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {}
-                    ).then(() => {
-                      expect(result).to.be.true;
-                      expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
-                    });
-                });
+                cy.waitForUssCallback(
+                  undefined, //default value: resolve after timeout
+                  () => {
+                    expect(result).to.be.true;
+                    expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
+                  }
+                );
             });
           });        
     });

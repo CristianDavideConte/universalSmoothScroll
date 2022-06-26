@@ -4,13 +4,6 @@
  *  - setXStepLength
  */
 
-function waitForUssCallback(fun) {   
-    return new Cypress.Promise((resolve, reject) => {
-        window.setTimeout(resolve, 3500);
-        fun(resolve, reject);
-    });
-}
-
 describe("setXStepLengthCalculator-Body", function() {
     var uss;
     var _testCalculatorInvalidTypeString = () => "";
@@ -60,16 +53,15 @@ describe("setXStepLengthCalculator-Body", function() {
                     uss.setXStepLengthCalculator(_testCalculatorValidType2, uss.getPageScroller(), true, true);
                     expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(_testCalculatorValidType2);
                     
-                    cy.wrap(null).then(() => {
-                        return waitForUssCallback(
-                            (resolve) => {
-                                uss.scrollXTo(100, uss.getPageScroller(), resolve);
-                            }
-                        ).then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(100, uss.getPageScroller(), resolve);
+                        },
+                        () => {
                             cy.bodyScrollLeftShouldToBe(100);
                             expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
-                        });
-                    });
+                        }
+                    );
                 });
             });     
     });
@@ -109,16 +101,15 @@ describe("setXStepLength", function() {
                     uss.setXStepLength(_testStepInvalidTypeString, uss.getPageScroller());
                     expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
                     
-                    cy.wrap(null).then(() => {
-                        return waitForUssCallback(
-                            (resolve) => {
-                                uss.scrollXTo(100, uss.getPageScroller(), resolve);
-                            }
-                        ).then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(100, uss.getPageScroller(), resolve);
+                        },
+                        () => {
                             cy.bodyScrollLeftShouldToBe(100);
                             expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);
-                        });
-                    });
+                        }
+                    );
                 });
             });     
     });
