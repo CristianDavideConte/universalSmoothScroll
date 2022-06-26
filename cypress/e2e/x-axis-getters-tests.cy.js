@@ -26,7 +26,8 @@ describe("getFinalXPosition-Body", function() {
               (resolve) => {
                 uss.scrollXTo(100, uss.getPageScroller(), resolve);
                 finalXPosition = uss.getFinalXPosition();
-              },
+              }
+            ).then(
               () => {
                 cy.bodyScrollLeftShouldToBe(100);
                 expect(finalXPosition).to.equal(100);
@@ -60,7 +61,8 @@ describe("getScrollXDirection-Body", function() {
                     scrollYDirectionLeft = uss.getScrollXDirection();
                 });
                 scrollYDirectionRight = uss.getScrollXDirection();
-              },
+              }
+            ).then(
               () => {
                 expect(scrollYDirectionLeft).to.equal(-1);
                 expect(scrollYDirectionRight).to.equal(1);
@@ -98,7 +100,8 @@ describe("getXStepLengthCalculator-Body", function() {
               cy.waitForUssCallback(
                 (resolve) => {
                   uss.scrollXTo(100, uss.getPageScroller(), resolve);
-                },
+                }
+              ).then(
                 () => {
                     expect(uss.getXStepLengthCalculator()).to.equal(nonTempTestCalculator);
                     expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
@@ -153,8 +156,9 @@ describe("getScrollXCalculator", function() {
               ));
 
               cy.waitForUssCallback(
-                undefined, //default value: resolve after timeout
-                () => {
+                undefined //default value: resolve after timeout
+              ).then(
+                  () => {
                   expect(result).to.be.true;
                   expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
                 }

@@ -28,7 +28,8 @@ describe("getXStepLength", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollXTo(100, uss.getPageScroller(), resolve);
-                    },
+                    }
+                ).then(
                     () => {
                         expect(uss.getXStepLength()).to.equal(10);
                     }
@@ -54,7 +55,8 @@ describe("getYStepLength", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollYTo(100, uss.getPageScroller(), resolve);
-                    },
+                    }
+                ).then(
                     () => {
                         expect(uss.getYStepLength()).to.equal(10);
                     }

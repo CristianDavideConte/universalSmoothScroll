@@ -26,7 +26,8 @@ describe("getFinalYPosition-Body", function() {
                 (resolve) => {
                     uss.scrollYTo(100, uss.getPageScroller(), resolve);
                     finalYPosition = uss.getFinalYPosition();
-                },
+                }
+              ).then(
                 () => {
                   cy.bodyScrollTopShouldToBe(100);
                   expect(finalYPosition).to.equal(100);
@@ -60,7 +61,8 @@ describe("getScrollYDirection-Body", function() {
                       scrollYDirectionUp = uss.getScrollYDirection();
                   });
                   scrollYDirectionDown = uss.getScrollYDirection();
-                },
+                }
+              ).then(
                 () => {
                   expect(scrollYDirectionUp).to.equal(-1);
                   expect(scrollYDirectionDown).to.equal(1);
@@ -98,7 +100,8 @@ describe("getYStepLengthCalculator-Body", function() {
             cy.waitForUssCallback(
               (resolve) => {
                 uss.scrollYTo(100, uss.getPageScroller(), resolve);
-              },
+              }
+            ).then(
               () => {
                 expect(uss.getYStepLengthCalculator()).to.equal(nonTempTestCalculator);
                 expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
@@ -153,7 +156,8 @@ describe("getScrollYCalculator", function() {
                 ));
 
                 cy.waitForUssCallback(
-                  undefined, //default value: resolve after timeout
+                  undefined //default value: resolve after timeout
+                ).then(
                   () => {
                     expect(result).to.be.true;
                     expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);

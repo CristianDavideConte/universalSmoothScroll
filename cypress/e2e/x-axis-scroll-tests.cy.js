@@ -28,7 +28,7 @@ describe("isXScrolling-Body", function() {
                     cy.waitForUssCallback(
                         (resolve) => {
                             uss.scrollXTo(100, uss.getPageScroller(), () => {
-                                isXscrolling = "pippo"//uss.isXscrolling();
+                                isXscrolling = uss.isXscrolling();
                                 resolve();
                             });
                             wasXScrolling = uss.isXscrolling();

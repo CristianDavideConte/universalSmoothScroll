@@ -56,7 +56,8 @@ describe("setXStepLengthCalculator-Body", function() {
                     cy.waitForUssCallback(
                         (resolve) => {
                             uss.scrollXTo(100, uss.getPageScroller(), resolve);
-                        },
+                        }
+                    ).then(
                         () => {
                             cy.bodyScrollLeftShouldToBe(100);
                             expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.equal(_testCalculatorValidType3);
@@ -104,7 +105,8 @@ describe("setXStepLength", function() {
                     cy.waitForUssCallback(
                         (resolve) => {
                             uss.scrollXTo(100, uss.getPageScroller(), resolve);
-                        },
+                        }
+                    ).then(
                         () => {
                             cy.bodyScrollLeftShouldToBe(100);
                             expect(uss.getXStepLength(uss.getPageScroller())).to.equal(_testStepValidType2);

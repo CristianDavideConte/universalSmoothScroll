@@ -63,7 +63,8 @@ describe("setStepLengthCalculator-Body", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollTo(200, 100, uss.getPageScroller(), resolve);
-                    },
+                    }
+                ).then(
                     () => {
                         cy.bodyScrollLeftShouldToBe(200);
                         cy.bodyScrollTopShouldToBe(100);
@@ -122,7 +123,8 @@ describe("setStepLength", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollTo(150, 70, uss.getPageScroller(), resolve);
-                    },
+                    }
+                ).then(
                     () => {
                         cy.bodyScrollLeftShouldToBe(150);
                         cy.bodyScrollTopShouldToBe(70);
