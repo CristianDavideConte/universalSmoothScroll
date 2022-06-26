@@ -35,7 +35,12 @@ Cypress.Commands.addAll({
         .should("have.prop", "scrollTop")
         .and("eq", value);
     },
-    waitForUssCallback(fun, tests) {
+    /**
+     * The passed fun parameter should resolve the promise.
+     * If it's undefined the promise is resolve after a timeout.
+     * The passed tests function is executed when the promise is resolved. 
+     */
+    waitForUssCallback(fun = (resolve, reject) => setTimeout(resolve, 3500), tests) {
         new Promise(
             (resolve, reject) => {
                 fun(resolve, reject);

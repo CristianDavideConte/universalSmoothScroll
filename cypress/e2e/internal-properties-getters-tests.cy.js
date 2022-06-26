@@ -11,13 +11,6 @@
  *  - getDebugMode
  */
 
-function waitForUssCallback(fun) {   
-    return new Cypress.Promise((resolve, reject) => {
-        window.setTimeout(resolve, 3500);
-        fun(resolve, reject);
-    });
-}
-
 describe("getXStepLength", function() {
     var uss;
     it("Tests the getXStepLength method", function() {
@@ -32,15 +25,14 @@ describe("getXStepLength", function() {
                 uss.setXStepLength(10);
                 expect(uss.getXStepLength()).to.equal(10);
 
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            uss.scrollXTo(100, uss.getPageScroller(), resolve);
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollXTo(100, uss.getPageScroller(), resolve);
+                    },
+                    () => {
                         expect(uss.getXStepLength()).to.equal(10);
-                    });
-                });
+                    }
+                );
             });        
     });
 })
@@ -59,15 +51,14 @@ describe("getYStepLength", function() {
                 uss.setYStepLength(10);
                 expect(uss.getYStepLength()).to.equal(10);
             
-                cy.wrap(null).then(() => {
-                    return waitForUssCallback(
-                        (resolve) => {
-                            uss.scrollYTo(100, uss.getPageScroller(), resolve);
-                        }
-                    ).then(() => {
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollYTo(100, uss.getPageScroller(), resolve);
+                    },
+                    () => {
                         expect(uss.getYStepLength()).to.equal(10);
-                    });
-                });
+                    }
+                );
             });        
     });
 })

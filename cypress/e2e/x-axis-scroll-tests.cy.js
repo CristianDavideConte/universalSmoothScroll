@@ -6,15 +6,6 @@
  *  - stopScrollingX
  */
 
-/*
-function waitForUssCallback(fun) {   
-    return new Cypress.Promise((resolve, reject) => {
-        window.setTimeout(resolve, 3500);
-        fun(resolve, reject);
-    });
-}
-*/
-
 describe("isXScrolling-Body", function() {
     var uss;
     var wasXScrolling;
@@ -34,17 +25,19 @@ describe("isXScrolling-Body", function() {
                     expect(uss.isXscrolling()).to.be.false;
                 })
                 .then(() => {
-                    cy.waitForUssCallback((resolve) => {
-                        uss.scrollXTo(100, uss.getPageScroller(), () => {
-                            isXscrolling = uss.isXscrolling();
-                            resolve();
-                        });
-                        wasXScrolling = uss.isXscrolling();
-                    }, 
-                    () => {
-                        expect(wasXScrolling).to.be.true;
-                        expect(isXscrolling).to.be.false;
-                    });
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(100, uss.getPageScroller(), () => {
+                                isXscrolling = uss.isXscrolling();
+                                resolve();
+                            });
+                            wasXScrolling = uss.isXscrolling();
+                        }, 
+                        () => {
+                            expect(wasXScrolling).to.be.true;
+                            expect(isXscrolling).to.be.false;
+                        }
+                    );
             });
         });         
     });
