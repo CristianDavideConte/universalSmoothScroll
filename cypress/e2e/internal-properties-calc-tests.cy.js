@@ -115,6 +115,12 @@ describe("calcScrollbarsDimensions", function() {
 
 describe("calcScrollbarsDimensions-webkit-scrollbar-modifiers", function() {
     var uss;
+    
+    //Source: https://stackoverflow.com/questions/7000190/detect-all-firefox-versions-in-js
+    function browserIsFirefox(window) {
+        return window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    }
+
     function arraysAreEqual(arr1, arr2) {
         if(!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
         if(arr1.length !== arr2.length) return false;
@@ -127,6 +133,9 @@ describe("calcScrollbarsDimensions-webkit-scrollbar-modifiers", function() {
         cy.visit("index.html"); 
         cy.window()
             .then((win) => {
+                //Firefox doens't support the ::webkit-scrollbar css modifier
+                if(browserIsFirefox(win)) return;
+                
                 uss = win.uss;
                 uss._containersData = new Map();
                 

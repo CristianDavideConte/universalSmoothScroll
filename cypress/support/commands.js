@@ -27,26 +27,26 @@
 Cypress.Commands.addAll({
     bodyScrollLeftShouldToBe(value) {
         cy.get("body")
-        .should("have.prop", "scrollLeft")
-        .and("eq", value);
+            .should("have.prop", "scrollLeft")
+            .and("eq", value);
     },
     bodyScrollTopShouldToBe(value) {
         cy.get("body")
-        .should("have.prop", "scrollTop")
-        .and("eq", value);
+            .should("have.prop", "scrollTop")
+            .and("eq", value);
     },
     /**
      * The passed fun parameter should resolve the promise.
      * If it's undefined the promise is resolve after a timeout.
      */
-    async waitForUssCallback(fun = (resolve, reject) => setTimeout(resolve, 3500)) {
-        const promise = new Promise(
-            (resolve, reject) => {
-                fun(resolve, reject);
-            }
-        );
-        const resolvedValue = await promise;
-        return resolvedValue
+    waitForUssCallback(fun = (resolve, reject) => setTimeout(resolve, 3500)) {
+        cy.wrap(null).then(() => {
+            return new Cypress.Promise(
+                (resolve, reject) => {
+                    fun(resolve, reject);
+                }
+            );
+        });
     },
     /** 
      * Input parameters structure:
