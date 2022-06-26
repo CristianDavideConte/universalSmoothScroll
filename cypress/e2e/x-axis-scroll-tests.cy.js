@@ -14,17 +14,6 @@ function waitForUssCallback(fun) {
     });
 }
 */
-function waitForUssCallback(fun, tests) {
-    new Promise(
-        (resolve, reject) => {
-            fun(resolve, reject);
-        }
-    ).then(
-        (resolvedValue, rejectedValue) => {
-            tests(resolvedValue, rejectedValue);
-        }
-    );
-}
 
 describe("isXScrolling-Body", function() {
     var uss;
@@ -38,14 +27,14 @@ describe("isXScrolling-Body", function() {
                 uss._containersData = new Map();
 
                 cy.testFailingValues(uss.isXscrolling, {
-                    0: []//[Cypress.env("failingValuesNoUndefined")]
+                    0: [Cypress.env("failingValuesNoUndefined")]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    //expect(res).to.be.undefined;
-                    //expect(uss.isXscrolling()).to.be.false;
+                    expect(res).to.be.undefined;
+                    expect(uss.isXscrolling()).to.be.false;
                 })
                 .then(() => {
-                    waitForUssCallback((resolve) => {
+                    cy.waitForUssCallback((resolve) => {
                         uss.scrollXTo(100, uss.getPageScroller(), () => {
                             isXscrolling = uss.isXscrolling();
                             resolve();
@@ -56,23 +45,6 @@ describe("isXScrolling-Body", function() {
                         expect(wasXScrolling).to.be.true;
                         expect(isXscrolling).to.be.false;
                     });
-
-                    /*
-                    cy.wrap(null).then(() => {
-                        return waitForUssCallback(
-                            (resolve) => {
-                                uss.scrollXTo(100, uss.getPageScroller(), () => {
-                                    isXscrolling = uss.isXscrolling();
-                                    resolve();
-                                });
-                                wasXScrolling = uss.isXscrolling();
-                            }
-                        ).then(() => {
-                            expect(wasXScrolling).to.be.true;
-                            expect(isXscrolling).to.be.false;
-                        });
-                    });
-                    */
             });
         });         
     });

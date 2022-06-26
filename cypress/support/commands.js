@@ -35,6 +35,17 @@ Cypress.Commands.addAll({
         .should("have.prop", "scrollTop")
         .and("eq", value);
     },
+    waitForUssCallback(fun, tests) {
+        new Promise(
+            (resolve, reject) => {
+                fun(resolve, reject);
+            }
+        ).then(
+            (resolvedValue, rejectedValue) => {
+                tests(resolvedValue, rejectedValue);
+            }
+        );
+    },
     /** 
      * Input parameters structure:
      *  command = uss.nameOfMethod
