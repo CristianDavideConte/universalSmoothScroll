@@ -252,7 +252,7 @@ var uss = {
   },
   getFinalXPosition: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) { 
-      //If there's no scroll-animation on the x-axis, the current position is returned instead
+      //If there's no scroll-animation on the x-axis, the current position is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[2] === 0 ? 0 : _containerData[2] || uss.getScrollXCalculator(container)();
     }
@@ -260,7 +260,7 @@ var uss = {
   },
   getFinalYPosition: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) { 
-      //If there's no scroll-animation on the y-axis, the current position is returned instead
+      //If there's no scroll-animation on the y-axis, the current position is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[3] === 0 ? 0 : _containerData[3] || uss.getScrollYCalculator(container)();
     }
@@ -268,7 +268,7 @@ var uss = {
   },
   getScrollXDirection: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) { 
-      //If there's no scroll-animation on the x-axis, 0 is returned instead
+      //If there's no scroll-animation on the x-axis, 0 is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[4] || 0;
     }
@@ -276,7 +276,7 @@ var uss = {
   },
   getScrollYDirection: (container = uss._pageScroller) => {
     if(container === window || container instanceof HTMLElement) { 
-      //If there's no scroll-animation on the y-axis, 0 is returned instead
+      //If there's no scroll-animation on the y-axis, 0 is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[5] || 0;
     }
@@ -1167,7 +1167,7 @@ var uss = {
       const _isXScrolling = !!_containerData[0];
       const _isYScrolling = !!_containerData[1];
       
-      //The container was already in place, directly execute the callback
+      //The container was already in place, directly execute the callback.
       if(!_isXScrolling && !_isYScrolling) {
         callback();
         return;
@@ -1214,7 +1214,7 @@ var uss = {
       const _isXScrolling = !!_containerData[0];
       const _isYScrolling = !!_containerData[1];
       
-      //The container was already in place, directly execute the callback
+      //The container was already in place, directly execute the callback.
       if(!_isXScrolling && !_isYScrolling) {
         callback();
         return;
@@ -1291,7 +1291,7 @@ var uss = {
       const _elementInitialX = _elementRect.left - _containerRect.left; //_currentElement's x-coordinate relative to it's container
       const _elementInitialY = _elementRect.top  - _containerRect.top;  //_currentElement's y-coordinate relative to it's container
 
-      //Align to "nearest" is an indirect way to say: Align to "top" / "bottom" / "center"
+      //Align to "nearest" is an indirect way to say: Align to "top" / "bottom" / "center".
       if(alignToLeft === "nearest") {
         const _leftDelta   = _elementInitialX > 0 ? _elementInitialX : -_elementInitialX;  //distance from left border    (container<-element  container)
         const _rightDelta  = Math.abs(_containerWidth - _elementInitialX - _elementWidth); //distance from right border   (container  element->container)
@@ -1583,8 +1583,8 @@ var uss = {
 window.addEventListener("resize", () => {uss._windowHeight = window.innerHeight; uss._windowWidth = window.innerWidth;}, {passive:true});
 window.addEventListener("load", () => {
   //Calculate the maximum sizes of scrollbars on the webpage by:
-  // - creating a <div> with id = "__ussScrollBox"
-  // - giving that <div> a mini-stylesheet that forces it to show the scrollbars
+  // - creating a <div> with id = "__ussScrollBox".
+  // - giving that <div> a mini-stylesheet that forces it to show the scrollbars.
   const __scrollBoxStyle = document.createElement("style");
   const __scrollBox = document.createElement("div");
   __scrollBox.id = "__ussScrollBox";

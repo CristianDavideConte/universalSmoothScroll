@@ -64,8 +64,8 @@ describe("getScrollYDirection-Body", function() {
                 }
               ).then(
                 () => {
-                  expect(scrollYDirectionUp).to.equal(-1);
                   expect(scrollYDirectionDown).to.equal(1);
+                  expect(scrollYDirectionUp).to.equal(-1);
                   expect(uss.getScrollYDirection()).to.equal(0);
                 }
               );

@@ -42,7 +42,7 @@ describe("getFinalXPosition-Body", function() {
 
 describe("getScrollXDirection-Body", function() {
     var uss;
-    var scrollYDirectionLeft, scrollYDirectionRight;
+    var scrollXDirectionLeft, scrollXDirectionRight;
     it("Tests the getScrollXDirection method", function() {
       cy.visit("index.html"); 
       cy.window()
@@ -58,14 +58,14 @@ describe("getScrollXDirection-Body", function() {
               (resolve) => {
                 uss.scrollXTo(100, uss.getPageScroller(), () => {
                     uss.scrollXTo(50, uss.getPageScroller(), resolve);
-                    scrollYDirectionLeft = uss.getScrollXDirection();
+                    scrollXDirectionLeft = uss.getScrollXDirection();
                 });
-                scrollYDirectionRight = uss.getScrollXDirection();
+                scrollXDirectionRight = uss.getScrollXDirection();
               }
             ).then(
               () => {
-                expect(scrollYDirectionLeft).to.equal(-1);
-                expect(scrollYDirectionRight).to.equal(1);
+                expect(scrollXDirectionRight).to.equal(1);
+                expect(scrollXDirectionLeft).to.equal(-1);
                 expect(uss.getScrollXDirection()).to.equal(0);
               }
             );
