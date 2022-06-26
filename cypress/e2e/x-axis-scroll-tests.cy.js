@@ -6,11 +6,24 @@
  *  - stopScrollingX
  */
 
+/*
 function waitForUssCallback(fun) {   
     return new Cypress.Promise((resolve, reject) => {
         window.setTimeout(resolve, 3500);
         fun(resolve, reject);
     });
+}
+*/
+function waitForUssCallback(fun, tests) {
+    new Promise(
+        (resolve, reject) => {
+            fun(resolve, reject);
+        }
+    ).then(
+        (resolvedValue, rejectedValue) => {
+            tests(resolvedValue, rejectedValue);
+        }
+    );
 }
 
 describe("isXScrolling-Body", function() {
@@ -25,13 +38,26 @@ describe("isXScrolling-Body", function() {
                 uss._containersData = new Map();
 
                 cy.testFailingValues(uss.isXscrolling, {
-                    0: [Cypress.env("failingValuesNoUndefined")]
+                    0: []//[Cypress.env("failingValuesNoUndefined")]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(res).to.be.undefined;
-                    expect(uss.isXscrolling()).to.be.false;
+                    //expect(res).to.be.undefined;
+                    //expect(uss.isXscrolling()).to.be.false;
                 })
                 .then(() => {
+                    waitForUssCallback((resolve) => {
+                        uss.scrollXTo(100, uss.getPageScroller(), () => {
+                            isXscrolling = uss.isXscrolling();
+                            resolve();
+                        });
+                        wasXScrolling = uss.isXscrolling();
+                    }, 
+                    () => {
+                        expect(wasXScrolling).to.be.true;
+                        expect(isXscrolling).to.be.false;
+                    });
+
+                    /*
                     cy.wrap(null).then(() => {
                         return waitForUssCallback(
                             (resolve) => {
@@ -46,11 +72,12 @@ describe("isXScrolling-Body", function() {
                             expect(isXscrolling).to.be.false;
                         });
                     });
+                    */
             });
         });         
     });
 })
-
+/*
 describe("isXScrolling-StoppedScrollingWhileAnimating-Body", function() {
     var uss;
     var wasXScrolling;
@@ -501,3 +528,4 @@ describe("stopScrollingX-immediatelyStopped-Body", function() {
             });         
     });
 })
+*/
