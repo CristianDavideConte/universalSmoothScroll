@@ -38,18 +38,15 @@ Cypress.Commands.addAll({
     /**
      * The passed fun parameter should resolve the promise.
      * If it's undefined the promise is resolve after a timeout.
-     * The passed tests function is executed when the promise is resolved. 
      */
-    waitForUssCallback(fun = (resolve, reject) => setTimeout(resolve, 3500), tests) {
-        new Promise(
+    async waitForUssCallback(fun = (resolve, reject) => setTimeout(resolve, 3500)) {
+        const promise = new Promise(
             (resolve, reject) => {
                 fun(resolve, reject);
             }
-        ).then(
-            (resolvedValue, rejectedValue) => {
-                tests(resolvedValue, rejectedValue);
-            }
         );
+        const resolvedValue = await promise;
+        return resolvedValue
     },
     /** 
      * Input parameters structure:

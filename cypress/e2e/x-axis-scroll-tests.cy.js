@@ -33,13 +33,14 @@ describe("isXScrolling-Body", function() {
                             });
                             wasXScrolling = uss.isXscrolling();
                         }, 
+                    ).then(
                         () => {
                             expect(wasXScrolling).to.be.true;
                             expect(isXscrolling).to.be.false;
                         }
                     );
-            });
-        });         
+                });
+            });         
     });
 })
 /*
