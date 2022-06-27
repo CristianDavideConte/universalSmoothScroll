@@ -423,6 +423,30 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     Sets the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property to the passed value if compatible.
    </td>
   </tr> 
+
+  <tr id = "setErrorLoggerFun">
+   <td rowspan = "1" align = "center">
+    <code>setErrorLogger</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setErrorLogger"><code>newErrorLogger</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Sets the <a href = "./VariablesAbout.md#_errorLogger"><code>_errorLogger</code></a> property to the passed value if compatible.
+   </td>
+  </tr> 
+  
+  <tr id = "setWarningLoggerFun">
+   <td rowspan = "1" align = "center">
+    <code>setWarningLogger</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setWarningLogger"><code>newWarningLogger</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Sets the <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger</code></a> property to the passed value if compatible.
+   </td>
+  </tr> 
          
   <tr id = "calcXStepLengthFun">
    <td rowspan = "1" align = "center">
@@ -1355,10 +1379,55 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>String</code>
   </td>
   <td rowspan = "1" align = "left">
-    `legacy`, `disabled` or any other string.
+    <code>"legacy"</code>, <code>"disabled"</code> or any other <i><strong>string</strong></i>. <br/>
+    This function is <i><strong>not</strong></i> case sensitive.
   </td>
   </tr>
-      
+  
+  <tr id = "setErrorLogger">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setErrorLoggerFun"><code>setErrorLogger</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>newErrorLogger</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Function</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    A function that should log the API's <strong>error messages</strong>. <br/>
+    It is always passed the following input parameters <i>(in this order)</i>: 
+    <ul>
+      <li>The name of the function that has invoked this logger</li>
+      <li>What the invoking function was expecting to received</li>
+      <li>What the invoking function actually received</li>
+    </ul>
+    The instructions given by the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property value should be followed.
+  </td>
+  </tr>
+    
+  <tr id = "setWarningLogger">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#setWarningLoggerFun"><code>setWarningLogger</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>newWarningLogger</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Function</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    A function that should log the API's <strong>warning messages</strong>. <br/>
+    It is always passed the following input parameters <i>(in this order)</i>: 
+    <ul>
+      <li>The element that caused this function to be invoked</li>
+      <li>The warning message</li>
+      <li>A boolean that is <code>true</code> if the first parameter is a string and its quotation marks should be displayed, <code>false</code> otherwise.</li>
+    </ul>
+    The instructions given by the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property value should be followed.
+  </td>
+  </tr>
+
   <tr id = "calcXStepLength">
   <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#calcXStepLengthFun"><code>calcXStepLength</code></a>

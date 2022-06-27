@@ -21,8 +21,8 @@ Name | Type | Description
 `DEFAULT_TEST_CALCULATOR_SCROLL_VALUE` | `Number` | The default number of pixel scrolled when testing a newStepLengthCalculator.
 `DEFAULT_TEST_CALCULATOR_DURATION` | `Number` | The default number of milliseconds the test of a newStepLengthCalculator should last.
 `DEFAULT_FRAME_TIME` | `Number` | The initial value of the [`_framesTime`](./VariablesAbout.md#_framesTime) property: it initially assumes that the user's browser/screen is refreshing at 60fps.   
-`DEFAULT_ERROR_LOGGER` | `Function` | A function that logs the API error messages inside the browser's console.
-`DEFAULT_WARNING_LOGGER` | `Function` | A function that logs the API warning messages inside the browser's console.
+`DEFAULT_ERROR_LOGGER` | `Function` | The initial value of the [`_errorLogger`](./VariablesAbout.md#_errorLogger) property: it logs the API error messages inside the browser's console.
+`DEFAULT_WARNING_LOGGER` | `Function` | The initial value of the [`_warningLogger`](./VariablesAbout.md#_warningLogger) property: it logs the API error messages inside the browser's console.
 
 <br/>
 

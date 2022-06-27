@@ -151,7 +151,30 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <li> <strong>"disabled"</strong> <i>(case insensitive)</i> the API won't show any warning or error message. </li> 
     <li> <strong>"legacy"</strong> <i>(case insensitive)</i> the API won't style any warning or error message. </li> 
    </ul> 
-    Any other <code><strong>String</strong></code> will make the warnings and error messages be displayed with the default API's styling.
+    Any other <i><strong>string</strong></i> will make the warnings and error messages be displayed with the default API's styling. <br/>
+    Custom values of the <a href = "./VariablesAbout.md#_errorLogger"><code>_errorLogger</code></a>  and/or <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger_</code></a> properties should respect this preference.
+   </td>
+  </tr>  
+  <tr id = "_errorLogger">
+   <td rowspan = "1" align = "center">
+    <code>_errorLogger</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Logs the API error messages inside the browser's console.
+   </td>
+  </tr>
+  <tr id = "_warningLogger">
+   <td rowspan = "1" align = "center">
+    <code>_warningLogger</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Logs the API warning messages inside the browser's console.
    </td>
   </tr>
  </tbody>
