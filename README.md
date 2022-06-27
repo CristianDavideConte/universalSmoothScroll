@@ -18,7 +18,7 @@
 
 <br/><p align="center">
     <a href="https://github.com/CristianDavideConte/universalSmoothScroll">
-        <img src="https://raw.githubusercontent.com/CristianDavideConte/universalSmoothScroll/master/docs/images/logo.png" height="140">
+        <img src="./docs/images/logo.png" height="140">
     </a>
 </p>
 <h1 align="center">Universal Smooth Scroll</h1>
