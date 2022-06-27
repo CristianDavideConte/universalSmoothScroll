@@ -148,8 +148,8 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    Controls the way the warning and error messages are logged in the browser's console. <br/> 
    If it's set to: 
    <ul> 
-    <li> <strong>"disabled"</strong> <i>(case insensitive)</i> the API won't show any warning or error message. </li> 
-    <li> <strong>"legacy"</strong> <i>(case insensitive)</i> the API won't style any warning or error message. </li> 
+    <li><code>"disabled"</code> <i>(case insensitive)</i> the API won't show any warning or error message. </li> 
+    <li><code>"legacy"</code> <i>(case insensitive)</i> the API won't style any warning or error message. </li> 
    </ul> 
     Any other <i><strong>string</strong></i> will make the warnings and error messages be displayed with the default API's styling. <br/>
     Custom values of the <a href = "./VariablesAbout.md#_errorLogger"><code>_errorLogger</code></a>  and/or <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger</code></a> properties should respect this preference.

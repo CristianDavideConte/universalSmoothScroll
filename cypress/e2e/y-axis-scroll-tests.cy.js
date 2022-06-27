@@ -51,7 +51,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
     var _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ < 10) return total / 10;
+            if(i++ < 2) return total / 10;
             uss.stopScrollingY(container);
             isYScrolling = uss.isYScrolling(container);
             _resolve();
@@ -65,7 +65,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating-Body", function() {
                 uss._containersData = new Map();
 
                 expect(uss.isYScrolling()).to.be.false;
-                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
 
 
                 cy.waitForUssCallback(
@@ -94,8 +94,8 @@ describe("scrollYTo-Body", function() {
                 uss._containersData = new Map();
 
                 cy.testFailingValues(uss.scrollYTo, {
-                    0: [[Cypress.env("failingValuesNoUndefined")],
-                        [Cypress.env("failingValuesNoUndefined")]
+                    0: [Cypress.env("failingValuesNoFiniteNumber"),
+                        Cypress.env("failingValuesNoUndefined")
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
@@ -206,7 +206,7 @@ describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
             if(!uss.isYScrolling()) return total; //testing phase of the setYStepLengthCalculator
             i++;
-            if(i < 10) return total / 10;
+            if(i < 2) return total / 10;
             uss.stopScrollingY(container, _resolve);
         }
     }
@@ -217,7 +217,7 @@ describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);   
+                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);   
 
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -226,7 +226,7 @@ describe("scrollYTo-StoppedScrollingWhileAnimating-Body", function() {
                     }
                 ).then(
                     () => {
-                        cy.bodyScrollTopShouldToBe(90);
+                        cy.bodyScrollTopShouldToBe(10);
                     }
                 );
             });         
@@ -238,7 +238,7 @@ describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating-Body", function() {
     var _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ === 10) uss.scrollYTo(50, uss.getPageScroller(), _resolve);
+            if(i++ === 2) uss.scrollYTo(50, uss.getPageScroller(), _resolve);
             return total / 10;
         }
     }
@@ -249,7 +249,7 @@ describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
   
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -275,8 +275,8 @@ describe("scrollYBy-Body", function() {
                 uss._containersData = new Map();
                 
                 cy.testFailingValues(uss.scrollYBy, {
-                    0: [[Cypress.env("failingValuesNoUndefined")],
-                        [Cypress.env("failingValuesNoUndefined")]
+                    0: [Cypress.env("failingValuesNoFiniteNumber"),
+                        Cypress.env("failingValuesNoUndefined")
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
@@ -317,7 +317,7 @@ describe("scrollYToBy-StillStart-True-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map(); 
                 
-                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true); 
+                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false); 
                     
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -360,7 +360,7 @@ describe("scrollYToBy-StillStart-False-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map(); 
                 
-                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);        
+                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);        
                     
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -391,7 +391,7 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
     var _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ === 10) uss.scrollYBy(90, uss.getPageScroller(), _resolve, false);
+            if(i++ === 2) uss.scrollYBy(90, uss.getPageScroller(), _resolve, false);
             return total / 10;
         }
     }
@@ -402,7 +402,7 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fu
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setYStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
                 
                 cy.waitForUssCallback(
                     (resolve) => {

@@ -82,6 +82,12 @@ You can try most of the features on:
           
   <tr>
    <td align = "center">
+    <a href = "./docs/DevHelpers.md"><code>Dev-Helpers library</code></a>   
+   </td>
+  </tr>
+
+  <tr>
+   <td align = "center">
     <a href = "./docs/FAQ.md"><code>F.A.Q.</code></a>   
    </td>
   </tr>

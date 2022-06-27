@@ -26,17 +26,17 @@ uss.setXStepLength() //Setter
 <br/>
 
 The main scrolling-functions are:
-* [`uss.scrollXTo()`](./FunctionsAbout.md#scrollXToFun),  [`uss.scrollYTo()`](./FunctionsAbout.md#scrollYToFun) and [`uss.scrollTo()`](./FunctionsAbout.md#scrollToFun)
-* [`uss.scrollXBy()`](./FunctionsAbout.md#scrollXByFun),  [`uss.scrollYBy()`](./FunctionsAbout.md#scrollYByFun) and [`uss.scrollBy()`](./FunctionsAbout.md#scrollByFun)
-* [`uss.scrollIntoView()`](./FunctionsAbout.md#scrollIntoViewFun) and [`uss.scrollIntoViewIfNeeded()`](./FunctionsAbout.md#scrollIntoViewIfNeededFun) <br/>
+* [`scrollXTo`](./FunctionsAbout.md#scrollXToFun),  [`scrollYTo`](./FunctionsAbout.md#scrollYToFun) and [`scrollTo`](./FunctionsAbout.md#scrollToFun)
+* [`scrollXBy`](./FunctionsAbout.md#scrollXByFun),  [`scrollYBy`](./FunctionsAbout.md#scrollYByFun) and [`scrollBy`](./FunctionsAbout.md#scrollByFun)
+* [`scrollIntoView`](./FunctionsAbout.md#scrollIntoViewFun) and [`scrollIntoViewIfNeeded`](./FunctionsAbout.md#scrollIntoViewIfNeededFun) <br/>
 
 Any scroll-animation can be stopped at any time by using:
-* [`uss.stopScrollingX()`](./FunctionsAbout.md#stopScrollingXFun)
-* [`uss.stopScrollingY()`](./FunctionsAbout.md#stopScrollingYFun)
-* [`uss.stopScrolling()`](./FunctionsAbout.md#stopScrollingFun)
+* [`stopScrollingX`](./FunctionsAbout.md#stopScrollingXFun)
+* [`stopScrollingY`](./FunctionsAbout.md#stopScrollingYFun)
+* [`stopScrolling`](./FunctionsAbout.md#stopScrollingFun)
 
 There's also a handy function for anchor's smooth scrolling management:
-* [`uss.hrefSetup()`](./FunctionsAbout.md#hrefSetupFun)
+* [`hrefSetup`](./FunctionsAbout.md#hrefSetupFun)
 
 <br/>
 

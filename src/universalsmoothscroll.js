@@ -9,8 +9,6 @@
  *                       It's 38px at 789px of (initial window's) height and 22px at 1920px of (initial window's) height.
  * DEFAULT_MIN_ANIMATION_FRAMES: number, The initial value of the "_minAnimationFrame" property: 
  *                               it represent the default lowest number of frames any scroll-animation should last if no StepLengthCalculator is set for a container.
- * DEFAULT_TEST_CALCULATOR_SCROLL_VALUE: number, the default number of pixel scrolled when testing a newScrollCalculator.
- * DEFAULT_TEST_CALCULATOR_DURATION: number, the default number of milliseconds the test of a newStepLengthCalculator should last.
  * DEFAULT_FRAME_TIME: number, the initial value of the "_framesTime" property: it initially assumes that the user's browser/screen is refreshing at 60fps. 
  * DEFAULT_ERROR_LOGGER: function, the initial value of the "_errorLogger" property: it logs the API error messages inside the browser's console.
  * DEFAULT_WARNING_LOGGER: function, the initial value of the "_warningLogger" property: it logs the API warning messages inside the browser's console.
@@ -155,8 +153,6 @@ const INITIAL_WINDOW_HEIGHT = window.innerHeight;
 const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);                         //16px at 412px of width  && 23px at 1920px of width 
 const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789))); //38px at 789px of height && 22px at 1920px of height
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
-const DEFAULT_TEST_CALCULATOR_SCROLL_VALUE = 100; //in px
-const DEFAULT_TEST_CALCULATOR_DURATION = 5000;    //in ms
 const DEFAULT_FRAME_TIME = 16.6;                  //in ms
 const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
   if(/disabled/i.test(uss._debugMode)) return;
@@ -311,7 +307,7 @@ var uss = {
   getPageScroller: () => uss._pageScroller,
   getReducedMotionState: () => uss._reducedMotion,
   getDebugMode: () => uss._debugMode, 
-  setXStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, shouldBeTested = false) => {
+  setXStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
     if(typeof newCalculator !== "function") {
       uss._errorLogger("setXStepLengthCalculator", "the newCalculator to be a function", newCalculator);
       return;
@@ -319,35 +315,6 @@ var uss = {
     if(container !== window && !(container instanceof HTMLElement)) {
       uss._errorLogger("setXStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
       return;
-    }
-    //If requested, a full scroll-animation is simulated to test newCalculator.
-    if(shouldBeTested) {
-      const _originalTimestamp = performance.now();
-      let _remaningScrollAmount = DEFAULT_TEST_CALCULATOR_SCROLL_VALUE;
-      let _currentTimestamp;
-      do {
-        _currentTimestamp = performance.now();
-        const _testResult = newCalculator(
-                              _remaningScrollAmount,                                        //remaningScrollAmount
-                              _originalTimestamp,                                           //originalTimestamp
-                              _currentTimestamp,                                            //currentTimestamp
-                              DEFAULT_TEST_CALCULATOR_SCROLL_VALUE,                         //totalScrollAmount
-                              DEFAULT_TEST_CALCULATOR_SCROLL_VALUE - _remaningScrollAmount, //currentXPosition
-                              DEFAULT_TEST_CALCULATOR_SCROLL_VALUE,                         //finalXPosition
-                              container                                                     //container
-                            );
-        if(!Number.isFinite(_testResult)) {
-          uss._errorLogger("setXStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
-          return;
-        }
-        _remaningScrollAmount -= _testResult;    
-      } while(_remaningScrollAmount > 0 && _currentTimestamp - _originalTimestamp <= DEFAULT_TEST_CALCULATOR_DURATION);
-      //The passed stepLengthCalculator may have entered a loop.
-      if(_currentTimestamp - _originalTimestamp > DEFAULT_TEST_CALCULATOR_DURATION) {
-        uss._warningLogger(newCalculator.name || "the passed calculator", 
-                              "didn't complete the test scroll-animation within " + DEFAULT_TEST_CALCULATOR_DURATION + "ms", 
-                              false);
-      }
     }
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -358,7 +325,7 @@ var uss = {
     }
     if(!_oldData) uss._containersData.set(container, _containerData);
   },
-  setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, shouldBeTested = false) => {
+  setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
     if(typeof newCalculator !== "function") {
       uss._errorLogger("setYStepLengthCalculator", "the newCalculator to be a function", newCalculator);
       return;
@@ -366,35 +333,6 @@ var uss = {
     if(container !== window && !(container instanceof HTMLElement)) {
       uss._errorLogger("setYStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
       return;
-    }
-    //If requested, a full scroll-animation is simulated to test newCalculator.
-    if(shouldBeTested) {
-      const _originalTimestamp = performance.now();
-      let _remaningScrollAmount = DEFAULT_TEST_CALCULATOR_SCROLL_VALUE;
-      let _currentTimestamp;
-      do {
-        _currentTimestamp = performance.now();
-        const _testResult = newCalculator(
-                              _remaningScrollAmount,                                        //remaningScrollAmount
-                              _originalTimestamp,                                           //originalTimestamp
-                              _currentTimestamp,                                            //currentTimestamp
-                              DEFAULT_TEST_CALCULATOR_SCROLL_VALUE,                         //totalScrollAmount
-                              DEFAULT_TEST_CALCULATOR_SCROLL_VALUE - _remaningScrollAmount, //currentXPosition
-                              DEFAULT_TEST_CALCULATOR_SCROLL_VALUE,                         //finalXPosition
-                              container                                                     //container
-                            );
-        if(!Number.isFinite(_testResult)) {
-          uss._errorLogger("setYStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
-          return;
-        }
-        _remaningScrollAmount -= _testResult;     
-      } while(_remaningScrollAmount > 0 && _currentTimestamp - _originalTimestamp <= DEFAULT_TEST_CALCULATOR_DURATION);
-      //The passed stepLengthCalculator may have entered a loop.
-      if(_currentTimestamp - _originalTimestamp > DEFAULT_TEST_CALCULATOR_DURATION) {
-        uss._warningLogger(newCalculator.name || "the passed calculator", 
-                              "didn't complete the test scroll-animation within " + DEFAULT_TEST_CALCULATOR_DURATION + "ms", 
-                              false);
-      }
     }
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -405,7 +343,7 @@ var uss = {
     }
     if(!_oldData) uss._containersData.set(container, _containerData);
   },
-  setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, shouldBeTested = false) => {
+  setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
     if(typeof newCalculator !== "function") {
       uss._errorLogger("setStepLengthCalculator", "the newCalculator to be a function", newCalculator);
       return;
@@ -413,35 +351,6 @@ var uss = {
     if(container !== window && !(container instanceof HTMLElement)) {
       uss._errorLogger("setStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
       return;
-    }
-    //If requested, a full scroll-animation is simulated to test newCalculator.
-    if(shouldBeTested) {
-      const _originalTimestamp = performance.now();
-      let _remaningScrollAmount = DEFAULT_TEST_CALCULATOR_SCROLL_VALUE;
-      let _currentTimestamp;
-      do {
-        _currentTimestamp = performance.now();
-        const _testResult = newCalculator(
-                              _remaningScrollAmount,                                        //remaningScrollAmount
-                              _originalTimestamp,                                           //originalTimestamp
-                              _currentTimestamp,                                            //currentTimestamp
-                              DEFAULT_TEST_CALCULATOR_SCROLL_VALUE,                         //totalScrollAmount
-                              DEFAULT_TEST_CALCULATOR_SCROLL_VALUE - _remaningScrollAmount, //currentXPosition
-                              DEFAULT_TEST_CALCULATOR_SCROLL_VALUE,                         //finalXPosition
-                              container                                                     //container
-                            );
-        if(!Number.isFinite(_testResult)) {
-          uss._errorLogger("setStepLengthCalculator", "the newCalculator to return a valid step value", _testResult);
-          return;
-        }
-        _remaningScrollAmount -= _testResult;     
-      } while(_remaningScrollAmount > 0 && _currentTimestamp - _originalTimestamp <= DEFAULT_TEST_CALCULATOR_DURATION);
-      //The passed stepLengthCalculator may have entered a loop.
-      if(_currentTimestamp - _originalTimestamp > DEFAULT_TEST_CALCULATOR_DURATION) {
-        uss._warningLogger(newCalculator.name || "the passed calculator", 
-                              "didn't complete the test scroll-animation within " + DEFAULT_TEST_CALCULATOR_DURATION + "ms", 
-                              false);
-      }
     }
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];

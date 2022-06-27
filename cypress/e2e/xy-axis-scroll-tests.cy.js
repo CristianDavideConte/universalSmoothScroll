@@ -128,7 +128,7 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation-Body", fun
     var _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ < 10) return total / 10;
+            if(i++ < 2) return total / 10;
             uss.stopScrolling(container);
             isScrolling = uss.isScrolling(container);
             _resolve();
@@ -142,7 +142,7 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation-Body", fun
                 uss._containersData = new Map();
 
                 expect(uss.isScrolling()).to.be.false;
-                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
 
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -167,7 +167,7 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation-Body", fun
     var _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ < 10) return total / 10;
+            if(i++ < 2) return total / 10;
             uss.stopScrolling(container);
             isScrolling = uss.isScrolling(container);
             _resolve();
@@ -181,7 +181,7 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation-Body", fun
             uss._containersData = new Map();
 
             expect(uss.isScrolling()).to.be.false;
-            uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+            uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
 
             cy.waitForUssCallback(
                 (resolve) => {
@@ -205,7 +205,7 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating-Body", function() {
     var isScrolling;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ < 10) return total / 10;
+            if(i++ < 2) return total / 10;
             uss.stopScrollingX(container);
             isScrolling = uss.isScrolling(container);
             return remaning;
@@ -219,7 +219,7 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating-Body", function() {
                 uss._containersData = new Map();
 
                 expect(uss.isScrolling()).to.be.false;
-                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
 
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -242,7 +242,7 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating-Body", function() {
     var isScrolling;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ < 10) return total / 10;
+            if(i++ < 2) return total / 10;
             uss.stopScrollingY(container);
             isScrolling = uss.isScrolling(container);
             return remaning;
@@ -256,7 +256,7 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating-Body", function() {
                 uss._containersData = new Map();
 
                 expect(uss.isScrolling()).to.be.false;
-                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
      
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -280,7 +280,7 @@ describe("isScrolling-StopBothAxisScrollingWhileAnimating-Body", function() {
     var isScrolling;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ < 10) return total / 10;
+            if(i++ < 2) return total / 10;
             uss.stopScrolling(container);
             isScrolling = uss.isScrolling(container);
             _resolve();
@@ -294,7 +294,7 @@ describe("isScrolling-StopBothAxisScrollingWhileAnimating-Body", function() {
                 uss._containersData = new Map();
 
                 expect(uss.isScrolling()).to.be.false;
-                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
  
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -322,8 +322,9 @@ describe("scrollTo-Body", function() {
                 uss._containersData = new Map();
 
                 cy.testFailingValues(uss.scrollTo, {
-                    0: [[Cypress.env("failingValuesAll")],
-                        [Cypress.env("failingValuesAll")]
+                    0: [Cypress.env("failingValuesNoFiniteNumber"),
+                        Cypress.env("failingValuesNoFiniteNumber"),
+                        Cypress.env("failingValuesNoUndefined")
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
@@ -438,7 +439,7 @@ describe("scrollTo-StoppedScrollingWhileAnimating-Body", function() {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
             if(!uss.isScrolling()) return total; //testing phase of the setXStepLengthCalculator
             i++;
-            if(i < 10) return total / 10;
+            if(i < 2) return total / 10;
             uss.stopScrollingX(container, _resolve);
         }
     }
@@ -446,7 +447,7 @@ describe("scrollTo-StoppedScrollingWhileAnimating-Body", function() {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
             if(!uss.isScrolling()) return total; //testing phase of the setYStepLengthCalculator
             i++;
-            if(i < 10) return total / 10;
+            if(i < 2) return total / 10;
             uss.stopScrollingY(container, _resolve);
         }
     }
@@ -457,8 +458,8 @@ describe("scrollTo-StoppedScrollingWhileAnimating-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                uss.setXStepLengthCalculator(_testCalculatorX(), uss.getPageScroller(), false, true);   
-                uss.setYStepLengthCalculator(_testCalculatorY(), uss.getPageScroller(), false, true);   
+                uss.setXStepLengthCalculator(_testCalculatorX(), uss.getPageScroller(), false);   
+                uss.setYStepLengthCalculator(_testCalculatorY(), uss.getPageScroller(), false);   
 
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -467,8 +468,8 @@ describe("scrollTo-StoppedScrollingWhileAnimating-Body", function() {
                     }
                 ).then(
                     () => {
-                        cy.bodyScrollLeftShouldToBe(180);
-                        cy.bodyScrollTopShouldToBe(90);
+                        cy.bodyScrollLeftShouldToBe(20);
+                        cy.bodyScrollTopShouldToBe(10);
                     }
                 );
             });         
@@ -481,7 +482,7 @@ describe("scrollTo-scrollTo-ReplaceScrollingWhileAnimating-Body", function() {
     var i = 0;
     const _testCalculator = () => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ === 10) uss.scrollTo(50, 75, uss.getPageScroller(), _resolve);
+            if(i++ === 2) uss.scrollTo(50, 75, uss.getPageScroller(), _resolve);
             return total / 10;
         }
     }
@@ -492,7 +493,7 @@ describe("scrollTo-scrollTo-ReplaceScrollingWhileAnimating-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
                     
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -519,8 +520,9 @@ describe("scrollBy-Body", function() {
                 uss._containersData = new Map();
                 
                 cy.testFailingValues(uss.scrollYBy, {
-                    0: [[Cypress.env("failingValuesAll")],
-                        [Cypress.env("failingValuesAll")]
+                    0: [Cypress.env("failingValuesNoFiniteNumber"),
+                        Cypress.env("failingValuesNoFiniteNumber"),
+                        Cypress.env("failingValuesNoUndefined")
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
@@ -572,8 +574,8 @@ describe("scrollToBy-StillStart-True-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map(); 
                 
-                uss.setXStepLengthCalculator(_testCalculatorX(), uss.getPageScroller(), false, true); 
-                uss.setYStepLengthCalculator(_testCalculatorY(), uss.getPageScroller(), false, true);           
+                uss.setXStepLengthCalculator(_testCalculatorX(), uss.getPageScroller(), false); 
+                uss.setYStepLengthCalculator(_testCalculatorY(), uss.getPageScroller(), false);           
                     
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -634,8 +636,8 @@ describe("scrollToBy-StillStart-False-Body", function() {
                 uss = win.uss;
                 uss._containersData = new Map(); 
                 
-                uss.setXStepLengthCalculator(_testCalculatorX(), uss.getPageScroller(), false, true); 
-                uss.setYStepLengthCalculator(_testCalculatorY(), uss.getPageScroller(), false, true); 
+                uss.setXStepLengthCalculator(_testCalculatorX(), uss.getPageScroller(), false); 
+                uss.setYStepLengthCalculator(_testCalculatorY(), uss.getPageScroller(), false); 
                 
                 cy.waitForUssCallback(
                     (resolve) => {
@@ -673,7 +675,7 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fun
     var i = 0;
     const _testCalculator = () => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(i++ === 10) uss.scrollBy(90, 70, uss.getPageScroller(), _resolve, false);
+            if(i++ === 2) uss.scrollBy(90, 70, uss.getPageScroller(), _resolve, false);
             return total / 10;
         }
     }
@@ -684,7 +686,7 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", fun
                 uss = win.uss;
                 uss._containersData = new Map();
 
-                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false, true);
+                uss.setStepLengthCalculator(_testCalculator(), uss.getPageScroller(), false);
 
                 cy.waitForUssCallback(
                     (resolve) => {

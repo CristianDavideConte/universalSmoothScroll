@@ -6,8 +6,6 @@
 
 describe("setXStepLengthCalculator-Body", function() {
     var uss;
-    var _testCalculatorInvalidTypeString = () => "";
-    var _testCalculatorInvalidTypeNaN = () => NaN;
     var _testCalculatorValidType1 = () => 10;
     var _testCalculatorValidType2 = () => 5;
     var _testCalculatorValidType3 = () => 0.000001; //Valid but takes more than the default testing timeout
@@ -19,19 +17,17 @@ describe("setXStepLengthCalculator-Body", function() {
                 uss._containersData = new Map();  
 
                 cy.testFailingValues(uss.setXStepLengthCalculator, {
-                    0: [Cypress.env("failingValuesAll").concat([_testCalculatorInvalidTypeString, _testCalculatorInvalidTypeNaN]),
+                    0: [Cypress.env("failingValuesAll"),
                         [uss.getPageScroller()],
-                        [true, false],
-                        [true]
+                        [true, false]
                         ],
                     1: [[_testCalculatorValidType1, _testCalculatorValidType2, _testCalculatorValidType3], 
                         Cypress.env("failingValuesAll"),
-                        [true, false],
-                        [true, false] //shouldBeTested = false is allowed because the second parameter is always invalid
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(uss.getXStepLengthCalculator()).to.be.undefined;
+                    expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
+                    expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.be.undefined;
                 })
                 .then(() => {
                     //test valid stepLengthCalculators

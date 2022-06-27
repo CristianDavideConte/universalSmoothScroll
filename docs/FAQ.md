@@ -79,9 +79,9 @@ class myApp extends React.Component {
 
 ## Q: Can I apply an easing to the scroll-animations ?
 A: Yes, you can create a custom [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) and apply it with:
-* `uss.setXStepLengthCalculator()` for the x-axis.
-* `uss.setYStepLengthCalculator()` for the y-axis. 
-* `uss.setStepLengthCalculator()` for both axes. 
+* `setXStepLengthCalculator` for the x-axis.
+* `setYStepLengthCalculator` for the y-axis. 
+* `setStepLengthCalculator` for both axes. 
 
 For example:<br/>
 ```javascript
@@ -158,8 +158,7 @@ const myStepLengthCalculator = (remaning, originalTimestamp, currentTimestamp, t
 //myStepLengthCalculator:
 //- will controll only the easing on the y axis of myContainer (first 2 parameters)
 //- it won't be discarded after just one animation (3rd parameter)
-//- it won't be tested by the API because we know it works (4th parameter)
-uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer, false, false); 
+uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer, false); 
 ```
 <br/>
 
@@ -178,7 +177,10 @@ uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 ```
 <br/>
 
-If you're not sure to have a valid StepLengthCalculator just ask the API to test it for you with the [`shouldBeTested`](./FunctionsAbout.md#setXStepLengthCalculator) parameter. <br/>
+On [`easings.net`](https://easings.net/) you can find out more about the way the StepLengthCalculators provided by [`universalsmoothscroll-ease-functions`](./Download.md) library will affect your scroll-animations.
+<br/><br/>
+
+If you're not sure if your StepLengthCalculator is valid just use the [`isValidStepLengthCalculator`](./DevHelpers.md#isValidStepLengthCalculator) function of the [`Dev-Helpers`](./Download.md) library. <br/>
 
 E.g.:<br/>
 ```javascript
@@ -190,38 +192,19 @@ E.g.:<br/>
 const myBrokenCalculator = (i = 0) => {
   if(i++ <= 10) return 50; 
 }
-const isTemporary = false;
-const shouldBeTested = true;
 
 /*
- * Since we set the shouldBeTested paramenter to true, the API will test our StepLengthCalculator with a 
- * dummy scroll-animation (no scroll actually takes place) and at the end of it, 
- * an error message that informs us that myBrokenCalculator didn't return a valid stepLength will be printed in the console. 
- * Thus the StepLengthCalculator won't be set for now.
+ * Suppose we've already imported the Dev-Helpers library.
+ * The isValidStepLengthCalculator non-blocking function will create
+ * a dummy scroll-animation for the passed container (no actual scroll takes place)
+ * to test our StepLengthCalculator.
  */
-uss.setXStepLengthCalculator(myBrokenCalculator, myContainer, isTemporary, shouldBeTested);
-
-const myPerfectlyWorkingCalculator = (i = 0) => {
-  if(i++ <= 10) return 50; 
-  i = 0;
-  return 49;
+const isValid = await isValidStepLengthCalculator(myBrokenCalculator, myContainer);
+if(!isValid) {
+  //Fix the StepLengthCalculator...
 }
-/**
- * Once our StepLengthCalculator is fixed we can tell the API to trust us and not test it anymore. 
- */
-uss.setXStepLengthCalculator(myBrokenCalculator, myContainer, isTemporary, false);
-
-
-/*
- * Keeping to true the shouldBeTested parameter will force the API to test the StepLengthCalculator.
- * In the example below the setXStepLengthCalculator method will take 3seconds to complete instead of 1ms
- * because it's waiting the EASE_LINEAR method to complete the test dummy scroll-animation.
- */
-uss.setXStepLengthCalculator(EASE_LINEAR(3000), myContainer, isTemporary, true);
 ```
 <br/>
-
-On [`easings.net`](https://easings.net/) you can find out more about the way the StepLengthCalculators provided by [`universalsmoothscroll-ease-functions`](./Download.md) library will affect your scroll-animations.
 
 ---
 <br/>
@@ -234,7 +217,7 @@ _`stillStart = false`_ means that even if other scroll-animations on the same ax
 This is an example of how different these 2 kind of scroll-animations are:<br/>
 ```javascript
 const ourEaseFunction = (remaning) => {return remaning / 15 + 1;};
-uss.setYStepLengthCalculator(ourEaseFunction, myContainer, false, false);
+uss.setYStepLengthCalculator(ourEaseFunction, myContainer, false);
 
 //CASE A: stillStart = true
 const stillStartTrueBehavior = wheelEvent => {

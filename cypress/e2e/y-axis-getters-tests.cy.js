@@ -91,10 +91,10 @@ describe("getYStepLengthCalculator-Body", function() {
                 ]
           })
           .then(() => {
-            uss.setYStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
+            uss.setYStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false);
             expect(uss.getYStepLengthCalculator()).to.equal(nonTempTestCalculator);  
 
-            uss.setYStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
+            uss.setYStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true);
             expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
             
             cy.waitForUssCallback(

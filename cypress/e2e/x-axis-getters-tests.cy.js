@@ -91,10 +91,10 @@ describe("getXStepLengthCalculator-Body", function() {
                   ]
             })
             .then(() => {
-              uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false, true);
+              uss.setXStepLengthCalculator(nonTempTestCalculator, uss.getPageScroller(), false);
               expect(uss.getXStepLengthCalculator()).to.equal(nonTempTestCalculator);  
 
-              uss.setXStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true, true);
+              uss.setXStepLengthCalculator(tempTestCalculator, uss.getPageScroller(), true);
               expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.equal(tempTestCalculator);
             
               cy.waitForUssCallback(
