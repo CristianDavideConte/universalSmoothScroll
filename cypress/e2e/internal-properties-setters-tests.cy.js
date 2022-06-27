@@ -3,6 +3,8 @@
  *  - setMinAnimationFrame
  *  - setPageScroller
  *  - setDebugMode
+ *  - setErrorLogger
+ *  - setWarningLogger
  */
 
 describe("setMinAnimationFrame", function() {
@@ -104,6 +106,73 @@ describe("setDebugMode", function() {
               });      
           });        
     })
+})
+
+describe("setErrorLogger", function() {
+  var uss;
+  var validLogger1 = (a,b,c) => console.log(a,b,c);
+  var validLogger2 = () => console.log("");
+  var validLogger3 = () => {}
+  it("Tests the setErrorLogger method", function() {
+      cy.visit("index.html"); 
+      cy.window()
+        .then((win) => {
+            uss = win.uss;
+            uss._containersData = new Map();  
+            const _originalLogger = uss._errorLogger;
+
+            cy.testFailingValues(uss.setErrorLogger, {
+              0: [Cypress.env("failingValuesAll")]
+            }, 
+            (res, v1, v2, v3, v4, v5, v6, v7) => {
+              expect(uss._errorLogger).to.equal(_originalLogger);
+            })
+            .then(() => {
+              uss.setErrorLogger(validLogger1);
+              expect(uss._errorLogger).to.equal(validLogger1);
+
+              uss.setErrorLogger(validLogger2);
+              expect(uss._errorLogger).to.equal(validLogger2);
+
+              uss.setErrorLogger(validLogger3);
+              expect(uss._errorLogger).to.equal(validLogger3);
+            });      
+        });        
+  })
+})
+
+
+describe("setWarningLogger", function() {
+  var uss;
+  var validLogger1 = (a,b,c) => console.log(a,b,c);
+  var validLogger2 = () => console.log("");
+  var validLogger3 = () => {}
+  it("Tests the setWarningLogger method", function() {
+      cy.visit("index.html"); 
+      cy.window()
+        .then((win) => {
+            uss = win.uss;
+            uss._containersData = new Map();  
+            const _originalLogger = uss._warningLogger;
+
+            cy.testFailingValues(uss.setWarningLogger, {
+              0: [Cypress.env("failingValuesAll")]
+            }, 
+            (res, v1, v2, v3, v4, v5, v6, v7) => {
+              expect(uss._warningLogger).to.equal(_originalLogger);
+            })
+            .then(() => {
+              uss.setWarningLogger(validLogger1);
+              expect(uss._warningLogger).to.equal(validLogger1);
+
+              uss.setWarningLogger(validLogger2);
+              expect(uss._warningLogger).to.equal(validLogger2);
+
+              uss.setWarningLogger(validLogger3);
+              expect(uss._warningLogger).to.equal(validLogger3);
+            });      
+        });        
+  })
 })
 
 

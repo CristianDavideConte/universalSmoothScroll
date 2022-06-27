@@ -154,7 +154,7 @@ const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);      
 const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789))); //38px at 789px of height && 22px at 1920px of height
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_FRAME_TIME = 16.6;                  //in ms
-const DEFAULT_ERROR_LOGGER  = (functionName, expectedValue, receivedValue) => {
+const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(/disabled/i.test(uss._debugMode)) return;
   
   //Convert and trim the receivedValue's string
