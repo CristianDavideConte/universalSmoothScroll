@@ -1455,54 +1455,81 @@ var uss = {
   hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false) => {
     const _init = typeof init === "function" ? init : () => {};
     const _pageURL = document.URL.split("#")[0];
-    const _updateHistory = updateHistory && !!(window.history && window.history.pushState && window.history.scrollRestoration); //Check if histoy manipulation is supported
+    const _updateHistory = updateHistory && 
+                           !!(window.history && 
+                              window.history.pushState && 
+                              window.history.scrollRestoration); //Check if histoy manipulation is supported
     
     if(_updateHistory) {
-      window.history.scrollRestoration = "manual"; 
-      window.addEventListener("popstate", _smoothHistoryNavigation, {passive:true}); //Try with document.body.addEventListener("popstate", ...)
+      window.history.scrollRestoration = "manual";       
+      window.addEventListener("popstate", _smoothHistoryNavigation, {passive:true}); 
       window.addEventListener("unload", (event) => event.preventDefault(), {passive:false, once:true});
 
       //Prevents the browser to jump-to-position,
       //when a user navigates through history.
       function _smoothHistoryNavigation () {
+        //document.URL = https://.../options#fragment#UniversalSmoothScroll
         const _fragment = document.URL.split("#")[1];
-        if(!_fragment) { //The URL is just "URL/#" or "URL/"
+        
+        //The URL is just "URL/#" or "URL/" 
+        if(!_fragment) {
           if(_init(window, uss._pageScroller) !== false) uss.scrollTo(0, 0, uss._pageScroller, callback);
           return;
         } 
-        const __elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
-        if(__elementToReach !== null && _init(window, __elementToReach) !== false) {
-          uss.scrollIntoView(__elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
+
+        const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
+        if(_elementToReach && _init(window, _elementToReach) !== false) {
+          uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
         }
       }
     }
 
     for(const _pageLink of document.links) {
-      const _pageLinkParts = _pageLink.href.split("#"); //PageLink.href = OptionalURL#Fragment
-      if(_pageLinkParts[0] !== _pageURL) continue;
-      if(_pageLinkParts[1] === "") { //href="#" scrolls the _pageScroller to its top left
+      const _pageLinkParts = _pageLink.href.split("#"); //_pageLink.href = optionalURL#fragment
+      const _optionalURL = _pageLinkParts[0];
+      const _fragment = _pageLinkParts[1];
+
+      //This pageLink refers to another webpage, 
+      //no need to smooth scroll.
+      if(_optionalURL !== _pageURL) continue;
+      
+      //href="#" scrolls the _pageScroller to its top left.
+      if(_fragment === "") { 
         _pageLink.addEventListener("click", event => {
           event.preventDefault();
           event.stopPropagation();
-          if(_init(_pageLink, uss._pageScroller) === false) return; //False means the scroll-animation has been explicitly prevented
-          if(_updateHistory && window.history.state !== "#") window.history.pushState("#", "", "#");
+
+          //False means the scroll-animation has been prevented by the user.
+          if(_init(_pageLink, uss._pageScroller) === false) return; 
+          if(_updateHistory && window.history.state !== "#") {
+            window.history.pushState("#", "", "#");
+          }
+
           uss.scrollTo(0, 0, uss._pageScroller, callback);
         }, {passive:false});
         continue;
       }
 
       //Look for elements with the corresponding id or "name" attribute.
-      const _elementToReach = document.getElementById(_pageLinkParts[1]) || document.querySelector("a[name='" + _pageLinkParts[1] + "']");
-      if(_elementToReach === null) {
-        uss._warningLogger(_pageLinkParts[1], "is not a valid anchor's destination", true);
+      const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
+      if(!_elementToReach) {
+        uss._warningLogger(_fragment, "is not a valid anchor's destination", true);
         continue;
       }
 
+      //href="#fragment" scrolls the element associated with the fragment into view.
       _pageLink.addEventListener("click", event => {
         event.preventDefault();
         event.stopPropagation();
-        if(_init(_pageLink, _elementToReach) === false) return; //False means the scroll-animation has been explicitly prevented
-        if(_updateHistory && window.history.state !== _pageLinkParts[1]) window.history.pushState(_pageLinkParts[1], "", "#" + _pageLinkParts[1]);
+
+        //False means the scroll-animation has been prevented by the user.
+        //The extra # at the end of the fragment is used to prevent Safari from restoring 
+        //the scrol position before the popstate event (it won't recognize the fragment). 
+        if(_init(_pageLink, _elementToReach) === false) return; 
+        if(_updateHistory && window.history.state !== _fragment) {
+          window.history.pushState(_fragment, "", "#" + _fragment + "#UniversalSmoothScroll");
+        }
+
         uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
       }, {passive:false});
     }
