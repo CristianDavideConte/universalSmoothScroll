@@ -1454,7 +1454,7 @@ var uss = {
   },
   hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false) => {
     const _init = typeof init === "function" ? init : () => {};
-    const _pageURL = document.URL.split("#")[0];
+    const _pageURL = window.location.href.split("#")[0];
     const _updateHistory = updateHistory && 
                            !!(window.history && 
                               window.history.pushState && 
@@ -1468,8 +1468,7 @@ var uss = {
       //Prevents the browser to jump-to-position,
       //when a user navigates through history.
       function _smoothHistoryNavigation () {
-        //document.URL = https://.../options#fragment#UniversalSmoothScroll
-        const _fragment = document.URL.split("#")[1];
+        const _fragment = window.location.hash.slice(1, -1);
         
         //The URL is just "URL/#" or "URL/" 
         if(!_fragment) {
@@ -1485,13 +1484,13 @@ var uss = {
     }
 
     for(const _pageLink of document.links) {
-      const _pageLinkParts = _pageLink.href.split("#"); //_pageLink.href = optionalURL#fragment
-      const _optionalURL = _pageLinkParts[0];
-      const _fragment = _pageLinkParts[1];
+      const _optionalURL = _pageLink.href.split("#")[0]; //_pageLink.href = optionalURL#fragment
 
       //This pageLink refers to another webpage, 
       //no need to smooth scroll.
       if(_optionalURL !== _pageURL) continue;
+      
+      const _fragment = _pageLink.hash.substring(1);
       
       //href="#" scrolls the _pageScroller to its top left.
       if(_fragment === "") { 
@@ -1523,11 +1522,11 @@ var uss = {
         event.stopPropagation();
 
         //False means the scroll-animation has been prevented by the user.
-        //The extra # at the end of the fragment is used to prevent Safari from restoring 
+        //The extra "." at the end of the fragment is used to prevent Safari from restoring 
         //the scrol position before the popstate event (it won't recognize the fragment). 
         if(_init(_pageLink, _elementToReach) === false) return; 
         if(_updateHistory && window.history.state !== _fragment) {
-          window.history.pushState(_fragment, "", "#" + _fragment + "#UniversalSmoothScroll");
+          window.history.pushState(_fragment, "", "#" + _fragment + ".");
         }
 
         uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
