@@ -23,7 +23,7 @@ describe("setMinAnimationFrame", function() {
               expect(uss.getMinAnimationFrame()).to.equal(Math.pow(2, 30));
    
               cy.testFailingValues(uss.setMinAnimationFrame, {
-                0: [Cypress.env("failingValuesNoPositiveNumber")]
+                0: [Cypress.env("failingValuesNoPositiveNumberOrUndefined")]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(uss.getMinAnimationFrame()).to.equal(Math.pow(2, 30));
@@ -122,7 +122,7 @@ describe("setErrorLogger", function() {
             const _originalLogger = uss._errorLogger;
 
             cy.testFailingValues(uss.setErrorLogger, {
-              0: [Cypress.env("failingValuesAll")]
+              0: [Cypress.env("failingValuesAllNoUndefined")]
             }, 
             (res, v1, v2, v3, v4, v5, v6, v7) => {
               expect(uss._errorLogger).to.equal(_originalLogger);
@@ -156,7 +156,7 @@ describe("setWarningLogger", function() {
             const _originalLogger = uss._warningLogger;
 
             cy.testFailingValues(uss.setWarningLogger, {
-              0: [Cypress.env("failingValuesAll")]
+              0: [Cypress.env("failingValuesAllNoUndefined")]
             }, 
             (res, v1, v2, v3, v4, v5, v6, v7) => {
               expect(uss._warningLogger).to.equal(_originalLogger);

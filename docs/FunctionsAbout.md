@@ -433,7 +433,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setXStepLength"><code>newXStepLength</code></a>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <a href = "./VariablesAbout.md#DEFAULT_XSTEP_LENGTH"><code>DEFAULT_XSTEP_LENGTH</code></a>
    </td>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_xStepLength"><code>_xStepLength</code></a> property to the passed value if compatible.
@@ -448,7 +448,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setYStepLength"><code>newYStepLength</code></a>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <a href = "./VariablesAbout.md#DEFAULT_YSTEP_LENGTH"><code>DEFAULT_YSTEP_LENGTH</code></a>
    </td>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_yStepLength"><code>_yStepLength</code></a> property to the passed value if compatible.
@@ -478,7 +478,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setMinAnimationFrame"><code>newMinAnimationFrame</code></a>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <a href = "./VariablesAbout.md#DEFAULT_MIN_ANIMATION_FRAMES"><code>DEFAULT_MIN_ANIMATION_FRAMES</code></a>
    </td>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property to the passed value if compatible.
@@ -523,7 +523,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setErrorLogger"><code>newErrorLogger</code></a>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <a href = "./VariablesAbout.md#DEFAULT_ERROR_LOGGER"><code>DEFAULT_ERROR_LOGGER</code></a>
    </td>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_errorLogger"><code>_errorLogger</code></a> property to the passed value if compatible.
@@ -538,7 +538,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setWarningLogger"><code>newWarningLogger</code></a>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <a href = "./VariablesAbout.md#DEFAULT_WARNING_LOGGER"><code>DEFAULT_WARNING_LOGGER</code></a>
    </td>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger</code></a> property to the passed value if compatible.

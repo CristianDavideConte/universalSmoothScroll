@@ -153,7 +153,7 @@ const INITIAL_WINDOW_HEIGHT = window.innerHeight;
 const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);                         //16px at 412px of width  && 23px at 1920px of width 
 const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789))); //38px at 789px of height && 22px at 1920px of height
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
-const DEFAULT_FRAME_TIME = 16.6;                  //in ms
+const DEFAULT_FRAME_TIME = 16.6; //in ms
 const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(/disabled/i.test(uss._debugMode)) return;
   
@@ -367,14 +367,14 @@ var uss = {
     }
     if(!_oldData) uss._containersData.set(container, _containerData);
   },
-  setXStepLength: (newXStepLength) => {
+  setXStepLength: (newXStepLength = DEFAULT_XSTEP_LENGTH) => {
     if(!Number.isFinite(newXStepLength) || newXStepLength <= 0) {
       uss._errorLogger("setXStepLength", "the newXStepLength to be a positive number", newXStepLength);
       return;
     }
     uss._xStepLength = newXStepLength;
   },
-  setYStepLength: (newYStepLength) => {
+  setYStepLength: (newYStepLength = DEFAULT_YSTEP_LENGTH) => {
     if(!Number.isFinite(newYStepLength) || newYStepLength <= 0) {
       uss._errorLogger("setYStepLength", "the newYStepLength to be a positive number", newYStepLength);
       return;
@@ -389,7 +389,7 @@ var uss = {
     uss._xStepLength = newStepLength;
     uss._yStepLength = newStepLength;
   },
-  setMinAnimationFrame: (newMinAnimationFrame) => {
+  setMinAnimationFrame: (newMinAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES) => {
     if(!Number.isFinite(newMinAnimationFrame) || newMinAnimationFrame <= 0) {
       uss._errorLogger("setMinAnimationFrame", "the newMinAnimationFrame to be a positive number", newMinAnimationFrame);
       return;
@@ -416,14 +416,14 @@ var uss = {
     }
     uss._debugMode = newDebugMode;
   },
-  setErrorLogger: (newErrorLogger) => {
+  setErrorLogger: (newErrorLogger = DEFAULT_ERROR_LOGGER) => {
     if(typeof newErrorLogger !== "function") {
       uss._errorLogger("setErrorLogger", "the newErrorLogger to be a function", newErrorLogger);
       return;
     }
     uss._errorLogger = newErrorLogger;
   }, 
-  setWarningLogger: (newWarningLogger) => {
+  setWarningLogger: (newWarningLogger = DEFAULT_WARNING_LOGGER) => {
     if(typeof newWarningLogger !== "function") {
       uss._errorLogger("setWarningLogger", "the newWarningLogger to be a function", newWarningLogger);
       return;
