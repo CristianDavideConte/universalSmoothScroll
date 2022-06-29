@@ -2,16 +2,56 @@
 <br/>
 
 # Download
-In order to use the USS API you first have to download the needed scripts which you can get in many ways. <br/>
+In order to use this API you first have to download the needed scripts which you can get in many ways. <br/>
+In total, there are 3 files available:
 
-In total, there are two files available:
-* `universalsmoothscroll-min.js`                
-* `universalsmoothscroll-ease-functions-min.js` 
-  
-The former is always required and contains _(the minified version of)_ the API itself. <br/> 
-The latter is optional instead and contains _(the minified version of)_ an easing-functions library which you may find useful later on. <br/>
+<table>
+ <thead>
+  <tr>
+   <th>File name</th>
+   <th>Importance</th>
+   <th>Purpose</th>
+  </tr>
+ </thead>
+ <tbody>
+ <tr id = "universalsmoothscroll-min-file">
+   <td rowspan = "1" align = "center">
+    <code>universalsmoothscroll-min.js</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>required</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Contains <i>(the minified version of)</i> the API itself.
+   </td>
+ </tr>
+  <tr id = "universalsmoothscroll-ease-functions-min-file">
+   <td rowspan = "1" align = "center">
+    <code>universalsmoothscroll-ease-functions-min.js</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>optional</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Contains <i>(the minified version of)</i> a high level easing-functions library which allows you to effordlessly customize the timings and the behaviors of your scroll-animations. 
+   </td>
+ </tr>
+ </tr>
+  <tr id = "universalsmoothscroll-dev-helpers-min-file">
+   <td rowspan = "1" align = "center">
+    <code>universalsmoothscroll-dev-helpers-min.js</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>optional</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Contains <i>(the minified version of)</i> a library specifically written to help you with some of the more advanced aspects of this API.
+   </td>
+ </tr>
+ </tbody>
+</table>
 
-Each one of the download options will give you access to all the above described scripts, so choose freely the download method you prefer.
+Each one of the download options below will give you full access to all the above described scripts, so choose freely the download method you prefer.
 
 ---
 

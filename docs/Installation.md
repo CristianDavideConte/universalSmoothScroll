@@ -11,8 +11,9 @@ For example: <br/>
 <html>
     <head>
         ...
-      <script src = "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-min.js"></script> <!-- always required -->
+      <script src = "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-min.js"></script>                <!-- required -->
       <script src = "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-ease-functions-min.js"></script> <!-- optional -->
+      <script src = "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-dev-helpers-min.js"></script>    <!-- optional -->
         ...
     </head>
     ...
