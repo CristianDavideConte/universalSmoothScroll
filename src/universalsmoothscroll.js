@@ -1454,7 +1454,7 @@ var uss = {
   },
   hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false) => {
     const _init = typeof init === "function" ? init : () => {};
-    const _pageURL = window.location.href.split("#")[0];
+    const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
     const _updateHistory = updateHistory && 
                            !!(window.history && 
                               window.history.pushState && 
@@ -1472,7 +1472,9 @@ var uss = {
         
         //The URL is just "URL/#" or "URL/" 
         if(!_fragment) {
-          if(_init(window, uss._pageScroller) !== false) uss.scrollTo(0, 0, uss._pageScroller, callback);
+          if(_init(window, uss._pageScroller) !== false) {
+              uss.scrollTo(0, 0, uss._pageScroller, callback);
+          }
           return;
         } 
 
@@ -1500,8 +1502,8 @@ var uss = {
 
           //False means the scroll-animation has been prevented by the user.
           if(_init(_pageLink, uss._pageScroller) === false) return; 
-          if(_updateHistory && window.history.state !== "#") {
-            window.history.pushState("#", "", "#");
+          if(_updateHistory && window.history.state !== "") {
+            window.history.pushState("", "", "#");
           }
 
           uss.scrollTo(0, 0, uss._pageScroller, callback);
@@ -1512,7 +1514,7 @@ var uss = {
       //Look for elements with the corresponding id or "name" attribute.
       const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
       if(!_elementToReach) {
-        uss._warningLogger(_fragment, "is not a valid anchor's destination", true);
+        uss._warningLogger("#" + _fragment, "is not a valid anchor's destination", true);
         continue;
       }
 

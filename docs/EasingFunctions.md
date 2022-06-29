@@ -21,6 +21,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <th>Name</th>
    <th>Visualizations</th>
    <th>Input Parameters</th>
+   <th>Default values</th>
   </tr>
  </thead>
  <tbody>
@@ -33,21 +34,34 @@ This library cannot be used without having imported the [`universalsmoothscroll-
     <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>xs</code></a>, <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>ys</code></a> 
+    <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>xs</code></a>, <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>ys</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>, <code>undefined</code>
+   </td> 
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-tension-parameter"><code>tension</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>0</code>
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -61,15 +75,25 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>xs</code></a>, <a href = "./EasingFunctions.md#the-xs-and-ys-parameters"><code>ys</code></a> 
+   </td> 
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>, <code>undefined</code>
+   </td> 
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -83,15 +107,25 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>x1</code></a>, <a href = "./EasingFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>y1</code></a>, <a href = "./EasingFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>x2</code></a>, <a href = "./EasingFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>y2</code></a>
+   </td> 
+   <td rowspan = "1" align = "center">
+    <code>0</code>, <code>0</code>, <code>1</code>, <code>1</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -106,10 +140,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -124,10 +164,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -142,10 +188,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -160,10 +212,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -178,10 +236,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -196,10 +260,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -214,10 +284,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -232,10 +308,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -250,15 +332,24 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>900</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>3</code>
    </td>
   </tr>
 
@@ -273,10 +364,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -291,10 +388,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -309,10 +412,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -327,10 +436,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -345,10 +460,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -363,10 +484,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -381,10 +508,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -399,15 +532,24 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>900</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>3</code>
    </td>
   </tr>
 
@@ -422,10 +564,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -440,10 +588,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -458,10 +612,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
 
@@ -476,10 +636,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
     
@@ -494,10 +660,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
     
@@ -512,10 +684,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
     
@@ -530,10 +708,16 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>500</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
     
@@ -548,15 +732,24 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-duration-parameter"><code>duration</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>1200</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-callback-parameter"><code>callback</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>6</code>
    </td>
   </tr>
     
@@ -570,20 +763,32 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-forward-steplengthcalculator-parameter"><code>forward StepLengthCalculator</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-backward-steplengthcalculator-parameter"><code>backward StepLengthCalculator</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-elasticpointcalculator-parameter"><code>ElasticPointCalculator</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>() => 50</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-debounce-time-parameter"><code>debounce time</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>0</code>
    </td>
   </tr>   
 
@@ -597,20 +802,32 @@ This library cannot be used without having imported the [`universalsmoothscroll-
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-forward-steplengthcalculator-parameter"><code>forward StepLengthCalculator</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-backward-steplengthcalculator-parameter"><code>backward StepLengthCalculator</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-elasticpointcalculator-parameter"><code>ElasticPointCalculator</code></a>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>() => 50</code>
+   </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
     <a href = "./EasingFunctions.md#the-debounce-time-parameter"><code>debounce time</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>0</code>
    </td>
   </tr>  
  </tbody>
