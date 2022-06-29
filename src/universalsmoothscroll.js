@@ -8,8 +8,8 @@
  * DEFAULT_YSTEP_LENGTH: number, The initial value of the "_yStepLength" property: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. 
  *                       It's 38px at 789px of (initial window's) height and 22px at 1920px of (initial window's) height.
  * DEFAULT_MIN_ANIMATION_FRAMES: number, The initial value of the "_minAnimationFrame" property: 
- *                               it represent the default lowest number of frames any scroll-animation should last if no StepLengthCalculator is set for a container.
- * DEFAULT_FRAME_TIME: number, the initial value of the "_framesTime" property: it initially assumes that the user's browser/screen is refreshing at 60fps. 
+ *                               it represents the default lowest number of frames any scroll-animation should last if no StepLengthCalculator is set for a container.
+ * DEFAULT_FRAME_TIME: number, the initial value of the "_framesTime" property: it's 16.6 and it initially assumes that the user's browser/screen is refreshing at 60fps. 
  * DEFAULT_ERROR_LOGGER: function, the initial value of the "_errorLogger" property: it logs the API error messages inside the browser's console.
  * DEFAULT_WARNING_LOGGER: function, the initial value of the "_warningLogger" property: it logs the API warning messages inside the browser's console.
  */

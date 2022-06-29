@@ -11,16 +11,108 @@ All the variables listed below are declared with the keywork [`const`](https://d
 <br/>
 <br/>
 
-Name | Type | Description
-:--: | :--: | -----------
-`INITIAL_WINDOW_HEIGHT` | `Number` |The window's inner height _(in px)_ when the page is first loaded.
-`INITIAL_WINDOW_WIDTH` | `Number` | The window's inner width _(in px)_ when the page is first loaded.
-`DEFAULT_XSTEP_LENGTH` | `Number` | The initial value of the [`_xStepLength`](./VariablesAbout.md#_xStepLength) property: it represents the default number of pixels scrolled in a single scroll-animation's step on the x-axis. <br/> It's **16px at 412px** of _(initial window's)_ width and **23px at 1920px** of _(initial window's)_ width.
-`DEFAULT_YSTEP_LENGTH` | `Number` | The initial value of the [`_yStepLength`](./VariablesAbout.md#_yStepLength) property: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. <br/> It's **38px at 789px** of _(initial window's)_ height and **22px at 1920px** of _(initial window's)_ height.
-`DEFAULT_MIN_ANIMATION_FRAMES` | `Number` | The initial value of the [`_minAnimationFrame`](./VariablesAbout.md#_minAnimationFrame) property: it represent the default lowest number of frames any scroll-animation should last if no [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) is set for a container. <br/> It's **51 frames at 929px** of _(initial window's)_ height.
-`DEFAULT_FRAME_TIME` | `Number` | The initial value of the [`_framesTime`](./VariablesAbout.md#_framesTime) property: it initially assumes that the user's browser/screen is refreshing at 60fps.   
-`DEFAULT_ERROR_LOGGER` | `Function` | The initial value of the [`_errorLogger`](./VariablesAbout.md#_errorLogger) property: it logs the API error messages inside the browser's console.
-`DEFAULT_WARNING_LOGGER` | `Function` | The initial value of the [`_warningLogger`](./VariablesAbout.md#_warningLogger) property: it logs the API error messages inside the browser's console.
+<table>
+ <thead>
+  <tr>
+   <th>Name</th>
+   <th>Type</th>
+   <th>Description</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr id = "INITIAL_WINDOW_HEIGHT">
+   <td rowspan = "1" align = "center">
+    <code>INITIAL_WINDOW_HEIGHT</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1">
+    The window's inner height <i>(in px)</i> when the page is first loaded.
+   </td>
+  </tr>
+  <tr id = "INITIAL_WINDOW_WIDTH">
+   <td rowspan = "1" align = "center">
+    <code>INITIAL_WINDOW_WIDTH</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1">
+    The window's inner width <i>(in px)</i> when the page is first loaded.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_XSTEP_LENGTH">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_XSTEP_LENGTH</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1">
+    The initial value of the <a href = "./VariablesAbout.md#_xStepLength"><code>_xStepLength</code></a> property: it represents the default number of pixels scrolled in a single scroll-animation's step on the x-axis. <br/> 
+    It's <strong>16px at 412px</strong> of <i>(initial window's)</i> width and <strong>23px at 1920px</strong> of <i>(initial window's)</i> width.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_YSTEP_LENGTH">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_YSTEP_LENGTH</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1">
+    The initial value of the <a href = "./VariablesAbout.md#_yStepLength"><code>_yStepLength</code></a> property: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. <br/> 
+    It's <strong>38px at 789px</strong> of <i>(initial window's)</i> height and <strong>22px at 1920px</strong> of <i>(initial window's)</i> height.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_MIN_ANIMATION_FRAMES">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_MIN_ANIMATION_FRAMES</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1">
+    The initial value of the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property: it represents the default lowest number of frames any scroll-animation should last if no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> is set for a container. <br/> 
+    It's <strong>51 frames at 929px</strong> of <i>(initial window's)<i> height.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_FRAME_TIME">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_FRAME_TIME</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1">
+    The initial value of the <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> property: it's <code>16.6ms</code> and it initially assumes that the user's browser/screen is refreshing at 60fps.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_ERROR_LOGGER">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_ERROR_LOGGER</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1">
+    The initial value of the <a href = "./VariablesAbout.md#_errorLogger"><code>_errorLogger</code></a> property: it logs the API error messages inside the browser's console.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_WARNING_LOGGER">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_WARNING_LOGGER</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1">
+    The initial value of the <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger</code></a> property: it logs the API warning messages inside the browser's console.
+   </td>
+  </tr>
+ </tbody>
+</table>
 
 <br/>
 

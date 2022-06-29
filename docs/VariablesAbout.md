@@ -17,6 +17,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
   <tr>
    <th>Name</th>
    <th>Type</th>
+   <th>Default value</th>
    <th>Description</th>
   </tr>
  </thead>
@@ -27,6 +28,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "center">
     <code>Map</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"><code>new Map()</code></a>
    </td>
    <td rowspan = "1" align = "left">
     A Map in which: 
@@ -43,6 +47,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    <td rowspan = "1" align = "center">
     <code>Number</code>
    </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./ConstantsAbout.md#DEFAULT_XSTEP_LENGTH"><code>DEFAULT_XSTEP_LENGTH</code></a>
+   </td>
    <td rowspan = "1" align = "left">
     If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
    </td>
@@ -55,6 +62,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    <td rowspan = "1" align = "center">
     <code>Number</code>
    </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./ConstantsAbout.md#DEFAULT_YSTEP_LENGTH"><code>DEFAULT_YSTEP_LENGTH</code></a>
+   </td>
    <td rowspan = "1" align = "left">
     If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
    </td>
@@ -65,6 +75,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "center">
     <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./ConstantsAbout.md#DEFAULT_MIN_ANIMATION_FRAMES"><code>DEFAULT_MIN_ANIMATION_FRAMES</code></a>
    </td>
    <td rowspan = "1" align = "left">
     If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
@@ -77,6 +90,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    <td rowspan = "1" align = "center">
     <code>Number</code>
    </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./ConstantsAbout.md#INITIAL_WINDOW_HEIGHT"><code>INITIAL_WINDOW_HEIGHT</code></a>
+   </td>
    <td rowspan = "1" align = "left">
     The current window's inner height <i>(in px)</i>.
    </td>
@@ -87,6 +103,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "center">
     <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./ConstantsAbout.md#INITIAL_WINDOW_WIDTH"><code>INITIAL_WINDOW_WIDTH</code></a>
    </td>
    <td rowspan = "1" align = "left">
     The current window's inner width <i>(in px)</i>.
@@ -99,6 +118,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    <td rowspan = "1" align = "center">
     <code>Number</code>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>0</code>
+   </td>
    <td rowspan = "1" align = "left">
     The highest amount of pixels any scrollbar on the page can occupy <i>(it's browser dependent)</i>.
    </td>
@@ -109,6 +131,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "center">
     <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./ConstantsAbout.md#DEFAULT_FRAME_TIME"><code>DEFAULT_FRAME_TIME</code></a>
    </td>
    <td rowspan = "1" align = "left">
     The time in milliseconds between two consecutive browser's frame repaints <i>(e.g. at 60fps this is 16.6ms)</i>.
@@ -121,6 +146,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    <td rowspan = "1" align = "center">
     <code>Object</code>
    </td>
+   <td rowspan = "1" align = "center">
+    <a href = "https://developer.mozilla.org/en-US/docs/Web/API/Document/scrollingElement"><code>document.scrollingElement</code></a> or <code>window</code>
+   </td>
    <td rowspan = "1" align = "left">
     The value used when an API method requires the <code>container</code> input parameter but nothing is passed: it should be used to tell the USS API which is the element that scrolls the document.
    </td>
@@ -131,6 +159,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "center">
     <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    Depends on user's system preference
    </td>
    <td rowspan = "1" align = "left">
     True if the user has enabled any <code>reduce-motion</code> setting devicewise, false otherwise. <br/> 
@@ -143,6 +174,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "center">
     <code>String</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>""</code>
    </td>
    <td rowspan = "1" align = "left">
    Controls the way the warning and error messages are logged in the browser's console. <br/> 
@@ -162,6 +196,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    <td rowspan = "1" align = "center">
     <code>Function</code>
    </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./ConstantsAbout.md#DEFAULT_ERROR_LOGGER"><code>DEFAULT_ERROR_LOGGER</code></a>
+   </td>
    <td rowspan = "1" align = "left">
     Logs the API error messages inside the browser's console.
    </td>
@@ -172,6 +209,9 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "center">
     <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./ConstantsAbout.md#DEFAULT_WARNING_LOGGER"><code>DEFAULT_WARNING_LOGGER</code></a>
    </td>
    <td rowspan = "1" align = "left">
     Logs the API warning messages inside the browser's console.
