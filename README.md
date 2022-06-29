@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="./projects">
+    <a href="https://github.com/CristianDavideConte/universalSmoothScroll/projects">
         <img src="https://img.shields.io/badge/What's%20next-%3F-009EFF" width="90" height="20"/>
     </a>
     <img width="20"/> <!-- Just empty space -->
