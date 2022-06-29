@@ -1,4 +1,8 @@
 <p align="center">
+    <a href="./projects">
+        <img src="https://img.shields.io/badge/What's%20next-%3F-009EFF" width="90" height="20"/>
+    </a>
+    <img width="20"/> <!-- Just empty space -->
     <a href="./docs/Download.md">
         <img src="https://img.shields.io/github/v/release/CristianDavideConte/universalSmoothScroll?color=rgba%2850%2C200%2C80%29&label=Version&logo=github"/>
     </a>
