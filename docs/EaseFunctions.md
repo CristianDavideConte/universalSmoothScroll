@@ -896,7 +896,7 @@ For instance:
 const xs = [0, 0.40, 0.60, 1];
 const ys = [0, 0.26, 0.84, 1];
 
-//This is a temporary custom EASE_IN_OUT like easing
+//This is a temporary custom EASE_IN_OUT easing
 //which always make the scroll-animation last 1.2 second.
 uss.setStepLengthCalculator(
     CUSTOM_CUBIC_HERMITE_SPLINE(xs, ys, 0, 1200),

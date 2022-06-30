@@ -33,7 +33,7 @@ In total, there are 3 files available:
     <code>optional</code>
    </td>
    <td rowspan = "1" align = "left">
-    Contains <i>(the minified version of)</i> a high level easing-functions library which allows you to effordlessly customize the timings and the behaviors of your scroll-animations. 
+    Contains <i>(the minified version of)</i> a high level ease-functions library which allows you to effordlessly customize the timings and the behaviors of your scroll-animations. 
    </td>
  </tr>
  </tr>
