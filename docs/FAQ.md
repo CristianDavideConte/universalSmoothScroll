@@ -34,7 +34,7 @@ A: No, they won't work on those containers.
 <br/>
 
 ## Q: How do I invoke the API methods ?  
-A: Every Universal Smooth Scroll API function call has this structure: `uss.NAME_OF_THE_METHOD(ARGUMENTS)`.
+A: Every Universal Smooth Scroll API function call has this structure: `uss.nameOfTheMethod(param1, param2 ...)`.
 
 ---
 <br/>
@@ -79,9 +79,9 @@ class myApp extends React.Component {
 
 ## Q: Can I apply an easing to the scroll-animations ?
 A: Yes, you can create a custom [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) and apply it with:
-* `setXStepLengthCalculator` for the x-axis.
-* `setYStepLengthCalculator` for the y-axis. 
-* `setStepLengthCalculator` for both axes. 
+* [`setXStepLengthCalculator`](./FunctionsAbout.md#setXStepLengthCalculatorFun) for the scroll-animations on the x-axis of your container.
+* [`setYStepLengthCalculator`](./FunctionsAbout.md#setYStepLengthCalculatorFun) for the scroll-animations on the y-axis of your container. 
+* [`setStepLengthCalculator`](./FunctionsAbout.md#setStepLengthCalculatorFun) for the scroll-animations on both axes of your container. 
 
 For example:<br/>
 ```javascript
@@ -92,7 +92,7 @@ uss.setYStepLengthCalculator(
     }
 );
 ```
-<br/>You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library.<br/>
+<br/>You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library.<br/>
 
 For istance:<br/>
 ```javascript
@@ -108,7 +108,7 @@ If you try to write a custom [`stepLengthCalculator`](./FAQ.md#q-what-is-a-stepl
 You can use them to make the scroll-animations last any amount of time you want.<br/>
 _(quick tip: the elapsed time is just `currentTimestap - originalTimestamp`)_.<br/>
 
-You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library with a specific duration. <br/>
+You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library with a specific duration.<br/>
 
 For example:<br/>
 ```javascript
@@ -164,7 +164,7 @@ uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer, false);
 
 You don't have to write your own stepLengthCalculator if you don't want to. <br/>
 The API will still function even if you don't specify any _(the scroll behavior/easing will be linear)_.<br/>
-You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library to get a stepLengthCalculator.<br/>
+You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library to get a stepLengthCalculator. <br/>
 
 For example:<br/>
 ```javascript
@@ -210,32 +210,54 @@ if(!isValid) {
 <br/>
 
 ## Q: What is the difference between _`stillStart = true`_ and _`stillStart = false`_ ?
-A: They produce 2 completly different kind of scroll-animations' behaviors.<br/>
-_`stillStart = true`_ means that before the scroll-animation you requested can be played any other scroll-animation on the same axis of the passed container is stopped so this type of scroll-animations always start from a no-movement situation in order to be performed.<br/>  
+A: They produce 2 completly different kind of scroll-animations' behaviors. <br/>
+
+_`stillStart = true`_ means that before the scroll-animation you requested can be played any other scroll-animation on the same axis of the passed container is stopped so this type of scroll-animations always start from a no-movement _(still start)_ situation in order to be performed.<br/>  
 _`stillStart = false`_ means that even if other scroll-animations on the same axis of the passed container are currently being performed they won't be stopped, but they'll just be extended/reduced by the passed delta.<br/>
 
 This is an example of how different these 2 kind of scroll-animations are:<br/>
 ```javascript
-const ourEaseFunction = (remaning) => {return remaning / 15 + 1;};
-uss.setYStepLengthCalculator(ourEaseFunction, myContainer, false);
+//Suppose we want to scroll the body and we start from (0,0).
+uss.setPageScroller(document.body);
 
-//CASE A: stillStart = true
-const stillStartTrueBehavior = wheelEvent => {
-    wheelEvent.preventDefault();
-    wheelEvent.stopPropagation();
-    uss.scrollYBy(wheelEvent.deltaY, myContainer, null, true);
-}
+//Returns the real-time scrollTop position of the body when invoked.
+const getCurrentYPosition = uss.getScrollYCalculator(); 
 
-//CASE B: stillStart = false
-const stillStartFalseBehavior = wheelEvent => {
-    wheelEvent.preventDefault();
-    wheelEvent.stopPropagation();
-    uss.scrollYBy(wheelEvent.deltaY, myContainer, null, false);
-}
+//We initially tell the API to scroll the body to (0,100).
+uss.scrollYTo(100);
 
-//Uncomment one line at a time and notice the difference
-//myContainer.addEventListener("wheel", stillStartTrueBehavior,  {passive:false});
-//myContainer.addEventListener("wheel", stillStartFalseBehavior, {passive:false});
+//N.B.
+//Since no repaint has been done we're still at (0,0). 
+
+//Option A: stillStart = true.
+//We expect the final scrollTop position of the body to be 200px.
+//This is because we've stopped the previous scroll-animation with 
+//stillStart = true, preventing it from scrolling to 100px.
+uss.scrollYBy(200, uss.getPageScroller(), () => console.log(getCurrentYPosition()), true);
+
+//Option B: stillStart = false.
+//We expect the final scrollTop position of the body to be 300px.
+//This is because we've extended the previous scroll-animation with 
+//stillStart = false and we've added another 200px to the totalScrollAmount.
+uss.scrollYBy(200, uss.getPageScroller(), () => console.log(getCurrentYPosition()), false);
+```
+ 
+These are some edge cases you may encounter:
+```javascript
+//Suppose we want to scroll the body and we start from (0,0).
+uss.setPageScroller(document.body);
+
+//We initially tell the API to scroll the body to (0,100).
+uss.scrollYTo(100);
+
+//Example A:
+//we "invert" the scroll animation's direction going (100 - 150 = -50).
+uss.scrollYBy(-150, uss.getPageScroller(), () => console.log("direction inverted"), false);
+
+//Example B:
+//we reduce the totalScrollAmount of the scroll-animation to 0 (100 - 100 = 0).
+//The callback is executed immediately.
+uss.scrollYBy(-100, uss.getPageScroller(), () => console.log("immediately executed"), false);
 ```
 
 ---
@@ -244,7 +266,7 @@ const stillStartFalseBehavior = wheelEvent => {
 ## Q: What is the _hrefSetup's_ `init` parameter ?
 A: Unlike any other callback parameter of the USS API, this is a function that gets automatically executed by the `uss` object whenever an anchor is clicked but right before any scroll-animation is performed. <br/>
 
-An `init` function is always passed the following input parameters _(in this order)_:
+This `init` function is always passed the following input parameters _(in this order)_:
 * the anchor that has been clicked
 * the element that has to be reached (the HTMLElement that has the same id of the anchors's `href` parameter) <br/>
 
@@ -257,14 +279,17 @@ For example: <br/>
  * In this example, every time an anchor link is clicked 
  * the document.body's background color is randomly changed.
  */
-function changeBg() {
+function changeBackgroundColor(number) {
+  //I want to prevent the anchor from scrolling to its linked element
+  //if the passed number is higher than 1.
+  if(number > 1) return false;
+
   document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + 
                                                  Math.random() * 255 + "," + 
                                                  Math.random() * 255 + ")"; 
-  //I don't want to prevent the scroll, 
-  //so there's no need to return anything in this case
+  //No return is needed if you don't want to prevent the scrolling.
 }
-uss.hrefSetup(true, true, changeBg);
+uss.hrefSetup(true, true, () => changeBackgroundColor(Math.random() * 2));
 ```
 
 ---
@@ -291,13 +316,16 @@ myContainer.addEventListener("wheel", event => {
   uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
 }, {passive:false});
 ```
+You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library.
+For istance: <br/>
+```javascript
+uss.setYStepLengthCalculator(EASE_OUT_QUAD(), myContainer);
 
----
-<br/>
-
-## Q: What are _`_scrollX()`_ and _`_scrollY()`_ ?
-A: They are functions that can only be internally accessed by the API, you won't be able to invoke them. <br/>
-They execute all the instructions needed for a single scroll-animation-step on, respectively, the x and y axis.
+myContainer.addEventListener("wheel", event => {
+  event.preventDefault(); //Prevent the classic scroll
+  uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
+}, {passive:false});
+```
 
 ---
 <br/>
@@ -316,8 +344,8 @@ Ignoring user preferences is not suggested.
 <br/>
 
 ## Q: Why is it allowed to directly modify internal variables ?
-A: It is allowed _(but highly discouraged)_ because there may be a bug that prevents you from setting a variable to a right value _(very uncommon)_. <br/>
-If that's the case don't hesitate to [`contact me`](https://github.com/CristianDavideConte/universalSmoothScroll#contact-me).
+A: It is allowed _(but highly discouraged)_ because there may be a bug that prevents you from setting a variable to a right value _(very uncommon)_ or maybe you want to implement a custom behavior not yet covered by the API. <br/>
+If one of above is your case don't hesitate to [`contact me`](https://github.com/CristianDavideConte/universalSmoothScroll#contact-me).
 
 ---
 <br/>
