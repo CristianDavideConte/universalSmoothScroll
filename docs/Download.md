@@ -2,7 +2,7 @@
 <br/>
 
 # Download
-In order to use this API you first have to download the needed scripts which you can get in many ways. <br/>
+In order to use this API you first have to download the needed scripts. <br/>
 In total, there are 3 files available:
 
 <table>

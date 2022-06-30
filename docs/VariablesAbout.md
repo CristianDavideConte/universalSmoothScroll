@@ -225,6 +225,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
 
 ## The `_containersData` arrays
 The `_containersData` variable is a map and its values are 16-cells-long arrays. <br/>
+
 This is what each cell contains: 
 <br/>
 <br/>

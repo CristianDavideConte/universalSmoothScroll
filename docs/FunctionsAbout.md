@@ -3,7 +3,7 @@
 
 # Available Functions
 Once imported, the [`universalsmoothscroll-min.js`](./Download.md) script will automatically declare and initialize _(in the global scope of your application)_ the `uss` object. <br/>
-This object has the below listed properties and they are the core functionalities of the UniversalSmoothScroll API. <br/>
+This object has the below listed properties and they are the core functionalities of the Universal Smooth Scroll API. <br/>
 Each one of these functions can be invoked in this way: `uss.nameOfTheFunction(param1, param2, ...)`. <br/>
 
 For instance:

@@ -2,7 +2,7 @@
 <br/>
 
 # Internal Constants
-Once imported, the [`universalsmoothscroll-min.js`](./Download.md) script will automatically declare and initialize _(in the global scope of your application)_ all the variables listed below. <br/>
+Once imported, the [`universalsmoothscroll-min.js`](./Download.md) script will automatically declare and initialize _(in the global scope of your application)_ all the constants listed below. <br/>
 They are internally used by the USS API for initialization purposes and can normally be ignored. <br/>
 They are only useful if you want to reset the `uss` object to its initial state or if you just want to better understand how this API works. <br/>
 

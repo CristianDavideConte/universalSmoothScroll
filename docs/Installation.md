@@ -20,7 +20,7 @@ For example: <br/>
 </html>
 ```
 
-The scripts will auto-initialize themselves and you can now start using the Universal Smooth Scroll API.
+All the scripts will auto-initialize themselves once imported so you can start using the Universal Smooth Scroll API straight away.
 
 ---
 

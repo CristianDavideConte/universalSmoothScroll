@@ -2,7 +2,7 @@
 <br/>
 
 # Included Easings
-This library contains functions that will return a valid [`stepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) that you can use to customize the easing of your scroll-animations. <br/>
+This library contains functions that can be invoked to get custom [`stepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) which can be used to control the easing of any scroll-animation. <br/>
 
 In order to do that, just pass the returned [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) to either one of these methods: 
 * [`setXStepLengthCalculator`](./FunctionsAbout.md#setXStepLengthCalculatorFun) for the scroll-animations on the x-axis of your container.

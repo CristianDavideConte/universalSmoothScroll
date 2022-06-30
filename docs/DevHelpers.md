@@ -2,7 +2,7 @@
 <br/>
 
 # Dev-Helpers library
-This library contains functions that should help you with the more challenging aspect of the UniversalSmoothScroll API (e.g. how to create a correct [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator)). <br/>
+This library contains functions that should help you with the more challenging aspect of the Universal Smooth Scroll API (e.g. how to create a correct [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator)). <br/>
 This library is meant to be used during the development phase of your website only and it's not internally used by the API, so it should be removed from the project before the deployment phase (nothing will happen if you leave it there, don't worry).
 
 ### N.B.
