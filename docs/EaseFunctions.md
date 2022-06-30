@@ -1,7 +1,7 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
 <br/>
 
-# Included Easings
+# Ease-Functions library
 This library contains functions that can be invoked to get custom [`stepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) which can be used to control the easing of any scroll-animation. <br/>
 
 In order to do that, just pass the returned [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) to either one of these methods: 
