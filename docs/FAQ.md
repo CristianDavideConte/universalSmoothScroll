@@ -92,7 +92,7 @@ uss.setYStepLengthCalculator(
     }
 );
 ```
-<br/>You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library.<br/>
+<br/>You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EaseFunctions.md) library.<br/>
 
 For istance:<br/>
 ```javascript
@@ -108,7 +108,7 @@ If you try to write a custom [`stepLengthCalculator`](./FAQ.md#q-what-is-a-stepl
 You can use them to make the scroll-animations last any amount of time you want.<br/>
 _(quick tip: the elapsed time is just `currentTimestap - originalTimestamp`)_.<br/>
 
-You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library with a specific duration.<br/>
+You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EaseFunctions.md) library with a specific duration.<br/>
 
 For example:<br/>
 ```javascript
@@ -164,7 +164,7 @@ uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer, false);
 
 You don't have to write your own stepLengthCalculator if you don't want to. <br/>
 The API will still function even if you don't specify any _(the scroll behavior/easing will be linear)_.<br/>
-You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library to get a stepLengthCalculator. <br/>
+You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EaseFunctions.md) library to get a stepLengthCalculator. <br/>
 
 For example:<br/>
 ```javascript
@@ -317,7 +317,7 @@ myContainer.addEventListener("wheel", event => {
 }, {passive:false});
 ```
 
-You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library. <br/>
+You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EaseFunctions.md) library. <br/>
 
 For istance: <br/>
 ```javascript

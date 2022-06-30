@@ -80,7 +80,7 @@ You can try most of the features on:
      
   <tr>
    <td align = "center">
-    <a href = "./docs/EasingFunctions.md"><code>Included Easings</code></a>   
+    <a href = "./docs/EaseFunctions.md"><code>Ease-Functions library</code></a>   
    </td>
   </tr>
           

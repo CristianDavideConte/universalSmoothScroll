@@ -2494,4 +2494,4 @@ The following table describes every entry of the `Input Parameters` column of th
 
 <br/>
 
-#### <p align="right"><a href = "./EasingFunctions.md"><code>Go to next section &#8680;</code></a></p>
+#### <p align="right"><a href = "./EaseFunctions.md"><code>Go to next section &#8680;</code></a></p>

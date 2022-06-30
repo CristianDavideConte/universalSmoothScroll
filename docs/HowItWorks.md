@@ -4,7 +4,7 @@
 # How it works
 Click the links below to understand what the imported scripts do: 
 * [`universalsmoothscroll-min.js`](./HowItWorks.md#api-script) _(see below)_
-* [`universalsmoothscroll-ease-functions-min.js`](./EasingFunctions.md)
+* [`universalsmoothscroll-ease-functions-min.js`](./EaseFunctions.md)
 * [`universalsmoothscroll-dev-helpers-min.js`](./DevHelpers.md)
 
 
