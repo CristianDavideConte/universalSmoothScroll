@@ -74,7 +74,7 @@ All the variables listed below are declared with the keywork [`const`](https://d
     <code>Number</code>
    </td>
    <td rowspan = "1">
-    The initial value of the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property: it represents the default lowest number of frames any scroll-animation should last if no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> is set for a container. <br/> 
+    The initial value of the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property: it represents the default lowest number of frames any scroll-animation should last if no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is set for a container. <br/> 
     It's <strong>51 frames at 929px</strong> of <i>(initial window's)<i> height.
    </td>
   </tr>

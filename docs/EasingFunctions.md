@@ -2,16 +2,16 @@
 <br/>
 
 # Included Easings
-Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the functions listed below. <br/>
-When invoked, each one of these functions will return a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that you can use to customize the easing of the scroll-animations on any axis of any container. <br/>
+This library contains functions that will return a valid [`stepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) that you can use to customize the easing of your scroll-animations. <br/>
 
-In order to do that, just pass the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) to either one of these methods: 
+In order to do that, just pass the returned [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) to either one of these methods: 
 * [`setXStepLengthCalculator`](./FunctionsAbout.md#setXStepLengthCalculatorFun) for the scroll-animations on the x-axis of your container.
 * [`setYStepLengthCalculator`](./FunctionsAbout.md#setYStepLengthCalculatorFun) for the scroll-animations on the y-axis of your container. 
 * [`setStepLengthCalculator`](./FunctionsAbout.md#setStepLengthCalculatorFun) for the scroll-animations on both axes of your container. 
 
 ### N.B.
-This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Download.md) script in your project first. 
+This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Installation.md) script in your project first. <br/>
+Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the functions listed below. <br/>
 <br/>
 <br/>
 
@@ -761,7 +761,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
     <img src = "./easingsGifs/26_EASE_ELASTIC/X.gif" width = "40px" height = "40px"/> 
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "./EasingFunctions.md#the-forward-steplengthcalculator-parameter"><code>forward StepLengthCalculator</code></a>
+    <a href = "./EasingFunctions.md#the-forwardeasing-parameter"><code>forwardEasing</code></a>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -769,7 +769,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
-    <a href = "./EasingFunctions.md#the-backward-steplengthcalculator-parameter"><code>backward StepLengthCalculator</code></a>
+    <a href = "./EasingFunctions.md#the-backwardeasing-parameter"><code>backwardEasing</code></a>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -777,7 +777,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
-    <a href = "./EasingFunctions.md#the-elasticpointcalculator-parameter"><code>ElasticPointCalculator</code></a>
+    <a href = "./EasingFunctions.md#the-elasticpointcalculator-parameter"><code>elasticPointCalculator</code></a>
    </td>
    <td rowspan = "1" align = "center">
     <code>() => 50</code>
@@ -785,7 +785,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
-    <a href = "./EasingFunctions.md#the-debounce-time-parameter"><code>debounce time</code></a>
+    <a href = "./EasingFunctions.md#the-debouncetime-parameter"><code>debounceTime</code></a>
    </td>
    <td rowspan = "1" align = "center">
     <code>0</code>
@@ -800,7 +800,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
     <img src = "./easingsGifs/26_EASE_ELASTIC/Y.gif" width = "40px" height = "40px"/> 
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "./EasingFunctions.md#the-forward-steplengthcalculator-parameter"><code>forward StepLengthCalculator</code></a>
+    <a href = "./EasingFunctions.md#the-forwardeasing-parameter"><code>forwardEasing</code></a>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -808,7 +808,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
-    <a href = "./EasingFunctions.md#the-backward-steplengthcalculator-parameter"><code>backward StepLengthCalculator</code></a>
+    <a href = "./EasingFunctions.md#the-backwardeasing-parameter"><code>backwardEasing</code></a>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -816,7 +816,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
-    <a href = "./EasingFunctions.md#the-elasticpointcalculator-parameter"><code>ElasticPointCalculator</code></a>
+    <a href = "./EasingFunctions.md#the-elasticpointcalculator-parameter"><code>elasticPointCalculator</code></a>
    </td>
    <td rowspan = "1" align = "center">
     <code>() => 50</code>
@@ -824,7 +824,7 @@ This library cannot be used without having imported the [`universalsmoothscroll-
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
-    <a href = "./EasingFunctions.md#the-debounce-time-parameter"><code>debounce time</code></a>
+    <a href = "./EasingFunctions.md#the-debouncetime-parameter"><code>debounceTime</code></a>
    </td>
    <td rowspan = "1" align = "center">
     <code>0</code>
@@ -916,39 +916,39 @@ It's an optional parameter.
 
 ## The `x1`, `y1`, `x2` and `y2` parameters
 They're 4 finite numbers between 0 _(included)_ and 1 _(included)_. <br/>
-They determine the type of easing the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will have. <br/>
+They determine the type of easing the returned [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will have. <br/>
 They're required parameters.
 
 ---
 
 ## The `duration` parameter
-It's a positive number which indicates the time _(in milliseconds)_ every scroll-animation controlled by this StepLengthCalculator will last. <br/>
+It's a positive number which indicates the time _(in milliseconds)_ every scroll-animation controlled by this [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will last. <br/>
 It's an optional parameter. 
 
 ---
 
 ## The `callback` parameter
-Each one of the above mentioned functions will return a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) when invoked. <br/>
-These [`StepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) are passed _some input parameters_. <br/> 
+Each one of the above mentioned functions will return a [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) when invoked. <br/>
+These [`stepLengthCalculators`](./FAQ.md#q-what-is-a-steplengthcalculator-) are passed _some input parameters_. <br/> 
 The `callback` is a function which gets executed at every scroll-animation step and that is always invoked with _those same input parameters_. <br/>
 It's an optional parameter. 
 
 ---
 
 ## The `bouncesNumber` parameter
-It's the number of bounces the returned [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will do before completing the scroll-animation. <br/>
+It's the number of bounces the returned [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) will do before completing the scroll-animation. <br/>
 A _bounce_ occurs when the scroll-animation reaches the highest scrollable value of a container and then goes back.   
 
 ---
 
 ## EASE_ELASTIC parameters
-  #### The `forward StepLengthCalculator` parameter 
-  * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***forward part*** of the scroll-animation. <br/> It's a required parameter.
-  #### The `backward StepLengthCalculator` parameter
-  * It's a [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***backward part*** of the scroll-animation. <br/> It's a required parameter.
-  #### The `ElasticPointCalculator` parameter
+  #### The `forwardEasing` parameter 
+  * It's a [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***forward part*** of the scroll-animation. <br/> It's a required parameter.
+  #### The `backwardEasing` parameter
+  * It's a [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the easing of the ***backward part*** of the scroll-animation. <br/> It's a required parameter.
+  #### The `elasticPointCalculator` parameter
   * It's a function which must return the number of pixels that will be scrolled by the backward part of the scroll-animation. <br/>
-    If this function returns a negative number, the `forward StepLengthCalculator` will be used instead of the `backward StepLengthCalculator` for the backward part of the scroll-animation. <br/>
+    If this function returns a negative number, the `forwardEasing` will be used instead of the `backwardEasing` for the backward part of the scroll-animation. <br/>
     It's an optional parameter. 
   
     An ElasticPointCalculator is always passed the following input parameters _(in this order)_: 
@@ -958,7 +958,7 @@ A _bounce_ occurs when the scroll-animation reaches the highest scrollable value
     * the `direction` of the _(forward part of)_ scroll-animation: 1 if the scrolling was from right-to-left/bottom-to-top, -1 otherwise
     * the `container` on which the scroll-animation is currently being performed (an HTMLElement that can be scrolled or the window object)
         
-  #### The `debounce time` parameter     
+  #### The `debounceTime` parameter     
   * It's the time _(in milliseconds)_ that has to elapse after the end of the _(forward part of)_ the scroll-animation in order to start the backward part. <br/> It's an optional parameter. 
 
 For example:
@@ -973,7 +973,7 @@ uss.setXStepLengthCalculator(
   EASE_ELASTIC_X(
     EASE_OUT_QUAD(1000),
     EASE_OUT_BOUNCE(700),
-    (originalTimestamp, currentTimestamp, currentPosition, direction, container) => {return 50;},
+    (originalTimestamp, currentTimestamp, currentPosition, direction, container) => 50,
     500
   ), 
   myContainer

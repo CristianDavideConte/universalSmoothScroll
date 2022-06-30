@@ -51,7 +51,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <a href = "./ConstantsAbout.md#DEFAULT_XSTEP_LENGTH"><code>DEFAULT_XSTEP_LENGTH</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
+    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
    </td>
   </tr>
   </tr>
@@ -66,7 +66,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <a href = "./ConstantsAbout.md#DEFAULT_YSTEP_LENGTH"><code>DEFAULT_YSTEP_LENGTH</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
+    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
    </td>
   </tr>
   <tr id = "_minAnimationFrame">
@@ -80,7 +80,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <a href = "./ConstantsAbout.md#DEFAULT_MIN_ANIMATION_FRAMES"><code>DEFAULT_MIN_ANIMATION_FRAMES</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
+    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
    </td>
   </tr>
   <tr id = "_windowHeight">
@@ -243,10 +243,10 @@ Index | Type | Description
 `9` | `Number` | Contains the starting time in milliseconds _(as a [`DOMHighResTimeStamp`](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp))_ of the current scroll-animation on the y-axis of this container. <br/> It's `null` if a scroll-animation on the y-axis of this container has been scheduled but has not been performed yet or if a scroll-animation with [`stillStart = false`](FunctionsAbout.md#scrollYBy) has been requested.
 `10` | `Function` | Contains a callback function that will be executed when the current scroll-animation on the x-axis of this container has been performed.
 `11` | `Function` | Contains a callback function that will be executed when the current scroll-animation on the y-axis of this container has been performed.
-`12` | `Function` | Contains the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the x-axis of this container. 
-`13` | `Function` | Contains the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the y-axis of this container.
-`14` | `Function` | Contains the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the x-axis of this container. <br/> If valid, replaces `12` for the current scroll-animation on the x-axis of this container and it's automatically invalidated at the end.
-`15` | `Function` | Contains the [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the y-axis of this container. <br/> If valid, replaces `13` for the current scroll-animation on the y-axis of this container and it's automatically invalidated at the end.
+`12` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the x-axis of this container. 
+`13` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the y-axis of this container.
+`14` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the x-axis of this container. <br/> If valid, replaces `12` for the current scroll-animation on the x-axis of this container and it's automatically invalidated at the end.
+`15` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the y-axis of this container. <br/> If valid, replaces `13` for the current scroll-animation on the y-axis of this container and it's automatically invalidated at the end.
 
 ### N.B.
 ***"This container"*** refers to the key linked to each array.

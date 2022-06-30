@@ -10,7 +10,7 @@ For instance:
 ```javascript
 /**
  * In this example:
- * - an ease-out StepLengthCalculator is first set to control
+ * - an ease-out stepLengthCalculator is first set to control
  *   the scroll-animations on the y-axis of myContainer.
  * - the API is requested to scroll the y-axis of myContainer to 500px and 
  *   log "dOnE" when finished.
@@ -162,7 +162,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
    </td>
    <td rowspan = "2" align = "left">
-    Returns the current <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> which controls the animations on the x-axis of the passed container if available.
+    Returns the current <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> which controls the animations on the x-axis of the passed container if available.
    </td>
   </tr>
   <tr>
@@ -185,7 +185,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
    </td>
    <td rowspan = "2" align = "left">
-    Returns the current <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> which controls the animations on the y-axis of the passed container if available.
+    Returns the current <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> which controls the animations on the y-axis of the passed container if available.
    </td>
   </tr>
   <tr>
@@ -343,7 +343,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>undefined</code>
    </td>
    <td rowspan = "3" align = "left">
-    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible.
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible.
    </td>
   </tr>
   <tr>
@@ -374,7 +374,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>undefined</code>
    </td>
    <td rowspan = "3" align = "left">
-    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible.
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible.
    </td>
   </tr>
   <tr>
@@ -405,7 +405,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>undefined</code>
    </td>
    <td rowspan = "3" align = "left">
-    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible.
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible.
    </td>
   </tr>
   <tr>
@@ -557,7 +557,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    </td>
    <td rowspan = "1" align = "left">
     Returns how long each animation-step on the x-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
-    This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for any scroll-animation on the x-axis of any container.
+    This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for any scroll-animation on the x-axis of any container.
    </td>
   </tr> 
            
@@ -573,7 +573,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    </td>
    <td rowspan = "1" align = "left">
     Returns how long each animation-step on the y-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
-    This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>StepLengthCalculator</code></a> for any scroll-animation on the y-axis of any container.
+    This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for any scroll-animation on the y-axis of any container.
    </td>
   </tr> 
            
@@ -1386,7 +1386,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    If <code>true</code> the returned StepLengthCalculator is the temporary one set for the x-axis of this container, otherwise it's the standard one.
+    If <code>true</code> the returned <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is the temporary one set for the x-axis of this container, otherwise it's the standard one.
   </td>
   </tr>
   
@@ -1412,7 +1412,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    If <code>true</code> the returned StepLengthCalculator is the temporary one set for the y-axis of this container, otherwise it's the standard one.
+    If <code>true</code> the returned <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is the temporary one set for the y-axis of this container, otherwise it's the standard one.
   </td>
   </tr>
   
@@ -1427,7 +1427,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A valid StepLengthCalculator.
+    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
   </td>
   </tr>
   <tr>
@@ -1451,9 +1451,9 @@ The following table describes every entry of the `Input Parameters` column of th
   <td rowspan = "1" align = "left">
     If <code>true</code>, <code>newCalculator</code> will control only the next scroll-animation on the x-axis of this container and it will be automatically discarded at the end of it. <br/>
     If <code>false</code> every scroll-animation on the x-axis of this container will be controlled by <code>newCalculator</code>. <br/>
-    If a container has both a temporary and non-temporary StepLengthCalculator set for its x-axis, the temporary one will controll the next scroll-animation on the x-axis of the container. <br/>
-    Setting a temporary StepLengthCalculator will only overwrite the previous temporary one. <br/>
-    Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
+    If a container has both a temporary and non-temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set for its x-axis, the temporary one will controll the next scroll-animation on the x-axis of the container. <br/>
+    Setting a temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> will only overwrite the previous temporary one. <br/>
+    Setting a non-temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> will overwrite the previous non-temporary one and discard any temporary one. <br/>
   </td>
   </tr>
   
@@ -1468,7 +1468,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A valid StepLengthCalculator.
+    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
   </td>
   </tr>
   <tr>
@@ -1492,9 +1492,9 @@ The following table describes every entry of the `Input Parameters` column of th
   <td rowspan = "1" align = "left">
     If <code>true</code>, <code>newCalculator</code> will control only the next scroll-animation on the y-axis of this container and it will be automatically discarded at the end of it. <br/>
     If <code>false</code> every scroll-animation on the y-axis of this container will be controlled by <code>newCalculator</code>. <br/>
-    If a container has both a temporary and non-temporary StepLengthCalculator set for its y-axis, the temporary one will controll the next scroll-animation on the y-axis of the container. <br/>
-    Setting a temporary StepLengthCalculator will only overwrite the previous temporary one. <br/>
-    Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
+    If a container has both a temporary and non-temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set for its y-axis, the temporary one will controll the next scroll-animation on the y-axis of the container. <br/>
+    Setting a temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> will only overwrite the previous temporary one. <br/>
+    Setting a non-temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> will overwrite the previous non-temporary one and discard any temporary one. <br/>
   </td>
   </tr> 
   
@@ -1509,7 +1509,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A valid StepLengthCalculator.
+    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
   </td>
   </tr>
   <tr>
@@ -1534,9 +1534,9 @@ The following table describes every entry of the `Input Parameters` column of th
     If <code>true</code>, <code>newCalculator</code> will control only the next scroll-animation on the x-axis and the next one on the y-axis of this container. <br/>
     It will automatically be discarded separately for each axis whenever the next scroll-animation on an axis is completed. <br/>
     If <code>false</code> every scroll-animation on both the x and y axes of this container will be controlled by <code>newCalculator</code>. <br/>
-    If a container has both a temporary and non-temporary StepLengthCalculator, the temporary one will controll the next scroll-animation of the container. <br/>
-    Setting a temporary StepLengthCalculator will only overwrite the previous temporary one. <br/>
-    Setting a non-temporary StepLengthCalculator will overwrite the previous non-temporary one and discard any temporary one. <br/>
+    If a container has both a temporary and non-temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>, the temporary one will controll the next scroll-animation of the container. <br/>
+    Setting a temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> will only overwrite the previous temporary one. <br/>
+    Setting a non-temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> will overwrite the previous non-temporary one and discard any temporary one. <br/>
   </td>
   </tr> 
 

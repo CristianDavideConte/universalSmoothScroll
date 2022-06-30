@@ -1,14 +1,11 @@
-const DEFAULT_TEST_CALCULATOR_SCROLL_VALUE = 100; //in px
-const DEFAULT_TEST_CALCULATOR_DURATION = 10000;    //in ms
-
-async function isValidStepLengthCalculator(stepLengthCalculator, container = uss.getPageScroller()) {
+async function isValidStepLengthCalculator(stepLengthCalculator, container = uss._pageScroller, totalScrollAmount = 100, timeout = 5000) {
     if(typeof stepLengthCalculator !== "function") {
         uss._errorLogger("isValidStepLengthCalculator", "the stepLengthCalculator to be a function", stepLengthCalculator);
         return false;
     }
     
     const _originalTimestamp = performance.now();
-    let _remaningScrollAmount = DEFAULT_TEST_CALCULATOR_SCROLL_VALUE;
+    let _remaningScrollAmount = totalScrollAmount;
     let _exeededTimeLimit = false;
     let _currentTimestamp;
 
@@ -18,9 +15,9 @@ async function isValidStepLengthCalculator(stepLengthCalculator, container = uss
                                 _remaningScrollAmount,                                        //remaningScrollAmount
                                 _originalTimestamp,                                           //originalTimestamp
                                 _currentTimestamp,                                            //currentTimestamp
-                                DEFAULT_TEST_CALCULATOR_SCROLL_VALUE,                         //totalScrollAmount
-                                DEFAULT_TEST_CALCULATOR_SCROLL_VALUE - _remaningScrollAmount, //currentXPosition
-                                DEFAULT_TEST_CALCULATOR_SCROLL_VALUE,                         //finalXPosition
+                                totalScrollAmount,                         //totalScrollAmount
+                                totalScrollAmount - _remaningScrollAmount, //currentXPosition
+                                totalScrollAmount,                         //finalXPosition
                                 container                                                     //container
                             );
                             
@@ -30,7 +27,7 @@ async function isValidStepLengthCalculator(stepLengthCalculator, container = uss
         }
 
         _remaningScrollAmount -= _testResult;  
-        _exeededTimeLimit = _currentTimestamp - _originalTimestamp > DEFAULT_TEST_CALCULATOR_DURATION;
+        _exeededTimeLimit = _currentTimestamp - _originalTimestamp > timeout;
 
         if(_remaningScrollAmount <= 0 || _exeededTimeLimit) {
           resolve();
@@ -52,7 +49,7 @@ async function isValidStepLengthCalculator(stepLengthCalculator, container = uss
     //The passed stepLengthCalculator may have entered a loop.
     if(_exeededTimeLimit) {
         uss._warningLogger(stepLengthCalculator.name || "the passed calculator", 
-                           "didn't complete the test scroll-animation within " + DEFAULT_TEST_CALCULATOR_DURATION + "ms", 
+                           "didn't complete the test scroll-animation within " + timeout + "ms", 
                            false
         );
     }

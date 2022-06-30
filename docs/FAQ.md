@@ -78,7 +78,7 @@ class myApp extends React.Component {
 <br/>
 
 ## Q: Can I apply an easing to the scroll-animations ?
-A: Yes, you can create a custom [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) and apply it with:
+A: Yes, you can create a custom [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) and apply it with:
 * `setXStepLengthCalculator` for the x-axis.
 * `setYStepLengthCalculator` for the y-axis. 
 * `setStepLengthCalculator` for both axes. 
@@ -86,7 +86,7 @@ A: Yes, you can create a custom [`StepLengthCalculator`](./FAQ.md#q-what-is-a-st
 For example:<br/>
 ```javascript
 uss.setYStepLengthCalculator(
-    //This function is a custom StepLengthCalculator
+    //This function is a custom stepLengthCalculator
     (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => { 
         return remaning / 15 + 1;
     }
@@ -104,7 +104,7 @@ uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
 
 ## Q: Can I make my scroll-animation last a certain amount of time?
 A: Yes. <br/>
-If you try to write a custom [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) you will notice it will be passed both the original timestamp _(relative to the beginning of the scroll-animation)_ and the current timestamp as respectively the second and third arguments.<br/>
+If you try to write a custom [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) you will notice it will be passed both the original timestamp _(relative to the beginning of the scroll-animation)_ and the current timestamp as respectively the second and third arguments.<br/>
 You can use them to make the scroll-animations last any amount of time you want.<br/>
 _(quick tip: the elapsed time is just `currentTimestap - originalTimestamp`)_.<br/>
 
@@ -123,26 +123,26 @@ uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer);
 ---
 <br/>
 
-## Q: What is a _StepLengthCalculator_ ?
+## Q: What is a _stepLengthCalculator_ ?
 A: It's a function that must return a finite number.<br/>
 
 This function will be automatically invoked by the `uss` object every time it has to decide how many pixels should be scrolled on either the x or y axis of a container.<br/>
 
-A StepLengthCalculator is always passed the following input parameters _(in this order)_:
+A stepLengthCalculator is always passed the following input parameters _(in this order)_:
 * the `remaningScrollAmount` of current the scroll-animation in px _(always positive)_
 * the `originalTimestamp` which indicates the exact time in milliseconds at which the scroll-animation has started
-* the `currentTimestamp` which indicates the time in milliseconds at which the StepLengthCalculator is invoked
+* the `currentTimestamp` which indicates the time in milliseconds at which the stepLengthCalculator is invoked
 * the `totalScrollAmount` of the current scroll-animation in px _(always positive)_
 * the `currentPosition` of the container's scrollTop/Left (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/scrollX otherwise)
 * the `finalPosition` that the container's scrollTop/Left has to reach (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/scrollX otherwise)
 * the `container` on which the scroll-animation is currently being performed (an HTMLElement that can be scrolled or the window object) <br/>
 
 Imagine that a scroll-animation is like a stair: you know when/from where you started walking up/down the stair, how much time has passed since, how long the the stair is and where you are right now.<br/>
-This stair could have many steps and you can decide that you want to rest and don't make any step _(return 0)_, go up _(return a number > 0)_ or go down _(return a number < 0)_ by telling the API through the return value of a StepLengthCalculator.<br/>   
+This stair could have many steps and you can decide that you want to rest and don't make any step _(return 0)_, go up _(return a number > 0)_ or go down _(return a number < 0)_ by telling the API through the return value of a stepLengthCalculator.<br/>   
 
 This function can be invoked by the API thousands of times during a single scroll-animation and that's why it gets passed all the parameters described above.<br/>
 
-A simple StepLengthCalculator may be:<br/>
+A simple stepLengthCalculator may be:<br/>
 ```javascript
 /*
  * This particular scroll calculator will make the scroll-animation:
@@ -162,14 +162,14 @@ uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer, false);
 ```
 <br/>
 
-You don't have to write your own StepLengthCalculator if you don't want to. <br/>
+You don't have to write your own stepLengthCalculator if you don't want to. <br/>
 The API will still function even if you don't specify any _(the scroll behavior/easing will be linear)_.<br/>
-You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library to get a StepLengthCalculator.<br/>
+You can also use the [`default ease-functions`](./EasingFunctions.md) available in the [`universalsmoothscroll-ease-functions`](./Download.md) library to get a stepLengthCalculator.<br/>
 
 For example:<br/>
 ```javascript
 /*
- * This StepLengthCalculator will make our scroll-animations on the x axis of myContainer 
+ * This stepLengthCalculator will make our scroll-animations on the x axis of myContainer 
  * always last 1 second and it will make sure that 
  * they will start as fast as possible and finish as slow as they can.
  */
@@ -177,15 +177,15 @@ uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 ```
 <br/>
 
-On [`easings.net`](https://easings.net/) you can find out more about the way the StepLengthCalculators provided by [`universalsmoothscroll-ease-functions`](./Download.md) library will affect your scroll-animations.
+On [`easings.net`](https://easings.net/) you can find out more about the way the stepLengthCalculators provided by [`universalsmoothscroll-ease-functions`](./Download.md) library will affect your scroll-animations.
 <br/><br/>
 
-If you're not sure if your StepLengthCalculator is valid just use the [`isValidStepLengthCalculator`](./DevHelpers.md#isValidStepLengthCalculator) function of the [`Dev-Helpers`](./Download.md) library. <br/>
+If you're not sure if your stepLengthCalculator is valid just use the [`isValidStepLengthCalculator`](./DevHelpers.md#isValidStepLengthCalculator) function of the [`Dev-Helpers`](./DevHelpers.md) library. <br/>
 
 E.g.:<br/>
 ```javascript
 /*
- * This StepLengthCalculator won't return a valid stepLength after
+ * This stepLengthCalculator won't return a valid stepLength after
  * the value of i is greater than 10.
  * Unfortunately we didn't catch this bug at first. 
  */
@@ -197,11 +197,11 @@ const myBrokenCalculator = (i = 0) => {
  * Suppose we've already imported the Dev-Helpers library.
  * The isValidStepLengthCalculator non-blocking function will create
  * a dummy scroll-animation for the passed container (no actual scroll takes place)
- * to test our StepLengthCalculator.
+ * to test our stepLengthCalculator.
  */
 const isValid = await isValidStepLengthCalculator(myBrokenCalculator, myContainer);
 if(!isValid) {
-  //Fix the StepLengthCalculator...
+  //Fix the stepLengthCalculator...
 }
 ```
 <br/>
@@ -271,13 +271,13 @@ uss.hrefSetup(true, true, changeBg);
 <br/>
 
 ## Q: Can I obtain the ***momentum-scrolling*** effect with this API ?
-A: Yes, it can be achieved by setting a custom ease-out [`StepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for the container you want to be _"momentum-scrolled"_. <br/>
+A: Yes, it can be achieved by setting a custom ease-out [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for the container you want to be _"momentum-scrolled"_. <br/>
 
 For istance: <br/>
 ```javascript
 /**
  * In this example I want to apply the momentum-scrolling effect on mousewheel only.
- * myEaseFunction is an ease-out StepLengthCalculator
+ * myEaseFunction is an ease-out stepLengthCalculator
  * because the returned values will be bigger at the beginning and 
  * smaller at the end of the scroll-animation.
  */
