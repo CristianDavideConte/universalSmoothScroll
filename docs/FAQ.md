@@ -316,7 +316,9 @@ myContainer.addEventListener("wheel", event => {
   uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
 }, {passive:false});
 ```
-You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library.
+
+You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EasingFunctions.md) library. <br/>
+
 For istance: <br/>
 ```javascript
 uss.setYStepLengthCalculator(EASE_OUT_QUAD(), myContainer);
