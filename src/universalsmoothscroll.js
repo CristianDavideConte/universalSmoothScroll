@@ -569,191 +569,161 @@ var uss = {
       uss._errorLogger("getXScrollableParent", "the element to be an HTMLElement or the Window", element);
       return null;
     }
-
-    //Initially test if the element is the body or the documentElement.
-    //These two elements consider overflow:visible as overflow:auto.
-    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
-    const _html = document.documentElement;
-    const _body = document.body;
-    if(element === _body) {
-      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowX) && uss.getMaxScrollX(_html) >= 1) return _html;
-      element = _html;
-    }
-    if(element === _html) {
-      if(uss.getMaxScrollX(window) >= 1) return window;
-      return null;
-    }
-
-    //The element is a generic HtmlElement.
-    //Test the position, the scrollWidth and the overflow property.
+    
+    //If the element has position:fixed,  
+    //it has no scrollable parent
     let _style = window.getComputedStyle(element);
     if(_style.position === "fixed") return null;
+
+    const _body = document.body;
+    const _html = document.documentElement; 
     const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
     const _relativePositioned = _style.position !== "absolute";
+    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1; 
+    element = element.parentElement;
 
-    do {
-      element = element.parentElement;
+    //Test if the any parent (up to the body) of the passed element 
+    //is scrollable on the x-axis
+    while(element && element !== _body && element !== _html) {
       _style = window.getComputedStyle(element);
-      if(element === _body) break;
-      if((_relativePositioned || _style.position !== "static") &&
-         (element.scrollWidth > element.clientWidth) &&
-         _overflowRegex.test(_style.overflowX)
-      ) {
+      if((_relativePositioned || _style.position !== "static") && 
+          _overflowRegex.test(_style.overflowX) && 
+          _isScrollable(element)) {
         return element;
       }
-      if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
-    } while(true); //Until body is reached
+      //If this parent is fixed, no other parent can scroll the element
+      if(_style.position === "fixed") return null;
+      element = element.parentElement;
+    }
 
-    if(_bodyOverflowRegex.test(_style.overflowX) && uss.getMaxScrollX(_body) >= 1) return _body;
-    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowX) && uss.getMaxScrollX(_html) >= 1) return _html;
-    if(uss.getMaxScrollX(window) >= 1) return window;
-    return null;
-  },
+    const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
+    if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflowX) && _isScrollable(_body)) return _body; 
+    if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflowX) && _isScrollable(_html)) return _html; 
+    if(_isScrollable(window)) return window;
+    return null; 
+  },   
   getYScrollableParent: (element, includeHiddenParents = false) => {
     if(element === window) return null;
     if(!(element instanceof HTMLElement)) {
       uss._errorLogger("getYScrollableParent", "the element to be an HTMLElement or the Window", element);
       return null;
     }
-
-    //Initially test if the element is the body or the documentElement.
-    //These two elements consider overflow:visible as overflow:auto.
-    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
-    const _html = document.documentElement;
-    const _body = document.body;
-    if(element === _body) {
-      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowY) && uss.getMaxScrollY(_html) >= 1) return _html;
-      element = _html;
-    }
-    if(element === _html) {
-      if(uss.getMaxScrollY(window) >= 1) return window;
-      return null;
-    }
-
-    //The element is a generic HtmlElement.
-    //Test the position, the scrollHeight and the overflow property.
+    
+    //If the element has position:fixed,  
+    //it has no scrollable parent
     let _style = window.getComputedStyle(element);
     if(_style.position === "fixed") return null;
+
+    const _body = document.body;
+    const _html = document.documentElement; 
     const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
     const _relativePositioned = _style.position !== "absolute";
+    const _isScrollable = (el) => uss.getMaxScrollY(el) >= 1; 
+    element = element.parentElement;
 
-    do {
-      element = element.parentElement;
+    //Test if the any parent (up to the body) of the passed element 
+    //is scrollable on the y-axis
+    while(element && element !== _body && element !== _html) {
       _style = window.getComputedStyle(element);
-      if(element === _body) break;
-      if((_relativePositioned || _style.position !== "static") &&
-         (element.scrollHeight > element.clientHeight) &&
-         _overflowRegex.test(_style.overflowY)
-      ) {
+      if((_relativePositioned || _style.position !== "static") && 
+          _overflowRegex.test(_style.overflowY) && 
+          _isScrollable(element)) {
         return element;
       }
-      if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
-    } while(true); //Until body is reached
+      //If this parent is fixed, no other parent can scroll the element
+      if(_style.position === "fixed") return null;
+      element = element.parentElement;
+    }
 
-    if(_bodyOverflowRegex.test(_style.overflowY) && uss.getMaxScrollY(_body) >= 1) return _body;
-    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflowY) && uss.getMaxScrollY(_html) >= 1) return _html;
-    if(uss.getMaxScrollY(window) >= 1) return window;
-    return null;
-  },    
+    const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
+    if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflowY) && _isScrollable(_body)) return _body; 
+    if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflowY) && _isScrollable(_html)) return _html; 
+    if(_isScrollable(window)) return window;
+    return null; 
+  },     
   getScrollableParent: (element, includeHiddenParents = false) => {
     if(element === window) return null;
     if(!(element instanceof HTMLElement)) {
       uss._errorLogger("getScrollableParent", "the element to be an HTMLElement or the Window", element);
       return null;
     }
-
-    //Initially test if the element is the body or the documentElement.
-    //These two elements consider overflow:visible as overflow:auto.
-    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
-    const _html = document.documentElement;
-    const _body = document.body;
-    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1 || uss.getMaxScrollY(el) >= 1;
-    if(element === _body) {
-      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) return _html;
-      element = _html;
-    }
-    if(element === _html) {
-      if(_isScrollable(window)) return window;
-      return null;
-    }
-
-    //The element is a generic HtmlElement.
-    //Test the position, the scrollWidth/scrollHeight and the overflow property.
+    
+    //If the element has position:fixed,  
+    //it has no scrollable parent
     let _style = window.getComputedStyle(element);
     if(_style.position === "fixed") return null;
+
+    const _body = document.body;
+    const _html = document.documentElement; 
     const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
     const _relativePositioned = _style.position !== "absolute";
+    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1 || uss.getMaxScrollY(el) >= 1; 
+    element = element.parentElement;
 
-    do {
-      element = element.parentElement;
+    //Test if the any parent (up to the body) of the passed element 
+    //is scrollable on both the x and y axes
+    while(element && element !== _body && element !== _html) {
       _style = window.getComputedStyle(element);
-      if(element === _body) break;
-      if((_relativePositioned || _style.position !== "static") &&
-         (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) &&
-         _overflowRegex.test(_style.overflow)
-      ) {
+      if((_relativePositioned || _style.position !== "static") && 
+          _overflowRegex.test(_style.overflow) && 
+          _isScrollable(element)) {
         return element;
       }
-      if(_style.position === "fixed") return null; //If this parent is fixed, no other parent can scroll the element
-    } while(true); //Until body is reached
+      //If this parent is fixed, no other parent can scroll the element
+      if(_style.position === "fixed") return null;
+      element = element.parentElement;
+    }
 
-    if(_bodyOverflowRegex.test(_style.overflow) && _isScrollable(_body)) return _body;
-    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) return _html;
+    const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
+    if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflow) && _isScrollable(_body)) return _body; 
+    if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) return _html; 
     if(_isScrollable(window)) return window;
-    return null;
-  },
-  getAllScrollableParents: (element, includeHiddenParents = false, callback) => { 
+    return null; 
+  },    
+  getAllScrollableParents: (element, includeHiddenParents = false, callback) => {
     if(element === window) return [];
     if(!(element instanceof HTMLElement)) {
       uss._errorLogger("getAllScrollableParents", "the element to be an HTMLElement or the Window", element);
       return [];
     }
+    
+    //If the element has position:fixed,  
+    //it has no scrollable parent
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") return [];
 
-    //Initially test if the element is the body or the documentElement.
-    //These two elements consider overflow:visible as overflow:auto.
-    const _bodyOverflowRegex = includeHiddenParents ? /(auto|scroll|hidden|visible)/ : /(auto|scroll|visible)/;
-    const _html = document.documentElement;
     const _body = document.body;
+    const _html = document.documentElement; 
     const _scrollableParents = [];
+    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _relativePositioned = _style.position !== "absolute";
     const _callback = typeof callback === "function" ? callback : () => {};
     const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1 || uss.getMaxScrollY(el) >= 1;
     const _scrollableParentFound = (el) => {
       _scrollableParents.push(el);
       _callback(el);
     }
-    if(element === _body) {
-      if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) _scrollableParentFound(_html);
-      element = _html;
-    }
-    if(element === _html) {
-      if(_isScrollable(window)) _scrollableParentFound(window);
-      return _scrollableParents;
-    }
+    element = element.parentElement;
 
-    //The element is a generic HtmlElement.
-    //Test the position, the scrollWidth/scrollHeight and the overflow property.
-    let _style = window.getComputedStyle(element);
-    if(_style.position === "fixed") return _scrollableParents;
-    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-    const _relativePositioned = _style.position !== "absolute";
-
-    do {
-      element = element.parentElement;
+    //Test if the any parent (up to the body) of the passed element 
+    //is scrollable on both the x and y axes
+    while(element && element !== _body && element !== _html) {
       _style = window.getComputedStyle(element);
-      if(element === _body) break;
-      if((_relativePositioned || _style.position !== "static") &&
-         (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) &&
-         _overflowRegex.test(_style.overflow)
-      ) {
+      if((_relativePositioned || _style.position !== "static") && 
+          _overflowRegex.test(_style.overflow) && 
+          _isScrollable(element)) {
         _scrollableParentFound(element);
       }
-      if(_style.position === "fixed") return _scrollableParents; //If this parent is fixed, no other parent can scroll the element
-    } while(true); //Until body is reached
+      //If this parent is fixed, no other parent can scroll the element
+      if(_style.position === "fixed") return _scrollableParents;
+      element = element.parentElement;
+    }
 
-    if(_bodyOverflowRegex.test(_style.overflow) && _isScrollable(_body)) _scrollableParentFound(_body);
-    if(_bodyOverflowRegex.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) _scrollableParentFound(_html);
+    const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
+    if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflow) && _isScrollable(_body)) _scrollableParentFound(_body); 
+    if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) _scrollableParentFound(_html); 
     if(_isScrollable(window)) _scrollableParentFound(window);
-    return _scrollableParents;
+    return _scrollableParents; 
   },
   scrollXTo: (finalXPosition, container = uss._pageScroller, callback) => {
     if(!Number.isFinite(finalXPosition)) {
@@ -1467,7 +1437,7 @@ var uss = {
 
       //Prevents the browser to jump-to-position,
       //when a user navigates through history.
-      function _smoothHistoryNavigation () {
+      function _smoothHistoryNavigation() {
         const _fragment = window.location.hash.slice(1, -1);
         
         //The URL is just "URL/#" or "URL/" 
@@ -1483,6 +1453,9 @@ var uss = {
           uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
         }
       }
+      //Checks if the page initially have a URL containing 
+      //a valid fragment and scrolls to it if necessary.
+      window.requestAnimationFrame(_smoothHistoryNavigation);
     }
 
     for(const _pageLink of document.links) {
