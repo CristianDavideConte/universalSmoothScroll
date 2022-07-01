@@ -1520,7 +1520,7 @@ window.addEventListener("load", () => {
   __scrollBox.id = "__ussScrollBox";
   __scrollBoxStyle.appendChild(
     document.createTextNode(
-      "#__ussScrollBox { display:block; width:100px; height:100px; overflow-x:scroll; }"  + 
+      "#__ussScrollBox { display:block; width:100px; height:100px; overflow-x:scroll; border:none; padding:0px; }"  + 
       "#__ussScrollBox::-webkit-scrollbar { display:block; width:initial; height:initial; }"
     )
   );
@@ -1530,26 +1530,35 @@ window.addEventListener("load", () => {
   document.body.removeChild(__scrollBox);
   document.head.removeChild(__scrollBoxStyle);
 
-  //Calculate the average frames' time of the user's screen and the corresponding minAnimationFrame.
-  const _totalFrameCount = 60;
-  const _totalMeasurementsLeft = 3;
-  let _currentFrameCount = _totalFrameCount;
-  let _currentMeasurementsLeft = _totalMeasurementsLeft; 
-  let _startFrameTime = performance.now();
-  window.requestAnimationFrame(function _calcFrameTime(_currentFrameTime) {
-    _currentFrameCount--;
-    if(_currentFrameCount < 0) {
-      uss._framesTime = uss._framesTime > 0 ? 0.5 * (uss._framesTime + (_currentFrameTime - _startFrameTime) / _totalFrameCount) :
-                                                                       (_currentFrameTime - _startFrameTime) / _totalFrameCount;     
-      //uss._minAnimationFrame = 1000 / uss._framesTime;
-      _currentMeasurementsLeft--;
-      if(_currentMeasurementsLeft < 1) return;
-      
-      //Start a new measurement.
-      _currentFrameCount = _totalFrameCount;
-      _startFrameTime = performance.now();
+  //Calculate the average frames' time of the user's screen. 
+  //(and the corresponding minAnimationFrame.) //<---------------------------------------------------------------------TO LOOK MORE INTO
+  const __totalMeasurementsNumber = 3;
+  const __totalFramesInMeasurement = 60; //How many frames are considered in a single measurement 
+  let __totalFramesTime = 0;
+  let __currentMeasurementsLeft = __totalMeasurementsNumber; 
+  let __currentFrameCount = __totalFramesInMeasurement;
+  let __originalTimestamp = performance.now();
+  window.requestAnimationFrame(function __calcFrameTime(_currentTimestamp) {
+    __currentFrameCount--;
+    if(__currentFrameCount > 0) {
+      window.requestAnimationFrame(__calcFrameTime);
+      return;
     }
-    window.requestAnimationFrame(_calcFrameTime);
+
+    __currentMeasurementsLeft--;
+    __totalFramesTime += (_currentTimestamp - __originalTimestamp) / __totalFramesInMeasurement;
+
+    //Start a new measurement.
+    if(__currentMeasurementsLeft > 0) {
+      __currentFrameCount = __totalFramesInMeasurement;
+      __originalTimestamp = performance.now();
+      window.requestAnimationFrame(__calcFrameTime);
+      return;
+    }
+
+    //All the measurements have been completed.
+    uss._framesTime = __totalFramesTime / __totalMeasurementsNumber;
+    //uss._minAnimationFrame = 1000 / uss._framesTime; //<---------------------------------------------------------------------TO LOOK MORE INTO
   });
 }, {passive:true, once:true});
 
