@@ -1808,7 +1808,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
    </td>
    <td rowspan = "1" align = "left">
-    If <code>true</code> flushes the internal cache for the highest reachable scrollLeft/scrollX value of the passed container and forces its recalculation <i>(expensive operation)</i>. <br/>
+    If <code>true</code> flushes the internal cache for the highest reachable scrollLeft/scrollX value of the passed container and forces its recalculation <i>(expensive operation that triggers a <code>scroll</code> event on the passed container)</i>. <br/>
     If <code>false</code> the result is returned from cache. 
    </td>
   </tr>
@@ -1836,7 +1836,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
    </td>
    <td rowspan = "1" align = "left">
-    If <code>true</code> flushes the internal cache for the highest reachable scrollTop/scrollY value of the passed container and forces its recalculation <i>(expensive operation)</i>. <br/>
+    If <code>true</code> flushes the internal cache for the highest reachable scrollTop/scrollY value of the passed container and forces its recalculation <i>(expensive operation that triggers a <code>scroll</code> event on the passed container)</i>. <br/>
     If <code>false</code> the result is returned from cache. 
    </td>
   </tr>
