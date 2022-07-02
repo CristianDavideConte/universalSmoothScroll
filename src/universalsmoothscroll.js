@@ -1635,13 +1635,17 @@ var uss = {
 }
 
 window.addEventListener("resize", () => {
+  //Update the internal window sizes.
   uss._windowHeight = window.innerHeight; 
   uss._windowWidth = window.innerWidth;
+
+  //Invalidate the maxScrollX/maxScrollY cached values of every container.
   for(const [_container, _containerData] of uss._containersData.entries()) {
-    _containerData[16] = null;
-    _containerData[17] = null; 
+    if(!!_containerData[16]) _containerData[16] = null;
+    if(!!_containerData[17]) _containerData[17] = null; 
   }
 }, {passive:true});
+
 window.addEventListener("load", () => {
   //Calculate the maximum sizes of scrollbars on the webpage by:
   // - creating a <div> with id = "__ussScrollBox".
