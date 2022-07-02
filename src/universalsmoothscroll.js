@@ -47,6 +47,8 @@
  *                          If valid, replaces [12] for the current scroll-animation on the x-axis of this container and it's automatically invalidated at the end.
  *                     [15] contains the StepLengthCalculator that controls the scroll-animations on the y-axis of this container.
  *                          If valid, replaces [13] for the current scroll-animation on the y-axis of this container and it's automatically invalidated at the end.
+ *                     [16] contains the cached value of the highest reacheable scrollLeft/scrollX value of the current container (its maxScrollX).
+ *                     [17] contains the cached value of the highest reacheable scrollTop/scrollY value of the current container (its maxScrollY).
  * _xStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a single scroll-animation's step on the x-axis of that container.
  * _yStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a single scroll-animation's step on the y-axis of that container.
  * _minAnimationFrame: number, if there's no StepLengthCalculator set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
@@ -529,12 +531,22 @@ var uss = {
                                                 throw "USS fatal error (execution stopped)";
                                               };
   },
-  getMaxScrollX: (container = uss._pageScroller) => {
+  getMaxScrollX: (container = uss._pageScroller, forceCalculation = false) => {
+    //Check if the maxScrollX value for the passed container has already been calculated. 
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+    if(!forceCalculation && !!_containerData[16]) return _containerData[16];
+
     if(container === window) {
       const _originalXPosition = window.scrollX;
       container.scroll(1073741824, window.scrollY); //highest safe scroll value: 2^30 = 1073741824
       const _maxScroll = window.scrollX;
       container.scroll(_originalXPosition, window.scrollY);
+
+      //Cache the value for later use.
+      _containerData[16] = _maxScroll;
+      if(!_oldData) uss._containersData.set(container, _containerData);
+
       return _maxScroll;
     }
     if(container instanceof HTMLElement) {
@@ -542,16 +554,31 @@ var uss = {
       container.scrollLeft = 1073741824; //highest safe scroll value: 2^30 = 1073741824
       const _maxScroll = container.scrollLeft;
       container.scrollLeft = _originalXPosition;
+
+      //Cache the value for later use.
+      _containerData[16] = _maxScroll;
+      if(!_oldData) uss._containersData.set(container, _containerData);
+      
       return _maxScroll;
     }
     uss._errorLogger("getMaxScrollX", "the container to be an HTMLElement or the Window", container);
   },
-  getMaxScrollY: (container = uss._pageScroller) => {
+  getMaxScrollY: (container = uss._pageScroller, forceCalculation = false) => {
+    //Check if the maxScrollY value for the passed container has already been calculated. 
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+    if(!forceCalculation && !!_containerData[17]) return _containerData[17];
+
     if(container === window) {
       const _originalYPosition = window.scrollY;
       container.scroll(window.scrollX, 1073741824); //highest safe scroll value: 2^30 = 1073741824
       const _maxScroll = window.scrollY;
       container.scroll(window.scrollX, _originalYPosition);
+      
+      //Cache the value for later use.
+      _containerData[17] = _maxScroll;
+      if(!_oldData) uss._containersData.set(container, _containerData);
+
       return _maxScroll;
     }
     if(container instanceof HTMLElement) {
@@ -559,6 +586,11 @@ var uss = {
       container.scrollTop = 1073741824; //highest safe scroll value: 2^30 = 1073741824
       const _maxScroll = container.scrollTop;
       container.scrollTop = _originalYPosition;
+      
+      //Cache the value for later use.
+      _containerData[17] = _maxScroll;
+      if(!_oldData) uss._containersData.set(container, _containerData);
+
       return _maxScroll;
     }
     uss._errorLogger("getMaxScrollY", "the container to be an HTMLElement or the Window", container);
@@ -1444,10 +1476,13 @@ var uss = {
     window.cancelAnimationFrame(_containerData[0]); 
     _containerData[0] = null;
 
-    if(!_containerData[1]) { //No scroll-animation on the y-axis is being performed
+    //No scroll-animation on the y-axis is being performed.
+    if(!_containerData[1]) { 
       const _newData = [];
       if(!!_containerData[12]) _newData[12] = _containerData[12];
       if(!!_containerData[13]) _newData[13] = _containerData[13];
+      if(!!_containerData[16]) _newData[16] = _containerData[16];  
+      if(!!_containerData[17]) _newData[17] = _containerData[17]; 
       uss._containersData.set(container, _newData);
     }
 
@@ -1462,10 +1497,13 @@ var uss = {
     window.cancelAnimationFrame(_containerData[1]);
     _containerData[1] = null;
   
-    if(!_containerData[0]) { //No scroll-animation on the x-axis is being performed
+    //No scroll-animation on the x-axis is being performed.
+    if(!_containerData[0]) { 
       const _newData = [];
       if(!!_containerData[12]) _newData[12] = _containerData[12];
       if(!!_containerData[13]) _newData[13] = _containerData[13];
+      if(!!_containerData[16]) _newData[16] = _containerData[16];  
+      if(!!_containerData[17]) _newData[17] = _containerData[17]; 
       uss._containersData.set(container, _newData);
     }
 
@@ -1485,6 +1523,8 @@ var uss = {
     const _newData = [];
     if(!!_containerData[12]) _newData[12] = _containerData[12];
     if(!!_containerData[13]) _newData[13] = _containerData[13];  
+    if(!!_containerData[16]) _newData[16] = _containerData[16];  
+    if(!!_containerData[17]) _newData[17] = _containerData[17];  
     uss._containersData.set(container, _newData);
 
     if(typeof callback === "function") callback();
@@ -1499,6 +1539,8 @@ var uss = {
       const _newData = [];
       if(!!_containerData[12]) _newData[12] = _containerData[12];
       if(!!_containerData[13]) _newData[13] = _containerData[13];
+      if(!!_containerData[16]) _newData[16] = _containerData[16];  
+      if(!!_containerData[17]) _newData[17] = _containerData[17]; 
       uss._containersData.set(_container, _newData)
     }
 
@@ -1592,7 +1634,14 @@ var uss = {
   }
 }
 
-window.addEventListener("resize", () => {uss._windowHeight = window.innerHeight; uss._windowWidth = window.innerWidth;}, {passive:true});
+window.addEventListener("resize", () => {
+  uss._windowHeight = window.innerHeight; 
+  uss._windowWidth = window.innerWidth;
+  for(const [_container, _containerData] of uss._containersData.entries()) {
+    _containerData[16] = null;
+    _containerData[17] = null; 
+  }
+}, {passive:true});
 window.addEventListener("load", () => {
   //Calculate the maximum sizes of scrollbars on the webpage by:
   // - creating a <div> with id = "__ussScrollBox".

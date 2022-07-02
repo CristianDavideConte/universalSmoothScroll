@@ -657,7 +657,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
                
   <tr id = "getMaxScrollXFun">
-   <td rowspan = "1" align = "center">
+   <td rowspan = "2" align = "center">
     <code>getMaxScrollX</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -666,13 +666,21 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
    </td>
-   <td rowspan = "1" align = "left">
+   <td rowspan = "2" align = "left">
     Returns the highest reacheable scrollLeft/scrollX value of the passed container.
    </td>
   </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getMaxScrollX"><code>forceCalculation</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                  
   <tr id = "getMaxScrollYFun">
-   <td rowspan = "1" align = "center">
+   <td rowspan = "2" align = "center">
     <code>getMaxScrollY</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -681,10 +689,18 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
    </td>
-   <td rowspan = "1" align = "left">
+   <td rowspan = "2" align = "left">
     Returns the highest reacheable scrollTop/scrollY value of the passed container.
    </td>
   </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getMaxScrollY"><code>forceCalculation</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                  
   <tr id = "getXScrollableParentFun">
    <td rowspan = "2" align = "center">
@@ -1771,7 +1787,7 @@ The following table describes every entry of the `Input Parameters` column of th
         
   </tr>
     <tr id = "getMaxScrollX">
-  <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
     <a href = "./FunctionsAbout.md#getMaxScrollXFun"><code>getMaxScrollX</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -1784,10 +1800,22 @@ The following table describes every entry of the `Input Parameters` column of th
     An HTMLElement or the window element.
   </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> flushes the internal cache for the highest reachable scrollLeft/scrollX value of the passed container and forces its recalculation <i>(expensive operation)</i>. <br/>
+    If <code>false</code> the result is returned from cache. 
+   </td>
+  </tr>
           
   </tr>
     <tr id = "getMaxScrollY">
-  <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
     <a href = "./FunctionsAbout.md#getMaxScrollYFun"><code>getMaxScrollY</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -1799,6 +1827,18 @@ The following table describes every entry of the `Input Parameters` column of th
   <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> flushes the internal cache for the highest reachable scrollTop/scrollY value of the passed container and forces its recalculation <i>(expensive operation)</i>. <br/>
+    If <code>false</code> the result is returned from cache. 
+   </td>
   </tr>
   
   <tr id = "getXScrollableParent">
