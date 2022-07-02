@@ -228,7 +228,7 @@
     uss.setYStepLengthCalculator(
       EASE_ELASTIC_Y(
         (r) => r / 20 + 1,
-        EASE_OUT_BOUNCE(),
+        EASE_OUT_CUBIC(),
         (originalTimestamp, timestamp, currentPos, direction, container) => {
           if(isFingerDown) return 0;
           backwardPhase = true;
@@ -257,6 +257,10 @@
 
 
     let scrollbarTimeout;
+    let easeFunctionSelectorListMaxScrollY = uss.getMaxScrollY(easeFunctionSelectorList);
+    window.addEventListener("resize", () => {
+      easeFunctionSelectorListMaxScrollY = uss.getMaxScrollY(easeFunctionSelectorList);
+    });
     easeFunctionSelectorList.addEventListener("scroll", (event) => {
       if(isFingerDown || backwardPhase || uss.isYScrolling(easeFunctionSelectorList)) return;
       clearTimeout(scrollbarTimeout);
@@ -275,8 +279,7 @@
         return;
       }
 
-      const maxScroll = uss.getMaxScrollY(easeFunctionSelectorList);
-      if(_currentPos > maxScroll - _elasticLimit + 1) {
+      if(_currentPos > easeFunctionSelectorListMaxScrollY - _elasticLimit + 1) {
         scrollbarTimeout = setTimeout(() => {
                             if(isFingerDown || backwardPhase || uss.isYScrolling(easeFunctionSelectorList)) return;
                             easeFunctionSelectorList.style.pointerEvents = "none";
@@ -286,6 +289,7 @@
                           }, 1.5 * elasticDebounceTime);
       }
     }, {passive:false});
+
 
 
 

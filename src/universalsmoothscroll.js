@@ -1147,28 +1147,76 @@ var uss = {
 
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++);
-    if(_containerIndex < 0) { //The element cannot be scrolled into view
+    
+    //The element cannot be scrolled into view
+    if(_containerIndex < 0) { 
       if(typeof callback === "function") callback();
       return;
     }
     
-    let _alignToTop  = alignToTop;
-    let _alignToLeft = alignToLeft;
-    let _currentContainer = _containers[_containerIndex];
-    let _currentElement   = _containers[_containerIndex - 1];
-    
-    //The window can scroll the body and/or the html,
-    //there's no need to scroll them after having scrolled the window.
-    if(_currentContainer === window && 
-      (_currentElement === document.body || _currentElement === document.documentElement)
-    ) {
-      _containerIndex--;
-      _containers[_containerIndex] = window;
+    //If the window and the html/body elements are scrollable parents of the passed element, 
+    //scrolling the window can actually scroll the other two.
+    //If this is the case remove the redundant html/body element.
+    if(_containers[_containerIndex] === window) {
+      const _html = document.documentElement;
+      const _body = document.body;
+      
+      if(_containers[_containerIndex - 1] === _html && _canWindowScrollElement(_html)) {
+        _containerIndex--;
+        _containers.splice(_containerIndex, 1);
+      }
+
+      if(_containers[_containerIndex - 1] === _body && _canWindowScrollElement(_body)) {
+        _containerIndex--;
+        _containers.splice(_containerIndex, 1);
+      }
     }
-    _currentElement = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
+
+    let _alignToLeft = alignToLeft;
+    let _alignToTop  = alignToTop;
+    let _currentContainer = _containers[_containerIndex];
+    let _currentElement = _containers[_containerIndex - 1] || element;
+
+    const _callback = () => {
+      if(_containerIndex < 1) {
+          if(typeof callback === "function") callback();
+          return;
+      } 
+      _containerIndex--;
+      _currentContainer = _containers[_containerIndex];
+      _currentElement   = _containers[_containerIndex - 1] || element;
+      _scrollContainer();
+    };
 
     _scrollContainer();
 
+    //Tests if scrolling the window also scrolls the passed element.
+    function _canWindowScrollElement(element) {
+      //Save the original scroll positions of the window and the element.
+      const _originalWindowXPosition = window.scrollX;
+      const _originalWindowYPosition = window.scrollY; 
+      const _originalElementXPosition = element.scrollLeft;
+      const _originalElementYPosition = element.scrollTop; 
+
+      //Scroll the window and the element to a known initial position.
+      window.scroll(0,0);
+      element.scroll(0,0);
+
+      //Scroll the window and test if the element has the same scroll positions.
+      window.scroll(100, 100);
+      const _windowScrollsElement = element.scrollLeft === window.scrollX && 
+                                    element.scrollTop === window.scrollY;
+      
+      //Restore the original scroll positions of the window and the element.
+      if(!_windowScrollsElement) {
+        element.scroll(_originalElementXPosition, _originalElementYPosition);
+      }
+      window.scroll(_originalWindowXPosition, _originalWindowYPosition);
+      
+      return _windowScrollsElement;
+    }
+
+    //Execute all the calculations needed for scrolling an element into view.
     function _scrollContainer() {   
       //_scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
       //_scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
@@ -1211,21 +1259,15 @@ var uss = {
       const _elementFinalY = _alignToTop  === true  ? _bordersDimensions[0] : 
                              _alignToTop  === false ? _containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] : 
                                                      (_containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] + _bordersDimensions[0]) * 0.5;
-      const _deltaX = _elementInitialX - _elementFinalX;
-      const _deltaY = _elementInitialY - _elementFinalY;
-      const _callback = () => {
-        if(_currentElement === element) {
-            if(typeof callback === "function") callback();
-            return;
-        } 
-        _containerIndex--;
-        _currentContainer = _containers[_containerIndex];
-        _currentElement   = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
-        _scrollContainer();
-      };
-      if(_deltaX !== 0 && _deltaY !== 0) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
-      else if(_deltaX !== 0) uss.scrollXBy(_deltaX, _currentContainer, _callback);
-      else if(_deltaY !== 0) uss.scrollYBy(_deltaY, _currentContainer, _callback);
+      
+      const _deltaX = Math.round(_elementInitialX - _elementFinalX);
+      const _deltaY = Math.round(_elementInitialY - _elementFinalY);
+      const _scrollContainerX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
+      const _scrollContainerY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
+
+      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
+      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback);
+      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback);
       else _callback();
     }
   },
@@ -1235,34 +1277,82 @@ var uss = {
       return;
     }
     if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("scrollIntoView", "the container to be an HTMLElement or the Window", element);
+      uss._errorLogger("scrollIntoViewIfNeeded", "the container to be an HTMLElement or the Window", element);
       return;
     }
 
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++);
-    if(_containerIndex < 0) { //The element cannot be scrolled into view
+    
+    //The element cannot be scrolled into view
+    if(_containerIndex < 0) { 
       if(typeof callback === "function") callback();
       return;
     }
-
-    let _alignToTop  = null;
-    let _alignToLeft = null;
-    let _currentContainer = _containers[_containerIndex];
-    let _currentElement   = _containers[_containerIndex - 1];
     
-    //The window can scroll the body and/or the html,
-    //there's no need to scroll them after having scrolled the window.
-    if(_currentContainer === window && 
-      (_currentElement === document.body || _currentElement === document.documentElement)
-    ) {
-      _containerIndex--;
-      _containers[_containerIndex] = window;
+    //If the window and the html/body elements are scrollable parents of the passed element, 
+    //scrolling the window can actually scroll the other two.
+    //If this is the case remove the redundant html/body element.
+    if(_containers[_containerIndex] === window) {
+      const _html = document.documentElement;
+      const _body = document.body;
+      
+      if(_containers[_containerIndex - 1] === _html && _canWindowScrollElement(_html)) {
+        _containerIndex--;
+        _containers.splice(_containerIndex, 1);
+      }
+
+      if(_containers[_containerIndex - 1] === _body && _canWindowScrollElement(_body)) {
+        _containerIndex--;
+        _containers.splice(_containerIndex, 1);
+      }
     }
-    _currentElement = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
+
+    let _alignToLeft = null;
+    let _alignToTop  = null;
+    let _currentContainer = _containers[_containerIndex];
+    let _currentElement = _containers[_containerIndex - 1] || element;
+    
+    const _callback = () => {
+      if(_containerIndex < 1) {
+          if(typeof callback === "function") callback();
+          return;
+      } 
+      _containerIndex--;
+      _currentContainer = _containers[_containerIndex];
+      _currentElement   = _containers[_containerIndex - 1] || element;
+      _scrollContainer();
+    };
 
     _scrollContainer();
 
+    //Tests if scrolling the window also scrolls the passed element.
+    function _canWindowScrollElement(element) {
+      //Save the original scroll positions of the window and the element.
+      const _originalWindowXPosition = window.scrollX;
+      const _originalWindowYPosition = window.scrollY; 
+      const _originalElementXPosition = element.scrollLeft;
+      const _originalElementYPosition = element.scrollTop; 
+
+      //Scroll the window and the element to a known initial position.
+      window.scroll(0,0);
+      element.scroll(0,0);
+
+      //Scroll the window and test if the element has the same scroll positions.
+      window.scroll(100, 100);
+      const _windowScrollsElement = element.scrollLeft === window.scrollX && 
+                                    element.scrollTop === window.scrollY;
+      
+      //Restore the original scroll positions of the window and the element.
+      if(!_windowScrollsElement) {
+        element.scroll(_originalElementXPosition, _originalElementYPosition);
+      }
+      window.scroll(_originalWindowXPosition, _originalWindowYPosition);
+      
+      return _windowScrollsElement;
+    }
+
+    //Execute all the calculations needed for scrolling an element into view.
     function _scrollContainer() {   
       //_scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
       //_scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
@@ -1334,22 +1424,14 @@ var uss = {
                              _alignToTop  === false ? _containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] : 
                                                      (_containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] + _bordersDimensions[0]) * 0.5;
       
-      const _deltaX = _elementInitialX - _elementFinalX;
-      const _deltaY = _elementInitialY - _elementFinalY;
-      
-      const _callback = () => {
-        if(_currentElement === element) {
-            if(typeof callback === "function") callback();
-            return;
-        } 
-        _containerIndex--;
-        _currentContainer = _containers[_containerIndex];
-        _currentElement   = _containerIndex < 1 ? element : _containers[_containerIndex - 1];
-        _scrollContainer();
-      };
-      if(_deltaX !== 0 && _deltaY !== 0) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
-      else if(_deltaX !== 0) uss.scrollXBy(_deltaX, _currentContainer, _callback);
-      else if(_deltaY !== 0) uss.scrollYBy(_deltaY, _currentContainer, _callback);
+      const _deltaX = Math.round(_elementInitialX - _elementFinalX);
+      const _deltaY = Math.round(_elementInitialY - _elementFinalY);
+      const _scrollContainerX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
+      const _scrollContainerY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
+
+      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
+      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback);
+      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback);
       else _callback();
     }
   },
