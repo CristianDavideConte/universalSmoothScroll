@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <script src = "../src/universalsmoothscroll-dev-helpers.js"></script>
+        <script src = "../src/universalsmoothscroll-ease-functions.js"></script>
+        <script src = "../src/universalsmoothscroll.js"></script>
+        <style>
+            html, body {
+                width: 1000px;
+                height: 1000px;
+                overflow-x: scroll;
+                overflow-y: visible;
+            }
+            .scroller {
+                width: 2000px;
+                height: 2000px;
+                overflow-x: scroll;
+                overflow-y: visible;
+            }
+            .no-scroller {
+                width: 2000px;
+                height: 2000px;
+                overflow: visible;
+            }
+            .position-fixed {
+                position: fixed;
+            }
+            .scrollable-content {
+                width: 4000px;
+                height: 4000px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class = "position-fixed" id = "position-fixed-element"></div>
+
+        <div class = "scroller"  id = "generic-element-parent-1">
+            <div class = "scrollable-content" id = "generic-element-1"></div>
+        </div>
+
+        <div class = "scroller" id = "should-not-be-the-scrollable-parent">
+            <div class = "scroller position-fixed" id = "generic-element-parent-2">
+                <div class = "scrollable-content" id = "generic-element-2"></div>
+            </div>
+        </div>
+        
+        <div class = "scroller" id = "generic-element-parent-3">
+            <div class = "no-scroller">
+                <div class = "scrollable-content" id = "generic-element-3"></div>
+            </div>
+        </div>
+
+    </body>
+</html>

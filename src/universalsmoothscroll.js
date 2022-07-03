@@ -407,13 +407,13 @@ var uss = {
   },
   setDebugMode: (newDebugMode = "") => {
     if(typeof newDebugMode !== "string") {
-      let _oldMode = null;
+      let _currentDebugMode = null;
       if(/disabled/i.test(uss._debugMode)) {
-        _oldMode = uss._debugMode;
+        _currentDebugMode = uss._debugMode;
         uss._debugMode = "legacy"; //Temporarily set the debug mode to "legacy" to show the error 
       }
       uss._errorLogger("setDebugMode", "the newDebugMode to be \"disabled\", \"legacy\" or any other string", newDebugMode);
-      if(!!_oldMode) uss._debugMode = _oldMode;
+      if(!!_currentDebugMode) uss._debugMode = _currentDebugMode;
       return;
     }
     uss._debugMode = newDebugMode;

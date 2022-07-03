@@ -1,0 +1,57 @@
+describe("setStepLength", function() {
+    let uss;
+    let _testStepInvalidTypeString = "";
+    let _testStepInvalidTypeNaN = NaN;
+    let _testStepValidType1 = 10;
+    let _testStepValidType2 = 5;
+    it("Tests the setStepLength method", function() {
+        cy.visit("setStepLength-tests.html"); 
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                const _testElement = win.document.getElementById("scroller");
+                
+                const _initialXStepLength = uss.getXStepLength(); 
+                const _initialYStepLength = uss.getYStepLength(); 
+
+                cy.testFailingValues(uss.setStepLength, {
+                    0: [Cypress.env("failingValuesNoPositiveNumber").concat([_testStepInvalidTypeString, _testStepInvalidTypeNaN])],
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(uss.getXStepLength()).to.equal(_initialXStepLength);
+                    expect(uss.getYStepLength()).to.equal(_initialYStepLength);
+                })
+                .then(() => {
+                    //Test valid step lengths
+                    uss.setStepLength(_testStepValidType1);
+                    expect(uss.getXStepLength()).to.equal(_testStepValidType1);  
+                    expect(uss.getYStepLength()).to.equal(_testStepValidType1);  
+
+                    uss.setStepLength(_testStepValidType2);
+                    expect(uss.getXStepLength()).to.equal(_testStepValidType2); 
+                    expect(uss.getYStepLength()).to.equal(_testStepValidType2); 
+
+                    uss.stopScrolling();
+                    expect(uss.getXStepLength()).to.equal(_testStepValidType2);
+                    expect(uss.getYStepLength()).to.equal(_testStepValidType2);
+                    
+                    uss.setStepLength(_testStepInvalidTypeString);
+                    expect(uss.getXStepLength()).to.equal(_testStepValidType2);
+                    expect(uss.getYStepLength()).to.equal(_testStepValidType2);
+                    
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollTo(150, 70, _testElement, resolve);
+                        }
+                    ).then(
+                        () => {
+                            cy.elementScrollLeftShouldBe(_testElement, 150);
+                            cy.elementScrollTopShouldBe(_testElement, 70);
+                            expect(uss.getXStepLength()).to.equal(_testStepValidType2);
+                            expect(uss.getYStepLength()).to.equal(_testStepValidType2);
+                        }
+                    );
+            });
+        });     
+    });
+})

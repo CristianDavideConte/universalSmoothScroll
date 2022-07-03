@@ -25,13 +25,13 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.addAll({
-    bodyScrollLeftShouldToBe(value) {
-        cy.get("body")
+    elementScrollLeftShouldBe(element = "body", value) {
+        cy.get(element)
             .should("have.prop", "scrollLeft")
             .and("eq", value);
     },
-    bodyScrollTopShouldToBe(value) {
-        cy.get("body")
+    elementScrollTopShouldBe(element = "body", value) {
+        cy.get(element)
             .should("have.prop", "scrollTop")
             .and("eq", value);
     },

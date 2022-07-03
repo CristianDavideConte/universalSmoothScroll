@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <script async src = "../src/universalsmoothscroll-dev-helpers.js"></script>
+        <script async src = "../src/universalsmoothscroll-ease-functions.js"></script>
+        <script async src = "../src/universalsmoothscroll.js"></script>
+        <style>
+            #bordered {
+                display: block;
+                width: 200px;
+                height: 200px;
+                border-width: 10px;
+            } 
+            .all-border {
+                border-top-style: dotted;
+                border-right-style: dashed;
+                border-bottom-style: solid;
+                border-left-style: double;
+            }            
+            .top-border {
+                border-top-style: groove;
+            }
+            .right-border {
+                border-right-style: ridge;
+            }   
+            .bottom-border {
+                border-bottom-style: inset;
+            } 
+            .left-border {
+                border-left-style: outset;
+            } 
+            .no-border {
+                border-style: none;
+            }
+            .hidden-border {
+                border-style: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <div id = "bordered"></div>
+    </body>
+</html>

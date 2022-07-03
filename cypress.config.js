@@ -21,6 +21,6 @@ module.exports = {
     setupNodeEvents(on, config) {
       return require("./cypress/plugins/index.js")(on, config)
     },
-    baseUrl: "http://localhost:8080",
+    baseUrl: "http://localhost:8080/tests-pages/",
   },
 }
