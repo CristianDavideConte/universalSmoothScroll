@@ -1,4 +1,4 @@
-describe("setYStepLengthCalculator-Body", function() {
+describe("setYStepLengthCalculator", function() {
     let uss;
     let _testCalculatorValidType1 = () => 10;
     let _testCalculatorValidType2 = () => 5;

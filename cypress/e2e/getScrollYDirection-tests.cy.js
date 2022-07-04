@@ -1,6 +1,5 @@
 describe("getScrollYDirection", function() {
     let uss;
-    let scrollYDirectionTop, scrollYDirectionBottom;
     it("Tests the getScrollYDirection method", function() {
       cy.visit("getScrollYDirection-tests.html"); 
       cy.window()
@@ -14,17 +13,16 @@ describe("getScrollYDirection", function() {
           .then(() => {
             cy.waitForUssCallback(
               (resolve) => {
+                expect(uss.getScrollYDirection(_testElement)).to.equal(0);
                 uss.scrollYTo(100, _testElement, () => {
                     uss.scrollYTo(50, _testElement, resolve);
-                    scrollYDirectionTop = uss.getScrollYDirection(_testElement);
+                    expect(uss.getScrollYDirection(_testElement)).to.equal(-1);
                 });
-                scrollYDirectionBottom = uss.getScrollYDirection(_testElement);
+                expect(uss.getScrollYDirection(_testElement)).to.equal(1);
               }
             ).then(
               () => {
                 expect(uss.getScrollYCalculator(_testElement)()).to.equal(50);
-                expect(scrollYDirectionBottom).to.equal(1);
-                expect(scrollYDirectionTop).to.equal(-1);
                 expect(uss.getScrollYDirection(_testElement)).to.equal(0);
               }
             );

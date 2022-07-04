@@ -1,7 +1,5 @@
 describe("isYScrolling", function() {
     let uss;
-    let wasYScrolling;
-    let isYScrolling;
     it("Tests the isYScrolling method", function() {
         cy.visit("isYScrolling-tests.html"); 
         cy.window()
@@ -19,16 +17,13 @@ describe("isYScrolling", function() {
                 .then(() => {
                     cy.waitForUssCallback(
                         (resolve) => {
-                            uss.scrollYTo(100, _testElement, () => {
-                                isYScrolling = uss.isYScrolling(_testElement);
-                                resolve();
-                            });
-                            wasYScrolling = uss.isYScrolling(_testElement);
-                        }, 
+                            expect(uss.isYScrolling(_testElement)).to.be.false;
+                            uss.scrollYTo(100, _testElement, resolve);
+                            expect(uss.isYScrolling(_testElement)).to.be.true;
+                        }
                     ).then(
                         () => {
-                            expect(wasYScrolling).to.be.true;
-                            expect(isYScrolling).to.be.false;
+                            expect(uss.isYScrolling(_testElement)).to.be.false;
                         }
                     );
                 });
@@ -36,13 +31,8 @@ describe("isYScrolling", function() {
     });
 })
 
-
-
-
 describe("isYScrolling-StoppedScrollingWhileAnimating", function() {
     let uss;
-    let wasYScrolling;
-    let isYScrolling;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -50,7 +40,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating", function() {
             if(i < 10) return total / 10;
             
             uss.stopScrollingY(container);
-            isYScrolling = uss.isYScrolling(container);
+            expect(uss.isYScrolling(container)).to.be.false;
             _resolve();
         }
     }
@@ -68,12 +58,11 @@ describe("isYScrolling-StoppedScrollingWhileAnimating", function() {
                     (resolve) => {
                         _resolve = resolve;
                         uss.scrollYTo(100, _testElement);
-                        wasYScrolling = uss.isYScrolling(_testElement);
+                        expect(uss.isYScrolling(_testElement)).to.be.true;
                     }
                 ).then(
                     () => {
-                        expect(wasYScrolling).to.be.true;
-                        expect(isYScrolling).to.be.false;
+                        expect(uss.isYScrolling(_testElement)).to.be.false;
                     }
                 );
             });         

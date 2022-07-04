@@ -1,6 +1,6 @@
-describe("scrollBy-Body", function() {
+describe("scrollBy", function() {
     let uss;
-    it("Horizontally and vertically scrolls the body by n1,n2 pixels", function() {
+    it("Horizontally and vertically scrolls the test element by n1,n2 pixels", function() {
         cy.visit("scrollBy-tests.html"); 
         cy.window()
             .then((win) => {
@@ -32,7 +32,7 @@ describe("scrollBy-Body", function() {
     });
 })
 
-describe("scrollToBy-StillStart-True-Body", function() {
+describe("scrollToBy-StillStart-True", function() {
     let uss;
     let _originalTimestampEqualsTimeStampX, _originalTimestampEqualsTimeStampY;
     let _remaningX, _remaningY, _totalX, _totalY;
@@ -59,7 +59,7 @@ describe("scrollToBy-StillStart-True-Body", function() {
             return total / 10;
         }
     }
-    it("Horizontally and vertically scrolls the body to n1a, n1b pixels and then replace that animation with a n2a,n2b pixels scroll", function() {
+    it("Horizontally and vertically scrolls the test element to n1a, n1b pixels and then replace that animation with a n2a,n2b pixels scroll", function() {
         cy.visit("scrollBy-tests.html"); 
         cy.window()
             .then((win) => {
@@ -90,7 +90,7 @@ describe("scrollToBy-StillStart-True-Body", function() {
     });
 })
 
-describe("scrollToBy-StillStart-False-Body", function() {
+describe("scrollToBy-StillStart-False", function() {
     let uss;
     let _secondPhaseX = false;
     let _secondPhaseY = false;
@@ -125,7 +125,7 @@ describe("scrollToBy-StillStart-False-Body", function() {
             return total / 10;
         }
     }
-    it("Horizontally and vertically scrolls the body to n1a, n1b pixels and then extends that animation by n2a, n2b pixels", function() {
+    it("Horizontally and vertically scrolls the test element to n1a, n1b pixels and then extends that animation by n2a, n2b pixels", function() {
         cy.visit("scrollBy-tests.html"); 
         cy.window()
             .then((win) => {
@@ -165,7 +165,7 @@ describe("scrollToBy-StillStart-False-Body", function() {
     });
 })
 
-describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", function() {
+describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
     let uss;
     let _resolve;
     let i = 0;

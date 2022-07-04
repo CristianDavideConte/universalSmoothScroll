@@ -1,7 +1,5 @@
 describe("isScrolling-scrollXAnimation", function() {
     let uss;
-    let wasScrolling;
-    let isScrolling;
     it("Tests the isScrolling method", function() {
         cy.visit("isScrolling-tests.html"); 
         cy.window()
@@ -19,16 +17,13 @@ describe("isScrolling-scrollXAnimation", function() {
                 .then(() => {
                     cy.waitForUssCallback(
                         (resolve) => {
-                            uss.scrollXTo(100, _testElement, () => {
-                                isScrolling = uss.isScrolling(_testElement);
-                                resolve();
-                            });
-                            wasScrolling = uss.isScrolling(_testElement);
+                            expect(uss.isScrolling(_testElement)).to.be.false;
+                            uss.scrollXTo(100, _testElement, resolve);
+                            expect(uss.isScrolling(_testElement)).to.be.true;
                         }
                     ).then(
                         () => {
-                            expect(wasScrolling).to.be.true;
-                            expect(isScrolling).to.be.false;
+                            expect(uss.isScrolling(_testElement)).to.be.false;
                         }
                     );
                 });
@@ -38,8 +33,6 @@ describe("isScrolling-scrollXAnimation", function() {
 
 describe("isScrolling-scrollYAnimation", function() {
     let uss;
-    let wasScrolling;
-    let isScrolling;
     it("Tests the isScrolling method", function() {
         cy.visit("isScrolling-tests.html"); 
         cy.window()
@@ -57,16 +50,13 @@ describe("isScrolling-scrollYAnimation", function() {
                 .then(() => {
                     cy.waitForUssCallback(
                         (resolve) => {
-                            uss.scrollYTo(100, _testElement, () => {
-                                isScrolling = uss.isScrolling(_testElement);
-                                resolve();
-                            });
-                            wasScrolling = uss.isScrolling(_testElement);
+                            expect(uss.isScrolling(_testElement)).to.be.false;
+                            uss.scrollYTo(100, _testElement, resolve);
+                            expect(uss.isScrolling(_testElement)).to.be.true;
                         }
                     ).then(
                         () => {
-                            expect(wasScrolling).to.be.true;
-                            expect(isScrolling).to.be.false;
+                            expect(uss.isScrolling(_testElement)).to.be.false;
                         }
                     );
                 });
@@ -76,8 +66,6 @@ describe("isScrolling-scrollYAnimation", function() {
 
 describe("isScrolling-scrollXYAnimation", function() {
     let uss;
-    let wasScrolling;
-    let isScrolling;
     it("Tests the isScrolling method", function() {
         cy.visit("isScrolling-tests.html"); 
         cy.window()
@@ -95,16 +83,13 @@ describe("isScrolling-scrollXYAnimation", function() {
                 .then(() => {
                     cy.waitForUssCallback(
                         (resolve) => {
-                            uss.scrollTo(100, 200, _testElement, () => {
-                                isScrolling = uss.isScrolling(_testElement);
-                                resolve();
-                            });
-                            wasScrolling = uss.isScrolling(_testElement);
+                            expect(uss.isScrolling(_testElement)).to.be.false;
+                            uss.scrollTo(100, 200, _testElement, resolve);
+                            expect(uss.isScrolling(_testElement)).to.be.true;
                         }
                     ).then(
                         () => {
-                            expect(wasScrolling).to.be.true;
-                            expect(isScrolling).to.be.false;
+                            expect(uss.isScrolling(_testElement)).to.be.false;
                         }
                     );
                 });
@@ -114,8 +99,6 @@ describe("isScrolling-scrollXYAnimation", function() {
 
 describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function() {
     let uss;
-    let wasScrolling;
-    let isScrolling;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -123,7 +106,7 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function
             if(i < 10) return total / 10;
 
             uss.stopScrolling(container);
-            isScrolling = uss.isScrolling(container);
+            expect(uss.isScrolling(container)).to.be.false;
             _resolve();
         }
     }
@@ -141,12 +124,11 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function
                     (resolve) => {
                         _resolve = resolve;
                         uss.scrollXTo(100, _testElement);
-                        wasScrolling = uss.isScrolling(_testElement);
+                        expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
                     () => {
-                        expect(wasScrolling).to.be.true;
-                        expect(isScrolling).to.be.false;
+                        expect(uss.isScrolling(_testElement)).to.be.false;
                     }
                 );
             });         
@@ -164,7 +146,7 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function
             if(i < 10) return total / 10;
 
             uss.stopScrolling(container);
-            isScrolling = uss.isScrolling(container);
+            expect(uss.isScrolling(container)).to.be.false;
             _resolve();
         }
     }
@@ -181,13 +163,13 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
+                        expect(uss.isScrolling(_testElement)).to.be.false;
                         uss.scrollYTo(100, _testElement);
-                        wasScrolling = uss.isScrolling(_testElement);
+                        expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
                     () => {
-                        expect(wasScrolling).to.be.true;
-                        expect(isScrolling).to.be.false;
+                        expect(uss.isScrolling(_testElement)).to.be.false;
                     }
                 );
             });         
@@ -205,7 +187,7 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
             if(i < 10) return total / 10;
 
             uss.stopScrollingX(container);
-            isScrolling = uss.isScrolling(container);
+            expect(uss.isScrolling(container)).to.be.false;
             _resolve();
         }
     }
@@ -222,13 +204,13 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
+                        expect(uss.isScrolling(_testElement)).to.be.false;
                         uss.scrollTo(100, 200, _testElement, resolve);
-                        wasScrolling = uss.isScrolling(_testElement);
+                        expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
                     () => {
-                        expect(wasScrolling).to.be.true;
-                        expect(isScrolling).to.be.true;
+                        expect(uss.isScrolling(_testElement)).to.be.false;
                     }
                 );
             });         
@@ -246,7 +228,7 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
             if(i < 10) return total / 10;
 
             uss.stopScrollingY(container);
-            isScrolling = uss.isScrolling(container);
+            expect(uss.isScrolling(container)).to.be.false;
             _resolve();
         }
     }
@@ -263,13 +245,13 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
+                        expect(uss.isScrolling(_testElement)).to.be.false;
                         uss.scrollTo(100, 200, _testElement, resolve);
-                        wasScrolling = uss.isScrolling(_testElement);
+                        expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
                     () => {
-                        expect(wasScrolling).to.be.true;
-                        expect(isScrolling).to.be.true;
+                        expect(uss.isScrolling(_testElement)).to.be.false;
                     }
                 );
             });         
@@ -287,7 +269,7 @@ describe("isScrolling-StopBothAxisScrollingWhileAnimating", function() {
             if(i < 10) return total / 10;
 
             uss.stopScrolling(container);
-            isScrolling = uss.isScrolling(container);
+            expect(uss.isScrolling(container)).to.be.false;
             _resolve();
         }
     }
@@ -304,13 +286,13 @@ describe("isScrolling-StopBothAxisScrollingWhileAnimating", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
+                        expect(uss.isScrolling(_testElement)).to.be.false;
                         uss.scrollTo(100, 200, _testElement);
-                        wasScrolling = uss.isScrolling(_testElement);
+                        expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
                     () => {
-                        expect(wasScrolling).to.be.true;
-                        expect(isScrolling).to.be.false;
+                        expect(uss.isScrolling(_testElement)).to.be.false;
                     }
                 );
             });         

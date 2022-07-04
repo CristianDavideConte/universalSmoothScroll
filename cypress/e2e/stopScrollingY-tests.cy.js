@@ -1,4 +1,4 @@
-describe("stopScrollingY-Body", function() {
+describe("stopScrollingY", function() {
     let uss;
     it("Tests the stopScrollingY method", function() {
         cy.visit("stopScrollingY-tests.html"); 

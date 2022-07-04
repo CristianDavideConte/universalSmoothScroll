@@ -1,6 +1,6 @@
-describe("scrollTo-Body", function() {
+describe("scrollTo", function() {
     let uss;
-    it("Horizontally and vertically scrolls the body to n1,n2 pixels", function() {
+    it("Horizontally and vertically scrolls the test element to n1,n2 pixels", function() {
         cy.visit("scrollTo-tests.html"); 
         cy.window()
             .then((win) => {
@@ -32,7 +32,7 @@ describe("scrollTo-Body", function() {
     });
 })
 
-describe("scrollTo-immediatelyStoppedScrolling-Body", function() {
+describe("scrollTo-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollTo method whenever a scroll-animation is immediately stopped", function() {
@@ -58,7 +58,7 @@ describe("scrollTo-immediatelyStoppedScrolling-Body", function() {
     });
 })
 
-describe("scrollToBy-immediatelyStoppedScrolling-Body", function() {
+describe("scrollToBy-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollTo method whenever a scroll-animation is immediately stopped and restarted with the scrollBy method", function() {
@@ -88,7 +88,7 @@ describe("scrollToBy-immediatelyStoppedScrolling-Body", function() {
     });
 })
 
-describe("scrollToTo-immediatelyStoppedScrolling-Body", function() {
+describe("scrollToTo-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollTo method whenever a scroll-animation is immediately stopped and restarted with the scrollTo method", function() {
@@ -118,7 +118,7 @@ describe("scrollToTo-immediatelyStoppedScrolling-Body", function() {
     });
 })
 
-describe("scrollTo-StoppedScrollingWhileAnimating-Body", function() {
+describe("scrollTo-StoppedScrollingWhileAnimating", function() {
     let uss;
     let _resolve;
     const _testCalculatorX = (i = 0) => {
@@ -166,7 +166,7 @@ describe("scrollTo-StoppedScrollingWhileAnimating-Body", function() {
     });
 })
 
-describe("scrollTo-scrollTo-ReplaceScrollingWhileAnimating-Body", function() {
+describe("scrollTo-scrollTo-ReplaceScrollingWhileAnimating", function() {
     let uss;
     let _resolve;
     let i = 0;

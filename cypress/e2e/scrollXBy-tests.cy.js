@@ -1,6 +1,6 @@
-describe("scrollXBy-Body", function() {
+describe("scrollXBy", function() {
     let uss;
-    it("Horizontally scrolls the body by n pixels", function() {
+    it("Horizontally scrolls the test element by n pixels", function() {
         cy.visit("scrollXBy-tests.html"); 
         cy.window()
             .then((win) => {
@@ -30,7 +30,7 @@ describe("scrollXBy-Body", function() {
     });
 })
 
-describe("scrollXToBy-StillStart-True-Body", function() {
+describe("scrollXToBy-StillStart-True", function() {
     let uss;
     let _originalTimestampEqualsTimeStamp, _remaning, _total;
     
@@ -45,7 +45,7 @@ describe("scrollXToBy-StillStart-True-Body", function() {
             return total / 10;
         }
     }
-    it("Horizontally scrolls the body to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
+    it("Horizontally scrolls the test element to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.visit("scrollXBy-tests.html"); 
         cy.window()
             .then((win) => {
@@ -71,7 +71,7 @@ describe("scrollXToBy-StillStart-True-Body", function() {
     });
 })
 
-describe("scrollXToBy-StillStart-False-Body", function() {
+describe("scrollXToBy-StillStart-False", function() {
     let uss;
     let _secondPhase = false;
     let _originalTimestampEqualsTimeStamp, _remaning, _total;
@@ -90,7 +90,7 @@ describe("scrollXToBy-StillStart-False-Body", function() {
             return total / 10;
         }
     }
-    it("Horizontally scrolls the body to n1 pixels and then extends that animation by n2 pixels", function() {
+    it("Horizontally scrolls the test element to n1 pixels and then extends that animation by n2 pixels", function() {
         cy.visit("scrollXBy-tests.html"); 
         cy.window()
             .then((win) => {
@@ -123,7 +123,7 @@ describe("scrollXToBy-StillStart-False-Body", function() {
     });
 })
 
-describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating-Body", function() {
+describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
     let uss;
     let _resolve;
     const _testCalculator = (i = 0) => {

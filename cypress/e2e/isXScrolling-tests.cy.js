@@ -1,7 +1,5 @@
 describe("isXScrolling", function() {
     let uss;
-    let wasXScrolling;
-    let isXScrolling;
     it("Tests the isXScrolling method", function() {
         cy.visit("isXScrolling-tests.html"); 
         cy.window()
@@ -19,16 +17,13 @@ describe("isXScrolling", function() {
                 .then(() => {
                     cy.waitForUssCallback(
                         (resolve) => {
-                            uss.scrollXTo(100, _testElement, () => {
-                                isXScrolling = uss.isXScrolling(_testElement);
-                                resolve();
-                            });
-                            wasXScrolling = uss.isXScrolling(_testElement);
-                        }, 
+                            expect(uss.isXScrolling(_testElement)).to.be.false;
+                            uss.scrollXTo(100, _testElement, resolve);
+                            expect(uss.isXScrolling(_testElement)).to.be.true;
+                        }
                     ).then(
                         () => {
-                            expect(wasXScrolling).to.be.true;
-                            expect(isXScrolling).to.be.false;
+                            expect(uss.isXScrolling(_testElement)).to.be.false;
                         }
                     );
                 });
@@ -36,13 +31,8 @@ describe("isXScrolling", function() {
     });
 })
 
-
-
-
 describe("isXScrolling-StoppedScrollingWhileAnimating", function() {
     let uss;
-    let wasXScrolling;
-    let isXScrolling;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
@@ -50,7 +40,7 @@ describe("isXScrolling-StoppedScrollingWhileAnimating", function() {
             if(i < 10) return total / 10;
             
             uss.stopScrollingX(container);
-            isXScrolling = uss.isXScrolling(container);
+            expect(uss.isXScrolling(container)).to.be.false;
             _resolve();
         }
     }
@@ -68,12 +58,11 @@ describe("isXScrolling-StoppedScrollingWhileAnimating", function() {
                     (resolve) => {
                         _resolve = resolve;
                         uss.scrollXTo(100, _testElement);
-                        wasXScrolling = uss.isXScrolling(_testElement);
+                        expect(uss.isXScrolling(_testElement)).to.be.true;
                     }
                 ).then(
                     () => {
-                        expect(wasXScrolling).to.be.true;
-                        expect(isXScrolling).to.be.false;
+                        expect(uss.isXScrolling(_testElement)).to.be.false;
                     }
                 );
             });         

@@ -1,4 +1,4 @@
-describe("stopScrollingAll-Body", function() {
+describe("stopScrollingAll", function() {
     let uss;
     it("Tests the stopScrollingAll method", function() {
         cy.visit("stopScrollingAll-tests.html"); 
@@ -71,7 +71,7 @@ describe("stopScrollingAll-Body", function() {
     });
 })
 
-describe("stopScrollingAll-immediatelyStopped-Body", function() {
+describe("stopScrollingAll-immediatelyStopped", function() {
     let uss;
     it("Initialize a series of scroll-animations on both the x-axis and the y-axis of all scrollable containers and immediately stop them", function() {
         cy.visit("stopScrollingAll-tests.html"); 
