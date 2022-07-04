@@ -28,7 +28,6 @@ jobs:
         with:
           # Disable running of tests within install job
           runTests: false
-          build: yarn build
       # Install and start the localhost server in the background
       - name: Run server
         run: npx http-server -c-1 &
