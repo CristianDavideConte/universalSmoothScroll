@@ -41,7 +41,7 @@ describe("stopScrollingAll", function() {
 
                     _elements.forEach(el => {
                         expect(uss.isScrolling(el)).to.be.false;
-                        uss.scrollTo(100, 100, el); 
+                        uss.scrollTo(100, 100, el, () => {}); 
                         expect(uss.isScrolling(el)).to.be.true;
                     });
 
@@ -115,7 +115,7 @@ describe("stopScrollingAll-immediatelyStopped", function() {
 
                     _elements.forEach(el => {
                         expect(uss.isScrolling(el)).to.be.false;
-                        uss.scrollTo(100, 100, el); 
+                        uss.scrollTo(100, 100, el, () => {}); 
                         expect(uss.isScrolling(el)).to.be.true;
                     });
                     uss.stopScrollingAll();

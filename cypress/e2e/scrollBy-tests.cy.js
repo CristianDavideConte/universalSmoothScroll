@@ -71,8 +71,11 @@ describe("scrollToBy-StillStart-True", function() {
                     
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollTo(500, 200, _testElement); 
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        uss.scrollTo(500, 200, _testElement, () => {}); 
+                        expect(uss.isScrolling(_testElement)).to.be.true;
                         uss.scrollBy(100, 400, _testElement, resolve, true);
+                        expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
                     () => {
@@ -137,7 +140,10 @@ describe("scrollToBy-StillStart-False", function() {
                 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollTo(170, 100, _testElement); 
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        uss.scrollTo(170, 100, _testElement, () => {}); 
+                        expect(uss.isScrolling(_testElement)).to.be.true;
+
                         win.requestAnimationFrame(function activateSecondPhase(i = 0) {
                             if(i < 2) win.requestAnimationFrame(() => activateSecondPhase(i + 1));
                             else {
@@ -172,8 +178,9 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
     const _testCalculator = () => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
             i++;
-            if(i === 2) uss.scrollBy(90, 70, container, _resolve, false);
-            
+            if(i === 2) {
+                uss.scrollBy(90, 70, container, _resolve, false);
+            }
             return total / 10;
         }
     }
@@ -189,7 +196,11 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
-                        uss.scrollTo(100, 100, _testElement);
+                        
+                        expect(_resolve).to.equal(resolve);
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        uss.scrollTo(100, 100, _testElement, resolve);
+                        expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
                     () => {

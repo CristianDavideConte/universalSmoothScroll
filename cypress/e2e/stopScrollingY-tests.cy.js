@@ -39,7 +39,7 @@ describe("stopScrollingY", function() {
                             _elements.forEach(el => {
                                 const _randomBetween0and1 = Math.min(Math.random(), 0.5);
                                 expect(uss.isYScrolling(el)).to.be.false;
-                                uss.scrollYTo(100, el); 
+                                uss.scrollYTo(100, el, () => {}); 
                                 expect(uss.isYScrolling(el)).to.be.true;
 
                                 win.setTimeout(() => {
@@ -103,7 +103,7 @@ describe("stopScrollingY-immediatelyStopped-Body", function() {
 
                     _elements.forEach(el => {
                         expect(uss.isYScrolling(el)).to.be.false;
-                        uss.scrollYTo(100, el); 
+                        uss.scrollYTo(100, el, () => {}); 
                         expect(uss.isYScrolling(el)).to.be.true;
                         
                         uss.stopScrollingY(el);

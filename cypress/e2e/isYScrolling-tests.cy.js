@@ -60,7 +60,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating", function() {
                         _resolve = resolve;
                         expect(_resolve).to.equal(resolve);
                         expect(uss.isYScrolling(_testElement)).to.be.false;
-                        uss.scrollYTo(100, _testElement);
+                        uss.scrollYTo(100, _testElement, resolve);
                         expect(uss.isYScrolling(_testElement)).to.be.true;
                     }
                 ).then(

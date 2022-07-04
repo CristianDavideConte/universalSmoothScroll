@@ -42,7 +42,7 @@ describe("stopScrolling", function() {
                         (resolve) => {
                             _elements.forEach(el => {
                                 expect(uss.isScrolling(el)).to.be.false;
-                                uss.scrollTo(100, 100, el); 
+                                uss.scrollTo(100, 100, el, () => {}); 
                                 expect(uss.isScrolling(el)).to.be.true;
 
                                 const _randomBetween0and1 = Math.min(Math.random(), 0.5);
@@ -116,7 +116,7 @@ describe("stopScrolling-immediatelyStopped", function() {
 
                     _elements.forEach(el => {
                         expect(uss.isScrolling(el)).to.be.false;
-                        uss.scrollTo(100, 100, el); 
+                        uss.scrollTo(100, 100, el, () => {}); 
                         expect(uss.isScrolling(el)).to.be.true;
                         
                         uss.stopScrolling(el);

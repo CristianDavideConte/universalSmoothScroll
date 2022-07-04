@@ -60,7 +60,7 @@ describe("isXScrolling-StoppedScrollingWhileAnimating", function() {
                         _resolve = resolve;
                         expect(_resolve).to.equal(resolve);
                         expect(uss.isXScrolling(_testElement)).to.be.false;
-                        uss.scrollXTo(100, _testElement);
+                        uss.scrollXTo(100, _testElement, resolve);
                         expect(uss.isXScrolling(_testElement)).to.be.true;
                     }
                 ).then(
