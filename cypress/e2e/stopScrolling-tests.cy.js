@@ -42,7 +42,7 @@ describe("stopScrolling", function() {
                         (resolve) => {
                             _elements.forEach(el => {
                                 expect(uss.isScrolling(el)).to.be.false;
-                                uss.scrollTo(100, 100, el, resolve); 
+                                uss.scrollTo(1000, 1000, el, resolve); 
                                 expect(uss.isScrolling(el)).to.be.true;
 
                                 win.setTimeout(() => {
@@ -51,7 +51,7 @@ describe("stopScrolling", function() {
                                     if(_elements.filter(el => uss.isScrolling(el)).length <= 0) {
                                         resolve();
                                     }
-                                }, 20);
+                                }, 100);
                             });
                         }
                     ).then(() => {
@@ -62,9 +62,9 @@ describe("stopScrolling", function() {
                             
                             if(uss.getMaxScrollX(el) < 1 && uss.getMaxScrollY(el) < 1) return;
                             if(uss.getMaxScrollX(el) > 1) {
-                                expect(_xPos).to.be.greaterThan(0);
+                                expect(_xPos).to.be.at.least(0);
                             } else {
-                                expect(_yPos).to.be.greaterThan(0);
+                                expect(_yPos).to.be.at.least(0);
                             }
                         });
                     });
@@ -114,11 +114,19 @@ describe("stopScrolling-immediatelyStopped", function() {
                     expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
                    
                     _elements.forEach(el => {  
-                        expect(uss.isScrolling(el)).to.be.false;                      
-                        uss.scrollTo(100, 100, el); 
-                        expect(uss.isScrolling(el)).to.be.true;
-                        uss.stopScrolling(el);
-                        expect(uss.isScrolling(el)).to.be.false;  
+                        cy.waitForUssCallback(
+                            (resolve) => {
+                                expect(uss.isScrolling(el)).to.be.false;                      
+                                uss.scrollTo(100, 100, el); 
+                                expect(uss.isScrolling(el)).to.be.true;
+                                resolve();
+                            }
+                        ).then(
+                            () => {
+                                uss.stopScrolling(el);
+                                expect(uss.isScrolling(el)).to.be.false;  
+                            }
+                        );
                     });              
                 });
             });         

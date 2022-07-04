@@ -38,7 +38,7 @@ describe("stopScrollingX", function() {
                         (resolve) => {
                             _elements.forEach(el => {
                                 expect(uss.isXScrolling(el)).to.be.false;
-                                uss.scrollXTo(100, el, resolve); 
+                                uss.scrollXTo(1000, el, resolve); 
                                 expect(uss.isXScrolling(el)).to.be.true;
 
                                 win.setTimeout(() => {
@@ -47,14 +47,14 @@ describe("stopScrollingX", function() {
                                     if(_elements.filter(el => uss.isScrolling(el)).length <= 0) {
                                         resolve();
                                     }
-                                }, 20);
+                                }, 100);
                             });
                         }
                     ).then(() => {
                         () => {
                             _elements.forEach(el => {
                                 expect(uss.isXScrolling(el)).to.be.false;
-                                expect(uss.getScrollXCalculator(el)()).to.be.greaterThan(0);
+                                expect(uss.getScrollXCalculator(el)()).to.be.at.least(0);
                             });
                         }
                     });
@@ -101,12 +101,20 @@ describe("stopScrollingX-immediatelyStopped", function() {
                     expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
 
                     _elements.forEach(el => {  
-                        expect(uss.isXScrolling(el)).to.be.false;                      
-                        uss.scrollXTo(100, el); 
-                        expect(uss.isXScrolling(el)).to.be.true;
-                        uss.stopScrollingX(el);
-                        expect(uss.isXScrolling(el)).to.be.false;  
-                    });
+                        cy.waitForUssCallback(
+                            (resolve) => {
+                                expect(uss.isXScrolling(el)).to.be.false;                      
+                                uss.scrollXTo(100, el); 
+                                expect(uss.isXScrolling(el)).to.be.true;
+                                resolve();
+                            }
+                        ).then(
+                            () => {
+                                uss.stopScrollingX(el);
+                                expect(uss.isXScrolling(el)).to.be.false;  
+                            }
+                        );
+                    }); 
                 });
             });         
     });

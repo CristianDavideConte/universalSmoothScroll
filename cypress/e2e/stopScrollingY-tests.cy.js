@@ -99,14 +99,22 @@ describe("stopScrollingY-immediatelyStopped-Body", function() {
 
                     _elements.forEach(el => expect(uss.getScrollYCalculator(el)()).to.equal(el.scrollTop));
                     expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
-
+                    
                     _elements.forEach(el => {  
-                        expect(uss.isYScrolling(el)).to.be.false;                      
-                        uss.scrollYTo(100, el); 
-                        expect(uss.isYScrolling(el)).to.be.true;
-                        uss.stopScrollingY(el);
-                        expect(uss.isYScrolling(el)).to.be.false;  
-                    });
+                        cy.waitForUssCallback(
+                            (resolve) => {
+                                expect(uss.isYScrolling(el)).to.be.false;                      
+                                uss.scrollYTo(100, el); 
+                                expect(uss.isYScrolling(el)).to.be.true;
+                                resolve();
+                            }
+                        ).then(
+                            () => {
+                                uss.stopScrollingY(el);
+                                expect(uss.isYScrolling(el)).to.be.false;  
+                            }
+                        );
+                    }); 
                 });
             });         
     });

@@ -72,7 +72,7 @@ describe("scrollToBy-StillStart-True", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         expect(uss.isScrolling(_testElement)).to.be.false;
-                        uss.scrollTo(500, 200, _testElement, () => {}); 
+                        uss.scrollTo(500, 200, _testElement, resolve); 
                         expect(uss.isScrolling(_testElement)).to.be.true;
                         uss.scrollBy(100, 400, _testElement, resolve, true);
                         expect(uss.isScrolling(_testElement)).to.be.true;
@@ -141,7 +141,7 @@ describe("scrollToBy-StillStart-False", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         expect(uss.isScrolling(_testElement)).to.be.false;
-                        uss.scrollTo(170, 100, _testElement, () => {}); 
+                        uss.scrollTo(170, 100, _testElement, resolve); 
                         expect(uss.isScrolling(_testElement)).to.be.true;
 
                         win.requestAnimationFrame(function activateSecondPhase(i = 0) {
@@ -180,8 +180,9 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
             i++;
             if(i === 2) {
                 uss.scrollBy(90, 70, container, _resolve, false);
+                return remaning;
             }
-            return total / 10;
+            return 10;
         }
     }
     it("Tests if the scrollBy method with stillStart = \"false\" can extend a scroll-animation from inside a stepLengthCalculator", function() {

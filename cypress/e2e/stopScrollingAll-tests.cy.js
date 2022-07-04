@@ -43,10 +43,10 @@ describe("stopScrollingAll", function() {
                         (resolve) => {
                             _elements.forEach(el => {
                                 expect(uss.isScrolling(el)).to.be.false;
-                                uss.scrollTo(100, 100, el, resolve); 
+                                uss.scrollTo(1000, 1000, el, resolve); 
                                 expect(uss.isScrolling(el)).to.be.true;
                             });
-                            win.setTimeout(() => uss.stopScrollingAll(resolve), 20);
+                            win.setTimeout(() => uss.stopScrollingAll(resolve), 100);
                         }
                     ).then(
                         () => {
@@ -58,9 +58,9 @@ describe("stopScrollingAll", function() {
                                 
                                 if(uss.getMaxScrollX(el) < 1 && uss.getMaxScrollY(el) < 1) return;
                                 if(uss.getMaxScrollX(el) > 1) {
-                                    expect(_xPos).to.be.greaterThan(0);
+                                    expect(_xPos).to.be.at.least(0);
                                 } else {
-                                    expect(_yPos).to.be.greaterThan(0);
+                                    expect(_yPos).to.be.at.least(0);
                                 }
                             });
                         }
