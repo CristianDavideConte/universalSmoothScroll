@@ -36,6 +36,7 @@ jobs:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: chrome
+          record: true
           parallel: true
           
   firefox-test:
@@ -63,6 +64,7 @@ jobs:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: firefox
+          record: true
           parallel: true
 
   edge-test:
@@ -93,4 +95,5 @@ jobs:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: edge
+          record: true
           parallel: true
