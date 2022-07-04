@@ -14,17 +14,19 @@ describe("getScrollXDirection", function() {
           .then(() => {
             cy.waitForUssCallback(
               (resolve) => {
-                const __wait = uss.scrollXTo(100, _testElement, () => {
-                                  uss.scrollXTo(50, _testElement, resolve);
-                                  scrollXDirectionLeft = uss.getScrollXDirection(_testElement);
-                              });
-                scrollXDirectionRight = uss.getScrollXDirection(_testElement);
+                uss.scrollXTo(100, _testElement, () => {
+                    uss.scrollXTo(50, _testElement, resolve);
+                    expect(uss.getScrollXDirection(_testElement)).to.equal(-1);
+                    //scrollXDirectionLeft = uss.getScrollXDirection(_testElement);
+                });
+                expect(uss.getScrollXDirection(_testElement)).to.equal(1);
+                //scrollXDirectionRight = uss.getScrollXDirection(_testElement);
               }
             ).then(
               () => {
                 expect(uss.getScrollXCalculator(_testElement)()).to.equal(50);
-                expect(scrollXDirectionRight).to.equal(1);
-                expect(scrollXDirectionLeft).to.equal(-1);
+                //expect(scrollXDirectionRight).to.equal(1);
+                //expect(scrollXDirectionLeft).to.equal(-1);
                 expect(uss.getScrollXDirection(_testElement)).to.equal(0);
               }
             );
