@@ -1,5 +1,4 @@
 module.exports = {
-  projectId: "2hhwdp",
   retries: 5,
   defaultCommandTimeout: 4000,
   env: {

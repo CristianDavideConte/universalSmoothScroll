@@ -14,10 +14,6 @@ jobs:
   chrome-test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Define Github strategy how to spin up new machines
-    strategy:
-     matrix:
-      job: [0, 1, 2, 3]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -36,23 +32,10 @@ jobs:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: chrome
-          record: true
-          parallel: true
-        env:
-          # pass the Project id as an environment variable
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
   firefox-test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Define Github strategy how to spin up new machines
-    strategy:
-     matrix:
-      job: [0, 1, 2, 3]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -71,23 +54,10 @@ jobs:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: firefox
-          record: true
-          parallel: true
-        env:
-          # pass the Project id as an environment variable
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   edge-test:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Define Github strategy how to spin up new machines
-    strategy:
-     matrix:
-      job: [0, 1, 2, 3]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -114,12 +84,3 @@ jobs:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: edge
-          record: true
-          parallel: true
-        env:
-          # pass the Project id as an environment variable
-          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
-          # pass the Dashboard record key as an environment variable
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-          # pass GitHub token to allow accurately detecting a build vs a re-run build
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
