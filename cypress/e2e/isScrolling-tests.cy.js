@@ -108,6 +108,7 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function
             uss.stopScrolling(container);
             expect(uss.isScrolling(container)).to.be.false;
             _resolve();
+            return remaning;
         }
     }
     it("Tests the isScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
@@ -123,7 +124,9 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
-                        uss.scrollXTo(100, _testElement);
+                        expect(_resolve).to.equal(resolve);
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        uss.scrollXTo(100, _testElement, resolve);
                         expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
@@ -148,6 +151,7 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function
             uss.stopScrolling(container);
             expect(uss.isScrolling(container)).to.be.false;
             _resolve();
+            return remaning;
         }
     }
     it("Tests the isScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
@@ -163,8 +167,9 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
                         expect(uss.isScrolling(_testElement)).to.be.false;
-                        uss.scrollYTo(100, _testElement);
+                        uss.scrollYTo(100, _testElement, resolve);
                         expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
@@ -189,6 +194,7 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
             uss.stopScrollingX(container);
             expect(uss.isScrolling(container)).to.be.false;
             _resolve();
+            return remaning;
         }
     }
     it("Tests the isScrolling method whenever the scroll-animation on the x-axis is stopped inside a stepLengthCalculator", function() {
@@ -204,6 +210,7 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
                         expect(uss.isScrolling(_testElement)).to.be.false;
                         uss.scrollTo(100, 200, _testElement, resolve);
                         expect(uss.isScrolling(_testElement)).to.be.true;
@@ -230,6 +237,7 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
             uss.stopScrollingY(container);
             expect(uss.isScrolling(container)).to.be.false;
             _resolve();
+            return remaning;
         }
     }
     it("Tests the isScrolling method whenever the scroll-animation on the y-axis is stopped inside a stepLengthCalculator", function() {
@@ -245,6 +253,7 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
                         expect(uss.isScrolling(_testElement)).to.be.false;
                         uss.scrollTo(100, 200, _testElement, resolve);
                         expect(uss.isScrolling(_testElement)).to.be.true;
@@ -271,6 +280,7 @@ describe("isScrolling-StopBothAxisScrollingWhileAnimating", function() {
             uss.stopScrolling(container);
             expect(uss.isScrolling(container)).to.be.false;
             _resolve();
+            return remaning;
         }
     }
     it("Tests the isScrolling method whenever the scroll-animations on both the x-axis and the y-axis are stopped from inside a stepLengthCalculator", function() {
@@ -286,8 +296,9 @@ describe("isScrolling-StopBothAxisScrollingWhileAnimating", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
                         expect(uss.isScrolling(_testElement)).to.be.false;
-                        uss.scrollTo(100, 200, _testElement);
+                        uss.scrollTo(100, 200, _testElement, resolve);
                         expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
