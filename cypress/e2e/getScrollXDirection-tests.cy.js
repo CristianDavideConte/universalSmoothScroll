@@ -14,10 +14,10 @@ describe("getScrollXDirection", function() {
           .then(() => {
             cy.waitForUssCallback(
               (resolve) => {
-                uss.scrollXTo(100, _testElement, () => {
-                    uss.scrollXTo(50, _testElement, resolve);
-                    scrollXDirectionLeft = uss.getScrollXDirection(_testElement);
-                });
+                const __wait = uss.scrollXTo(100, _testElement, () => {
+                                  uss.scrollXTo(50, _testElement, resolve);
+                                  scrollXDirectionLeft = uss.getScrollXDirection(_testElement);
+                              });
                 scrollXDirectionRight = uss.getScrollXDirection(_testElement);
               }
             ).then(
