@@ -22,13 +22,6 @@ jobs:
       # Workaround for creating the package.json file 
       - name: Setup npm package
         run: npm init -y && npm install
-     # Installs Cypress
-      - name: Cypress install
-        uses: cypress-io/github-action@v4.1.0
-        with:
-          # Disable running of tests within install job
-          runTests: false
-          build: npm i -D cypress
       # Install and start the localhost server in the background
       - name: Run server
         run: npx http-server -c-1 &
@@ -49,6 +42,7 @@ jobs:
         uses: cypress-io/github-action@v4.1.0
         with:
           wait-on: "http://localhost:8080"
+          build: npm i -D cypress
           browser: chrome
           
   firefox-test:
