@@ -37,9 +37,8 @@ describe("stopScrollingX", function() {
                     cy.waitForUssCallback(
                         (resolve) => {
                             _elements.forEach(el => {
-                                const _randomBetween0and1 = Math.min(Math.random(), 0.5);
                                 expect(uss.isXScrolling(el)).to.be.false;
-                                uss.scrollXTo(100, el, () => {}); 
+                                uss.scrollXTo(100, el, resolve); 
                                 expect(uss.isXScrolling(el)).to.be.true;
 
                                 win.setTimeout(() => {
@@ -48,7 +47,7 @@ describe("stopScrollingX", function() {
                                     if(_elements.filter(el => uss.isScrolling(el)).length <= 0) {
                                         resolve();
                                     }
-                                }, _randomBetween0and1 * 100);
+                                }, 20);
                             });
                         }
                     ).then(() => {
@@ -103,11 +102,10 @@ describe("stopScrollingX-immediatelyStopped", function() {
 
                     _elements.forEach(el => {  
                         expect(uss.isXScrolling(el)).to.be.false;                      
-                        uss.scrollXTo(100, el, () => {}); 
+                        uss.scrollXTo(100, el); 
                         expect(uss.isXScrolling(el)).to.be.true;
-                        
                         uss.stopScrollingX(el);
-                        expect(uss.isXScrolling(el)).to.be.false;
+                        expect(uss.isXScrolling(el)).to.be.false;  
                     });
                 });
             });         

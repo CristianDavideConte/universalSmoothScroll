@@ -37,9 +37,8 @@ describe("stopScrollingY", function() {
                     cy.waitForUssCallback(
                         (resolve) => {
                             _elements.forEach(el => {
-                                const _randomBetween0and1 = Math.min(Math.random(), 0.5);
                                 expect(uss.isYScrolling(el)).to.be.false;
-                                uss.scrollYTo(100, el, () => {}); 
+                                uss.scrollYTo(100, el, resolve); 
                                 expect(uss.isYScrolling(el)).to.be.true;
 
                                 win.setTimeout(() => {
@@ -48,7 +47,7 @@ describe("stopScrollingY", function() {
                                     if(_elements.filter(el => uss.isScrolling(el)).length <= 0) {
                                         resolve();
                                     }
-                                }, _randomBetween0and1 * 100);
+                                }, 20);
                             });
                         }
                     ).then(() => {
@@ -101,13 +100,12 @@ describe("stopScrollingY-immediatelyStopped-Body", function() {
                     _elements.forEach(el => expect(uss.getScrollYCalculator(el)()).to.equal(el.scrollTop));
                     expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
 
-                    _elements.forEach(el => {
-                        expect(uss.isYScrolling(el)).to.be.false;
-                        uss.scrollYTo(100, el, () => {}); 
+                    _elements.forEach(el => {  
+                        expect(uss.isYScrolling(el)).to.be.false;                      
+                        uss.scrollYTo(100, el); 
                         expect(uss.isYScrolling(el)).to.be.true;
-                        
                         uss.stopScrollingY(el);
-                        expect(uss.isYScrolling(el)).to.be.false;
+                        expect(uss.isYScrolling(el)).to.be.false;  
                     });
                 });
             });         
