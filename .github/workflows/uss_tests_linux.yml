@@ -24,10 +24,11 @@ jobs:
         run: npm init -y && npm install
      # Installs Cypress
       - name: Cypress install
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v4.1.0
         with:
           # Disable running of tests within install job
           runTests: false
+          build: yarn build
       # Install and start the localhost server in the background
       - name: Run server
         run: npx http-server -c-1 &
