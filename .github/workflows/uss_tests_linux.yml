@@ -19,15 +19,15 @@ jobs:
      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v3
+      # Workaround for creating the package.json file 
+      - name: Setup npm package
+        run: npm init -y && npm install
      # Installs Cypress
       - name: Cypress install
         uses: cypress-io/github-action@v4
         with:
           # Disable running of tests within install job
           runTests: false
-      # Workaround for creating the package.json file 
-      - name: Setup npm package
-        run: npm init -y && npm install
       # Install and start the localhost server in the background
       - name: Run server
         run: npx http-server -c-1 &
