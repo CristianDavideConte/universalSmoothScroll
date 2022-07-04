@@ -41,6 +41,7 @@ describe("stopScrolling", function() {
                     cy.waitForUssCallback(
                         (resolve) => {
                             _elements.forEach(el => {
+                                expect(uss.isScrolling(el)).to.be.false;
                                 uss.scrollTo(100, 100, el); 
                                 expect(uss.isScrolling(el)).to.be.true;
 
@@ -114,6 +115,7 @@ describe("stopScrolling-immediatelyStopped", function() {
                     expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
 
                     _elements.forEach(el => {
+                        expect(uss.isScrolling(el)).to.be.false;
                         uss.scrollTo(100, 100, el); 
                         expect(uss.isScrolling(el)).to.be.true;
                         

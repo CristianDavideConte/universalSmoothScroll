@@ -33,12 +33,12 @@ describe("stopScrollingX", function() {
 
                     _elements.forEach(el => expect(uss.getScrollXCalculator(el)()).to.equal(el.scrollLeft));
                     expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
-
-                    
+ 
                     cy.waitForUssCallback(
                         (resolve) => {
                             _elements.forEach(el => {
                                 const _randomBetween0and1 = Math.min(Math.random(), 0.5);
+                                expect(uss.isXScrolling(el)).to.be.false;
                                 uss.scrollXTo(100, el); 
                                 expect(uss.isXScrolling(el)).to.be.true;
 
@@ -101,7 +101,8 @@ describe("stopScrollingX-immediatelyStopped", function() {
                     _elements.forEach(el => expect(uss.getScrollXCalculator(el)()).to.equal(el.scrollLeft));
                     expect(uss.getScrollXCalculator(win)()).to.equal(win.scrollX);
 
-                    _elements.forEach(el => {                        
+                    _elements.forEach(el => {  
+                        expect(uss.isXScrolling(el)).to.be.false;                      
                         uss.scrollXTo(100, el); 
                         expect(uss.isXScrolling(el)).to.be.true;
                         

@@ -42,6 +42,7 @@ describe("isYScrolling-StoppedScrollingWhileAnimating", function() {
             uss.stopScrollingY(container);
             expect(uss.isYScrolling(container)).to.be.false;
             _resolve();
+            return remaning;
         }
     }
     it("Tests the isYScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
@@ -57,6 +58,8 @@ describe("isYScrolling-StoppedScrollingWhileAnimating", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
+                        expect(uss.isYScrolling(_testElement)).to.be.false;
                         uss.scrollYTo(100, _testElement);
                         expect(uss.isYScrolling(_testElement)).to.be.true;
                     }
