@@ -119,7 +119,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <code>Number</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>0</code>
+    Depends on the user's browser
    </td>
    <td rowspan = "1" align = "left">
     The highest amount of pixels any scrollbar on the page can occupy <i>(it's browser dependent)</i>.

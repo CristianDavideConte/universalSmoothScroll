@@ -162,6 +162,7 @@ const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
   if(_stepLength > uss._xStepLength) return uss._xStepLength;
   return _stepLength;
 }
+
 const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
   const _stepLength = total / uss._minAnimationFrame;
   if(_stepLength < 1) return 1;
@@ -239,7 +240,7 @@ var uss = {
   _minAnimationFrame: DEFAULT_MIN_ANIMATION_FRAMES,
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _windowWidth:  INITIAL_WINDOW_WIDTH,
-  _scrollbarsMaxDimension: 0,
+  _scrollbarsMaxDimension: null,
   _framesTime: DEFAULT_FRAME_TIME,
   _pageScroller: document.scrollingElement || window,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
@@ -318,7 +319,29 @@ var uss = {
   getMinAnimationFrame: () => uss._minAnimationFrame,
   getWindowHeight: () => uss._windowHeight,
   getWindowWidth:  () => uss._windowWidth,
-  getScrollbarsMaxDimension: () => uss._scrollbarsMaxDimension,
+  getScrollbarsMaxDimension: (forceCalculation = false) => {
+    //Calculate the maximum sizes of scrollbars on the webpage by:
+    // - creating a <div> with id = "__ussScrollBox".
+    // - giving that <div> a mini-stylesheet that forces it to show the scrollbars.
+    if(forceCalculation || !uss._scrollbarsMaxDimension) {
+      const __scrollBoxStyle = document.createElement("style");
+      const __scrollBox = document.createElement("div");
+      __scrollBox.id = "__uss-ScrollBox";
+      __scrollBoxStyle.appendChild(
+        document.createTextNode(
+          "#__uss-ScrollBox { display:block; width:100px; height:100px; overflow-x:scroll; border:none; padding:0px; }"  + 
+          "#__uss-ScrollBox::-webkit-scrollbar { display:block; width:initial; height:initial; }"
+        )
+      );
+      document.head.appendChild(__scrollBoxStyle);
+      document.body.appendChild(__scrollBox);
+      uss._scrollbarsMaxDimension = __scrollBox.offsetHeight - __scrollBox.clientHeight;
+      document.body.removeChild(__scrollBox);
+      document.head.removeChild(__scrollBoxStyle);
+    }
+
+    return uss._scrollbarsMaxDimension;
+  },
   getPageScroller: () => uss._pageScroller,
   getReducedMotionState: () => uss._reducedMotion,
   getDebugMode: () => uss._debugMode, 
@@ -448,13 +471,13 @@ var uss = {
   calcScrollbarsDimensions: (element) => {
     if(element === window) {
       element = document.scrollingElement || uss.getPageScroller();
-      if(element === window) return [0,0];
+      if(element === window) return [0,0]; //[Vertical scrollbar's width, Horizontal scrollbar's height]
     } else if(!(element instanceof HTMLElement)) {
       uss._errorLogger("calcScrollbarsDimensions", "the element to be an HTMLElement or the Window", element);
       throw "USS fatal error (execution stopped)";
     }
 
-    if(uss._scrollbarsMaxDimension === 0) return [0,0]; //[Vertical scrollbar's width, Horizontal scrollbar's height]
+    if(uss.getScrollbarsMaxDimension(false) === 0) return [0,0]; //[Vertical scrollbar's width, Horizontal scrollbar's height]
 
     const _scrollbarsDimensions = [];
     const _elementStyle = window.getComputedStyle(element);
@@ -1646,23 +1669,7 @@ window.addEventListener("resize", () => {
 }, {passive:true});
 
 window.addEventListener("load", () => {
-  //Calculate the maximum sizes of scrollbars on the webpage by:
-  // - creating a <div> with id = "__ussScrollBox".
-  // - giving that <div> a mini-stylesheet that forces it to show the scrollbars.
-  const __scrollBoxStyle = document.createElement("style");
-  const __scrollBox = document.createElement("div");
-  __scrollBox.id = "__ussScrollBox";
-  __scrollBoxStyle.appendChild(
-    document.createTextNode(
-      "#__ussScrollBox { display:block; width:100px; height:100px; overflow-x:scroll; border:none; padding:0px; }"  + 
-      "#__ussScrollBox::-webkit-scrollbar { display:block; width:initial; height:initial; }"
-    )
-  );
-  document.head.appendChild(__scrollBoxStyle);
-  document.body.appendChild(__scrollBox);
-  uss._scrollbarsMaxDimension = __scrollBox.offsetHeight - __scrollBox.clientHeight;
-  document.body.removeChild(__scrollBox);
-  document.head.removeChild(__scrollBoxStyle);
+  uss.getScrollbarsMaxDimension(true);
 
   //Calculate the average frames' time of the user's screen. 
   //(and the corresponding minAnimationFrame.) //<---------------------------------------------------------------------TO LOOK MORE INTO

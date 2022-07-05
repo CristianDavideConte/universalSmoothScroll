@@ -277,10 +277,10 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getScrollbarsMaxDimension</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <a href = "./FunctionsAbout.md#getScrollbarsMaxDimension"><code>forceCalculation</code></a>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <code>false</code>
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_scrollbarsMaxDimension"><code>_scrollbarsMaxDimension</code></a> property.
@@ -1400,6 +1400,22 @@ The following table describes every entry of the `Input Parameters` column of th
   </td>
   </tr>
   
+  <tr id = "getScrollbarsMaxDimension">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getScrollbarsMaxDimensionFun"><code>getScrollbarsMaxDimension</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    If <code>true</code> flushes the internal cache for the <a href = "./VariablesAbout.md#_scrollbarsMaxDimension"><code>_scrollbarsMaxDimension</code></a> variable and forces its recalculation <i>(expensive operation)</i> before returning it. <br/>
+    If <code>false</code> the result is returned from cache. 
+  </td>
+  </tr>
+
   <tr id = "setXStepLengthCalculator">
   <td rowspan = "3" align = "center">
     <a href = "./FunctionsAbout.md#setXStepLengthCalculatorFun"><code>setXStepLengthCalculator</code></a>
