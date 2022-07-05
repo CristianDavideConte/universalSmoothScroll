@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getScrollYDirection", function() {
     let uss;
     it("Tests the getScrollYDirection method", function() {
@@ -8,7 +10,7 @@ describe("getScrollYDirection", function() {
           const _testElement = win.document.getElementById("scroller");
 
           cy.testFailingValues(uss.getScrollYDirection, {
-            0: [Cypress.env("failingValuesNoUndefined")]
+            0: [constants.failingValuesNoUndefined]
           })
           .then(() => {
             cy.waitForUssCallback(

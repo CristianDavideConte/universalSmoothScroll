@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getMaxScrollY", function() {
     let uss;
     it("Tests the getMaxScrollY method", function() {
@@ -8,7 +10,7 @@ describe("getMaxScrollY", function() {
               const _testElement = win.document.getElementById("scroller");
                             
               cy.testFailingValues(uss.getMaxScrollY, {
-                0: [Cypress.env("failingValuesNoUndefined"),
+                0: [constants.failingValuesNoUndefined,
                     [true, false]
                   ]
               })

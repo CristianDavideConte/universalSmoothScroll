@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("isScrolling-scrollXAnimation", function() {
     let uss;
     it("Tests the isScrolling method", function() {
@@ -8,7 +10,7 @@ describe("isScrolling-scrollXAnimation", function() {
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.isScrolling, {
-                    0: [Cypress.env("failingValuesNoUndefined")]
+                    0: [constants.failingValuesNoUndefined]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
@@ -41,7 +43,7 @@ describe("isScrolling-scrollYAnimation", function() {
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.isScrolling, {
-                    0: [Cypress.env("failingValuesNoUndefined")]
+                    0: [constants.failingValuesNoUndefined]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
@@ -74,7 +76,7 @@ describe("isScrolling-scrollXYAnimation", function() {
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.isScrolling, {
-                    0: [Cypress.env("failingValuesNoUndefined")]
+                    0: [constants.failingValuesNoUndefined]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
@@ -192,7 +194,6 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
             if(i < 10) return total / 10;
 
             uss.stopScrollingX(container);
-            expect(uss.isScrolling(container)).to.be.false;
             _resolve();
             return remaning;
         }
@@ -217,7 +218,7 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
                     }
                 ).then(
                     () => {
-                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        expect(uss.isXScrolling(_testElement)).to.be.false;
                     }
                 );
             });         
@@ -235,7 +236,6 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
             if(i < 10) return total / 10;
 
             uss.stopScrollingY(container);
-            expect(uss.isScrolling(container)).to.be.false;
             _resolve();
             return remaning;
         }
@@ -260,7 +260,7 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
                     }
                 ).then(
                     () => {
-                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        expect(uss.isYScrolling(_testElement)).to.be.false;
                     }
                 );
             });         

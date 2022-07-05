@@ -89,6 +89,30 @@ All the variables listed below are declared with the keywork [`const`](https://d
     The initial value of the <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> property: it's <code>16.6ms</code> and it initially assumes that the user's browser/screen is refreshing at 60fps.
    </td>
   </tr>
+  <tr id = "DEFAULT_XSTEP_LENGTH_CALCULATOR">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_XSTEP_LENGTH_CALCULATOR</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1">
+    Returns how long each animation-step on the x-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
+    This is the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for scroll-animations on the x-axis of every container that doesn't have a custom <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set. 
+   </td>
+  </tr>
+  <tr id = "DEFAULT_YSTEP_LENGTH_CALCULATOR">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_YSTEP_LENGTH_CALCULATOR</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1">
+    Returns how long each animation-step on the y-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
+    This is the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for scroll-animations on the y-axis of every container that doesn't have a custom <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set. 
+   </td>
+  </tr>
   <tr id = "DEFAULT_ERROR_LOGGER">
    <td rowspan = "1" align = "center">
     <code>DEFAULT_ERROR_LOGGER</code>

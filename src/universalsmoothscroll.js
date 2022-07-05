@@ -10,6 +10,10 @@
  * DEFAULT_MIN_ANIMATION_FRAMES: number, The initial value of the "_minAnimationFrame" property: 
  *                               it represents the default lowest number of frames any scroll-animation should last if no StepLengthCalculator is set for a container.
  * DEFAULT_FRAME_TIME: number, the initial value of the "_framesTime" property: it's 16.6 and it initially assumes that the user's browser/screen is refreshing at 60fps. 
+ * DEFAULT_XSTEP_LENGTH_CALCULATOR: function, returns how long each animation-step on the x-axis must be in order to target the "_minAnimationFrame" property value. 
+ *                                  This is the default stepLengthCalculator for scroll-animations on the x-axis of every container that doesn't have a custom stepLengthCalculator set. 
+ * DEFAULT_YSTEP_LENGTH_CALCULATOR: function, returns how long each animation-step on the y-axis must be in order to target the "_minAnimationFrame" property value. 
+ *                                  This is the default stepLengthCalculator for scroll-animations on the y-axis of every container that doesn't have a custom stepLengthCalculator set. 
  * DEFAULT_ERROR_LOGGER: function, the initial value of the "_errorLogger" property: it logs the API error messages inside the browser's console.
  * DEFAULT_WARNING_LOGGER: function, the initial value of the "_warningLogger" property: it logs the API warning messages inside the browser's console.
  */
@@ -106,10 +110,6 @@
  * setDebugMode: function, sets the "_debugMode" property to the passed value if compatible.
  * setErrorLogger: function, sets the "_errorLogger" property to the passed value if compatible.
  * setWarningLogger: function, sets the "_warningLogger" property to the passed value if compatible.
- * calcXStepLength: function, returns how long each animation-step on the x-axis must be in order to target the "_minAnimationFrame" property value.  
- *                            This function can be considered the default StepLengthCalculator for any scroll-animation on the x-axis of any container.
- * calcYStepLength: function, returns how long each animation-step on the y-axis must be in order to target the "_minAnimationFrame" property value.
- *                            This function can be considered the default StepLengthCalculator for any scroll-animation on the y-axis of any container.
  * calcScrollbarsDimensions: function, returns an array containing 2 numbers:
  *                           [0] contains the vertical scrollbar's width (in px) of the passed element.
  *                           [1] contains the horizontal scrollbar's height (in px) of the passed element.
@@ -156,6 +156,19 @@ const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);      
 const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789))); //38px at 789px of height && 22px at 1920px of height
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_FRAME_TIME = 16.6; //in ms
+const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+  const _stepLength = total / uss._minAnimationFrame;
+  if(_stepLength < 1) return 1;
+  if(_stepLength > uss._xStepLength) return uss._xStepLength;
+  return _stepLength;
+}
+const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+  const _stepLength = total / uss._minAnimationFrame;
+  if(_stepLength < 1) return 1;
+  if(_stepLength > uss._yStepLength) return uss._yStepLength;
+  return _stepLength;
+}
+
 const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(/disabled/i.test(uss._debugMode)) return;
   
@@ -309,7 +322,7 @@ var uss = {
   getPageScroller: () => uss._pageScroller,
   getReducedMotionState: () => uss._reducedMotion,
   getDebugMode: () => uss._debugMode, 
-  setXStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
+  setXStepLengthCalculator: (newCalculator = DEFAULT_XSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false) => {
     if(typeof newCalculator !== "function") {
       uss._errorLogger("setXStepLengthCalculator", "the newCalculator to be a function", newCalculator);
       return;
@@ -327,7 +340,7 @@ var uss = {
     }
     if(!_oldData) uss._containersData.set(container, _containerData);
   },
-  setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
+  setYStepLengthCalculator: (newCalculator = DEFAULT_YSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false) => {
     if(typeof newCalculator !== "function") {
       uss._errorLogger("setYStepLengthCalculator", "the newCalculator to be a function", newCalculator);
       return;
@@ -432,26 +445,6 @@ var uss = {
     }
     uss._warningLogger = newWarningLogger;
   }, 
-  calcXStepLength: (deltaX) => {
-    if(!Number.isFinite(deltaX) || deltaX < 0) {
-      uss._errorLogger("calcXStepLength", "the deltaX to be a positive number", deltaX);
-      throw "USS fatal error (execution stopped)";
-    }
-    const _stepLength = deltaX / uss._minAnimationFrame;
-    if(_stepLength < 1) return 1;
-    if(_stepLength > uss._xStepLength) return uss._xStepLength;
-    return _stepLength;
-  },
-  calcYStepLength: (deltaY) => {
-    if(!Number.isFinite(deltaY) || deltaY < 0) {
-      uss._errorLogger("calcYStepLength", "the deltaY to be a positive number", deltaY);
-      throw "USS fatal error (execution stopped)";
-    }
-    const _stepLength = deltaY / uss._minAnimationFrame;
-    if(_stepLength < 1) return 1;
-    if(_stepLength > uss._yStepLength) return uss._yStepLength;
-    return _stepLength;
-  },
   calcScrollbarsDimensions: (element) => {
     if(element === window) {
       element = document.scrollingElement || uss.getPageScroller();
@@ -820,46 +813,49 @@ var uss = {
     if(!_oldData) uss._containersData.set(container, _containerData);
 
     function _stepX(timestamp) {
-      //The originalTimeStamp is null at the beginning of a scroll-animation.
-      if(!_containerData[8]) _containerData[8] = timestamp;
-      const finalXPosition = _containerData[2];
+      const _finalXPosition = _containerData[2];
       const _direction = _containerData[4];
-      let _calculatedScrollStepLength;
-
       const _currentXPosition = _scrollXCalculator();
-      const _remaningScrollAmount = (finalXPosition - _currentXPosition) * _direction;
+      const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _direction;
+      
       if(_remaningScrollAmount < 1) {
         uss.stopScrollingX(container, _containerData[10]);
         return;
       }
+      
+      //The originalTimeStamp is null at the beginning of a scroll-animation.
+      if(!_containerData[8]) _containerData[8] = timestamp;
+      
+      const _scrollID = _containerData[0];  
+      let _stepLength = !!_containerData[14] ? _containerData[14](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container) :
+                        !!_containerData[12] ? _containerData[12](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container) :
+                                               DEFAULT_XSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container);
+      
+      //The current scroll-animation has been aborted by the stepLengthCalculator.
+      if(_scrollID !== _containerData[0]) return; 
 
-      try {
-        const _scrollID = _containerData[0];
-        _calculatedScrollStepLength = !!_containerData[14] ? _containerData[14](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, finalXPosition, container) 
-                                                           : _containerData[12](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, finalXPosition, container);
-        if(_scrollID !== _containerData[0]) return; //The current scroll-animation has been aborted by the stepLengthCalculator
-        if(finalXPosition !== _containerData[2]) {  //The current scroll-animation has been altered by the stepLengthCalculator
-          _containerData[0] = window.requestAnimationFrame(_stepX); 
-          return;
-        } 
-        if(!Number.isFinite(_calculatedScrollStepLength)) {
-          uss._warningLogger(_calculatedScrollStepLength, "is not a valid step length", true);
-          _calculatedScrollStepLength = uss.calcXStepLength(_totalScrollAmount);
-        }
-      } catch(e) {
-        _calculatedScrollStepLength = uss.calcXStepLength(_totalScrollAmount);
+      //The current scroll-animation has been altered by the stepLengthCalculator.
+      if(_finalXPosition !== _containerData[2]) {  
+        _containerData[0] = window.requestAnimationFrame(_stepX); 
+        return;
+      } 
+
+      //The stepLengthCalculator returned an invalid stepLength.
+      if(!Number.isFinite(_stepLength)) {
+        uss._warningLogger(_stepLength, "is not a valid step length", true);
+        _stepLength = DEFAULT_XSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container);
       }
 
-      if(_remaningScrollAmount <= _calculatedScrollStepLength) {
-        _scroll(finalXPosition);
+      if(_remaningScrollAmount <= _stepLength) {
+        _scroll(_finalXPosition);
         uss.stopScrollingX(container, _containerData[10]);
         return;
       }
 
-      _scroll(_currentXPosition + _calculatedScrollStepLength * _direction);
+      _scroll(_currentXPosition + _stepLength * _direction);
 
       //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container.
-      if(_calculatedScrollStepLength !== 0 && _currentXPosition === _scrollXCalculator()) {
+      if(_stepLength !== 0 && _currentXPosition === _scrollXCalculator()) {
         uss.stopScrollingX(container, _containerData[10]);
         return;
       }
@@ -930,46 +926,49 @@ var uss = {
     if(!_oldData) uss._containersData.set(container, _containerData);
      
     function _stepY(timestamp) {
-      //The originalTimeStamp is null at the beginning of a scroll-animation.
-      if(!_containerData[9]) _containerData[9] = timestamp;
-      const finalYPosition = _containerData[3];
+      const _finalYPosition = _containerData[3];
       const _direction = _containerData[5];
-      let _calculatedScrollStepLength;
-
       const _currentYPosition = _scrollYCalculator();
-      const _remaningScrollAmount = (finalYPosition - _currentYPosition) * _direction;
+      const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _direction;
+
       if(_remaningScrollAmount < 1) {
         uss.stopScrollingY(container, _containerData[11]);
         return;
       }
 
-      try {
-        const _scrollID = _containerData[1];
-        _calculatedScrollStepLength = !!_containerData[15] ? _containerData[15](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, finalYPosition, container) 
-                                                           : _containerData[13](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, finalYPosition, container);
-        if(_scrollID !== _containerData[1]) return; //The current scroll-animation has been aborted by the stepLengthCalculator
-        if(finalYPosition !== _containerData[3]) {  //The current scroll-animation has been altered by the stepLengthCalculator
-          _containerData[1] = window.requestAnimationFrame(_stepY); 
-          return;
-        } 
-        if(!Number.isFinite(_calculatedScrollStepLength)) {
-          uss._warningLogger(_calculatedScrollStepLength, "is not a valid step length", true);
-          _calculatedScrollStepLength = uss.calcYStepLength(_totalScrollAmount);
-        }
-      } catch(e) {
-        _calculatedScrollStepLength = uss.calcYStepLength(_totalScrollAmount);
+      //The originalTimeStamp is null at the beginning of a scroll-animation.
+      if(!_containerData[9]) _containerData[9] = timestamp;
+
+      const _scrollID = _containerData[1];
+      let _stepLength = !!_containerData[15] ? _containerData[15](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container) :
+                        !!_containerData[13] ? _containerData[13](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container) :
+                                               DEFAULT_YSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container);
+      
+      //The current scroll-animation has been aborted by the stepLengthCalculator.
+      if(_scrollID !== _containerData[1]) return; 
+
+      //The current scroll-animation has been altered by the stepLengthCalculator.
+      if(_finalYPosition !== _containerData[3]) {  
+        _containerData[1] = window.requestAnimationFrame(_stepY); 
+        return;
+      } 
+      
+      //The stepLengthCalculator returned an invalid stepLength.
+      if(!Number.isFinite(_stepLength)) {
+        uss._warningLogger(_stepLength, "is not a valid step length", true);
+        _stepLength = DEFAULT_YSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container);
       }
 
-      if(_remaningScrollAmount <= _calculatedScrollStepLength) {
-        _scroll(finalYPosition);
+      if(_remaningScrollAmount <= _stepLength) {
+        _scroll(_finalYPosition);
         uss.stopScrollingY(container, _containerData[11]);
         return;
       }
 
-      _scroll(_currentYPosition + _calculatedScrollStepLength * _direction);
+      _scroll(_currentYPosition + _stepLength * _direction);
 
       //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container.
-      if(_calculatedScrollStepLength !== 0 && _currentYPosition === _scrollYCalculator()) {
+      if(_stepLength !== 0 && _currentYPosition === _scrollYCalculator()) {
         uss.stopScrollingY(container, _containerData[11]);
         return;
       }

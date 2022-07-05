@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getXStepLengthCalculator", function() {
     let uss;
     let nonTempTestCalculator = () => 10;
@@ -10,7 +12,7 @@ describe("getXStepLengthCalculator", function() {
             const _testElement = win.document.getElementById("scroller");
                                         
             cy.testFailingValues(uss.getXStepLengthCalculator, {
-              0: [Cypress.env("failingValuesAll"), 
+              0: [constants.failingValuesAll, 
                   [true, false]
                   ]
             })

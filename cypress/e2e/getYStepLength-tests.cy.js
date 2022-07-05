@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getYStepLength", function() {
     let uss;
     it("Tests the getYStepLength method", function() {

@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("setPageScroller", function() {
     let uss;
     it("Tests the setPageScroller method", function() {
@@ -10,7 +12,7 @@ describe("setPageScroller", function() {
               expect(uss.getPageScroller()).to.equal(win);
                             
               cy.testFailingValues(uss.setPageScroller, {
-                0: [Cypress.env("failingValuesAll")]
+                0: [constants.failingValuesAll]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(uss.getPageScroller()).to.equal(win);

@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("setWarningLogger", function() {
   let uss;
   let validLogger1 = (a,b,c) => console.log(a,b,c);
@@ -11,7 +13,7 @@ describe("setWarningLogger", function() {
             const _originalLogger = uss._warningLogger;
 
             cy.testFailingValues(uss.setWarningLogger, {
-              0: [Cypress.env("failingValuesAllNoUndefined")]
+              0: [constants.failingValuesAllNoUndefined]
             }, 
             (res, v1, v2, v3, v4, v5, v6, v7) => {
               expect(uss._warningLogger).to.equal(_originalLogger);

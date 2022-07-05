@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("stopScrollingY", function() {
     let uss;
     it("Tests the stopScrollingY method", function() {
@@ -7,7 +9,7 @@ describe("stopScrollingY", function() {
                 uss = win.uss;
 
                 cy.testFailingValues(uss.stopScrollingY, {
-                    0: [Cypress.env("failingValuesNoUndefined")]
+                    0: [constants.failingValuesNoUndefined]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;
@@ -73,7 +75,7 @@ describe("stopScrollingY-immediatelyStopped-Body", function() {
                 uss = win.uss;
 
                 cy.testFailingValues(uss.stopScrollingY, {
-                    0: [Cypress.env("failingValuesNoUndefined")]
+                    0: [constants.failingValuesNoUndefined]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;

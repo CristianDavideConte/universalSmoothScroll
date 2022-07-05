@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getWindowWidth", function() {
     let uss;
     const resolutions = [[640, 480],

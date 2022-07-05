@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("setDebugMode", function() {
     let uss;
     it("Tests the setDebugMode method", function() {
@@ -7,7 +9,7 @@ describe("setDebugMode", function() {
               uss = win.uss;
               
               cy.testFailingValues(uss.setDebugMode, {
-                0: [Cypress.env("failingValuesNoStringNoUndefined")]
+                0: [constants.failingValuesNoStringNoUndefined]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(uss.getDebugMode()).to.equal("");

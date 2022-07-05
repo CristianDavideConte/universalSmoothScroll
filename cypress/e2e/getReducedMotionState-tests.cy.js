@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getReducedMotionState", function() {
     let uss;
     it("Tests the getReducedMotionState method", function() {

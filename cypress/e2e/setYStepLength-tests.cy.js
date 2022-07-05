@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("setYStepLength", function() {
     let uss;
     let _testStepInvalidTypeString = "";
@@ -13,7 +15,7 @@ describe("setYStepLength", function() {
                 const _initialStepLength = uss.getYStepLength(); 
 
                 cy.testFailingValues(uss.setYStepLength, {
-                    0: [Cypress.env("failingValuesNoPositiveNumberOrUndefined").concat([_testStepInvalidTypeString, _testStepInvalidTypeNaN])],
+                    0: [constants.failingValuesNoPositiveNumberOrUndefined.concat([_testStepInvalidTypeString, _testStepInvalidTypeNaN])],
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(uss.getYStepLength()).to.equal(_initialStepLength);

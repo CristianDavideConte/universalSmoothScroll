@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("scrollBy", function() {
     let uss;
     it("Horizontally and vertically scrolls the test element by n1,n2 pixels", function() {
@@ -8,9 +10,9 @@ describe("scrollBy", function() {
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.testFailingValues(uss.scrollYBy, {
-                    0: [Cypress.env("failingValuesNoFiniteNumber"),
-                        Cypress.env("failingValuesNoFiniteNumber"),
-                        Cypress.env("failingValuesNoUndefined")
+                    0: [constants.failingValuesNoFiniteNumber,
+                        constants.failingValuesNoFiniteNumber,
+                        constants.failingValuesNoUndefined
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {

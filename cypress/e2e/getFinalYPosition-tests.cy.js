@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getFinalYPosition", function() {
     let uss;
     let finalYPosition;
@@ -9,7 +11,7 @@ describe("getFinalYPosition", function() {
           const _testElement = win.document.getElementById("scroller");
                       
           cy.testFailingValues(uss.getFinalYPosition, {
-            0: [Cypress.env("failingValuesNoUndefined")]
+            0: [constants.failingValuesNoUndefined]
           })
           .then(() => {
             cy.waitForUssCallback(

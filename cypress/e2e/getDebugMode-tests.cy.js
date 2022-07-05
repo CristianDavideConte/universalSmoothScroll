@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getDebugMode", function() {
     let uss;
     it("Tests the getDebugMode method", function() {

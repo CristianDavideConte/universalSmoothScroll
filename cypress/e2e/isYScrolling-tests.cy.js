@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("isYScrolling", function() {
     let uss;
     it("Tests the isYScrolling method", function() {
@@ -8,7 +10,7 @@ describe("isYScrolling", function() {
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.isYScrolling, {
-                    0: [Cypress.env("failingValuesNoUndefined")]
+                    0: [constants.failingValuesNoUndefined]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.be.undefined;

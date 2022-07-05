@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 function arraysAreEqual(arr1, arr2) {
     if(!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
     if(arr1.length !== arr2.length) return false;
@@ -16,9 +18,9 @@ describe("getAllScrollableParents", function() {
                 uss = win.uss;
                             
                 cy.testFailingValues(uss.getAllScrollableParents, {
-                    0: [Cypress.env("failingValuesAll"), 
+                    0: [constants.failingValuesAll, 
                         [true, false],
-                        Cypress.env("failingValuesAll")
+                        constants.failingValuesAll
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {

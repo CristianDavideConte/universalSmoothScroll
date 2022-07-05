@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getPageScroller", function() {
     let uss;
     it("Tests the getPageScroller method", function() {

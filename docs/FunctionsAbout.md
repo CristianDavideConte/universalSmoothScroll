@@ -340,7 +340,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>newCalculator</code></a>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <a href = "./ConstantsAbout.md#DEFAULT_XSTEP_LENGTH_CALCULATOR"><code>DEFAULT_XSTEP_LENGTH_CALCULATOR</code></a>
    </td>
    <td rowspan = "3" align = "left">
     Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible.
@@ -371,7 +371,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>newCalculator</code></a>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <a href = "./ConstantsAbout.md#DEFAULT_YSTEP_LENGTH_CALCULATOR"><code>DEFAULT_YSTEP_LENGTH_CALCULATOR</code></a>
    </td>
    <td rowspan = "3" align = "left">
     Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible.
@@ -542,38 +542,6 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    </td>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger</code></a> property to the passed value if compatible.
-   </td>
-  </tr> 
-         
-  <tr id = "calcXStepLengthFun">
-   <td rowspan = "1" align = "center">
-    <code>calcXStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
-    <a href = "./FunctionsAbout.md#calcXStepLength"><code>deltaX</code></a>
-   </td>
-   <td rowspan = "1" align = "center">
-    <code>undefined</code>
-   </td>
-   <td rowspan = "1" align = "left">
-    Returns how long each animation-step on the x-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
-    This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for any scroll-animation on the x-axis of any container.
-   </td>
-  </tr> 
-           
-  <tr id = "calcYStepLengthFun">
-   <td rowspan = "1" align = "center">
-    <code>calcYStepLength</code>
-   </td>
-   <td rowspan = "1" align = "center">
-    <a href = "./FunctionsAbout.md#calcYStepLength"><code>deltaY</code></a>
-   </td>
-   <td rowspan = "1" align = "center">
-    <code>undefined</code>
-   </td>
-   <td rowspan = "1" align = "left">
-    Returns how long each animation-step on the y-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
-    This function can be considered the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for any scroll-animation on the y-axis of any container.
    </td>
   </tr> 
            
@@ -1688,36 +1656,6 @@ The following table describes every entry of the `Input Parameters` column of th
       <li>A boolean that is <code>true</code> if the first parameter is a string and its quotation marks should be displayed, <code>false</code> otherwise.</li>
     </ul>
     The instructions given by the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property value should be followed.
-  </td>
-  </tr>
-
-  <tr id = "calcXStepLength">
-  <td rowspan = "1" align = "center">
-    <a href = "./FunctionsAbout.md#calcXStepLengthFun"><code>calcXStepLength</code></a>
-  </td>
-  <td rowspan = "1" align = "center">
-    <code>deltaX</code>
-  </td>
-  <td rowspan = "1" align = "center">
-    <code>Number</code>
-  </td>
-  <td rowspan = "1" align = "left">
-    A number > 0.
-  </td>
-  </tr>
-      
-  <tr id = "calcYStepLength">
-  <td rowspan = "1" align = "center">
-    <a href = "./FunctionsAbout.md#calcYStepLengthFun"><code>calcYStepLength</code></a>
-  </td>
-  <td rowspan = "1" align = "center">
-    <code>deltaY</code>
-  </td>
-  <td rowspan = "1" align = "center">
-    <code>Number</code>
-  </td>
-  <td rowspan = "1" align = "left">
-    A number > 0.
   </td>
   </tr>
     

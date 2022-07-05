@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getScrollbarsMaxDimension", function() {
     let uss;
 

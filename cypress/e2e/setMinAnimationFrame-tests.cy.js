@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("setMinAnimationFrame", function() {
     let uss;
     it("Tests the setMinAnimationFrame method", function() {
@@ -13,7 +15,7 @@ describe("setMinAnimationFrame", function() {
               expect(uss.getMinAnimationFrame()).to.equal(Math.pow(2, 30));
    
               cy.testFailingValues(uss.setMinAnimationFrame, {
-                0: [Cypress.env("failingValuesNoPositiveNumberOrUndefined")]
+                0: [constants.failingValuesNoPositiveNumberOrUndefined]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
                 expect(uss.getMinAnimationFrame()).to.equal(Math.pow(2, 30));

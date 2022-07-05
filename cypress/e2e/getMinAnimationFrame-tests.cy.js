@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getMinAnimationFrame", function() {
     let uss;
     it("Tests the getMinAnimationFrame method", function() {

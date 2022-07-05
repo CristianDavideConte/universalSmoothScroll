@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 function arraysAreEqual(arr1, arr2) {
     if(!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
     if(arr1.length !== arr2.length) return false;
@@ -17,10 +19,10 @@ describe("calcBordersDimensions", function() {
                 const _maxDim = 10; //See css styles of calcBordersDimensions-tests.html
                 
                 cy.testFailingValues(uss.calcBordersDimensions, {
-                    0: [Cypress.env("failingValuesAll")]
+                    0: [constants.failingValuesAll]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(res).to.throw(Cypress.env("defaultUssException"));
+                    expect(res).to.throw(constants.defaultUssException);
                 })
                 .then(() => {
                     const _borderedElement = win.document.getElementById("bordered");   

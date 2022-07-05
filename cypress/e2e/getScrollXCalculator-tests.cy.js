@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getScrollXCalculator", function() {
     let uss;
     let result = false;
@@ -8,10 +10,10 @@ describe("getScrollXCalculator", function() {
             uss = win.uss;
                               
             cy.testFailingValues(uss.getScrollXCalculator, {
-              0: [Cypress.env("failingValuesNoUndefined")]
+              0: [constants.failingValuesNoUndefined]
             },
             (res, v1, v2, v3, v4, v5, v6, v7) => {
-              expect(res).to.throw(Cypress.env("defaultUssException"));
+              expect(res).to.throw(constants.defaultUssException);
             })
             .then(() => {
               const _document = win.document.documentElement;

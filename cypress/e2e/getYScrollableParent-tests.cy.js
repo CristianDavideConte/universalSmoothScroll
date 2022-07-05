@@ -1,3 +1,5 @@
+const { constants } = require("../support/constants");
+
 describe("getYScrollableParent", function() {
     let uss;
     it("Tests the getYScrollableParent method", function() {
@@ -7,7 +9,7 @@ describe("getYScrollableParent", function() {
               uss = win.uss;
                             
               cy.testFailingValues(uss.getYScrollableParent, {
-                0: [Cypress.env("failingValuesAll"), 
+                0: [constants.failingValuesAll, 
                     [true, false]
                     ]
               }, 
