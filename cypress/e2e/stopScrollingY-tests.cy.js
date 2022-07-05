@@ -106,7 +106,7 @@ describe("stopScrollingY-immediatelyStopped-Body", function() {
                         cy.waitForUssCallback(
                             (resolve) => {
                                 expect(uss.isYScrolling(el)).to.be.false;                      
-                                uss.scrollYTo(100, el); 
+                                uss.scrollYTo(100, el, resolve); 
                                 expect(uss.isYScrolling(el)).to.be.true;
                                 resolve();
                             }

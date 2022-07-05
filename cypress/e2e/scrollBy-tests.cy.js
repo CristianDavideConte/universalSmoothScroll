@@ -39,27 +39,24 @@ describe("scrollToBy-StillStart-True", function() {
     let _originalTimestampEqualsTimeStampX, _originalTimestampEqualsTimeStampY;
     let _remaningX, _remaningY, _totalX, _totalY;
     
-    const _testCalculatorX = () => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
-            if(!uss.isXScrolling(container)) return total; //testing phase of the setXStepLengthCalculator
-            
-            if(!_remaningX) _remaningX = remaning;
-            if(!_originalTimestampEqualsTimeStampX) _originalTimestampEqualsTimeStampX = originalTimestamp === currentTimestamp;
-            if(!_totalX) _totalX = total;
-            
-            return total / 10;
-        }
+    const _testCalculatorX = (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
+        if(!uss.isXScrolling(container)) return total; //testing phase of the setXStepLengthCalculator
+        
+        if(!_remaningX) _remaningX = remaning;
+        if(!_originalTimestampEqualsTimeStampX) _originalTimestampEqualsTimeStampX = originalTimestamp === currentTimestamp;
+        if(!_totalX) _totalX = total;
+        
+        return total / 10;
+    
     }
-    const _testCalculatorY = () => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(!uss.isYScrolling(container)) return total; //testing phase of the setYStepLengthCalculator
-            
-            if(!_remaningY) _remaningY = remaning;
-            if(!_originalTimestampEqualsTimeStampY) _originalTimestampEqualsTimeStampY = originalTimestamp === currentTimestamp;
-            if(!_totalY) _totalY = total;
-            
-            return total / 10;
-        }
+    const _testCalculatorY = (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
+        if(!uss.isYScrolling(container)) return total; //testing phase of the setYStepLengthCalculator
+        
+        if(!_remaningY) _remaningY = remaning;
+        if(!_originalTimestampEqualsTimeStampY) _originalTimestampEqualsTimeStampY = originalTimestamp === currentTimestamp;
+        if(!_totalY) _totalY = total;
+        
+        return total / 10;
     }
     it("Horizontally and vertically scrolls the test element to n1a, n1b pixels and then replace that animation with a n2a,n2b pixels scroll", function() {
         cy.visit("scrollBy-tests.html"); 
@@ -67,12 +64,14 @@ describe("scrollToBy-StillStart-True", function() {
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
-                
-                uss.setXStepLengthCalculator(_testCalculatorX(), _testElement, false); 
-                uss.setYStepLengthCalculator(_testCalculatorY(), _testElement, false);           
-                    
+                        
                 cy.waitForUssCallback(
                     (resolve) => {
+                        uss.setXStepLengthCalculator(_testCalculatorX, _testElement, false); 
+                        expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorX);
+                        uss.setYStepLengthCalculator(_testCalculatorY, _testElement, false);   
+                        expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorY);
+
                         expect(uss.isScrolling(_testElement)).to.be.false;
                         uss.scrollTo(500, 200, _testElement, resolve); 
                         expect(uss.isScrolling(_testElement)).to.be.true;
@@ -102,33 +101,29 @@ describe("scrollToBy-StillStart-False", function() {
     let _originalTimestampEqualsTimeStampX, _remaningX, _totalX;
     let _originalTimestampEqualsTimeStampY, _remaningY, _totalY;
     
-    const _testCalculatorX = () => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
-            if(!uss.isScrolling(container)) return total; //testing phase of the setStepLengthCalculator
-            
-            if(_secondPhaseX) {
-                _remaningX = remaning;
-                _originalTimestampEqualsTimeStampX = originalTimestamp === currentTimestamp;
-                _totalX = total;
-                _secondPhaseX = false;
-            }
-            
-            return total / 10;
+    const _testCalculatorX = (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
+        if(!uss.isScrolling(container)) return total; //testing phase of the setStepLengthCalculator
+        
+        if(_secondPhaseX) {
+            _remaningX = remaning;
+            _originalTimestampEqualsTimeStampX = originalTimestamp === currentTimestamp;
+            _totalX = total;
+            _secondPhaseX = false;
         }
+        
+        return total / 10;
     }
-    const _testCalculatorY = () => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(!uss.isScrolling(container)) return total; //testing phase of the setStepLengthCalculator
-            
-            if(_secondPhaseY) {
-                _remaningY = remaning;
-                _originalTimestampEqualsTimeStampY = originalTimestamp === currentTimestamp;
-                _totalY = total;
-                _secondPhaseY = false;
-            }
-            
-            return total / 10;
+    const _testCalculatorY = (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
+        if(!uss.isScrolling(container)) return total; //testing phase of the setStepLengthCalculator
+        
+        if(_secondPhaseY) {
+            _remaningY = remaning;
+            _originalTimestampEqualsTimeStampY = originalTimestamp === currentTimestamp;
+            _totalY = total;
+            _secondPhaseY = false;
         }
+        
+        return total / 10;
     }
     it("Horizontally and vertically scrolls the test element to n1a, n1b pixels and then extends that animation by n2a, n2b pixels", function() {
         cy.visit("scrollBy-tests.html"); 
@@ -137,11 +132,13 @@ describe("scrollToBy-StillStart-False", function() {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
-                uss.setXStepLengthCalculator(_testCalculatorX(), _testElement, false); 
-                uss.setYStepLengthCalculator(_testCalculatorY(), _testElement, false); 
-                
                 cy.waitForUssCallback(
                     (resolve) => {
+                        uss.setXStepLengthCalculator(_testCalculatorX, _testElement, false); 
+                        expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorX);
+                        uss.setYStepLengthCalculator(_testCalculatorY, _testElement, false); 
+                        expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorY);
+                        
                         expect(uss.isScrolling(_testElement)).to.be.false;
                         uss.scrollTo(170, 100, _testElement, resolve); 
                         expect(uss.isScrolling(_testElement)).to.be.true;
@@ -177,15 +174,13 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
     let uss;
     let _resolve;
     let i = 0;
-    const _testCalculator = () => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            i++;
-            if(i === 2) {
-                uss.scrollBy(90, 70, container, _resolve, false);
-                return remaning;
-            }
-            return 10;
+    const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
+        i++;
+        if(i === 2) {
+            uss.scrollBy(90, 70, container, _resolve, false);
+            return remaning;
         }
+        return 10;
     }
     it("Tests if the scrollBy method with stillStart = \"false\" can extend a scroll-animation from inside a stepLengthCalculator", function() {
         cy.visit("scrollBy-tests.html"); 
@@ -194,10 +189,13 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
-                uss.setStepLengthCalculator(_testCalculator(), _testElement, false);
 
                 cy.waitForUssCallback(
                     (resolve) => {
+                        uss.setStepLengthCalculator(_testCalculator, _testElement, false);
+                        expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculator);
+                        expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculator);
+
                         _resolve = resolve;
                         
                         expect(_resolve).to.equal(resolve);

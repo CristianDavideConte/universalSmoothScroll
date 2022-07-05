@@ -36,18 +36,23 @@ describe("scrollTo", function() {
 
 describe("scrollTo-immediatelyStoppedScrolling", function() {
     let uss;
-    let count = 0;
     it("Tests the scrollTo method whenever a scroll-animation is immediately stopped", function() {
         cy.visit("scrollTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                let count = 0;
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollTo(500, 100, _testElement, () => count++);
-                        uss.stopScrolling(_testElement, resolve);
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        uss.scrollTo(500, 100, _testElement, () => {count += 1});
+                        expect(uss.isScrolling(_testElement)).to.be.true;
+
+                        uss.stopScrolling(_testElement);
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        resolve();
                     }
                 ).then(
                     () => {

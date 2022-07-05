@@ -106,7 +106,7 @@ describe("stopScrollingX-immediatelyStopped", function() {
                         cy.waitForUssCallback(
                             (resolve) => {
                                 expect(uss.isXScrolling(el)).to.be.false;                      
-                                uss.scrollXTo(100, el); 
+                                uss.scrollXTo(100, el, resolve); 
                                 expect(uss.isXScrolling(el)).to.be.true;
                                 resolve();
                             }
