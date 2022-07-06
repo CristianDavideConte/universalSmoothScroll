@@ -58,6 +58,10 @@ describe("scrollToBy-StillStart-True", function() {
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
+                const _scroll = (resolve) => {
+                    uss.scrollTo(500, 200, _testElement); 
+                    uss.scrollBy(100, 400, _testElement, resolve, true);
+                }
 
                 uss.setXStepLengthCalculator(_testCalculatorX, _testElement, false); 
                 expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorX);
@@ -67,9 +71,7 @@ describe("scrollToBy-StillStart-True", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         expect(uss.isScrolling(_testElement)).to.be.false;
-                        uss.scrollTo(500, 200, _testElement, resolve); 
-                        expect(uss.isScrolling(_testElement)).to.be.true;
-                        uss.scrollBy(100, 400, _testElement, resolve, true);
+                        _scroll(resolve);
                         expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
@@ -81,6 +83,7 @@ describe("scrollToBy-StillStart-True", function() {
             });        
     });
 })
+
 describe("scrollToBy-StillStart-False", function() {
     let uss;
     
@@ -104,6 +107,10 @@ describe("scrollToBy-StillStart-False", function() {
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
+                const _scroll = (resolve) => {
+                    uss.scrollTo(170, 100, _testElement); 
+                    uss.scrollBy(130, 200, _testElement, resolve, false);
+                }
 
                 uss.setXStepLengthCalculator(_testCalculatorX, _testElement, false); 
                 expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorX);
@@ -113,9 +120,7 @@ describe("scrollToBy-StillStart-False", function() {
                 cy.waitForUssCallback(
                     (resolve) => {        
                         expect(uss.isScrolling(_testElement)).to.be.false;
-                        uss.scrollTo(170, 100, _testElement, resolve); 
-                        expect(uss.isScrolling(_testElement)).to.be.true;
-                        uss.scrollBy(130, 200, _testElement, resolve, false);
+                        _scroll(resolve);
                         expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
@@ -131,7 +136,6 @@ describe("scrollToBy-StillStart-False", function() {
 describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
     let uss;
     let _resolve;
-    let i = 0;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentPosition, finalPosition, container) => {
         uss.scrollBy(90, 70, container, _resolve, false);
@@ -154,14 +158,18 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
                 uss.setStepLengthCalculator(_testCalculator, _testElement, false);
                 expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculator);
                 expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculator);
-
+                
+                return win;
+            }).then((win) => {
+                const _testElement = win.document.getElementById("scroller");
+                
                 cy.waitForUssCallback(
                     (resolve) => {
                         _resolve = resolve;
                         
                         expect(_resolve).to.equal(resolve);
                         expect(uss.isScrolling(_testElement)).to.be.false;
-                        uss.scrollTo(100, 100, _testElement, resolve);
+                        uss.scrollTo(100, 100, _testElement);
                         expect(uss.isScrolling(_testElement)).to.be.true;
                     }
                 ).then(
