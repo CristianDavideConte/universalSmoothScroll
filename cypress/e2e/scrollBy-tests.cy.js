@@ -61,19 +61,20 @@ describe("scrollToBy-StillStart-True", function() {
                 const _scroll = (resolve) => {
                     uss.scrollTo(500, 200, _testElement); 
                     uss.scrollBy(100, 400, _testElement, null, true);
-                    win.setTimeout(resolve, constants.defaultTimeout);
                 }
 
                 uss.setXStepLengthCalculator(_testCalculatorX, _testElement, false); 
                 expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorX);
                 uss.setYStepLengthCalculator(_testCalculatorY, _testElement, false);   
                 expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorY);
+                
+                expect(uss.isScrolling(_testElement)).to.be.false;
+                _scroll(resolve);
+                expect(uss.isScrolling(_testElement)).to.be.true;
                         
                 cy.waitForUssCallback(
                     (resolve) => {
-                        expect(uss.isScrolling(_testElement)).to.be.false;
-                        _scroll(resolve);
-                        expect(uss.isScrolling(_testElement)).to.be.true;
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
@@ -111,7 +112,6 @@ describe("scrollToBy-StillStart-False", function() {
                 const _scroll = (resolve) => {
                     uss.scrollTo(170, 100, _testElement); 
                     uss.scrollBy(130, 200, _testElement, null, false);
-                    win.setTimeout(resolve, constants.defaultTimeout);
                 }
 
                 uss.setXStepLengthCalculator(_testCalculatorX, _testElement, false); 
@@ -119,11 +119,13 @@ describe("scrollToBy-StillStart-False", function() {
                 uss.setYStepLengthCalculator(_testCalculatorY, _testElement, false); 
                 expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorY);
                 
+                expect(uss.isScrolling(_testElement)).to.be.false;
+                _scroll(resolve);
+                expect(uss.isScrolling(_testElement)).to.be.true;
+
                 cy.waitForUssCallback(
                     (resolve) => {        
-                        expect(uss.isScrolling(_testElement)).to.be.false;
-                        _scroll(resolve);
-                        expect(uss.isScrolling(_testElement)).to.be.true;
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
@@ -160,15 +162,12 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
                 expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculator);
                 expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculator);
                 
-                return win;
-            }).then((win) => {
-                const _testElement = win.document.getElementById("scroller");
-
+                expect(uss.isScrolling(_testElement)).to.be.false;
+                uss.scrollTo(100, 100, _testElement);
+                expect(uss.isScrolling(_testElement)).to.be.true;
+                
                 cy.waitForUssCallback(
                     (resolve) => {
-                        expect(uss.isScrolling(_testElement)).to.be.false;
-                        uss.scrollTo(100, 100, _testElement, resolve);
-                        expect(uss.isScrolling(_testElement)).to.be.true;
                         win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
@@ -177,6 +176,6 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
                         cy.elementScrollTopShouldBe(_testElement, 170);
                     }
                 );
-            });         
+            })         
     });
 })
