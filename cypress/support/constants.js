@@ -1,5 +1,6 @@
 export const constants = {
     defaultUssException: "USS fatal error (execution stopped)",
+    defaultTimeout: 1000,
     failingValuesAll: [Infinity, -Infinity, true, false, NaN, "fail", "", 10, -10, 0, null, undefined],
     failingValuesAllNoUndefined: [Infinity, -Infinity, true, false, NaN, "fail", "", 10, -10, 0, null],
     failingValuesNoString: [Infinity, -Infinity, true, false, NaN, 10, -10, 0, null, undefined],

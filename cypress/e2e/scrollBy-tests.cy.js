@@ -60,7 +60,8 @@ describe("scrollToBy-StillStart-True", function() {
                 const _testElement = win.document.getElementById("scroller");
                 const _scroll = (resolve) => {
                     uss.scrollTo(500, 200, _testElement); 
-                    uss.scrollBy(100, 400, _testElement, resolve, true);
+                    uss.scrollBy(100, 400, _testElement, null, true);
+                    win.setTimeout(resolve, constants.defaultTimeout);
                 }
 
                 uss.setXStepLengthCalculator(_testCalculatorX, _testElement, false); 
@@ -109,7 +110,8 @@ describe("scrollToBy-StillStart-False", function() {
                 const _testElement = win.document.getElementById("scroller");
                 const _scroll = (resolve) => {
                     uss.scrollTo(170, 100, _testElement); 
-                    uss.scrollBy(130, 200, _testElement, resolve, false);
+                    uss.scrollBy(130, 200, _testElement, null, false);
+                    win.setTimeout(resolve, constants.defaultTimeout);
                 }
 
                 uss.setXStepLengthCalculator(_testCalculatorX, _testElement, false); 
@@ -135,10 +137,9 @@ describe("scrollToBy-StillStart-False", function() {
 
 describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
     let uss;
-    let _resolve;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentPosition, finalPosition, container) => {
-        uss.scrollBy(90, 70, container, _resolve, false);
+        uss.scrollBy(90, 70, container, null, false);
     
         uss.setStepLengthCalculator(_testCalculator2, container, false);
         expect(uss.getXStepLengthCalculator(container, false)).to.equal(_testCalculator2);
@@ -162,15 +163,13 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
                 return win;
             }).then((win) => {
                 const _testElement = win.document.getElementById("scroller");
-                
+
                 cy.waitForUssCallback(
                     (resolve) => {
-                        _resolve = resolve;
-                        
-                        expect(_resolve).to.equal(resolve);
                         expect(uss.isScrolling(_testElement)).to.be.false;
-                        uss.scrollTo(100, 100, _testElement);
+                        uss.scrollTo(100, 100, _testElement, resolve);
                         expect(uss.isScrolling(_testElement)).to.be.true;
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
