@@ -1,5 +1,5 @@
 module.exports = {
-  retries: 5,
+  retries: 2,
   defaultCommandTimeout: 4000,
   e2e: {
     // We've imported your old cypress plugins here.
@@ -8,5 +8,9 @@ module.exports = {
       return require("./cypress/plugins/index.js")(on, config)
     },
     baseUrl: "http://localhost:8080/tests-pages/",
+    specPattern: [
+      "./cypress/e2e/scrollBy-tests.cy.js", 
+      "./cypress/e2e/*.cy.js"
+    ]
   },
 }
