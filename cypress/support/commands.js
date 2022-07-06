@@ -40,8 +40,8 @@ Cypress.Commands.addAll({
      * If it's undefined the promise is resolve after a timeout.
      */
     waitForUssCallback(fun = (resolve, reject) => setTimeout(resolve, 3500)) {
-        cy.wrap(null).then(() => {
-            return new Cypress.Promise(
+        cy.wrap(null).then(async () => {
+            await new Cypress.Promise(
                 (resolve, reject) => {
                     fun(resolve, reject);
                 }
