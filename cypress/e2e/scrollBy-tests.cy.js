@@ -58,7 +58,7 @@ describe("scrollToBy-StillStart-True", function() {
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
-                const _scroll = (resolve) => {
+                const _scroll = () => {
                     uss.scrollTo(500, 200, _testElement); 
                     uss.scrollBy(100, 400, _testElement, null, true);
                 }
@@ -69,7 +69,7 @@ describe("scrollToBy-StillStart-True", function() {
                 expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorY);
                 
                 expect(uss.isScrolling(_testElement)).to.be.false;
-                _scroll(resolve);
+                _scroll();
                 expect(uss.isScrolling(_testElement)).to.be.true;
                         
                 cy.waitForUssCallback(
@@ -120,7 +120,7 @@ describe("scrollToBy-StillStart-False", function() {
                 expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorY);
                 
                 expect(uss.isScrolling(_testElement)).to.be.false;
-                _scroll(resolve);
+                _scroll();
                 expect(uss.isScrolling(_testElement)).to.be.true;
 
                 cy.waitForUssCallback(
