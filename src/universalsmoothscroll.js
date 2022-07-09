@@ -110,6 +110,8 @@
  * setDebugMode: function, sets the "_debugMode" property to the passed value if compatible.
  * setErrorLogger: function, sets the "_errorLogger" property to the passed value if compatible.
  * setWarningLogger: function, sets the "_warningLogger" property to the passed value if compatible.
+ * calcXScrollbarDimension: function, returns the vertical scrollbar's width (in px) of the passed element.
+ * calcYScrollbarDimension: function, returns the horizontal scrollbar's height (in px) of the passed element.
  * calcScrollbarsDimensions: function, returns an array containing 2 numbers:
  *                           [0] contains the vertical scrollbar's width (in px) of the passed element.
  *                           [1] contains the horizontal scrollbar's height (in px) of the passed element.
@@ -468,6 +470,76 @@ var uss = {
     }
     uss._warningLogger = newWarningLogger;
   }, 
+  calcXScrollbarDimension: (element) => {
+    if(element === window) {
+      element = document.scrollingElement || uss.getPageScroller();
+      if(element === window) return 0; //Vertical scrollbar's width
+    } else if(!(element instanceof HTMLElement)) {
+      uss._errorLogger("calcXScrollbarDimension", "the element to be an HTMLElement or the Window", element);
+      throw "USS fatal error (execution stopped)";
+    }
+
+    if(uss.getScrollbarsMaxDimension(false) === 0) return 0; //Vertical scrollbar's width
+
+    const _elementStyle = window.getComputedStyle(element);
+    const _originalWidth  = Number.parseInt(_elementStyle.width);
+    const _clientWidth  = element.clientWidth;
+    const _originalOverflowY = element.style.overflowY;
+    const _originalScrollLeft = element.scrollLeft;
+
+    //The properties of _elementStyle are automatically updated whenever the style is changed.
+    element.style.overflowY = "hidden"; //The element is forced to hide its vertical scrollbars
+   
+    //When the vertical scrollbar is hidden the element's width increases only if 
+    //it was originally showing a scrollbar, otherwise it remains the same. 
+    let _scrollbarDimension = Number.parseInt(_elementStyle.width) - _originalWidth; //Vertical scrollbar's width
+
+    //If the element is not scrollable but has "overflow:scroll"
+    //the dimensions can only be calculated by using clientWidth.
+    //If the overflow is "visible" the dimensions are < 0.
+    if(_scrollbarDimension === 0)    _scrollbarDimension = element.clientWidth - _clientWidth;
+    else if(_scrollbarDimension < 0) _scrollbarDimension = 0;
+     
+    element.style.overflowY = _originalOverflowY;
+    element.scrollLeft = _originalScrollLeft;
+
+    return _scrollbarDimension;
+  },
+  calcYScrollbarDimension: (element) => {
+    if(element === window) {
+      element = document.scrollingElement || uss.getPageScroller();
+      if(element === window) return 0; //Horizontal scrollbar's height
+    } else if(!(element instanceof HTMLElement)) {
+      uss._errorLogger("calcYScrollbarDimension", "the element to be an HTMLElement or the Window", element);
+      throw "USS fatal error (execution stopped)";
+    }
+
+    if(uss.getScrollbarsMaxDimension(false) === 0) return 0; //Horizontal scrollbar's height
+
+    const _elementStyle = window.getComputedStyle(element);
+    const _originalHeight = Number.parseInt(_elementStyle.height);   
+    const _clientHeight = element.clientHeight;
+    const _originalOverflowX = element.style.overflowX;
+    const _originalScrollTop  = element.scrollTop;
+
+    //The properties of _elementStyle are automatically updated whenever the style is changed.
+    element.style.overflowX = "hidden"; //The element is forced to hide its horizontal scrollbars
+   
+    //When the horizontal scrollbar is hidden the element's height increases only if 
+    //it was originally showing a scrollbar, otherwise it remains the same. 
+    let _scrollbarDimension = Number.parseInt(_elementStyle.height) - _originalHeight; //Horizontal scrollbar's height
+
+    //If the element is not scrollable but has "overflow:scroll"
+    //the dimensions can only be calculated by using clientHeight.
+    //If the overflow is "visible" the dimensions are < 0.
+    if(_scrollbarDimension === 0)    _scrollbarDimension = element.clientHeight - _clientHeight;
+    else if(_scrollbarDimension < 0) _scrollbarDimension = 0;
+     
+    element.style.overflowX = _originalOverflowX;
+    element.scrollTop = _originalScrollTop;
+
+    return _scrollbarDimension;
+  },
   calcScrollbarsDimensions: (element) => {
     if(element === window) {
       element = document.scrollingElement || uss.getPageScroller();
@@ -491,8 +563,8 @@ var uss = {
     const _originalScrollTop  = element.scrollTop;
 
     //The properties of _elementStyle are automatically updated whenever the style is changed.
-    element.style.overflowX = "hidden"; //The element is forced to hide its vertical scrollbars
-    element.style.overflowY = "hidden"; //The element is forced to hide its horizontal scrollbars
+    element.style.overflowX = "hidden"; //The element is forced to hide its horizontal scrollbars
+    element.style.overflowY = "hidden"; //The element is forced to hide its vertical scrollbars
    
     //When the scrollbars are hidden the element's width/height increase only if 
     //it was originally showing scrollbars, otherwise they remain the same. 
@@ -1668,49 +1740,55 @@ window.addEventListener("resize", () => {
   }
 }, {passive:true});
 
-window.addEventListener("load", () => {
-  uss.getScrollbarsMaxDimension(true);
-
-  //Calculate the average frames' time of the user's screen. 
-  //(and the corresponding minAnimationFrame.) //<---------------------------------------------------------------------TO LOOK MORE INTO
-  const __totalMeasurementsNumber = 3;
-  const __totalFramesInMeasurement = 60; //How many frames are considered in a single measurement 
-  let __totalFramesTime = 0;
-  let __currentMeasurementsLeft = __totalMeasurementsNumber; 
-  let __currentFrameCount = __totalFramesInMeasurement;
-  let __originalTimestamp = performance.now();
-  window.requestAnimationFrame(function __calcFrameTime(_currentTimestamp) {
-    __currentFrameCount--;
-    if(__currentFrameCount > 0) {
-      window.requestAnimationFrame(__calcFrameTime);
-      return;
-    }
-
-    __currentMeasurementsLeft--;
-    __totalFramesTime += (_currentTimestamp - __originalTimestamp) / __totalFramesInMeasurement;
-
-    //Start a new measurement.
-    if(__currentMeasurementsLeft > 0) {
-      __currentFrameCount = __totalFramesInMeasurement;
-      __originalTimestamp = performance.now();
-      window.requestAnimationFrame(__calcFrameTime);
-      return;
-    }
-
-    //All the measurements have been completed.
-    uss._framesTime = __totalFramesTime / __totalMeasurementsNumber;
-    //uss._minAnimationFrame = 1000 / uss._framesTime; //<---------------------------------------------------------------------TO LOOK MORE INTO
-  });
-}, {passive:true, once:true});
-
 try { //Chrome, Firefox & Safari >= 14
   window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
-    uss._reducedMotion = !uss._reducedMotion;
+    uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
     uss.stopScrollingAll();
   }, {passive:true});
 } catch(e) { //Safari < 14
   window.matchMedia("(prefers-reduced-motion)").addListener(() => {
-    uss._reducedMotion = !uss._reducedMotion;
+    uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
     uss.stopScrollingAll();
   }, {passive:true});
+}
+
+{
+  function __ussInit() {
+    //Force the calculation of the _scrollbarsMaxDimension at the startup.
+    uss.getScrollbarsMaxDimension(true);
+
+    //Calculate the average frames' time of the user's screen. 
+    //(and the corresponding minAnimationFrame.) //<---------------------------------------------------------------------TO LOOK MORE INTO
+    const __totalMeasurementsNumber = 3;
+    const __totalFramesInMeasurement = 60; //How many frames are considered in a single measurement 
+    let __totalFramesTime = 0;
+    let __currentMeasurementsLeft = __totalMeasurementsNumber; 
+    let __currentFrameCount = __totalFramesInMeasurement;
+    let __originalTimestamp = performance.now();
+    window.requestAnimationFrame(function __calcFrameTime(_currentTimestamp) {
+      __currentFrameCount--;
+      if(__currentFrameCount > 0) {
+        window.requestAnimationFrame(__calcFrameTime);
+        return;
+      }
+
+      __currentMeasurementsLeft--;
+      __totalFramesTime += (_currentTimestamp - __originalTimestamp) / __totalFramesInMeasurement;
+
+      //Start a new measurement.
+      if(__currentMeasurementsLeft > 0) {
+        __currentFrameCount = __totalFramesInMeasurement;
+        __originalTimestamp = performance.now();
+        window.requestAnimationFrame(__calcFrameTime);
+        return;
+      }
+
+      //All the measurements have been completed.
+      uss._framesTime = __totalFramesTime / __totalMeasurementsNumber;
+      //uss._minAnimationFrame = 1000 / uss._framesTime; //<---------------------------------------------------------------------TO LOOK MORE INTO
+    });
+  }
+
+  if(document.readyState === "complete") __ussInit();
+  else window.addEventListener("load", __ussInit, {passive:true, once:true});
 }

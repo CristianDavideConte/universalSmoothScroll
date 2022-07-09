@@ -9,9 +9,9 @@ module.exports = {
     },
     baseUrl: "http://localhost:8080/tests-pages/",
     specPattern: [
-      "./cypress/e2e/scrollBy*.cy.js",
+      //"./cypress/e2e/scrollBy*.cy.js",
       //"./cypress/e2e/scroll*.cy.js", 
-      //"./cypress/e2e/*.cy.js"
+      "./cypress/e2e/*.cy.js"
     ]
   },
 }

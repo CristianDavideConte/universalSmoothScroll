@@ -124,15 +124,15 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
 
   const c = 1 - tension;
   const n = xs.length - 1;
-  const nHalf = Math.round(n / 2);
+  const nHalf = Math.round(0.5 * n);
   
   //Cubic Hermite-Spline definition:
   //p(x) = h00(t) * p_k + h10(t) * (x_k+1 - x_k) * m_k + h01(t) * p_k+1 + h11(t) * (x_k+1 - x_k) * m_k+1 
   function _evalSpline(x) {
     //if(x === 0) x = 0.5 * uss._framesTime;
-    let binaryMin = 0;
-    let binaryMax = n;
-    let k = nHalf;
+    let binaryMin = 0; //binary search lower bound
+    let binaryMax = n; //binary search upper bound
+    let k = nHalf;     //binary search iteration index
     let t; 
     
     //Find t corresponding to the given x (binary search).

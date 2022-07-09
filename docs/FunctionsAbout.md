@@ -544,7 +544,37 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     Sets the <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger</code></a> property to the passed value if compatible.
    </td>
   </tr> 
-           
+               
+  <tr id = "calcXScrollbarDimensionFun">
+   <td rowspan = "1" align = "center">
+    <code>calcXScrollbarDimension</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcXScrollbarDimension"><code>element</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the vertical scrollbar's width <i> (in px) </i> of the passed element. </li>
+   </td>
+  </tr> 
+
+  <tr id = "calcYScrollbarDimensionFun">
+   <td rowspan = "1" align = "center">
+    <code>calcYScrollbarDimension</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcYScrollbarDimension"><code>element</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the horizontal scrollbar's height <i> (in px) </i> of the passed element. </li>
+   </td>
+  </tr> 
+
   <tr id = "calcScrollbarsDimensionsFun">
    <td rowspan = "1" align = "center">
     <code>calcScrollbarsDimensions</code>
@@ -1674,7 +1704,39 @@ The following table describes every entry of the `Input Parameters` column of th
     The instructions given by the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property value should be followed.
   </td>
   </tr>
-    
+  
+  </tr>
+    <tr id = "calcXScrollbarDimension">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcXScrollbarDimensionFun"><code>calcXScrollbarDimension</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>element</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Object</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+  </td>
+  </tr>
+
+  </tr>
+    <tr id = "calcYScrollbarDimension">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcYScrollbarDimensionFun"><code>calcYScrollbarDimension</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>element</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Object</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    An HTMLElement or the window element.
+  </td>
+  </tr>
+
   </tr>
     <tr id = "calcScrollbarsDimensions">
   <td rowspan = "1" align = "center">
