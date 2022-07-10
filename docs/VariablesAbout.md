@@ -248,8 +248,10 @@ Index | Type | Description
 `13` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the y-axis of this container.
 `14` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the x-axis of this container. <br/> If valid, replaces `12` for the current scroll-animation on the x-axis of this container and it's automatically invalidated at the end.
 `15` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the y-axis of this container. <br/> If valid, replaces `13` for the current scroll-animation on the y-axis of this container and it's automatically invalidated at the end.
-`16` | `Number` | Contains the cached value of the highest reacheable scrollLeft/scrollX value of the current container (its <a href = "./FunctionsAbount.md#getMaxScrollXFun"><code>maxScrollX</code></a>).
-`17` | `Number` | Contains the cached value of the highest reacheable scrollTop/scrollY value of the current container (its <a href = "./FunctionsAbount.md#getMaxScrollYFun"><code>maxScrollY</code></a>).
+`16` | `Number` | Contains the cached value of the highest reacheable scrollLeft/scrollX value of this container (its <a href = "./FunctionsAbount.md#getMaxScrollXFun"><code>maxScrollX</code></a>).
+`17` | `Number` | Contains the cached value of the highest reacheable scrollTop/scrollY value of this container (its <a href = "./FunctionsAbount.md#getMaxScrollYFun"><code>maxScrollY</code></a>).
+`18` | `Number` | Contains the cached value of the vertical scrollbar's width of this container.
+`19` | `Number` | Contains the cached value of the horizontal scrollbar's height of this container.
 
 ### N.B.
 ***"This container"*** refers to the key linked to each array.

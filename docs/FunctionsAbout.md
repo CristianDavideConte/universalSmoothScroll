@@ -546,7 +546,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
                
   <tr id = "calcXScrollbarDimensionFun">
-   <td rowspan = "1" align = "center">
+   <td rowspan = "2" align = "center">
     <code>calcXScrollbarDimension</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -555,13 +555,21 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "center">
     <code>undefined</code>
    </td>
-   <td rowspan = "1" align = "left">
+   <td rowspan = "2" align = "left">
     Returns the vertical scrollbar's width <i> (in px) </i> of the passed element. </li>
    </td>
   </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcXScrollbarDimension"><code>forceCalculation</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
 
   <tr id = "calcYScrollbarDimensionFun">
-   <td rowspan = "1" align = "center">
+   <td rowspan = "2" align = "center">
     <code>calcYScrollbarDimension</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -570,13 +578,21 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "center">
     <code>undefined</code>
    </td>
-   <td rowspan = "1" align = "left">
+   <td rowspan = "2" align = "left">
     Returns the horizontal scrollbar's height <i> (in px) </i> of the passed element. </li>
    </td>
   </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcYScrollbarDimension"><code>forceCalculation</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
 
   <tr id = "calcScrollbarsDimensionsFun">
-   <td rowspan = "1" align = "center">
+   <td rowspan = "2" align = "center">
     <code>calcScrollbarsDimensions</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -585,7 +601,7 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <td rowspan = "1" align = "center">
     <code>undefined</code>
    </td>
-   <td rowspan = "1" align = "left">
+   <td rowspan = "2" align = "left">
     Returns an array containing 2 numbers: 
     <ol start="0">
      <li> Contains the vertical scrollbar's width <i> (in px) </i> of the passed element. </li> 
@@ -593,6 +609,14 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     </ol>
    </td>
   </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#calcScrollbarsDimensions"><code>forceCalculation</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
            
   <tr id = "calcBordersDimensionsFun">
    <td rowspan = "1" align = "center">
@@ -1707,7 +1731,7 @@ The following table describes every entry of the `Input Parameters` column of th
   
   </tr>
     <tr id = "calcXScrollbarDimension">
-  <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
     <a href = "./FunctionsAbout.md#calcXScrollbarDimensionFun"><code>calcXScrollbarDimension</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -1720,10 +1744,22 @@ The following table describes every entry of the `Input Parameters` column of th
     An HTMLElement or the window element.
   </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> flushes the internal cache for the vertical scrollbar's width value of the passed container and forces its recalculation <i>(expensive operation)</i>. <br/>
+    If <code>false</code> the result is returned from cache. 
+   </td>
+  </tr>
 
   </tr>
     <tr id = "calcYScrollbarDimension">
-  <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
     <a href = "./FunctionsAbout.md#calcYScrollbarDimensionFun"><code>calcYScrollbarDimension</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -1736,10 +1772,22 @@ The following table describes every entry of the `Input Parameters` column of th
     An HTMLElement or the window element.
   </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> flushes the internal cache for the horizontal scrollbar's height value of the passed container and forces its recalculation <i>(expensive operation)</i>. <br/>
+    If <code>false</code> the result is returned from cache. 
+   </td>
+  </tr>
 
   </tr>
     <tr id = "calcScrollbarsDimensions">
-  <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
     <a href = "./FunctionsAbout.md#calcScrollbarsDimensionsFun"><code>calcScrollbarsDimensions</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -1751,6 +1799,18 @@ The following table describes every entry of the `Input Parameters` column of th
   <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> flushes the internal caches for both the vertical scrollbar's width and the horizontal scrollbar's height values of the passed container and forces their recalculation <i>(expensive operation)</i>. <br/>
+    If <code>false</code> the results are returned from cache. 
+   </td>
   </tr>
       
   </tr>
