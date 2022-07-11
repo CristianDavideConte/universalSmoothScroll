@@ -24,8 +24,7 @@ describe("getAllScrollableParents", function() {
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(Array.isArray(res)).to.be.true;
-                    expect(res.length).to.equal(0);
+                        expect(res).to.throw(constants.defaultUssException);
                 })
                 .then(() => {
                     const _bodyParent = win;

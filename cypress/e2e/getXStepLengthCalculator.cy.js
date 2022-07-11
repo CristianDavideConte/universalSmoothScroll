@@ -12,9 +12,12 @@ describe("getXStepLengthCalculator", function() {
             const _testElement = win.document.getElementById("scroller");
                                         
             cy.testFailingValues(uss.getXStepLengthCalculator, {
-              0: [constants.failingValuesAll, 
+              0: [constants.failingValuesNoUndefined, 
                   [true, false]
                   ]
+            }, 
+            (res, v1, v2, v3, v4, v5, v6, v7) => {
+              expect(res).to.throw(constants.defaultUssException);
             })
             .then(() => {
               uss.setXStepLengthCalculator(nonTempTestCalculator, _testElement, false);

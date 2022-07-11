@@ -8,12 +8,12 @@ describe("isScrolling-scrollXAnimation", function() {
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
-
+ 
                 cy.testFailingValues(uss.isScrolling, {
                     0: [constants.failingValuesNoUndefined]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(res).to.be.undefined;
+                    expect(res).to.throw(constants.defaultUssException);
                     expect(uss.isScrolling()).to.be.false;
                 })
                 .then(() => {
@@ -46,7 +46,7 @@ describe("isScrolling-scrollYAnimation", function() {
                     0: [constants.failingValuesNoUndefined]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(res).to.be.undefined;
+                    expect(res).to.throw(constants.defaultUssException);
                     expect(uss.isScrolling()).to.be.false;
                 })
                 .then(() => {
@@ -79,7 +79,7 @@ describe("isScrolling-scrollXYAnimation", function() {
                     0: [constants.failingValuesNoUndefined]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(res).to.be.undefined;
+                    expect(res).to.throw(constants.defaultUssException);
                     expect(uss.isScrolling()).to.be.false;
                 })
                 .then(() => {

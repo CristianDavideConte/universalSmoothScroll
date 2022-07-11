@@ -18,6 +18,7 @@ describe("setMinAnimationFrame", function() {
                 0: [constants.failingValuesNoPositiveNumberOrUndefined]
               }, 
               (res, v1, v2, v3, v4, v5, v6, v7) => {
+                expect(res).to.throw(constants.defaultUssException);
                 expect(uss.getMinAnimationFrame()).to.equal(Math.pow(2, 30));
               });
           });        

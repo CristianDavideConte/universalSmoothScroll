@@ -186,7 +186,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(/legacy/i.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
     console.error("USS ERROR\n", functionName, "was expecting", expectedValue + ", but received", receivedValue + ".");
-    return;
+    throw "USS fatal error (execution stopped)";
   }
 
   console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
@@ -206,6 +206,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
     console.groupEnd("Stack Trace");
 
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+  throw "USS fatal error (execution stopped)";
 }
 
 const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) => {
@@ -251,72 +252,72 @@ var uss = {
   _debugMode: "",
   _errorLogger: DEFAULT_ERROR_LOGGER,
   _warningLogger: DEFAULT_WARNING_LOGGER,
-  isXScrolling: (container = uss._pageScroller) => {
+  isXScrolling: (container = uss._pageScroller, options = {debugString: "isXScrolling"}) => {
     if(container === window || container instanceof HTMLElement) {
       const _containerData = uss._containersData.get(container) || [];
       return !!_containerData[0];
     }
-    uss._errorLogger("isXScrolling", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  isYScrolling: (container = uss._pageScroller) => {
+  isYScrolling: (container = uss._pageScroller, options = {debugString: "isYScrolling"}) => {
     if(container === window || container instanceof HTMLElement) {
       const _containerData = uss._containersData.get(container) || [];
       return !!_containerData[1];
     }
-    uss._errorLogger("isYScrolling", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  isScrolling: (container = uss._pageScroller) => {
+  isScrolling: (container = uss._pageScroller, options = {debugString: "isScrolling"}) => {
     if(container === window || container instanceof HTMLElement) { 
       const _containerData = uss._containersData.get(container) || [];
       return !!_containerData[0] || !!_containerData[1];
     }
-    uss._errorLogger("isScrolling", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  getFinalXPosition: (container = uss._pageScroller) => {
+  getFinalXPosition: (container = uss._pageScroller, options = {debugString: "getFinalXPosition"}) => {
     if(container === window || container instanceof HTMLElement) { 
       //If there's no scroll-animation on the x-axis, the current position is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[2] === 0 ? 0 : _containerData[2] || uss.getScrollXCalculator(container)();
     }
-    uss._errorLogger("getFinalXPosition", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  getFinalYPosition: (container = uss._pageScroller) => {
+  getFinalYPosition: (container = uss._pageScroller, options = {debugString: "getFinalYPosition"}) => {
     if(container === window || container instanceof HTMLElement) { 
       //If there's no scroll-animation on the y-axis, the current position is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[3] === 0 ? 0 : _containerData[3] || uss.getScrollYCalculator(container)();
     }
-    uss._errorLogger("getFinalYPosition", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  getScrollXDirection: (container = uss._pageScroller) => {
+  getScrollXDirection: (container = uss._pageScroller, options = {debugString: "getScrollXDirection"}) => {
     if(container === window || container instanceof HTMLElement) { 
       //If there's no scroll-animation on the x-axis, 0 is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[4] || 0;
     }
-    uss._errorLogger("getScrollXDirection", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  getScrollYDirection: (container = uss._pageScroller) => {
+  getScrollYDirection: (container = uss._pageScroller, options = {debugString: "getScrollYDirection"}) => {
     if(container === window || container instanceof HTMLElement) { 
       //If there's no scroll-animation on the y-axis, 0 is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[5] || 0;
     }
-    uss._errorLogger("getScrollYDirection", "the container to be an HTMLElement or the Window", container);  
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);  
   },
-  getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false) => {
+  getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getXStepLengthCalculator"}) => {
     if(container === window || container instanceof HTMLElement) { 
       const _containerData = uss._containersData.get(container) || [];
       return getTemporary ? _containerData[14] : _containerData[12];
     }
-    uss._errorLogger("getXStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false) => {    
+  getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getYStepLengthCalculator"}) => {    
     if(container === window || container instanceof HTMLElement) { 
       const _containerData = uss._containersData.get(container) || [];
       return getTemporary ? _containerData[15] : _containerData[13];
     }
-    uss._errorLogger("getYStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
   getXStepLength: () => uss._xStepLength,
   getYStepLength: () => uss._yStepLength,
@@ -349,14 +350,12 @@ var uss = {
   getPageScroller: () => uss._pageScroller,
   getReducedMotionState: () => uss._reducedMotion,
   getDebugMode: () => uss._debugMode, 
-  setXStepLengthCalculator: (newCalculator = DEFAULT_XSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false) => {
+  setXStepLengthCalculator: (newCalculator = DEFAULT_XSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false, options = {debugString: "setXStepLengthCalculator"}) => {
     if(typeof newCalculator !== "function") {
-      uss._errorLogger("setXStepLengthCalculator", "the newCalculator to be a function", newCalculator);
-      return;
+      uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
     }
     if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("setXStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
-      return;
+      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
     }
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -367,14 +366,12 @@ var uss = {
     }
     if(!_oldData) uss._containersData.set(container, _containerData);
   },
-  setYStepLengthCalculator: (newCalculator = DEFAULT_YSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false) => {
+  setYStepLengthCalculator: (newCalculator = DEFAULT_YSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false, options = {debugString: "setYStepLengthCalculator"}) => {
     if(typeof newCalculator !== "function") {
-      uss._errorLogger("setYStepLengthCalculator", "the newCalculator to be a function", newCalculator);
-      return;
+      uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
     }
     if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("setYStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
-      return;
+      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
     }
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -385,14 +382,12 @@ var uss = {
     }
     if(!_oldData) uss._containersData.set(container, _containerData);
   },
-  setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false) => {
+  setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setStepLengthCalculator"}) => {
     if(typeof newCalculator !== "function") {
-      uss._errorLogger("setStepLengthCalculator", "the newCalculator to be a function", newCalculator);
-      return;
+      uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
     }
     if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("setStepLengthCalculator", "the container to be an HTMLElement or the Window", container);
-      return;
+      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
     }
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -409,70 +404,60 @@ var uss = {
     }
     if(!_oldData) uss._containersData.set(container, _containerData);
   },
-  setXStepLength: (newXStepLength = DEFAULT_XSTEP_LENGTH) => {
+  setXStepLength: (newXStepLength = DEFAULT_XSTEP_LENGTH, options = {debugString: "setXStepLength"}) => {
     if(!Number.isFinite(newXStepLength) || newXStepLength <= 0) {
-      uss._errorLogger("setXStepLength", "the newXStepLength to be a positive number", newXStepLength);
-      return;
+      uss._errorLogger(options.debugString, "the newXStepLength to be a positive number", newXStepLength);
     }
     uss._xStepLength = newXStepLength;
   },
-  setYStepLength: (newYStepLength = DEFAULT_YSTEP_LENGTH) => {
+  setYStepLength: (newYStepLength = DEFAULT_YSTEP_LENGTH, options = {debugString: "setYStepLength"}) => {
     if(!Number.isFinite(newYStepLength) || newYStepLength <= 0) {
-      uss._errorLogger("setYStepLength", "the newYStepLength to be a positive number", newYStepLength);
-      return;
+      uss._errorLogger(options.debugString, "the newYStepLength to be a positive number", newYStepLength);
     }
     uss._yStepLength = newYStepLength;
   },
-  setStepLength: (newStepLength) => {
+  setStepLength: (newStepLength, options = {debugString: "setStepLength"}) => {
     if(!Number.isFinite(newStepLength) || newStepLength <= 0) {
-      uss._errorLogger("setStepLength", "the newStepLength to be a positive number", newStepLength);
-      return;
+      uss._errorLogger(options.debugString, "the newStepLength to be a positive number", newStepLength);
     }
     uss._xStepLength = newStepLength;
     uss._yStepLength = newStepLength;
   },
-  setMinAnimationFrame: (newMinAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES) => {
+  setMinAnimationFrame: (newMinAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES, options = {debugString: "setMinAnimationFrame"}) => {
     if(!Number.isFinite(newMinAnimationFrame) || newMinAnimationFrame <= 0) {
-      uss._errorLogger("setMinAnimationFrame", "the newMinAnimationFrame to be a positive number", newMinAnimationFrame);
-      return;
+      uss._errorLogger(options.debugString, "the newMinAnimationFrame to be a positive number", newMinAnimationFrame);
     }
     uss._minAnimationFrame = newMinAnimationFrame;
   },
-  setPageScroller: (newPageScroller) => {
+  setPageScroller: (newPageScroller, options = {debugString: "setPageScroller"}) => {
     if(newPageScroller !== window && !(newPageScroller instanceof HTMLElement)) {
-      uss._errorLogger("setPageScroller", "the newPageScroller to be an HTMLElement or the Window", newPageScroller);
-      return;
+      uss._errorLogger(options.debugString, "the newPageScroller to be an HTMLElement or the Window", newPageScroller);
     }
     uss._pageScroller = newPageScroller;
   },
-  setDebugMode: (newDebugMode = "") => {
-    if(typeof newDebugMode !== "string") {
-      let _currentDebugMode = null;
-      if(/disabled/i.test(uss._debugMode)) {
-        _currentDebugMode = uss._debugMode;
-        uss._debugMode = "legacy"; //Temporarily set the debug mode to "legacy" to show the error 
-      }
-      uss._errorLogger("setDebugMode", "the newDebugMode to be \"disabled\", \"legacy\" or any other string", newDebugMode);
-      if(!!_currentDebugMode) uss._debugMode = _currentDebugMode;
+  setDebugMode: (newDebugMode = "", options = {debugString: "setDebugMode"}) => {
+    if(typeof newDebugMode === "string") {
+      uss._debugMode = newDebugMode;
       return;
     }
-    uss._debugMode = newDebugMode;
+    console.error("USS ERROR\n", 
+                  options.debugString, 
+                  "was expecting the newDebugMode to be \"disabled\", \"legacy\" or any other string, but received", newDebugMode + "."
+    );
   },
-  setErrorLogger: (newErrorLogger = DEFAULT_ERROR_LOGGER) => {
+  setErrorLogger: (newErrorLogger = DEFAULT_ERROR_LOGGER, options = {debugString: "setErrorLogger"}) => {
     if(typeof newErrorLogger !== "function") {
-      uss._errorLogger("setErrorLogger", "the newErrorLogger to be a function", newErrorLogger);
-      return;
+      uss._errorLogger(options.debugString, "the newErrorLogger to be a function", newErrorLogger);
     }
     uss._errorLogger = newErrorLogger;
   }, 
-  setWarningLogger: (newWarningLogger = DEFAULT_WARNING_LOGGER) => {
+  setWarningLogger: (newWarningLogger = DEFAULT_WARNING_LOGGER, options = {debugString: "setWarningLogger"}) => {
     if(typeof newWarningLogger !== "function") {
-      uss._errorLogger("setWarningLogger", "the newWarningLogger to be a function", newWarningLogger);
-      return;
+      uss._errorLogger(options.debugString, "the newWarningLogger to be a function", newWarningLogger);
     }
     uss._warningLogger = newWarningLogger;
   }, 
-  calcXScrollbarDimension: (element, forceCalculation = false) => {
+  calcXScrollbarDimension: (element, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
     //Check if the scrollbarDimension on the x-axis of the passed element have already been calculated. 
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
@@ -483,8 +468,7 @@ var uss = {
     if(element === window) {
       element = document.scrollingElement || uss.getPageScroller();
     } else if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("calcXScrollbarDimension", "the element to be an HTMLElement or the Window", element);
-      throw "USS fatal error (execution stopped)";
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
     }
 
     if(element === window || uss.getScrollbarsMaxDimension(false) === 0) {
@@ -523,7 +507,7 @@ var uss = {
 
     return _scrollbarDimension;
   },
-  calcYScrollbarDimension: (element, forceCalculation = false) => {
+  calcYScrollbarDimension: (element, forceCalculation = false, options = {debugString: "calcYScrollbarDimension"}) => {
     //Check if the scrollbarDimension on the y-axis of the passed element have already been calculated. 
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
@@ -534,8 +518,7 @@ var uss = {
     if(element === window) {
       element = document.scrollingElement || uss.getPageScroller();
     } else if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("calcYScrollbarDimension", "the element to be an HTMLElement or the Window", element);
-      throw "USS fatal error (execution stopped)";
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
     }
 
     if(element === window || uss.getScrollbarsMaxDimension(false) === 0) {
@@ -574,7 +557,7 @@ var uss = {
 
     return _scrollbarDimension;
   },
-  calcScrollbarsDimensions: (element, forceCalculation = false) => {
+  calcScrollbarsDimensions: (element, forceCalculation = false, options = {debugString: "calcScrollbarsDimensions"}) => {
     //Check if the scrollbarsDimensions of the passed element have already been calculated. 
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
@@ -585,8 +568,7 @@ var uss = {
     if(element === window) {
       element = document.scrollingElement || uss.getPageScroller();
     } else if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("calcScrollbarsDimensions", "the element to be an HTMLElement or the Window", element);
-      throw "USS fatal error (execution stopped)";
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
     }
 
     if(element === window || uss.getScrollbarsMaxDimension(false) === 0) {
@@ -639,13 +621,12 @@ var uss = {
     
     return _scrollbarsDimensions;
   },
-  calcBordersDimensions: (element) => {
+  calcBordersDimensions: (element, options = {debugString: "calcBordersDimensions"}) => {
     if(element === window) {
       element = document.scrollingElement || uss.getPageScroller();
       if(element === window) return [0,0,0,0]; //[top, right, bottom, left]
     } else if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("calcBordersDimensions", "the element to be an HTMLElement or the Window", element);
-      throw "USS fatal error (execution stopped)";
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
     }
 
     const _style = window.getComputedStyle(element);
@@ -655,23 +636,18 @@ var uss = {
             Number.parseInt(_style.borderLeftWidth)
            ];
   },
-  getScrollXCalculator: (container = uss._pageScroller) => {
+  getScrollXCalculator: (container = uss._pageScroller, options = {debugString: "getScrollXCalculator"}) => {
     return container === window             ? () => window.scrollX       :
            container instanceof HTMLElement ? () => container.scrollLeft :
-                                              () => {
-                                                uss._errorLogger("getScrollXCalculator", "the container to be an HTMLElement or the Window", container);
-                                                throw "USS fatal error (execution stopped)";
-                                              };
+                                              () => uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+                                              
   },
-  getScrollYCalculator: (container = uss._pageScroller) => {
+  getScrollYCalculator: (container = uss._pageScroller, options = {debugString: "getScrollYCalculator"}) => {
     return container === window             ? () => window.scrollY      :
            container instanceof HTMLElement ? () => container.scrollTop :
-                                              () => {
-                                                uss._errorLogger("getScrollYCalculator", "the container to be an HTMLElement or the Window", container);
-                                                throw "USS fatal error (execution stopped)";
-                                              };
+                                              () => uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  getMaxScrollX: (container = uss._pageScroller, forceCalculation = false) => {
+  getMaxScrollX: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollX"}) => {
     //Check if the maxScrollX value for the passed container has already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -701,9 +677,9 @@ var uss = {
       
       return _maxScroll;
     }
-    uss._errorLogger("getMaxScrollX", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  getMaxScrollY: (container = uss._pageScroller, forceCalculation = false) => {
+  getMaxScrollY: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollY"}) => {
     //Check if the maxScrollY value for the passed container has already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -733,13 +709,12 @@ var uss = {
 
       return _maxScroll;
     }
-    uss._errorLogger("getMaxScrollY", "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
   },
-  getXScrollableParent: (element, includeHiddenParents = false) => {
+  getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
     if(element === window) return null;
     if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("getXScrollableParent", "the element to be an HTMLElement or the Window", element);
-      return null;
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
     }
     
     //If the element has position:fixed,  
@@ -774,11 +749,10 @@ var uss = {
     if(_isScrollable(window)) return window;
     return null; 
   },   
-  getYScrollableParent: (element, includeHiddenParents = false) => {
+  getYScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
     if(element === window) return null;
     if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("getYScrollableParent", "the element to be an HTMLElement or the Window", element);
-      return null;
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
     }
     
     //If the element has position:fixed,  
@@ -813,11 +787,10 @@ var uss = {
     if(_isScrollable(window)) return window;
     return null; 
   },     
-  getScrollableParent: (element, includeHiddenParents = false) => {
+  getScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getScrollableParent"}) => {
     if(element === window) return null;
     if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("getScrollableParent", "the element to be an HTMLElement or the Window", element);
-      return null;
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
     }
     
     //If the element has position:fixed,  
@@ -852,11 +825,10 @@ var uss = {
     if(_isScrollable(window)) return window;
     return null; 
   },    
-  getAllScrollableParents: (element, includeHiddenParents = false, callback) => {
+  getAllScrollableParents: (element, includeHiddenParents = false, callback, options = {debugString: "getAllScrollableParents"}) => {
     if(element === window) return [];
     if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("getAllScrollableParents", "the element to be an HTMLElement or the Window", element);
-      return [];
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
     }
     
     //If the element has position:fixed,  
@@ -897,18 +869,13 @@ var uss = {
     if(_isScrollable(window)) _scrollableParentFound(window);
     return _scrollableParents; 
   },
-  scrollXTo: (finalXPosition, container = uss._pageScroller, callback) => {
+  scrollXTo: (finalXPosition, container = uss._pageScroller, callback, options = {debugString: "scrollXTo"}) => {
     if(!Number.isFinite(finalXPosition)) {
-      uss._errorLogger("scrollXTo", "the finalXPosition to be a number", finalXPosition);
-      return;
-    }
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("scrollXTo", "the container to be an HTMLElement or the Window", container);
-      return;
+      uss._errorLogger(options.debugString, "the finalXPosition to be a number", finalXPosition);
     }
 
     //The container cannot be scrolled on the x-axis.
-    if(uss.getMaxScrollX(container) < 1) {
+    if(uss.getMaxScrollX(container, false, options) < 1) {
       const _containerName = container === window ? "window" : 
                                                     container.tagName.toLowerCase() + 
                                                     (container.id ? "#" + container.id : "") + 
@@ -1010,18 +977,13 @@ var uss = {
       _containerData[0] = window.requestAnimationFrame(_stepX);
     }
   },
-  scrollYTo: (finalYPosition, container = uss._pageScroller, callback) => {
+  scrollYTo: (finalYPosition, container = uss._pageScroller, callback, options = {debugString: "scrollYTo"}) => {
     if(!Number.isFinite(finalYPosition)) {
-      uss._errorLogger("scrollYTo", "the finalYPosition to be a number", finalYPosition);
-      return;
-    }
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("scrollYTo", "the container to be an HTMLElement or the Window", container);
-      return;
+      uss._errorLogger(options.debugString, "the finalYPosition to be a number", finalYPosition);
     }
 
     //The container cannot be scrolled on the y-axis.
-    if(uss.getMaxScrollY(container) < 1) {
+    if(uss.getMaxScrollY(container, false, options) < 1) {
       const _containerName = container === window ? "window" : 
                                                     container.tagName.toLowerCase() + 
                                                     (container.id ? "#" + container.id : "") + 
@@ -1123,17 +1085,12 @@ var uss = {
       _containerData[1] = window.requestAnimationFrame(_stepY);
     }
   },
-  scrollXBy: (deltaX, container = uss._pageScroller, callback, stillStart = true) => {
+  scrollXBy: (deltaX, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollXBy"}) => {
     if(!Number.isFinite(deltaX)) {
-      uss._errorLogger("scrollXBy", "the deltaX to be a number", deltaX);
-      return;
+      uss._errorLogger(options.debugString, "the deltaX to be a number", deltaX);
     }
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("scrollXBy", "the container to be an HTMLElement or the Window", container);
-      return;
-    }
-    
-    const _currentXPosition = uss.getScrollXCalculator(container)();
+
+    const _currentXPosition = uss.getScrollXCalculator(container, options)();
     if(!stillStart) {
       const _containerData = uss._containersData.get(container) || [];
 
@@ -1171,17 +1128,12 @@ var uss = {
 
     uss.scrollXTo(_currentXPosition + deltaX, container, callback);
   },
-  scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true) => {
+  scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollYBy"}) => {
     if(!Number.isFinite(deltaY)) {
-      uss._errorLogger("scrollYBy", "the deltaY to be a number", deltaY);
-      return;
-    }
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("scrollYBy", "the container to be an HTMLElement or the Window", container);
-      return;
+      uss._errorLogger(options.debugString, "the deltaY to be a number", deltaY);
     }
 
-    const _currentYPosition = uss.getScrollYCalculator(container)();
+    const _currentYPosition = uss.getScrollYCalculator(container, options)();
     if(!stillStart) {
       const _containerData = uss._containersData.get(container) || [];
 
@@ -1219,22 +1171,9 @@ var uss = {
 
     uss.scrollYTo(_currentYPosition + deltaY, container, callback);
   },
-  scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback) => {
-    if(!Number.isFinite(finalXPosition)) {
-      uss._errorLogger("scrollTo", "the finalXPosition to be a number", finalXPosition);
-      return;
-    }
-    if(!Number.isFinite(finalYPosition)) {
-      uss._errorLogger("scrollTo", "the finalYPosition to be a number", finalYPosition);
-      return;
-    }
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("scrollTo", "the container to be an HTMLElement or the Window", container);
-      return;
-    }
-    
-    uss.scrollXTo(finalXPosition, container);
-    uss.scrollYTo(finalYPosition, container);
+  scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback, options = {debugString: "scrollTo"}) => {
+    uss.scrollXTo(finalXPosition, container, null, options);
+    uss.scrollYTo(finalYPosition, container, null, options);
 
     //This functions are used to make sure that the passed callback is only called
     //once all the scroll-animations for the passed container have been performed.
@@ -1266,22 +1205,9 @@ var uss = {
       if(_isYScrolling) _containerData[11] = _scrollYCallback; 
     }
   },
-  scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true) => {
-    if(!Number.isFinite(deltaX)) {
-      uss._errorLogger("scrollBy", "the deltaX to be a number", deltaX);
-      return;
-    }
-    if(!Number.isFinite(deltaY)) {
-      uss._errorLogger("scrollBy", "the deltaY to be a number", deltaY);
-      return;
-    }
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("scrollBy", "the container to be an HTMLElement or the Window", container);
-      return;
-    }
-
-    uss.scrollXBy(deltaX, container, null, stillStart);
-    uss.scrollYBy(deltaY, container, null, stillStart);
+  scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollBy"}) => {
+    uss.scrollXBy(deltaX, container, null, stillStart, options);
+    uss.scrollYBy(deltaY, container, null, stillStart, options);
     
     //This functions are used to make sure that the passed callback is only called
     //once all the scroll-animations for the passed container have been performed.
@@ -1313,18 +1239,14 @@ var uss = {
       if(_isYScrolling) _containerData[11] = _scrollYCallback; 
     }
   },
-  scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false) => {
+  scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoView"}) => {
     if(element === window) {
       if(typeof callback === "function") callback();
       return;
     }
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("scrollIntoView", "the container to be an HTMLElement or the Window", element);
-      return;
-    }
 
     let _containerIndex = -1;
-    const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++);
+    const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
     
     //The element cannot be scrolled into view
     if(_containerIndex < 0) { 
@@ -1449,18 +1371,14 @@ var uss = {
       else _callback();
     }
   },
-  scrollIntoViewIfNeeded: (element, alignToCenter = true, callback, includeHiddenParents = false) => {
+  scrollIntoViewIfNeeded: (element, alignToCenter = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoViewIfNeeded"}) => {
     if(element === window) {
       if(typeof callback === "function") callback();
       return;
     }
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger("scrollIntoViewIfNeeded", "the container to be an HTMLElement or the Window", element);
-      return;
-    }
 
     let _containerIndex = -1;
-    const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++);
+    const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
     
     //The element cannot be scrolled into view
     if(_containerIndex < 0) { 
@@ -1613,10 +1531,9 @@ var uss = {
       else _callback();
     }
   },
-  stopScrollingX: (container = uss._pageScroller, callback) => {
+  stopScrollingX: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingX"}) => {
     if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("stopScrollingX", "the container to be an HTMLElement or the Window", container);
-      return;
+      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[0]); 
@@ -1638,10 +1555,9 @@ var uss = {
 
     if(typeof callback === "function") callback();
   },
-  stopScrollingY: (container = uss._pageScroller, callback) => {
+  stopScrollingY: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingY"}) => {
     if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("stopScrollingY", "the container to be an HTMLElement or the Window", container);
-      return;
+      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[1]);
@@ -1663,10 +1579,9 @@ var uss = {
 
     if(typeof callback === "function") callback();
   },
-  stopScrolling: (container = uss._pageScroller, callback) => {
+  stopScrolling: (container = uss._pageScroller, callback, options = {debugString: "stopScrolling"}) => {
     if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger("stopScrolling", "the container to be an HTMLElement or the Window", container);
-      return;
+      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[0]);

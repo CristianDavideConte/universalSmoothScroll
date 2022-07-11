@@ -23,6 +23,7 @@ describe("setYStepLengthCalculator", function() {
                         ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.throw(constants.defaultUssException);
                     expect(uss.getYStepLengthCalculator(_testElement, true)).to.be.undefined;
                     expect(uss.getYStepLengthCalculator(_testElement, false)).to.be.undefined;
                     expect(uss.getYStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;

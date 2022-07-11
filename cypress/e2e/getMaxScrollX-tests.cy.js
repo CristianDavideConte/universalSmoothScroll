@@ -13,6 +13,9 @@ describe("getMaxScrollX", function() {
                 0: [constants.failingValuesNoUndefined, 
                     [true, false]
                   ]
+              }, 
+              (res, v1, v2, v3, v4, v5, v6, v7) => {
+                      expect(res).to.throw(constants.defaultUssException);
               })
               .then(() => {
                 const _expectedMaxScrollX = 0.5 * _testElement.scrollWidth + uss.getScrollbarsMaxDimension(); 

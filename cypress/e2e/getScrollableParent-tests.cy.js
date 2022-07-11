@@ -12,9 +12,9 @@ describe("getScrollableParent", function() {
                 0: [constants.failingValuesAll, 
                     [true, false]
                     ]
-              }, 
+              },
               (res, v1, v2, v3, v4, v5, v6, v7) => {
-                expect(res).to.equal(null);
+                expect(res).to.throw(constants.defaultUssException);
               })
               .then(() => {
                 const _bodyParent = win;

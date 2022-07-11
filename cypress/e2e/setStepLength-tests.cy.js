@@ -20,6 +20,7 @@ describe("setStepLength", function() {
                     0: [constants.failingValuesNoPositiveNumber.concat([_testStepInvalidTypeString, _testStepInvalidTypeNaN])],
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.throw(constants.defaultUssException);
                     expect(uss.getXStepLength()).to.equal(_initialXStepLength);
                     expect(uss.getYStepLength()).to.equal(_initialYStepLength);
                 })
@@ -37,9 +38,12 @@ describe("setStepLength", function() {
                     expect(uss.getXStepLength()).to.equal(_testStepValidType2);
                     expect(uss.getYStepLength()).to.equal(_testStepValidType2);
                     
-                    uss.setStepLength(_testStepInvalidTypeString);
-                    expect(uss.getXStepLength()).to.equal(_testStepValidType2);
-                    expect(uss.getYStepLength()).to.equal(_testStepValidType2);
+                    try {
+                        uss.setStepLength(_testStepInvalidTypeString);
+                    } catch(e) {
+                        expect(uss.getXStepLength()).to.equal(_testStepValidType2);
+                        expect(uss.getYStepLength()).to.equal(_testStepValidType2);
+                    }
                     
                     cy.waitForUssCallback(
                         (resolve) => {

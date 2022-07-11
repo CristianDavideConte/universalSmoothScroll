@@ -11,6 +11,9 @@ describe("getScrollYDirection", function() {
 
           cy.testFailingValues(uss.getScrollYDirection, {
             0: [constants.failingValuesNoUndefined]
+          }, 
+          (res, v1, v2, v3, v4, v5, v6, v7) => {
+            expect(res).to.throw(constants.defaultUssException);
           })
           .then(() => {
             cy.waitForUssCallback(
