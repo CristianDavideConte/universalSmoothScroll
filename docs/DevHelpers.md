@@ -33,7 +33,10 @@ if(!result1 || !result2) {
 This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Installation.md) script in your project first. <br/>
 Once imported, the [`universalsmoothscroll-dev-helpers`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the functions listed below. <br/>
 <br/>
-<br/>
+
+Note: <br/> 
+A **bold** input parameter's name means that it's a mandatory input. <br/>
+An _italic_ input parameter's name means that it's an optional input.
 
 <table>
  <thead>
@@ -54,10 +57,12 @@ Once imported, the [`universalsmoothscroll-dev-helpers`](./Download.md) library 
     <code>async</code>
    </td>
    <td colspan = "2" rowspan = "1" align = "center">
+   <strong>
     <a href = "./DevHelpers.md#isValidStepLengthCalculator"><code>fun</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "4" align = "left">
     Tests the passed function by performing a dummy scroll-animation <i>(no actual scroll takes place)</i>. <br/> 
@@ -68,10 +73,14 @@ Once imported, the [`universalsmoothscroll-dev-helpers`](./Download.md) library 
 
   <tr>
    <td rowspan = "3" align = "center">
+   <i>
     <a href = "./DevHelpers.md#isValidStepLengthCalculator"><code>options</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
-    <code><i>container</i></code>
+   <strong>
+    <code>container</code>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -80,7 +89,9 @@ Once imported, the [`universalsmoothscroll-dev-helpers`](./Download.md) library 
 
   <tr>
     <td rowspan = "1" align = "center">
-     <code><i>totalScrollAmount</i></code>
+    <strong>
+     <code>totalScrollAmount</code>
+    </strong>
     </td>
     <td rowspan = "1" align = "center">
      <code>100</code>
@@ -89,7 +100,9 @@ Once imported, the [`universalsmoothscroll-dev-helpers`](./Download.md) library 
 
   <tr>
    <td rowspan = "1" align = "center">
-     <code><i>timeout</i></code>
+   <strong>
+     <code>timeout</code>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
      <code>5000</code>
@@ -136,7 +149,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>options</code>
    </td>
    <td rowspan = "1" align = "center">
-    <i><code>container</code></i>
+    <code>container</code>
    </td>
    <td rowspan = "1" align = "center">
      <code>Object</code>
@@ -148,7 +161,7 @@ The following table describes every entry of the `Input Parameters` column of th
   
   <tr>
    <td rowspan = "1" align = "center">
-    <i><code>totalScrollAmount</code></i>
+    <code>totalScrollAmount</code>
    </td>
    <td rowspan = "1" align = "center">
      <code>Number</code>
@@ -160,7 +173,7 @@ The following table describes every entry of the `Input Parameters` column of th
 
   <tr>
    <td rowspan = "1" align = "center">
-     <i><code>timeout</code></i>
+     <code>timeout</code>
    </td>
    <td rowspan = "1" align = "center">
      <code>Number</code>

@@ -13,7 +13,10 @@ In order to do that, just pass the returned [`stepLengthCalculator`](./FAQ.md#q-
 This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Installation.md) script in your project first. <br/>
 Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the functions listed below. <br/>
 <br/>
-<br/>
+
+Note: <br/> 
+A **bold** input parameter's name means that it's a mandatory input _(its default value is always a <strong>✗</strong>)_. <br/>
+An _italic_ input parameter's name means that it's an optional input.
 
 <table>
  <thead>
@@ -34,15 +37,19 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./EaseFunctions.md#the-xs-and-ys-parameters"><code>xs</code></a>, <a href = "./EaseFunctions.md#the-xs-and-ys-parameters"><code>ys</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>, <code>undefined</code>
+    <strong>✗</strong>
    </td> 
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-tension-parameter"><code>tension</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>0</code>
@@ -50,7 +57,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -58,7 +67,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -74,15 +85,19 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./EaseFunctions.md#the-xs-and-ys-parameters"><code>xs</code></a>, <a href = "./EaseFunctions.md#the-xs-and-ys-parameters"><code>ys</code></a> 
+   </strong>
    </td> 
    <td rowspan = "1" align = "center">
-    <code>undefined</code>, <code>undefined</code>
+    <strong>✗</strong>
    </td> 
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -90,7 +105,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -106,7 +123,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/0_CUSTOM_CUBIC_BEZIER/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>x1</code></a>, <a href = "./EaseFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>y1</code></a>, <a href = "./EaseFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>x2</code></a>, <a href = "./EaseFunctions.md#the-x1-y1-x2-and-y2-parameters"><code>y2</code></a>
+   </i>
    </td> 
    <td rowspan = "1" align = "center">
     <code>0</code>, <code>0</code>, <code>1</code>, <code>1</code>
@@ -114,7 +133,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -122,7 +143,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -138,7 +161,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/1_EASE_LINEAR/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -146,7 +171,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -162,7 +189,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/2_EASE_IN_SINE/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -170,7 +199,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -186,7 +217,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/3_EASE_IN_QUAD/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -194,7 +227,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -210,7 +245,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/4_EASE_IN_CUBIC/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -218,7 +255,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -234,7 +273,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/5_EASE_IN_QUART/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -242,7 +283,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -258,7 +301,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/6_EASE_IN_QUINT/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -266,7 +311,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -282,7 +329,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/7_EASE_IN_EXPO/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -290,7 +339,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -306,7 +357,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/8_EASE_IN_CIRC/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -314,7 +367,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -330,7 +385,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/9_EASE_IN_BOUNCE/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>900</code>
@@ -338,7 +395,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -346,7 +405,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>3</code>
@@ -362,7 +423,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/10_EASE_OUT_SINE/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -370,7 +433,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -386,7 +451,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/11_EASE_OUT_QUAD/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -394,7 +461,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -410,7 +479,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/12_EASE_OUT_CUBIC/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -418,7 +489,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -434,7 +507,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/13_EASE_OUT_QUART/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -442,7 +517,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -458,7 +535,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/14_EASE_OUT_QUINT/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -466,7 +545,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -482,7 +563,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/15_EASE_OUT_EXPO/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -490,7 +573,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -506,7 +591,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/16_EASE_OUT_CIRC/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -514,7 +601,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -530,7 +619,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/17_EASE_OUT_BOUNCE/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>900</code>
@@ -538,7 +629,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -546,7 +639,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>3</code>
@@ -562,7 +657,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/18_EASE_IN_OUT_SINE/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -570,7 +667,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -586,7 +685,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/19_EASE_IN_OUT_QUAD/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -594,7 +695,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -610,7 +713,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/20_EASE_IN_OUT_CUBIC/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -618,7 +723,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -634,7 +741,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/21_EASE_IN_OUT_QUART/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -642,7 +751,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -658,7 +769,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/22_EASE_IN_OUT_QUINT/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -666,7 +779,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -682,7 +797,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/23_EASE_IN_OUT_EXPO/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -690,7 +807,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -706,7 +825,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/24_EASE_IN_OUT_CIRC/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>500</code>
@@ -714,7 +835,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -730,7 +853,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/25_EASE_IN_OUT_BOUNCE/Y.gif" width = "40px" height = "40px"/>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-duration-parameter"><code>duration</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>1200</code>
@@ -738,7 +863,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-callback-parameter"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -746,7 +873,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-bouncesNumber-parameter"><code>bouncesNumber</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>6</code>
@@ -761,23 +890,29 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/26_EASE_ELASTIC/X.gif" width = "40px" height = "40px"/> 
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./EaseFunctions.md#the-forwardeasing-parameter"><code>forwardEasing</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+    <strong>
     <a href = "./EaseFunctions.md#the-backwardeasing-parameter"><code>backwardEasing</code></a>
+    </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-elasticpointcalculator-parameter"><code>elasticPointCalculator</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>() => 50</code>
@@ -785,7 +920,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-debouncetime-parameter"><code>debounceTime</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>0</code>
@@ -800,23 +937,29 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
     <img src = "./easingsGifs/26_EASE_ELASTIC/Y.gif" width = "40px" height = "40px"/> 
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./EaseFunctions.md#the-forwardeasing-parameter"><code>forwardEasing</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./EaseFunctions.md#the-backwardeasing-parameter"><code>backwardEasing</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-elasticpointcalculator-parameter"><code>elasticPointCalculator</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>() => 50</code>
@@ -824,7 +967,9 @@ Once imported, the [`universalsmoothscroll-ease-functions`](./Download.md) libra
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./EaseFunctions.md#the-debouncetime-parameter"><code>debounceTime</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>0</code>
