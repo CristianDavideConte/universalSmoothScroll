@@ -5,6 +5,30 @@
 This library contains functions that should help you with the more challenging aspect of the Universal Smooth Scroll API (e.g. how to create a correct [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator)). <br/>
 This library is meant to be used during the development phase of your website only and it's not internally used by the API, so it should be removed from the project before the deployment phase (nothing will happen if you leave it there, don't worry).
 
+In this library each function has this structure: `functionName(mandatoryParam1, ...mandatoryParamN, options)`. <br/>
+The `options` parameter must either be completely omitted or fully specified. <br/> 
+
+For instance: 
+```javascript
+//Here we fully specify the "options" parameter.
+let result1 = await isValidStepLengthCalculator(
+  myFunction1,
+  { //This is the "options" parameter
+    container: myContainer,
+    totalScrollAmount: 500,
+    timeout: 1000
+  }
+);
+
+//Omitting the options parameter is also valid.
+let result2 = await isValidStepLengthCalculator(myFunction1);
+
+if(!result1 || !result2) {
+  //Throw error...
+  //Fix myFunction1...
+}
+```
+
 ### N.B.
 This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Installation.md) script in your project first. <br/>
 Once imported, the [`universalsmoothscroll-dev-helpers`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the functions listed below. <br/>
@@ -16,7 +40,7 @@ Once imported, the [`universalsmoothscroll-dev-helpers`](./Download.md) library 
   <tr>
    <th>Name</th>
    <th>Type</th>
-   <th>Input Parameters</th>
+   <th colspan = "2" >Input Parameters</th>
    <th>Default values</th>
    <th>Description</th>
   </tr>
@@ -29,43 +53,49 @@ Once imported, the [`universalsmoothscroll-dev-helpers`](./Download.md) library 
    <td rowspan = "4" align = "center">
     <code>async</code>
    </td>
-   <td rowspan = "1" align = "center">
-    <a href = "./DevHelpers.md#isValidStepLengthCalculator"><code>stepLengthCalculator</code></a>
+   <td colspan = "2" rowspan = "1" align = "center">
+    <a href = "./DevHelpers.md#isValidStepLengthCalculator"><code>fun</code></a>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
    </td>
    <td rowspan = "4" align = "left">
-    Tests the passed <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> by performing a dummy scroll-animation <i>(no actual scroll takes place)</i>. <br/> 
+    Tests the passed function by performing a dummy scroll-animation <i>(no actual scroll takes place)</i>. <br/> 
     Errors/warnings will be logged in the console during the testing process. <br/>
-    Returns <code>true</code> if the passed <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is valid, <code>false</code> otherwise.
+    Returns <code>true</code> if the passed function is a valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>, <code>false</code> otherwise.
    </td>
   </tr>
+
   <tr>
+   <td rowspan = "3" align = "center">
+    <a href = "./DevHelpers.md#isValidStepLengthCalculator"><code>options</code></a>
+   </td>
    <td rowspan = "1" align = "center">
-    <a href = "./DevHelpers.md#isValidStepLengthCalculator"><code>container</code></a>
+    <code><i>container</i></code>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
    </td>
   </tr>
+
+  <tr>
+    <td rowspan = "1" align = "center">
+     <code><i>totalScrollAmount</i></code>
+    </td>
+    <td rowspan = "1" align = "center">
+     <code>100</code>
+    </td>
+  </tr>
+
   <tr>
    <td rowspan = "1" align = "center">
-    <a href = "./DevHelpers.md#isValidStepLengthCalculator"><code>totalScrollAmount</code></a>
+     <code><i>timeout</i></code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>100</code>
+     <code>5000</code>
    </td>
   </tr>
-  <tr>
-   <td rowspan = "1" align = "center">
-    <a href = "./DevHelpers.md#isValidStepLengthCalculator"><code>timeout</code></a>
-   </td>
-   <td rowspan = "1" align = "center">
-    <code>5000</code>
-   </td>
-  </tr>
- </tbody>
+  </tbody>
 </table>
 
 ---
@@ -80,55 +110,61 @@ The following table describes every entry of the `Input Parameters` column of th
  <thead>
   <tr>
   <th>Name</th>
-  <th>Parameter Name</th>
+  <th colspan = "2">Parameter Name</th>
   <th>Parameter Type</th>
   <th>Parameter Description</th>
   </tr>
  </thead>
  <tbody>
   <tr id = "isValidStepLengthCalculator">
-  <td rowspan = "4" align = "center">
-    <a href = "./DevHelpers.md#isValidStepLengthCalculatorFun"><code>isValidStepLengthCalculator</code></a>
-  </td>
-  <td rowspan = "1" align = "center">
-    <code>stepLengthCalculator</code>
-  </td>
-  <td rowspan = "1" align = "center">
-    <code>Function</code>
-  </td>
-  <td rowspan = "1" align = "left">
-    A function you want to use as a <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
-  </td>
+   <td rowspan = "4" align = "center">
+     <a href = "./DevHelpers.md#isValidStepLengthCalculatorFun"><code>isValidStepLengthCalculator</code></a>
+   </td>
+   <td colspan = "2" rowspan = "1" align = "center">
+     <code>fun</code>
+   </td>
+   <td rowspan = "1" align = "center">
+     <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+     A function you want to use as a <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
+   </td>
   </tr>
+
   <tr>
-    <td rowspan = "1" align = "center">
-    <code>container</code>
-  </td>
-  <td rowspan = "1" align = "center">
-    <code>Object</code>
-  </td>
-  <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
-  </td>
+   <td rowspan = "3" align = "center">
+    <code>options</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <i><code>container</code></i>
+   </td>
+   <td rowspan = "1" align = "center">
+     <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "left">
+     An HTMLElement or the window element.
+   </td>
   </tr>
+  
   <tr>
-    <td rowspan = "1" align = "center">
-    <code>totalScrollAmount</code>
-  </td>
-  <td rowspan = "1" align = "center">
-    <code>Number</code>
-  </td>
-  <td rowspan = "1" align = "left">
+   <td rowspan = "1" align = "center">
+    <i><code>totalScrollAmount</code></i>
+   </td>
+   <td rowspan = "1" align = "center">
+     <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
     The total amount of pixel to scroll you want the dummy scroll-animation to test your <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> againist. 
-  </td>
+   </td>
   </tr>
+
   <tr>
-    <td rowspan = "1" align = "center">
-    <code>timeout</code>
-  </td>
-  <td rowspan = "1" align = "center">
-    <code>Number</code>
-  </td>
+   <td rowspan = "1" align = "center">
+     <i><code>timeout</code></i>
+   </td>
+   <td rowspan = "1" align = "center">
+     <code>Number</code>
+   </td>
   <td rowspan = "1" align = "left">
     The number of milliseconds after which the test forcefully returns a result.
   </td>

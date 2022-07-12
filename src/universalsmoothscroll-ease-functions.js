@@ -93,11 +93,11 @@ const _CUSTOM_BOUNCE = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumbe
   arrInserter(ys, 1, arrIndex, arrLen);    
 }
 
-const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, debugString = "CUSTOM_CUBIC_HERMITE_SPLINE") => {
-  if(!Array.isArray(xs)) {uss._errorLogger(debugString, "xs to be an array", xs); return;}
-  if(!Array.isArray(ys)) {uss._errorLogger(debugString, "ys to be an array", ys); return;}
-  if(xs.length !== ys.length) {uss._errorLogger(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(debugString, "the duration to be a positive number", duration); return;}
+const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, options = {debugString: "CUSTOM_CUBIC_HERMITE_SPLINE"}) => {
+  if(!Array.isArray(xs)) {uss._errorLogger(options.debugString, "xs to be an array", xs); return;}
+  if(!Array.isArray(ys)) {uss._errorLogger(options.debugString, "ys to be an array", ys); return;}
+  if(xs.length !== ys.length) {uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
   
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
@@ -105,13 +105,13 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
   const _xsLen = xs.length;
 
   for(let i = 0; i < _xsLen; i++) {
-    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {uss._errorLogger(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
-    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {uss._errorLogger(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
+    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
+    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {uss._errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
     
     //Checks if the passed points are sorted.
     if(!xsCurrMax || xsCurrMax < xs[i]) xsCurrMax = xs[i]; 
     else {
-      uss._errorLogger(debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
+      uss._errorLogger(options.debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
       return;
     } 
     if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
@@ -174,19 +174,19 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
   return _DEFAULT_STEP_LENGTH_CALCULATOR(_evalSpline, duration, callback);
 }
 
-const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CUSTOM_BEZIER_CURVE") => {
-  if(!Array.isArray(xs)) {uss._errorLogger(debugString, "xs to be an array", xs); return;}
-  if(!Array.isArray(ys)) {uss._errorLogger(debugString, "ys to be an array", ys); return;}
-  if(xs.length !== ys.length) {uss._errorLogger(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(debugString, "the duration to be a positive number", duration); return;}
+const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = {debugString: "CUSTOM_BEZIER_CURVE"}) => {
+  if(!Array.isArray(xs)) {uss._errorLogger(options.debugString, "xs to be an array", xs); return;}
+  if(!Array.isArray(ys)) {uss._errorLogger(options.debugString, "ys to be an array", ys); return;}
+  if(xs.length !== ys.length) {uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
 
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
   const _xsLen = xs.length;
 
   for(let i = 0; i < _xsLen; i++) {
-    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {uss._errorLogger(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
-    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {uss._errorLogger(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
+    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
+    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {uss._errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
     if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
     if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
   }
@@ -237,12 +237,12 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
   return _DEFAULT_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
 }
 
-const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
-  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(debugString, "the duration to be a positive number", duration); return;}
-  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {uss._errorLogger(debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
-  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {uss._errorLogger(debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
-  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {uss._errorLogger(debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
-  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {uss._errorLogger(debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
+const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, options = {debugString: "CUSTOM_CUBIC_BEZIER"}) => {
+  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
+  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {uss._errorLogger(options.debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
+  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {uss._errorLogger(options.debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
+  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {uss._errorLogger(options.debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
+  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {uss._errorLogger(options.debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
 
   const aX = 1 + 3 * (x1 - x2);
   const aY = 1 + 3 * (y1 - y2);
@@ -266,31 +266,31 @@ const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, cal
   return _DEFAULT_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
 }
 
-const EASE_LINEAR = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, duration, callback, "EASE_LINEAR");
+const EASE_LINEAR = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0, 1, 1, duration, callback, {debugString: "EASE_LINEAR"});
 
-const EASE_IN_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, duration, callback, "EASE_IN_SINE");
-const EASE_IN_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.11, 0, 0.5,  0, duration, callback, "EASE_IN_QUAD");
-const EASE_IN_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.32, 0, 0.67, 0, duration, callback, "EASE_IN_CUBIC");
-const EASE_IN_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5,  0, 0.75, 0, duration, callback, "EASE_IN_QUART");
-const EASE_IN_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.64, 0, 0.78, 0, duration, callback, "EASE_IN_QUINT");
-const EASE_IN_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.7,  0, 0.84, 0, duration, callback, "EASE_IN_EXPO");
-const EASE_IN_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.55, 0, 1, 0.45, duration, callback, "EASE_IN_CIRC");
+const EASE_IN_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.12, 0, 0.39, 0, duration, callback, {debugString: "EASE_IN_SINE"});
+const EASE_IN_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.11, 0, 0.5,  0, duration, callback, {debugString: "EASE_IN_QUAD"});
+const EASE_IN_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.32, 0, 0.67, 0, duration, callback, {debugString: "EASE_IN_CUBIC"});
+const EASE_IN_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5,  0, 0.75, 0, duration, callback, {debugString: "EASE_IN_QUART"});
+const EASE_IN_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.64, 0, 0.78, 0, duration, callback, {debugString: "EASE_IN_QUINT"});
+const EASE_IN_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.7,  0, 0.84, 0, duration, callback, {debugString: "EASE_IN_EXPO"});
+const EASE_IN_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.55, 0, 1, 0.45, duration, callback, {debugString: "EASE_IN_CIRC"});
 
-const EASE_OUT_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.61, 1, 0.88, 1, duration, callback, "EASE_OUT_SINE");
-const EASE_OUT_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5,  1, 0.89, 1, duration, callback, "EASE_OUT_QUAD");
-const EASE_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.33, 1, 0.68, 1, duration, callback, "EASE_OUT_CUBIC");
-const EASE_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.25, 1, 0.5,  1, duration, callback, "EASE_OUT_QUART");
-const EASE_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.22, 1, 0.36, 1, duration, callback, "EASE_OUT_QUINT");
-const EASE_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.16, 1, 0.3,  1, duration, callback, "EASE_OUT_EXPO");
-const EASE_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0.55, 0.45, 1, duration, callback, "EASE_OUT_CIRC");
+const EASE_OUT_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.61, 1, 0.88, 1, duration, callback, {debugString: "EASE_OUT_SINE"});
+const EASE_OUT_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5,  1, 0.89, 1, duration, callback, {debugString: "EASE_OUT_QUAD"});
+const EASE_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.33, 1, 0.68, 1, duration, callback, {debugString: "EASE_OUT_CUBIC"});
+const EASE_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.25, 1, 0.5,  1, duration, callback, {debugString: "EASE_OUT_QUART"});
+const EASE_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.22, 1, 0.36, 1, duration, callback, {debugString: "EASE_OUT_QUINT"});
+const EASE_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.16, 1, 0.3,  1, duration, callback, {debugString: "EASE_OUT_EXPO"});
+const EASE_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0.55, 0.45, 1, duration, callback, {debugString: "EASE_OUT_CIRC"});
 
-const EASE_IN_OUT_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.37, 0, 0.63, 1, duration, callback, "EASE_IN_OUT_SINE");
-const EASE_IN_OUT_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.45, 0, 0.55, 1, duration, callback, "EASE_IN_OUT_QUAD");
-const EASE_IN_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.65, 0, 0.35, 1, duration, callback, "EASE_IN_OUT_CUBIC");
-const EASE_IN_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.76, 0, 0.24, 1, duration, callback, "EASE_IN_OUT_QUART");
-const EASE_IN_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.83, 0, 0.17, 1, duration, callback, "EASE_IN_OUT_QUINT");
-const EASE_IN_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.87, 0, 0.13, 1, duration, callback, "EASE_IN_OUT_EXPO");
-const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, duration, callback, "EASE_IN_OUT_CIRC");
+const EASE_IN_OUT_SINE  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.37, 0, 0.63, 1, duration, callback, {debugString: "EASE_IN_OUT_SINE"});
+const EASE_IN_OUT_QUAD  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.45, 0, 0.55, 1, duration, callback, {debugString: "EASE_IN_OUT_QUAD"});
+const EASE_IN_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.65, 0, 0.35, 1, duration, callback, {debugString: "EASE_IN_OUT_CUBIC"});
+const EASE_IN_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.76, 0, 0.24, 1, duration, callback, {debugString: "EASE_IN_OUT_QUART"});
+const EASE_IN_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.83, 0, 0.17, 1, duration, callback, {debugString: "EASE_IN_OUT_QUINT"});
+const EASE_IN_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.87, 0, 0.13, 1, duration, callback, {debugString: "EASE_IN_OUT_EXPO"});
+const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, duration, callback, {debugString: "EASE_IN_OUT_CIRC"});
 
 const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
   if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {uss._errorLogger("EASE_IN_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}
@@ -301,7 +301,7 @@ const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
   
   _CUSTOM_BOUNCE(_xs, _ys, _inserter, 1, bouncesNumber + 1);
   
-  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, "EASE_IN_BOUNCE");
+  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, {debugString: "EASE_IN_BOUNCE"});
 }
 
 const EASE_OUT_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
@@ -313,7 +313,7 @@ const EASE_OUT_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
   
   _CUSTOM_BOUNCE(_xs, _ys, _inserter, 1, bouncesNumber + 1);
   
-  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, "EASE_OUT_BOUNCE");
+  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, {debugString: "EASE_OUT_BOUNCE"});
 }
 
 const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6) => {
@@ -322,7 +322,7 @@ const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6) => {
     return CUSTOM_CUBIC_HERMITE_SPLINE(
       [0, 0.04, 0.14, 0.24, 0.3000, 0.3001, 0.40, 0.60, 0.7000, 0.7001, 0.76, 0.86, 0.96, 1], 
       [0, 0.07, 0.13, 0.07, 0.0001, 0.0001, 0.46, 0.64, 0.9999, 0.9999, 0.93, 0.87, 0.93, 1], 
-      0, duration, callback, "EASE_IN_OUT_BOUNCE"
+      0, duration, callback, {debugString: "EASE_IN_OUT_BOUNCE"}
     );
   }
 
@@ -348,7 +348,7 @@ const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6) => {
   //Remove the duplicate definitions of the control points at (1,1).
   _xs.pop(); _xs.pop();
   _ys.pop(); _ys.pop();
-  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, "EASE_IN_OUT_BOUNCE");
+  return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, {debugString: "EASE_IN_OUT_BOUNCE"});
 }
 
 const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = () => 50, debounceTime = 0) => {
