@@ -94,10 +94,10 @@ const _CUSTOM_BOUNCE = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumbe
 }
 
 const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, debugString = "CUSTOM_CUBIC_HERMITE_SPLINE") => {
-  if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
-  if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
-  if(xs.length !== ys.length) {DEFAULT_ERROR_LOGGER(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
+  if(!Array.isArray(xs)) {uss._errorLogger(debugString, "xs to be an array", xs); return;}
+  if(!Array.isArray(ys)) {uss._errorLogger(debugString, "ys to be an array", ys); return;}
+  if(xs.length !== ys.length) {uss._errorLogger(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(debugString, "the duration to be a positive number", duration); return;}
   
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
@@ -105,13 +105,13 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
   const _xsLen = xs.length;
 
   for(let i = 0; i < _xsLen; i++) {
-    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
-    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
+    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {uss._errorLogger(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
+    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {uss._errorLogger(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
     
     //Checks if the passed points are sorted.
     if(!xsCurrMax || xsCurrMax < xs[i]) xsCurrMax = xs[i]; 
     else {
-      DEFAULT_ERROR_LOGGER(debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
+      uss._errorLogger(debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
       return;
     } 
     if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
@@ -175,18 +175,18 @@ const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callba
 }
 
 const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CUSTOM_BEZIER_CURVE") => {
-  if(!Array.isArray(xs)) {DEFAULT_ERROR_LOGGER(debugString, "xs to be an array", xs); return;}
-  if(!Array.isArray(ys)) {DEFAULT_ERROR_LOGGER(debugString, "ys to be an array", ys); return;}
-  if(xs.length !== ys.length) {DEFAULT_ERROR_LOGGER(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
+  if(!Array.isArray(xs)) {uss._errorLogger(debugString, "xs to be an array", xs); return;}
+  if(!Array.isArray(ys)) {uss._errorLogger(debugString, "ys to be an array", ys); return;}
+  if(xs.length !== ys.length) {uss._errorLogger(debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(debugString, "the duration to be a positive number", duration); return;}
 
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
   const _xsLen = xs.length;
 
   for(let i = 0; i < _xsLen; i++) {
-    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
-    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {DEFAULT_ERROR_LOGGER(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
+    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {uss._errorLogger(debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
+    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {uss._errorLogger(debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
     if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
     if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
   }
@@ -238,11 +238,11 @@ const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, debugString = "CU
 }
 
 const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, debugString = "CUSTOM_CUBIC_BEZIER") => {
-  if(!Number.isFinite(duration) || duration <= 0) {DEFAULT_ERROR_LOGGER(debugString, "the duration to be a positive number", duration); return;}
-  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {DEFAULT_ERROR_LOGGER(debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
-  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {DEFAULT_ERROR_LOGGER(debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
-  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {DEFAULT_ERROR_LOGGER(debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
-  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {DEFAULT_ERROR_LOGGER(debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(debugString, "the duration to be a positive number", duration); return;}
+  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {uss._errorLogger(debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
+  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {uss._errorLogger(debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
+  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {uss._errorLogger(debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
+  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {uss._errorLogger(debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
 
   const aX = 1 + 3 * (x1 - x2);
   const aY = 1 + 3 * (y1 - y2);
@@ -293,7 +293,7 @@ const EASE_IN_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.87, 0, 0
 const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, duration, callback, "EASE_IN_OUT_CIRC");
 
 const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
-  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {DEFAULT_ERROR_LOGGER("EASE_IN_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}
+  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {uss._errorLogger("EASE_IN_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}
   
   const _xs = [];
   const _ys = [];
@@ -305,7 +305,7 @@ const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
 }
 
 const EASE_OUT_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
-  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {DEFAULT_ERROR_LOGGER("EASE_OUT_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}
+  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {uss._errorLogger("EASE_OUT_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}
 
   const _xs = [];
   const _ys = [];
@@ -317,7 +317,7 @@ const EASE_OUT_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
 }
 
 const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6) => {
-  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 1) {DEFAULT_ERROR_LOGGER("EASE_IN_OUT_BOUNCE", "bouncesNumber to be a number >= 2", bouncesNumber); return;}
+  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 1) {uss._errorLogger("EASE_IN_OUT_BOUNCE", "bouncesNumber to be a number >= 2", bouncesNumber); return;}
   if(bouncesNumber === 2) {
     return CUSTOM_CUBIC_HERMITE_SPLINE(
       [0, 0.04, 0.14, 0.24, 0.3000, 0.3001, 0.40, 0.60, 0.7000, 0.7001, 0.76, 0.86, 0.96, 1], 
@@ -352,10 +352,10 @@ const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6) => {
 }
 
 const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = () => 50, debounceTime = 0) => {
-  if(typeof forwardEasing  !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the forwardEasing to be a function", forwardEasing);  return;}
-  if(typeof backwardEasing !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the backwardEasing to be a function", backwardEasing); return;}
-  if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
-  if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_X", "the debounceTime to be a number", debounceTime); return;}
+  if(typeof forwardEasing  !== "function") {uss._errorLogger("EASE_ELASTIC_X", "the forwardEasing to be a function", forwardEasing);  return;}
+  if(typeof backwardEasing !== "function") {uss._errorLogger("EASE_ELASTIC_X", "the backwardEasing to be a function", backwardEasing); return;}
+  if(typeof elasticPointCalculator !== "function") {uss._errorLogger("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
+  if(!Number.isFinite(debounceTime)) {uss._errorLogger("EASE_ELASTIC_X", "the debounceTime to be a number", debounceTime); return;}
 
   let _finalXPositionBackwardPhase = null;
   let _scrollCalculator;
@@ -388,7 +388,7 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
         const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _oldDirection, container);
         
         if(!Number.isFinite(_elasticAmount)) {
-          DEFAULT_WARNING_LOGGER(_elasticAmount, "is not a valid elastic amount");
+          uss._warningLogger(_elasticAmount, "is not a valid elastic amount");
           _originalCallback();
         } else if(_elasticAmount === 0) {
           _originalCallback();
@@ -409,10 +409,10 @@ const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = 
 }
 
 const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = () => 50, debounceTime = 0) => {
-  if(typeof forwardEasing  !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the forwardEasing to be a function", forwardEasing);  return;}
-  if(typeof backwardEasing !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the backwardEasing to be a function", backwardEasing); return;}
-  if(typeof elasticPointCalculator !== "function") {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
-  if(!Number.isFinite(debounceTime)) {DEFAULT_ERROR_LOGGER("EASE_ELASTIC_Y", "the debounceTime to be a number", debounceTime); return;}
+  if(typeof forwardEasing  !== "function") {uss._errorLogger("EASE_ELASTIC_Y", "the forwardEasing to be a function", forwardEasing);  return;}
+  if(typeof backwardEasing !== "function") {uss._errorLogger("EASE_ELASTIC_Y", "the backwardEasing to be a function", backwardEasing); return;}
+  if(typeof elasticPointCalculator !== "function") {uss._errorLogger("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
+  if(!Number.isFinite(debounceTime)) {uss._errorLogger("EASE_ELASTIC_Y", "the debounceTime to be a number", debounceTime); return;}
 
   let _finalYPositionBackwardPhase = null;
   let _scrollCalculator;
@@ -445,7 +445,7 @@ const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = 
         const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _oldDirection, container);
         
         if(!Number.isFinite(_elasticAmount)) {
-          DEFAULT_WARNING_LOGGER(_elasticAmount, "is not a valid elastic amount");
+          uss._warningLogger(_elasticAmount, "is not a valid elastic amount");
           _originalCallback();
         } else if(_elasticAmount === 0) {
           _originalCallback();
