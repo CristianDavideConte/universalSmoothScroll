@@ -22,7 +22,10 @@ uss.scrollYTo(500, myContainer, () => console.log("dOnE"));
 uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);      
 ```
 <br/>
-<br/>
+
+Note: <br/> 
+A **bold** input parameter's name means that it's a mandatory input _(its default value is always a <strong>✗</strong>)_. <br/>
+An _italic_ input parameter's name means that it's an optional input.
 
 <table>
  <thead>
@@ -39,7 +42,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>isXScrolling</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#isXScrolling"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -54,7 +59,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>isYScrolling</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#isYScrolling"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -69,7 +76,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
    <code>isScrolling</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#isScrolling"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -84,7 +93,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getFinalXPosition</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getFinalXPosition"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -100,7 +111,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getFinalYPosition</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getFinalYPosition"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -116,7 +129,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getScrollXDirection</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getScrollXDirection"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -136,7 +151,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getScrollYDirection</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getScrollYDirection"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -156,7 +173,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getXStepLengthCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getXStepLengthCalculator"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -167,7 +186,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getXStepLengthCalculator"><code>getTemporary</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -179,7 +200,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getYStepLengthCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getYStepLengthCalculator"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -190,7 +213,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getYStepLengthCalculator"><code>getTemporary</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -202,10 +227,10 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getXStepLength</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_xStepLength"><code>_xStepLength</code></a> property.
@@ -217,10 +242,10 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getYStepLength</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_yStepLength"><code>_yStepLength</code></a> property.
@@ -232,10 +257,10 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getMinAnimationFrame</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property.
@@ -247,10 +272,10 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getWindowHeight</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_windowHeight"><code>_windowHeight</code></a> property.
@@ -262,10 +287,10 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getWindowWidth</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_windowWidth"><code>_windowWidth</code></a> property.
@@ -277,7 +302,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getScrollbarsMaxDimension</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getScrollbarsMaxDimension"><code>forceCalculation</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -292,10 +319,10 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getPageScroller</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a> property.
@@ -307,10 +334,10 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getReducedMotionState</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_reducedMotion"><code>_reducedMotion</code></a> property.
@@ -322,10 +349,10 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getDebugMode</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>-</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property.
@@ -337,7 +364,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setXStepLengthCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>newCalculator</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./ConstantsAbout.md#DEFAULT_XSTEP_LENGTH_CALCULATOR"><code>DEFAULT_XSTEP_LENGTH_CALCULATOR</code></a>
@@ -348,7 +377,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -356,7 +387,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setXStepLengthCalculator"><code>isTemporary</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -368,7 +401,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setYStepLengthCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>newCalculator</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./ConstantsAbout.md#DEFAULT_YSTEP_LENGTH_CALCULATOR"><code>DEFAULT_YSTEP_LENGTH_CALCULATOR</code></a>
@@ -379,7 +414,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -387,7 +424,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setYStepLengthCalculator"><code>isTemporary</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -399,10 +438,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setStepLengthCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>newCalculator</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "3" align = "left">
     Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible.
@@ -410,7 +451,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -418,7 +461,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setStepLengthCalculator"><code>isTemporary</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -430,7 +475,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setXStepLength</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setXStepLength"><code>newXStepLength</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./ConstantsAbout.md#DEFAULT_XSTEP_LENGTH"><code>DEFAULT_XSTEP_LENGTH</code></a>
@@ -445,7 +492,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setYStepLength</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setYStepLength"><code>newYStepLength</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./ConstantsAbout.md#DEFAULT_YSTEP_LENGTH"><code>DEFAULT_YSTEP_LENGTH</code></a>
@@ -460,10 +509,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setStepLength</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#setStepLength"><code>newStepLength</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Sets both the <a href = "./VariablesAbout.md#_xStepLength"><code>_xStepLength</code></a> and <a href = "./VariablesAbout.md#_yStepLength"><code>_yStepLength</code></a> properties to the passed value if compatible.
@@ -475,7 +526,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setMinAnimationFrame</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setMinAnimationFrame"><code>newMinAnimationFrame</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./ConstantsAbout.md#DEFAULT_MIN_ANIMATION_FRAMES"><code>DEFAULT_MIN_ANIMATION_FRAMES</code></a>
@@ -490,10 +543,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setPageScroller</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#setPageScroller"><code>newPageScroller</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a> property to the passed value if compatible.
@@ -505,7 +560,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setDebugMode</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setDebugMode"><code>newDebugMode</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>""</code>
@@ -520,7 +577,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setErrorLogger</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setErrorLogger"><code>newErrorLogger</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./ConstantsAbout.md#DEFAULT_ERROR_LOGGER"><code>DEFAULT_ERROR_LOGGER</code></a>
@@ -535,7 +594,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>setWarningLogger</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#setWarningLogger"><code>newWarningLogger</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./ConstantsAbout.md#DEFAULT_WARNING_LOGGER"><code>DEFAULT_WARNING_LOGGER</code></a>
@@ -550,10 +611,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>calcXScrollbarDimension</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#calcXScrollbarDimension"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "2" align = "left">
     Returns the vertical scrollbar's width <i> (in px) </i> of the passed element. </li>
@@ -561,7 +624,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#calcXScrollbarDimension"><code>forceCalculation</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -573,10 +638,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>calcYScrollbarDimension</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#calcYScrollbarDimension"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "2" align = "left">
     Returns the horizontal scrollbar's height <i> (in px) </i> of the passed element. </li>
@@ -584,7 +651,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#calcYScrollbarDimension"><code>forceCalculation</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -596,10 +665,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>calcScrollbarsDimensions</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#calcScrollbarsDimensions"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "2" align = "left">
     Returns an array containing 2 numbers: 
@@ -611,7 +682,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#calcScrollbarsDimensions"><code>forceCalculation</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -623,10 +696,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>calcBordersDimensions</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#calcBordersDimensions"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "1" align = "left">
     Returns an array containing 4 numbers: 
@@ -645,16 +720,18 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getScrollXCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getScrollXCalculator"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Returns a function that returns: 
+    Returns a function that when invoked: 
     <ul> 
-     <li> The scrollLeft property of the passed container if it's an instance of HTMLElement. </li> 
-     <li> The scrollX property of the passed container if it's the window element. </li> 
+     <li> Returns the scrollLeft property of the passed container if it's an instance of HTMLElement. </li> 
+     <li> Returns the scrollX property of the passed container if it's the window element. </li> 
     </ul>
    </td>
   </tr> 
@@ -664,16 +741,18 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getScrollYCalculator</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getScrollYCalculator"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Returns a function that returns: 
+    Returns a function that when invoked: 
     <ul> 
-     <li> The scrollTop property of the passed container if it's an instance of HTMLElement. </li> 
-     <li> The scrollY property of the passed container if it's the window element. </li> 
+     <li> Returns the scrollTop property of the passed container if it's an instance of HTMLElement. </li> 
+     <li> Returns the scrollY property of the passed container if it's the window element. </li> 
     </ul>
    </td>
   </tr> 
@@ -683,7 +762,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getMaxScrollX</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getMaxScrollX"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -694,7 +775,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getMaxScrollX"><code>forceCalculation</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -706,7 +789,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getMaxScrollY</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getMaxScrollY"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -717,7 +802,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getMaxScrollY"><code>forceCalculation</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -729,10 +816,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getXScrollableParent</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#getXScrollableParent"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "2" align = "left">
     Returns the first scrollable container <i>(on the x-axis)</i> of the passed element or null if it doesn't have one.
@@ -740,7 +829,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getXScrollableParent"><code>includeHiddenParents</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -752,10 +843,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getYScrollableParent</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#getYScrollableParent"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "2" align = "left">
     Returns the first scrollable container <i>(on the y-axis)</i> of the passed element or null if it doesn't have one.
@@ -763,7 +856,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getYScrollableParent"><code>includeHiddenParents</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -775,10 +870,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getScrollableParent</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#getScrollableParent"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "2" align = "left">
     Returns the first scrollable container <i>(on either the x or y axis)</i> of the passed element or null if it doesn't have one.
@@ -786,7 +883,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getScrollableParent"><code>includeHiddenParents</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -798,10 +897,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>getAllScrollableParents</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#getAllScrollableParents"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "3" align = "left">
     Returns an array of all the scrollable containers <i>(on either the x or y axis)</i> of the passed element.
@@ -809,7 +910,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getAllScrollableParents"><code>includeHiddenParents</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -817,7 +920,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#getAllScrollableParents"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -829,10 +934,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>scrollXTo</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollXTo"><code>finalXPosition</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "3" align = "left">
     Scrolls the x-axis of the passed container to the specified position <i>(in px)</i> if possible.
@@ -840,7 +947,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollXTo"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -848,7 +957,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollXTo"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -860,10 +971,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>scrollYTo</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollYTo"><code>finalYPosition</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "3" align = "left">
     Scrolls the y-axis of the passed container to the specified position <i>(in px)</i> if possible.
@@ -871,7 +984,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollYTo"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -879,7 +994,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollYTo"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -891,10 +1008,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>scrollXBy</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollXBy"><code>deltaX</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "4" align = "left">
     Scrolls the x-axis the passed container by the specified amount of pixels if possible.
@@ -902,7 +1021,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollXBy"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -910,7 +1031,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollXBy"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -918,7 +1041,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollXBy"><code>stillStart</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
@@ -930,10 +1055,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>scrollYBy</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollYBy"><code>deltaY</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "4" align = "left">
     Scrolls the y-axis the passed container by the specified amount of pixels if possible.
@@ -941,7 +1068,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollYBy"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -949,7 +1078,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollYBy"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -957,7 +1088,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollYBy"><code>stillStart</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
@@ -969,10 +1102,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>scrollTo</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollTo"><code>finalXPosition</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "4" align = "left">
     Scrolls both the x and y axes of the passed container to the specified positions <i>(in px)</i> if possible.
@@ -980,15 +1115,19 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollTo"><code>finalYPosition</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollTo"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -996,7 +1135,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollTo"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1008,10 +1149,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>scrollBy</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollBy"><code>deltaX</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "5" align = "left">
     Scrolls both the x and y axes of the passed container by the specified amounts of pixels if possible.
@@ -1019,15 +1162,19 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollBy"><code>deltaY</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollBy"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -1035,7 +1182,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollBy"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1043,7 +1192,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollBy"><code>stillStart</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
@@ -1055,10 +1206,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>scrollIntoView</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollIntoView"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "5" align = "left">
     Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignments.
@@ -1066,7 +1219,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollIntoView"><code>alignToLeft</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
@@ -1074,7 +1229,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollIntoView"><code>alignToTop</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
@@ -1082,7 +1239,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollIntoView"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1090,7 +1249,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollIntoView"><code>includeHiddenParents</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -1102,10 +1263,12 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>scrollIntoViewIfNeeded</code>
    </td>
    <td rowspan = "1" align = "center">
+   <strong>
     <a href = "./FunctionsAbout.md#scrollIntoViewIfNeeded"><code>element</code></a>
+   </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <code>undefined</code>
+    <strong>✗</strong>
    </td>
    <td rowspan = "4" align = "left">
     Scrolls all the scrollable parents of the passed element in order to make it visible on the screen with the specified alignment only if it's not already visible.
@@ -1113,7 +1276,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollIntoViewIfNeeded"><code>alignToCenter</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
@@ -1121,7 +1286,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollIntoViewIfNeeded"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1129,7 +1296,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#scrollIntoViewIfNeeded"><code>includeHiddenParents</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -1141,7 +1310,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>stopScrollingX</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#stopScrollingX"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -1152,7 +1323,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#stopScrollingX"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1164,7 +1337,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>stopScrollingY</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#stopScrollingY"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -1175,7 +1350,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#stopScrollingY"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1187,7 +1364,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>stopScrolling</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#stopScrolling"><code>container</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
@@ -1198,7 +1377,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#stopScrolling"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1210,7 +1391,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>stopScrollingAll</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#stopScrollingAll"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1225,7 +1408,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
     <code>hrefSetup</code>
    </td>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#hrefSetup"><code>alignToLeft</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
@@ -1237,7 +1422,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr> 
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#hrefSetup"><code>alignToTop</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
@@ -1245,7 +1432,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#hrefSetup"><code>init</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1253,7 +1442,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#hrefSetup"><code>callback</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>undefined</code>
@@ -1261,7 +1452,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#hrefSetup"><code>includeHiddenParents</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -1269,7 +1462,9 @@ uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);
   </tr>
   <tr>
    <td rowspan = "1" align = "center">
+   <i>
     <a href = "./FunctionsAbout.md#hrefSetup"><code>updateHistory</code></a>
+   </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
@@ -2338,10 +2533,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the left. <br/>
-    <code>false</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the right. <br/>
-    <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
-    Any other value if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable containers should be to the center. <br/>
+    <code>true</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable parents should be to the left. <br/>
+    <code>false</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable parents should be to the right. <br/>
+    <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
+    <strong><i>Any other value</i></strong>, if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
   <tr>
@@ -2352,10 +2547,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the left. <br/>
-    <code>false</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the right. <br/>
-    <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
-    Any other value if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable containers should be to the center. <br/>
+    <code>true</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable parents should be to the left. <br/>
+    <code>false</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable parents should be to the right. <br/>
+    <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
+    <strong><i>Any other value</i></strong>, if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
   <tr>
@@ -2403,8 +2598,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if the alignment <i>(on either the x and y axis)</i> of <code>element</code> should be to the center of its closest scrollable parent. <br/>
-    Any other value if the alignment <i>(on either the x and y axis)</i> of <code>element</code> and all its scrollable containers should be to the to the closest between <i>"left aligned"</i> or <i>"right aligned"</i>: the alignment of each container is decided by measuring its relative position <i>(on either the x and y axis)</i> to their closest scrollable parent. <br/>
+    <code>true</code> if the alignment <i>(on both the x and y axes)</i> of <code>element</code> should be to the center of its closest scrollable parent. <br/>
+    <strong><i>Any other value</i></strong>, if the alignment <i>(on both the x and y axes)</i> of <code>element</code> and all its scrollable parents should be to the closest side (<i>align-to-nearest</i>): the alignment of each container is decided by measuring its position <i>(on either the x and y axis)</i> relative to its closest scrollable parent. <br/>
   </td>
   </tr>
   <tr>
@@ -2534,10 +2729,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the left. <br/>
-    <code>false</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the right. <br/>
-    <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
-    Any other value if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable containers should be to the center. <br/>
+    <code>true</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the left. <br/>
+    <code>false</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the right. <br/>
+    <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
+    <strong><i>Any other value</i></strong>, if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
   <tr>
@@ -2548,10 +2743,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the left. <br/>
-    <code>false</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the right. <br/>
-    <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the to the closest of the other ones described: the alignment of each container is decided by measuring its relative position <i>(on the x-axis)</i> to their closest scrollable parent. <br/>
-    Any other value if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable containers should be to the center. <br/>
+    <code>true</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the left. <br/>
+    <code>false</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the right. <br/>
+    <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
+    <strong><i>Any other value</i></strong>, if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
   <tr>
