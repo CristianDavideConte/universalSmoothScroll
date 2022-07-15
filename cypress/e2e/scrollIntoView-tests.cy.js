@@ -95,6 +95,7 @@ describe("scrollIntoView", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                uss._reducedMotion = true;
 
                 const _testElement1 = win.document.getElementById("scroller-content-111");
                 const _testElement2 = win.document.getElementById("scroller-content-112");
