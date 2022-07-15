@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <script src = "../src/universalsmoothscroll-dev-helpers.js"></script>
+        <script src = "../src/universalsmoothscroll-ease-functions.js"></script>
+        <script src = "../src/universalsmoothscroll.js"></script>
+        <style>
+            body {
+                display: grid;
+                justify-content: center;
+                align-items: center;
+                overflow: scroll;
+                width: 2000px;
+                height: 2000px;
+            }
+            .scroller {
+                overflow: scroll;
+                width: 500px;
+                height: 500px;
+                padding: 50px;              
+                border: 10px solid black;  
+                background-color: blue;    
+            }
+            .scroller-container {
+                display: flex;
+                flex-direction: row;
+                overflow: scroll;
+                width: 1000px;
+                height: 1000px;
+                margin: 50px 0px;
+                border: 20px dotted white;
+            }
+            .scroller-content {
+                width: 2000px;
+                height: 2000px;
+                padding: 50px;
+                flex-shrink: 0;
+                flex-grow: 0;
+            }
+            #scroller-content-111 {
+                background-color: red;
+            }
+            #scroller-content-112 {
+                background-color: orange;
+            }
+            #scroller-content-121 {
+                background-color: lightcoral;
+            }
+            #scroller-content-122 {
+                background-color: violet;
+            }
+        </style>
+    </head>
+    <body>
+        <div id = "scroller-1" class = "scroller">
+            <div id = "scroller-container-1" class = "scroller-container">
+                <div id = "scroller-content-111" class = "scroller-content"></div>
+                <div id = "scroller-content-112" class = "scroller-content"></div>
+            </div>
+            <div id = "scroller-container-2" class = "scroller-container">
+                <div id = "scroller-content-121" class = "scroller-content"></div>
+                <div id = "scroller-content-122" class = "scroller-content"></div>
+            </div>
+        </div>
+    </body>
+</html>
