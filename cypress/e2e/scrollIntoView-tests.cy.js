@@ -134,10 +134,10 @@ describe("scrollIntoView", function() {
                                                 const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
 
                                                 const _elPos = el.getBoundingClientRect();
-                                                expect(_elPos.top).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(_elPos.right).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
-                                                expect(_elPos.bottom).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
-                                                expect(_elPos.left).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(Math.round(_elPos.top)).to.be.closeTo(_totalTopBorder, 1);
+                                                expect(Math.round(_elPos.right)).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
+                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
+                                                expect(Math.round(_elPos.left)).to.be.closeTo(_totalLeftBorder, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
                                                 const _container = el.parentElement;
@@ -147,20 +147,20 @@ describe("scrollIntoView", function() {
                                                 const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
 
                                                 const _containerPos = _container.getBoundingClientRect();
-                                                expect(_containerPos.top).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(_containerPos.right).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
-                                                expect(_containerPos.bottom).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
-                                                expect(_containerPos.left).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(Math.round(_containerPos.top)).to.be.closeTo(_totalTopBorder, 1);
+                                                expect(Math.round(_containerPos.right)).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
+                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
+                                                expect(Math.round(_containerPos.left)).to.be.closeTo(_totalLeftBorder, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
                                                 const _container = el.parentElement;
                                                 const _parent = _container.parentElement;
 
                                                 const _parentPos = _parent.getBoundingClientRect();
-                                                expect(_parentPos.top).to.be.closeTo(0, 1);
-                                                expect(_parentPos.right).to.be.closeTo(0 + _parentPos.width, 1);
-                                                expect(_parentPos.bottom).to.be.closeTo(0 + _parentPos.height, 1);
-                                                expect(_parentPos.left).to.be.closeTo(0, 1);
+                                                expect(Math.round(_parentPos.top)).to.be.closeTo(0, 1);
+                                                expect(Math.round(_parentPos.right)).to.be.closeTo(0 + _parentPos.width, 1);
+                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(0 + _parentPos.height, 1);
+                                                expect(Math.round(_parentPos.left)).to.be.closeTo(0, 1);
                                             }
                                         ]
                                     },
@@ -180,10 +180,10 @@ describe("scrollIntoView", function() {
                                                 const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
 
                                                 const _elPos = el.getBoundingClientRect();
-                                                expect(_elPos.top).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(_elPos.right).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(_elPos.bottom).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
-                                                expect(_elPos.left).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
+                                                expect(Math.round(_elPos.top)).to.be.closeTo(_totalTopBorder, 1);
+                                                expect(Math.round(_elPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
+                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
+                                                expect(Math.round(_elPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
                                                 const _container = el.parentElement;
@@ -195,10 +195,10 @@ describe("scrollIntoView", function() {
                                                 const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
 
                                                 const _containerPos = _container.getBoundingClientRect();
-                                                expect(_containerPos.top).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(_containerPos.right).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(_containerPos.bottom).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
-                                                expect(_containerPos.left).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
+                                                expect(Math.round(_containerPos.top)).to.be.closeTo(_totalTopBorder, 1);
+                                                expect(Math.round(_containerPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
+                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
+                                                expect(Math.round(_containerPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
                                                 const _container = el.parentElement;
@@ -207,10 +207,10 @@ describe("scrollIntoView", function() {
                                                 const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
                                                 
                                                 const _parentPos = _parent.getBoundingClientRect();
-                                                expect(_parentPos.top).to.be.closeTo(0, 1);
-                                                expect(_parentPos.right).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
-                                                expect(_parentPos.bottom).to.be.closeTo(0 + _parentPos.height, 1);
-                                                expect(_parentPos.left).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
+                                                expect(Math.round(_parentPos.top)).to.be.closeTo(0, 1);
+                                                expect(Math.round(_parentPos.right)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
+                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(0 + _parentPos.height, 1);
+                                                expect(Math.round(_parentPos.left)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
                                             }
                                         ]
                                     },
@@ -230,10 +230,10 @@ describe("scrollIntoView", function() {
                                                 const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
 
                                                 const _elPos = el.getBoundingClientRect();
-                                                expect(_elPos.top).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
-                                                expect(_elPos.right).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
-                                                expect(_elPos.bottom).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(_elPos.left).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
+                                                expect(Math.round(_elPos.right)).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
+                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
+                                                expect(Math.round(_elPos.left)).to.be.closeTo(_totalLeftBorder, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
                                                 const _container = el.parentElement;
@@ -245,10 +245,10 @@ describe("scrollIntoView", function() {
                                                 const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1); 
 
                                                 const _containerPos = _container.getBoundingClientRect();
-                                                expect(_containerPos.top).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
-                                                expect(_containerPos.right).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
-                                                expect(_containerPos.bottom).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(_containerPos.left).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(Math.round(_containerPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
+                                                expect(Math.round(_containerPos.right)).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
+                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
+                                                expect(Math.round(_containerPos.left)).to.be.closeTo(_totalLeftBorder, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
                                                 const _container = el.parentElement;
@@ -257,10 +257,10 @@ describe("scrollIntoView", function() {
                                                 const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
                                                 
                                                 const _parentPos = _parent.getBoundingClientRect();
-                                                expect(_parentPos.top).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize - _parentPos.height, 1);
-                                                expect(_parentPos.right).to.be.closeTo(_parentPos.width, 1);
-                                                expect(_parentPos.bottom).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize, 1);
-                                                expect(_parentPos.left).to.be.closeTo(0, 1);
+                                                expect(Math.round(_parentPos.top)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize - _parentPos.height, 1);
+                                                expect(Math.round(_parentPos.right)).to.be.closeTo(_parentPos.width, 1);
+                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize, 1);
+                                                expect(Math.round(_parentPos.left)).to.be.closeTo(0, 1);
                                             }
                                         ]
                                     },
@@ -281,10 +281,10 @@ describe("scrollIntoView", function() {
                                                 const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
 
                                                 const _elPos = el.getBoundingClientRect();
-                                                expect(_elPos.top).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
-                                                expect(_elPos.right).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(_elPos.bottom).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(_elPos.left).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
+                                                expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
+                                                expect(Math.round(_elPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
+                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
+                                                expect(Math.round(_elPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
                                                 const _container = el.parentElement;
@@ -297,10 +297,10 @@ describe("scrollIntoView", function() {
                                                 const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1); 
 
                                                 const _containerPos = _container.getBoundingClientRect();
-                                                expect(_containerPos.top).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
-                                                expect(_containerPos.right).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(_containerPos.bottom).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(_containerPos.left).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
+                                                expect(Math.round(_containerPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
+                                                expect(Math.round(_containerPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
+                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
+                                                expect(Math.round(_containerPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
                                                 const _container = el.parentElement;
@@ -310,10 +310,10 @@ describe("scrollIntoView", function() {
                                                 const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
                                                 
                                                 const _parentPos = _parent.getBoundingClientRect();
-                                                expect(_parentPos.top).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize - _parentPos.height, 1);
-                                                expect(_parentPos.right).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
-                                                expect(_parentPos.bottom).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize, 1);
-                                                expect(_parentPos.left).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
+                                                expect(Math.round(_parentPos.top)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize - _parentPos.height, 1);
+                                                expect(Math.round(_parentPos.right)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
+                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize, 1);
+                                                expect(Math.round(_parentPos.left)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
                                             }
                                         ]
                                     }
