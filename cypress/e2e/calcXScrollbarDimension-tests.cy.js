@@ -25,7 +25,9 @@ describe("calcXScrollbarDimension", function() {
                 uss = win.uss;
                 
                 cy.testFailingValues(uss.calcXScrollbarDimension, {
-                    0: [constants.failingValuesAll]
+                    0: [constants.failingValuesAll,
+                        [true, false],
+                       ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);
@@ -71,12 +73,12 @@ describe("calcXScrollbarDimension", function() {
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0]);
                
                     //Test if the methods used for stopping one or more scroll-animation/s erase the cached values (they should not).
-                    uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true);
+                    const _dim = uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true);
                     uss.stopScrollingX(_elementWithScrollbarOnTheXYAxes);
                     uss.stopScrollingY(_elementWithScrollbarOnTheXYAxes);
                     uss.stopScrolling(_elementWithScrollbarOnTheXYAxes);
                     uss.stopScrollingAll();
-                    expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, false)).to.equal(_maxDim);
+                    expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, false)).to.equal(_dim);
                 });
             });        
     });

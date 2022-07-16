@@ -252,6 +252,10 @@ Index | Type | Description
 `17` | `Number` | Contains the cached value of the highest reacheable scrollTop/scrollY value of this container (its <a href = "./FunctionsAbount.md#getMaxScrollYFun"><code>maxScrollY</code></a>).
 `18` | `Number` | Contains the cached value of the vertical scrollbar's width of this container.
 `19` | `Number` | Contains the cached value of the horizontal scrollbar's height of this container.
+`20` | `Number` | Contains the cached value of the top border's height _(in px)_ of this container.
+`21` | `Number` | Contains the cached value of the right border's width _(in px)_ of this container.
+`22` | `Number` | Contains the cached value of the bottom border's height _(in px)_ of this container.
+`23` | `Number` | Contains the cached value of the left border's width _(in px)_ of this container.
 
 ### N.B.
 ***"This container"*** refers to the key linked to each array.

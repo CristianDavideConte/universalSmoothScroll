@@ -19,7 +19,9 @@ describe("calcBordersDimensions", function() {
                 const _maxDim = 10; //See css styles of calcBordersDimensions-tests.html
                 
                 cy.testFailingValues(uss.calcBordersDimensions, {
-                    0: [constants.failingValuesAll]
+                    0: [constants.failingValuesAll,
+                        [true, false],
+                       ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);
@@ -33,51 +35,80 @@ describe("calcBordersDimensions", function() {
 
                     _borderedElement.classList.add("all-border");
 
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                                          [0,0,0,0])
+                    ).to.be.true;
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [_maxDim,_maxDim,_maxDim,_maxDim])
                     ).to.be.true;
 
                     _borderedElement.classList.remove("all-border");
                     _borderedElement.classList.add("top-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                                          [_maxDim,_maxDim,_maxDim,_maxDim])
+                    ).to.be.true;
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [_maxDim,0,0,0])
                     ).to.be.true;
                     
                     _borderedElement.classList.remove("top-border");
                     _borderedElement.classList.add("right-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                                          [_maxDim,0,0,0])
+                    ).to.be.true;
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,_maxDim,0,0])
                     ).to.be.true;
        
                     _borderedElement.classList.remove("right-border");
                     _borderedElement.classList.add("bottom-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                                          [0,_maxDim,0,0])
+                    ).to.be.true;
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,0,_maxDim,0])
                     ).to.be.true;
 
                     _borderedElement.classList.remove("bottom-border");
                     _borderedElement.classList.add("left-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                                          [0,0,_maxDim,0])
+                    ).to.be.true;
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,0,0,_maxDim])
                     ).to.be.true;
                     
                     _borderedElement.classList.remove("left-border");
                     _borderedElement.classList.add("no-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                                          [0,0,0,_maxDim])
+                    ).to.be.true;
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,0,0,0])
                     ).to.be.true;
 
                     _borderedElement.classList.remove("no-border");
                     _borderedElement.classList.add("hidden-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
                                           [0,0,0,0])
                     ).to.be.true;
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
+                                          [0,0,0,0])
+                    ).to.be.true;
+
+                    //Test if the methods used for stopping one or more scroll-animation/s erase the cached values (they should not).
+                    const _dims = uss.calcBordersDimensions(_borderedElement, true);
+                    uss.stopScrollingX(_borderedElement);
+                    uss.stopScrollingY(_borderedElement);
+                    uss.stopScrolling(_borderedElement);
+                    uss.stopScrollingAll();
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), _dims)).to.be.true;                
                 });
             });        
     });

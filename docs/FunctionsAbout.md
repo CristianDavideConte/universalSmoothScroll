@@ -692,7 +692,7 @@ An _italic_ input parameter's name means that it's an optional input.
   </tr>
            
   <tr id = "calcBordersDimensionsFun">
-   <td rowspan = "1" align = "center">
+   <td rowspan = "2" align = "center">
     <code>calcBordersDimensions</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -703,7 +703,7 @@ An _italic_ input parameter's name means that it's an optional input.
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "1" align = "left">
+   <td rowspan = "2" align = "left">
     Returns an array containing 4 numbers: 
     <ol start="0"> 
      <li> Contains the top border's height <i> (in px) </i> of the passed element. </li> 
@@ -711,9 +711,19 @@ An _italic_ input parameter's name means that it's an optional input.
      <li> Contains the bottom border's height <i> (in px) </i> of the passed element. </li> 
      <li> Contains the left border's width <i> (in px) </i> of the passed element. </li> 
     </ol>
-    The returned border sizes don't take into consideration the css "transform" property's effects.
+    The returned border sizes don't take into consideration the css <code>transform</code> property's effects.
    </td>
   </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#calcBordersDimensions"><code>forceCalculation</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
            
   <tr id = "getScrollXCalculatorFun">
    <td rowspan = "1" align = "center">
@@ -2004,13 +2014,13 @@ The following table describes every entry of the `Input Parameters` column of th
    </td>
    <td rowspan = "1" align = "left">
     If <code>true</code> flushes the internal caches for both the vertical scrollbar's width and the horizontal scrollbar's height values of the passed container and forces their recalculation <i>(expensive operation)</i>. <br/>
-    If <code>false</code> the results are returned from cache. 
+    If <code>false</code> the result is returned from cache. 
    </td>
   </tr>
       
   </tr>
     <tr id = "calcBordersDimensions">
-  <td rowspan = "1" align = "center">
+  <td rowspan = "2" align = "center">
     <a href = "./FunctionsAbout.md#calcBordersDimensionsFun"><code>calcBordersDimensions</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2022,6 +2032,18 @@ The following table describes every entry of the `Input Parameters` column of th
   <td rowspan = "1" align = "left">
     An HTMLElement or the window element.
   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> flushes the internal caches for all borders dimensions of the passed container and forces their recalculation <i>(expensive operation)</i>. <br/>
+    If <code>false</code> the result is returned from cache. 
+   </td>
   </tr>
       
   </tr>

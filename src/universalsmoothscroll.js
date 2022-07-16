@@ -55,6 +55,10 @@
  *                     [17] contains the cached value of the highest reacheable scrollTop/scrollY value of this container (its maxScrollY).
  *                     [18] contains the cached value of the vertical scrollbar's width of this container.
  *                     [19] contains the cached value of the horizontal scrollbar's height of this container.
+ *                     [20] contains the cached value of the top border's height (in px) of this container.
+ *                     [21] contains the cached value of the right border's width (in px) of this container.
+ *                     [22] contains the cached value of the bottom border's height (in px) of this container.
+ *                     [23] contains the cached value of the left border's width (in px) of this container.
  * _xStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a single scroll-animation's step on the x-axis of that container.
  * _yStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a single scroll-animation's step on the y-axis of that container.
  * _minAnimationFrame: number, if there's no StepLengthCalculator set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
@@ -612,21 +616,50 @@ var uss = {
     
     return _scrollbarsDimensions;
   },
-  calcBordersDimensions: (element, options = {debugString: "calcBordersDimensions"}) => {
-    if(element === window) {
-      element = document.scrollingElement || uss.getPageScroller();
-      if(element === window) return [0,0,0,0]; //[top, right, bottom, left]
-    } 
+  calcBordersDimensions: (element, forceCalculation = false, options = {debugString: "calcBordersDimensions"}) => {
+    //Check if the bordersDimensions of the passed element have already been calculated. 
+    const _oldData = uss._containersData.get(element);
+    const _containerData = _oldData || [];
+    if(!forceCalculation && 
+        Number.isFinite(_containerData[20]) && 
+        Number.isFinite(_containerData[21]) &&
+        Number.isFinite(_containerData[22]) && 
+        Number.isFinite(_containerData[23])
+    ) {
+      return [
+        _containerData[20], //top
+        _containerData[21], //right
+        _containerData[22], //bottom
+        _containerData[23], //left
+      ];
+    }
+
+    if(element === window) element = document.scrollingElement || uss.getPageScroller();
     if(!(element instanceof HTMLElement)) {
       uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
     }
+    
+    let _bordersDimensions; 
+    if(element === window) {
+      _bordersDimensions = [0,0,0,0];
+    } else {
+      const _style = window.getComputedStyle(element);
+      _bordersDimensions = [
+                             Number.parseInt(_style.borderTopWidth),
+                             Number.parseInt(_style.borderRightWidth),
+                             Number.parseInt(_style.borderBottomWidth),
+                             Number.parseInt(_style.borderLeftWidth)
+                           ];
+    }
+  
+    //Cache the values for later use.
+    _containerData[20] = _bordersDimensions[0]; //top
+    _containerData[21] = _bordersDimensions[1]; //right
+    _containerData[22] = _bordersDimensions[2]; //bottom
+    _containerData[23] = _bordersDimensions[3]; //left
+    if(!_oldData) uss._containersData.set(element, _containerData);
 
-    const _style = window.getComputedStyle(element);
-    return [Number.parseInt(_style.borderTopWidth),
-            Number.parseInt(_style.borderRightWidth),
-            Number.parseInt(_style.borderBottomWidth),
-            Number.parseInt(_style.borderLeftWidth)
-           ];
+    return _bordersDimensions;
   },
   getScrollXCalculator: (container = uss._pageScroller, options = {debugString: "getScrollXCalculator"}) => {
     if(container === window)             return () => window.scrollX;
@@ -1164,73 +1197,58 @@ var uss = {
     uss.scrollYTo(_currentYPosition + deltaY, container, callback);
   },
   scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback, options = {debugString: "scrollTo"}) => {
-    uss.scrollXTo(finalXPosition, container, null, options);
-    uss.scrollYTo(finalYPosition, container, null, options);
-
-    //This functions are used to make sure that the passed callback is only called
-    //once all the scroll-animations for the passed container have been performed.
-    //If one of the scroll-animations' callback is altered this it's taken into consideration.
-    if(typeof callback === "function") {
-      const _containerData = uss._containersData.get(container) || [];
-      const _isXScrolling = !!_containerData[0];
-      const _isYScrolling = !!_containerData[1];
-      
-      //The container was already in place, directly execute the callback.
-      if(!_isXScrolling && !_isYScrolling) {
-        callback();
-        return;
-      }
-      //Execute the callback only if the scroll-animation on the y-axis 
-      //has finished or has been altered.
-      const _scrollXCallback = () => {
-        _containerData[10] = null; 
-        if(!_containerData[1] || _containerData[11] !== _scrollYCallback) callback();
-      }
-      //Execute the callback only if the scroll-animation on the x-axis 
-      //has finished or has been altered.
-      const _scrollYCallback = () => {
-        _containerData[11] = null; 
-        if(!_containerData[0] || _containerData[10] !== _scrollXCallback) callback();
-      }
-      
-      if(_isXScrolling) _containerData[10] = _scrollXCallback; 
-      if(_isYScrolling) _containerData[11] = _scrollYCallback; 
+    if(typeof callback !== "function") {
+      uss.scrollXTo(finalXPosition, container, null, options);
+      uss.scrollYTo(finalYPosition, container, null, options);
+      return;
     }
+    //Execute the callback only if the initialization has finished and 
+    //the scroll-animation on the y-axis has finished too or it has been altered.
+    const _scrollXCallback = () => {
+      const _containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && _containerData[11] !== _scrollYCallback) callback();
+    }
+    //Execute the callback only if the initialization has finished and 
+    //the scroll-animation on the x-axis has finished too or it has been altered.
+    const _scrollYCallback = () => {
+      const _containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && _containerData[10] !== _scrollXCallback) callback();
+    }
+
+    let _initPhase = true;
+    uss.scrollXTo(finalXPosition, container, _scrollXCallback, options);
+    _initPhase = false;
+    uss.scrollYTo(finalYPosition, container, _scrollYCallback, options);
   },
   scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollBy"}) => {
-    uss.scrollXBy(deltaX, container, null, stillStart, options);
-    uss.scrollYBy(deltaY, container, null, stillStart, options);
-    
-    //This functions are used to make sure that the passed callback is only called
-    //once all the scroll-animations for the passed container have been performed.
-    //If one of the scroll-animations' callback is altered this it's taken into consideration.
-    if(typeof callback === "function") {
-      const _containerData = uss._containersData.get(container) || [];
-      const _isXScrolling = !!_containerData[0];
-      const _isYScrolling = !!_containerData[1];
-      
-      //The container was already in place, directly execute the callback.
-      if(!_isXScrolling && !_isYScrolling) {
-        callback();
-        return;
-      }
-      //Execute the callback only if the scroll-animation on the y-axis 
-      //has finished or has been altered.
-      const _scrollXCallback = () => {
-        _containerData[10] = null; 
-        if(!_containerData[1] || _containerData[11] !== _scrollYCallback) callback();
-      }
-      //Execute the callback only if the scroll-animation on the x-axis 
-      //has finished or has been altered.
-      const _scrollYCallback = () => {
-        _containerData[11] = null; 
-        if(!_containerData[0] || _containerData[10] !== _scrollXCallback) callback();
-      }
-      
-      if(_isXScrolling) _containerData[10] = _scrollXCallback; 
-      if(_isYScrolling) _containerData[11] = _scrollYCallback; 
+    if(typeof callback !== "function") {
+      uss.scrollXBy(deltaX, container, null, stillStart, options);
+      uss.scrollYBy(deltaY, container, null, stillStart, options);
+      return;
     }
+    //Execute the callback only if the initialization has finished and 
+    //the scroll-animation on the y-axis has finished too or it has been altered.
+    const _scrollXCallback = () => {
+      const _containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && _containerData[11] !== _scrollYCallback) callback();
+    }
+    //Execute the callback only if the initialization has finished and 
+    //the scroll-animation on the x-axis has finished too or it has been altered.
+    const _scrollYCallback = () => {
+      const _containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && _containerData[10] !== _scrollXCallback) callback();
+    }
+
+    let _initPhase = true;
+    uss.scrollXBy(deltaX, container, _scrollXCallback, stillStart, options);
+    _initPhase = false;
+    uss.scrollYBy(deltaY, container, _scrollYCallback, stillStart, options);
   },
+  
+  /**
+   * TODO: USE THE NEW uss.calcXScrollbarDimension and uss.calcYScrollbarDimension functions
+   *  Possibly optimize the elementFinalX/Y calculations (isn't alignToRight => elementFinalX = container.right?)
+   */
   scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoView"}) => {
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
@@ -1307,13 +1325,13 @@ var uss = {
     function _scrollContainer() {   
       //_scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
       //_scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
-      const _scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer);
+      const _scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false);
 
       //_bordersDimensions[0] = _currentContainer's top border size
       //_bordersDimensions[1] = _currentContainer's right border size
       //_bordersDimensions[2] = _currentContainer's bottom border size
       //_bordersDimensions[3] = _currentContainer's left border size
-      const _bordersDimensions = uss.calcBordersDimensions(_currentContainer);   
+      const _bordersDimensions = uss.calcBordersDimensions(_currentContainer, false);   
 
       const _containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
       const _containerWidth  = _containerRect.width;
@@ -1358,6 +1376,12 @@ var uss = {
       else _callback();
     }
   },
+
+  
+  /**
+   * TODO: USE THE NEW uss.calcXScrollbarDimension and uss.calcYScrollbarDimension functions
+   */
+
   scrollIntoViewIfNeeded: (element, alignToCenter = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoViewIfNeeded"}) => {
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
@@ -1434,13 +1458,13 @@ var uss = {
     function _scrollContainer() {   
       //_scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
       //_scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
-      const _scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer);
+      const _scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false);
 
       //_bordersDimensions[0] = _currentContainer's top border size
       //_bordersDimensions[1] = _currentContainer's right border size
       //_bordersDimensions[2] = _currentContainer's bottom border size
       //_bordersDimensions[3] = _currentContainer's left border size
-      const _bordersDimensions = uss.calcBordersDimensions(_currentContainer);   
+      const _bordersDimensions = uss.calcBordersDimensions(_currentContainer, false);   
 
       const _containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
       const _containerWidth  = _containerRect.width;
@@ -1519,7 +1543,8 @@ var uss = {
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[0]); 
-    _containerData[0] = null;
+    _containerData[0] = null;  //scrollID on x-axis
+    _containerData[10] = null; //callback on x-axis
 
     //No scroll-animation on the y-axis is being performed.
     if(!_containerData[1]) { 
@@ -1528,10 +1553,14 @@ var uss = {
       if(!!_containerData[13]) _newData[13] = _containerData[13];
       
       //Cached values.
-      if(!!_containerData[16]) _newData[16] = _containerData[16];  
-      if(!!_containerData[17]) _newData[17] = _containerData[17]; 
-      if(!!_containerData[18]) _newData[18] = _containerData[18];  
-      if(!!_containerData[19]) _newData[19] = _containerData[19]; 
+      if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+      if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+      if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+      if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+      if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+      if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+      if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+      if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
       uss._containersData.set(container, _newData);
     }
 
@@ -1543,7 +1572,8 @@ var uss = {
     }
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[1]);
-    _containerData[1] = null;
+    _containerData[1] = null; //scrollID on y-axis
+    _containerData[11] = null; //callback on x-axis
   
     //No scroll-animation on the x-axis is being performed.
     if(!_containerData[0]) { 
@@ -1552,10 +1582,14 @@ var uss = {
       if(!!_containerData[13]) _newData[13] = _containerData[13];
       
       //Cached values.
-      if(!!_containerData[16]) _newData[16] = _containerData[16];  
-      if(!!_containerData[17]) _newData[17] = _containerData[17]; 
-      if(!!_containerData[18]) _newData[18] = _containerData[18];  
-      if(!!_containerData[19]) _newData[19] = _containerData[19]; 
+      if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+      if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+      if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+      if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+      if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+      if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+      if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+      if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
       uss._containersData.set(container, _newData);
     }
 
@@ -1568,18 +1602,24 @@ var uss = {
     const _containerData = uss._containersData.get(container) || [];
     window.cancelAnimationFrame(_containerData[0]);
     window.cancelAnimationFrame(_containerData[1]);
-    _containerData[0] = null;
-    _containerData[1] = null;
+    _containerData[0] = null;  //scrollID on x-axis
+    _containerData[1] = null;  //scrollID on y-axis
+    _containerData[10] = null; //callback on x-axis
+    _containerData[11] = null; //callback on y-axis
     
     const _newData = [];
     if(!!_containerData[12]) _newData[12] = _containerData[12];
     if(!!_containerData[13]) _newData[13] = _containerData[13];
 
     //Cached values.  
-    if(!!_containerData[16]) _newData[16] = _containerData[16];  
-    if(!!_containerData[17]) _newData[17] = _containerData[17]; 
-    if(!!_containerData[18]) _newData[18] = _containerData[18];  
-    if(!!_containerData[19]) _newData[19] = _containerData[19];  
+    if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+    if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+    if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+    if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+    if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+    if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+    if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+    if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
     uss._containersData.set(container, _newData);
 
     if(typeof callback === "function") callback();
@@ -1588,18 +1628,24 @@ var uss = {
     for(const [_container, _containerData] of uss._containersData.entries()) {
       window.cancelAnimationFrame(_containerData[0]);
       window.cancelAnimationFrame(_containerData[1]);
-      _containerData[0] = null;
-      _containerData[1] = null;
+      _containerData[0] = null;  //scrollID on x-axis
+      _containerData[1] = null;  //scrollID on y-axis
+      _containerData[10] = null; //callback on x-axis
+      _containerData[11] = null; //callback on y-axis
 
       const _newData = [];
       if(!!_containerData[12]) _newData[12] = _containerData[12];
       if(!!_containerData[13]) _newData[13] = _containerData[13];
       
       //Cached values.
-      if(!!_containerData[16]) _newData[16] = _containerData[16];  
-      if(!!_containerData[17]) _newData[17] = _containerData[17]; 
-      if(!!_containerData[18]) _newData[18] = _containerData[18];  
-      if(!!_containerData[19]) _newData[19] = _containerData[19]; 
+      if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+      if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+      if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+      if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+      if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+      if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+      if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+      if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
       uss._containersData.set(_container, _newData)
     }
 
@@ -1697,12 +1743,6 @@ window.addEventListener("resize", () => {
   //Update the internal window sizes.
   uss._windowHeight = window.innerHeight; 
   uss._windowWidth = window.innerWidth;
-
-  //Invalidate the maxScrollX/maxScrollY cached values of every container.
-  for(const [_container, _containerData] of uss._containersData.entries()) {
-    if(!!_containerData[16]) _containerData[16] = null;
-    if(!!_containerData[17]) _containerData[17] = null; 
-  }
 }, {passive:true});
 
 try { //Chrome, Firefox & Safari >= 14
