@@ -8,6 +8,7 @@
     <link rel = "stylesheet" type = "text/css" href = "./index.css">
     <script async src = "./src/universalsmoothscroll-dev-helpers.js"></script>
     <script async src = "./src/universalsmoothscroll-ease-functions.js"></script>
+    <script async src = "./src/universalsmoothscroll-presets.js"></script> <!--  type = "module" -->
     <script async src = "./src/universalsmoothscroll.js"></script>
   </head>
   <body onload = "init()">
@@ -107,7 +108,16 @@
     </div>
   </body>
 </html>
-<script>
+
+<!--  type = "module" -->
+<script> 
+  /*
+  import {
+    addMomentumScrolling, 
+    addMomentumSnapScrolling, 
+    addElasticMomentumScrolling
+  } from "./src/universalsmoothscroll-presets.js"; */
+
   //Enables smooth scrolling for touch devices
   let isFingerDown;
   function touchHelper(container, init, callback, scrollModifier = delta => {return delta;}, shouldTrackFinger = false, onfingerUp = () => {}) {
@@ -187,7 +197,7 @@
 
 
 
-  function init() {
+  window.init = () => {
     const pageScroller = document.body;
     const defaultEase = EASE_OUT_CUBIC(1000);
 
@@ -205,22 +215,39 @@
     let lastAnchorPressed = null;
 
 
-    uss.setPageScroller(pageScroller);
+    uss.setPageScroller(pageScroller); //TODO -> FIX: THIS SHOULD BE NECESSARY
     uss.setStepLengthCalculator(EASE_LINEAR());
 
     uss.hrefSetup(null, true, (anchor, el) => {
       if(anchor !== window && lastAnchorPressed === anchor && uss.isScrolling()) return false;
       lastAnchorPressed = anchor;
-      uss.setStepLengthCalculator(uss.getXStepLengthCalculator()); //Unsets the temporary StepLengthCalculator
+
+      //Unsets the temporary StepLengthCalculator if there's one.
+      uss.stopScrolling();
     }, null, false, true);
 
 
 
 
 
+    addElasticMomentumScrolling(
+      easeFunctionSelectorList,
+      {
+        onYAxis: true, 
+        elasticAmount: 0.25 * window.innerHeight, //25vh in css
+        children: [
+          {
+            element: easeFunctionSelectorList.children[0]
+          }, 
+          {
+            element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1]
+          },
+        ]
+      }
+    );
 
 
-
+    /**
 
     //Used to bring the easeFunctionSelectorList to initial position
     const elasticDebounceTime = 70; //Debounce time in ms
@@ -288,6 +315,9 @@
     }, {passive:false});
 
 
+    
+
+
 
 
 
@@ -309,7 +339,7 @@
                 }
                );
 
-
+*/
 
 
 
@@ -370,14 +400,15 @@
       const finalXPosition = direction === -1 ? 0 : uss.getMaxScrollX(xScrollerSection);
       uss.scrollXTo(finalXPosition, xScrollerSection, null, true);
     }
-
+    
+    /*
     uss.setXStepLengthCalculator(EASE_IN_OUT_QUAD(1000), xScrollerSection);
     xScrollerSection.addEventListener("wheel", event => {
       event.preventDefault();
       event.stopPropagation();
       uss.setXStepLengthCalculator(defaultEase, xScrollerSection, true);
       uss.scrollXBy(event.deltaY, xScrollerSection, null, false);
-    }, {passive:false});
+    }, {passive:false});*/
     xScrollerSection.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
 
     xScrollerLeftButton.addEventListener("mousedown",   () => scrollListX(-1), {passive: false});
@@ -401,13 +432,104 @@
       uss.scrollYTo(finalYPosition, yScrollerSection, null, true);
     }
 
+
+
+    addMomentumScrolling(
+      pageScroller,
+      {
+        onYAxis: true,
+        onXAxis: true,
+        momentumEasingX: EASE_OUT_CUBIC(1000),
+        momentumEasingY: EASE_OUT_CUBIC(1000),
+        speedModifierX: (deltaX, deltaY) => {
+          if(lastAnchorPressed && uss.isScrolling()) {
+            uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
+          }
+          lastAnchorPressed = null;
+          return deltaX;
+        },
+        speedModifierY: (deltaX, deltaY) => {
+          if(lastAnchorPressed && uss.isScrolling()) {
+            uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
+          }
+          lastAnchorPressed = null;
+          return deltaY;
+        },
+      }
+    );
+    
+    const __yChildren = Array.from(yScrollerSection.children);
+    const _yChildren = [
+      {
+        element:__yChildren[0],
+        align: "start"
+      },
+      {
+        element:__yChildren[1],
+        align: "end"
+      },
+      {
+        element:__yChildren[2],
+        align: "center"
+      },
+      {
+        element:__yChildren[3],
+        align: "end"
+      }
+    ];
+    addMomentumSnapScrolling(yScrollerSection, {onYAxis: "mandatory", children: _yChildren});
+    
+    const __xChildren = Array.from(xScrollerSection.children);
+    const _xChildren = [
+      {
+        element:__xChildren[0],
+        align: "start"
+      },
+      {
+        element:__xChildren[1],
+        align: "end"
+      },
+      {
+        element:__xChildren[2],
+        align: "center"
+      },
+      {
+        element:__xChildren[3],
+        align: "end"
+      }
+  ];
+  
+  /*
+    const _children = Array.from(xScrollerSection.children)
+                           .reduce(
+                             (prev, curr) => {
+                               prev.push({
+                                 element: curr,
+                                 align: "center"
+                               });
+                               return prev;
+                             }, 
+                             []
+                           );*/
+    addMomentumSnapScrolling(
+      xScrollerSection, 
+      {
+        onXAxis: "mandatory", 
+        speedModifierX: (deltaX, deltaY) => deltaX + deltaY,
+        children: _xChildren
+      }
+    );
+
+
+    
+    /*
     uss.setYStepLengthCalculator(EASE_OUT_EXPO(2000), yScrollerSection);
     yScrollerSection.addEventListener("wheel", event => {
       event.preventDefault();
       event.stopPropagation();
       uss.setYStepLengthCalculator(defaultEase, yScrollerSection, true);
       uss.scrollYBy(event.deltaY, yScrollerSection, null, false);
-    }, {passive:false});
+    }, {passive:false});*/
     yScrollerSection.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
 
     yScrollerUpButton.addEventListener("mousedown",    () => scrollListY(-1), {passive: false});
@@ -453,21 +575,11 @@
       title.innerHTML = "All set, try it out !";
       bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
     }, {passive:true});
-
-    pageScroller.addEventListener("wheel", event => {
-      event.preventDefault();
-      event.stopPropagation();
-      if(lastAnchorPressed && uss.isScrolling()) uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
-      
-      lastAnchorPressed = null;
-      uss.setYStepLengthCalculator(defaultEase, pageScroller, true);
-      uss.scrollYBy(event.deltaY, pageScroller, null, false);
-      return false;
-    }, {passive:false});
-
+    
     document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(pageScroller, () => console.log("scrollX stopped"));}, {passive:true});
     document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(pageScroller, () => console.log("scrollY stopped"));}, {passive:true});
 
     touchHelper(pageScroller, () => uss.setStepLengthCalculator(defaultEase, pageScroller, true));
+    window.init = undefined;
   }
 </script>

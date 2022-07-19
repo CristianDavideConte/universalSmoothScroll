@@ -2,9 +2,9 @@
  * TODO:
  * - fix error logging's weird output format
  * - elastic scrolling
- * - smooth scrolling with animation allowed
- * - smooth scrolling for sliders
  * - touch smooth scrolling
+ * - smooth scrolling with animation allowed
+ * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
  * - TURN THIS INTO A MODULE
  */
 
@@ -55,7 +55,6 @@ function addMomentumScrolling(
 
     const _onXAxis = options.onXAxis;
     const _onYAxis = options.onYAxis;
-    const _callback = typeof options.callback === "function" ? options.callback : null;
     options.debugString = options.debugString || "addMomentumScrolling";
 
     //Check if at least one axis was requested to be momentum-scrolled.
@@ -80,11 +79,11 @@ function addMomentumScrolling(
 
     const _momentumScrolling = _onXAxis && !_onYAxis ? (deltaX, deltaY) => { 
                                                             uss.setXStepLengthCalculator(_easingX, container, true, options);
-                                                            uss.scrollXBy(_speedModifierX(deltaX, deltaY), container, _callback, false, options);
+                                                            uss.scrollXBy(_speedModifierX(deltaX, deltaY), container, options.callback, false, options);
                                                         } :
                                !_onXAxis && _onYAxis ? (deltaX, deltaY) => {
                                                             uss.setYStepLengthCalculator(_easingY, container, true, options);
-                                                            uss.scrollYBy(_speedModifierY(deltaX, deltaY), container, _callback, false, options);
+                                                            uss.scrollYBy(_speedModifierY(deltaX, deltaY), container, options.callback, false, options);
                                                         } :
                                                         (deltaX, deltaY) => {
                                                             uss.setXStepLengthCalculator(_easingX, container, true, options);
@@ -92,7 +91,7 @@ function addMomentumScrolling(
                                                             uss.scrollBy(_speedModifierX(deltaX, deltaY), 
                                                                          _speedModifierY(deltaX, deltaY), 
                                                                          container, 
-                                                                         _callback, 
+                                                                         options.callback, 
                                                                          false,
                                                                          options
                                                             );
@@ -282,12 +281,12 @@ function addMomentumSnapScrolling(
     let _snapScrollingTimeout;
     function snapScrolling() {        
         window.clearTimeout(_snapScrollingTimeout);
-        if(options.children.length < 1) {
-            _callback();
-            return;
-        }        
-
         _snapScrollingTimeout = window.setTimeout(() => {
+            if(options.children.length < 1) {
+                _callback();
+                return;
+            }  
+
             //console.time("main");
             const _containerPos = container.getBoundingClientRect();
             const _containerBorders = uss.calcBordersDimensions(container, false, options);
@@ -304,7 +303,7 @@ function addMomentumSnapScrolling(
                 const _requestedAlignment = child.align;
 
                 const _distances = _calcDistances(_containerPos, _containerBorders, _childPos, _requestedAlignment);
-                if(!_distances) continue;
+                if(!_distances) continue; //In normal conditions _distances is an array
                 const _euclideanDistance = _calcEuclideanDistance(_distances);
 
                 if(_euclideanDistance <= _minEuclideanDistance) {
@@ -371,7 +370,7 @@ function addElasticMomentumScrolling(
         uss._errorLogger(options.debugString, "the options.children parameter to be an array", _children);
     }
 
-    //Check if the options.children parameter has exactly 2 elements.
+    //Check if the options.children parameter has at most 2 elements.
     if(_children.length > 2) {
         uss._errorLogger(options.debugString, "the options.children parameter to have at most 2 elements.", _children);
     }
@@ -410,7 +409,7 @@ function addElasticMomentumScrolling(
             const _delta = deltaX;
             const _finalPos = uss.getFinalXPosition(container, options) + _delta;
             
-            if(_finalPos <= _elasticAmount && _delta < 0) {
+            if(_finalPos <= _elasticAmount) {
                 //We're at the left of the passed container, the snap scrolling
                 //will be triggered on _children[0] with align = "start".
                 if(_children[0]) options.children = [_children[0]];
@@ -424,7 +423,7 @@ function addElasticMomentumScrolling(
             }
         
             const _maxScroll = uss.getMaxScrollX(container, false, options);
-            if(_finalPos >= _maxScroll - _elasticAmount && _delta > 0) {
+            if(_finalPos >= _maxScroll - _elasticAmount) {
                 //We're at the bottom of the passed container, the snap scrolling
                 //will be triggered on _children[1] with align = "end".
                 if(_children[1]) options.children = [_children[1]];
@@ -449,9 +448,9 @@ function addElasticMomentumScrolling(
             const _delta = deltaY;
             const _finalPos = uss.getFinalYPosition(container, options) + _delta;
             
-            if(_finalPos <= _elasticAmount && _delta < 0) {
-                //We're at the top of the passed container, the snap scrolling
-                //will be triggered on _children[0] with align = "start".
+            //We're at the top of the passed container beyond the _elasticAmount trigger. 
+            if(_finalPos <= _elasticAmount) {
+                //The snap scrolling will be triggered on _children[0] with align: "start".
                 if(_children[0]) options.children = [_children[0]];
 
                 //Mathematical explanation of the below delta's easing: 
@@ -463,9 +462,10 @@ function addElasticMomentumScrolling(
             }
         
             const _maxScroll = uss.getMaxScrollY(container, false, options);
-            if(_finalPos >= _maxScroll - _elasticAmount && _delta > 0) {
-                //We're at the bottom of the passed container, the snap scrolling
-                //will be triggered on _children[1] with align = "end".
+            
+            //We're at the bottom of the passed container beyond the _elasticAmount trigger. 
+            if(_finalPos >= _maxScroll - _elasticAmount) {
+                //The snap scrolling will be triggered on _children[1] with align: "end".
                 if(_children[1]) options.children = [_children[1]];
 
                 //Mathematical explanation of the below delta's easing: 
@@ -475,7 +475,7 @@ function addElasticMomentumScrolling(
                 const _progress = Math.max(0, (_maxScroll - _finalPos) / _elasticAmount);
                 return _delta * Math.pow(_progress, 1.3) + 1; //delta * f3 + 1 
             }
-        
+
             //The snap scrolling won't be triggered because we're not 
             //at any end of the passed container.
             options.children = [];
@@ -486,10 +486,15 @@ function addElasticMomentumScrolling(
     //TODO Test new elastic easings (perhaps see index.html) <------------------------
     options.snapEasingX = options.elasticEasingX || EASE_OUT_CUBIC(); //NOT FINAL <------------------------------
     options.snapEasingY = options.elasticEasingY || EASE_OUT_CUBIC(); //NOT FINAL <------------------------------
+
+    //Doesn't work on laptop (60fps monitors)
+    options.snapEasingY = (remaning, originalTimeStamp, timestamp) => {
+        return remaning / 20 + 1;
+    }
     
     options.elasticEasingX = undefined;
     options.elasticEasingY = undefined;
-    options.snapDelay = 70; //Debounce time
+    options.snapDelay = 60; //Debounce time
 
     addMomentumSnapScrolling(container, options)(); 
 }
