@@ -1,7 +1,8 @@
 /**
  * TODO:
  * - fix error logging's weird output format
- * - elastic scrolling
+ * - fix momentum snap scrolling bug that stops the scrolling if an anchor link is hovered
+ * - scrollbar smooth scrolling
  * - touch smooth scrolling
  * - smooth scrolling with animation allowed
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
@@ -32,17 +33,35 @@ function __testImports() {
     }
 }
 
+/**
+ * This function enables the momentum smooth scrolling on the passed container
+ * accordingly to what is specified in the passed options parameter. 
+ * @param {*} container An HTMLElement or the window element.
+ * @param {Object} options An object which containing the momentum smooth scrolling preferences/properties listed below.
+ * @param {Boolean} [options.onXAxis=false] True if the momentum smooth scrolling should be enabled on the x-axis of container, false otherwise.
+ * @param {Boolean} [options.onYAxis=false] True if the momentum smooth scrolling should be enabled on the y-axis of container, false otherwise.
+ * @param {Function} [options.callback] A function that will be executed when the container is done with the current momentum smooth scrolling scroll-animation.
+ * @param {Function} [options.speedModifierX] A function that must return the number of pixel that will be added to the current total scrolling amount (on the x-axis)
+ *                                            of this momentum smooth scrolling scroll-animation.
+ *                                            It will be passed the deltaX and the deltaY of the wheel event that triggered this scroll-animation.
+ * @param {Function} [options.speedModifierY] A function that must return the number of pixel that will be added to the current total scrolling amount (on the y-axis)
+ *                                            of this momentum smooth scrolling scroll-animation.
+ *                                            It will be passed the deltaX and the deltaY of the wheel event that triggered this scroll-animation.
+ * @param {Function} [options.momentumEasingX] A valid stepLengthCalculator that will control the easing of this scroll-animation (on the x-axis) of container. 
+ * @param {Function} [options.momentumEasingY] A valid stepLengthCalculator that will control the easing of this scroll-animation (on the y-axis) of container.
+ * @param {String} [options.debugString="addMomentumScrolling"] A string internally used to log the name of the most upper level function that caused an error/warning.   
+ */
 //export
 function addMomentumScrolling(
     container, 
     options = {
         onXAxis: false,
         onYAxis: false,
-        callback: null,
-        speedModifierX: null,
-        speedModifierY: null,
-        momentumEasingX: null,
-        momentumEasingY: null,
+        callback,
+        speedModifierX,
+        speedModifierY,
+        momentumEasingX,
+        momentumEasingY,
         debugString: "addMomentumScrolling"
     }
 ) {
@@ -74,6 +93,8 @@ function addMomentumScrolling(
 
     const _speedModifierX = typeof options.speedModifierX === "function" ? options.speedModifierX : (deltaX, deltaY) => deltaX; 
     const _speedModifierY = typeof options.speedModifierY === "function" ? options.speedModifierY : (deltaX, deltaY) => deltaY; 
+
+    //Default easing behaviors: ease-out.
     const _easingX = options.momentumEasingX || function(remaning) {return remaning / 25 + 1};
     const _easingY = options.momentumEasingY || function(remaning) {return remaning / 25 + 1};
 
@@ -103,19 +124,54 @@ function addMomentumScrolling(
     }, {passive:false});
 }
 
+/**
+ * This function enables the momentum snap scrolling on the passed container
+ * accordingly to what is specified in the passed options parameter. 
+ * @param {*} container An HTMLElement or the window element.
+ * @param {Object} options An object which containing the momentum snap scrolling preferences/properties listed below.
+ * @param {Boolean} [options.onXAxis] "mandatory" to always trigger the snap-into-view behavior (on the x-axis) of this scroll-animation.
+ *                                    "proximity" to trigger the snap-into-view behavior (on the x-axis) of this scroll-animation only if there's one of the 
+ *                                    children.elements not further from its snap-point than half of his width. 
+ * @param {Boolean} [options.onYAxis] "mandatory" to always trigger the snap-into-view behavior (on the y-axis) of this scroll-animation.
+ *                                    "proximity" to trigger the snap-into-view behavior (on the y-axis) of this scroll-animation only if there's one of the 
+ *                                    children.elements not further from its snap-point than half of his height. 
+ * @param {Function} [options.callback] A function that will be executed when the container is done with the snap-into-view part of the current scroll-animation.
+ * @param {Function} [options.speedModifierX] A function that must return the number of pixel that will be added to the current total scrolling amount (on the x-axis)
+ *                                            of this momentum snap scrolling scroll-animation.
+ *                                            It will be passed the deltaX and the deltaY of the wheel event that triggered this scroll-animation.
+ * @param {Function} [options.speedModifierY] A function that must return the number of pixel that will be added to the current total scrolling amount (on the y-axis)
+ *                                            of this momentum snap scrolling scroll-animation.
+ *                                            It will be passed the deltaX and the deltaY of the wheel event that triggered this scroll-animation.
+ * @param {Function} [options.momentumEasingX] A valid stepLengthCalculator that will control the easing of the momentum smooth scroll part of this 
+ *                                             scroll-animation (on the x-axis) of container. 
+ * @param {Function} [options.momentumEasingY] A valid stepLengthCalculator that will control the easing of the momentum smooth scroll part of this 
+ *                                             scroll-animation (on the y-axis) of container.
+ * @param {Function} [options.snapEasingX] A valid stepLengthCalculator that will control the easing of the snap-into-view part of this 
+ *                                         scroll-animation (on the x-axis) of container. 
+ * @param {Function} [options.snapEasingY] A valid stepLengthCalculator that will control the easing of the snap-into-view part of this 
+ *                                         scroll-animation (on the y-axis) of container. 
+ * @param {Number} [options.snapDelay=0] The number of milliseconds that will be waited from the end of the momentum smooth scroll part of this scroll-animation 
+ *                                       in order to trigger the beginning of the snap-into-view part.
+ * @param {Array} [options.children] An array of objects that have 2 properties:
+ *                                   - element: a direct children of container that you want to snap-into-view.
+ *                                   - align: "start" if you want element to be left-aligned on the x-axis and top-aligned on the y-axis.
+ *                                            "end" if you want element to be right-aligned on the x-axis and bottom-aligned on the y-axis.
+ *                                            Any other value if you want element to be center-aligned on both axes.
+ * @param {String} [options.debugString="addMomentumScrolling"] A string internally used to log the name of the most upper level function that caused an error/warning.   
+ */
 //export
 function addMomentumSnapScrolling(
     container, 
     options = {
-        onXAxis: null,
-        onYAxis: null,
-        callback: null,
-        speedModifierX: null,
-        speedModifierY: null,
-        momentumEasingX: null,
-        momentumEasingY: null,
-        snapEasingX: null,
-        snapEasingY: null,
+        onXAxis,
+        onYAxis,
+        callback,
+        speedModifierX,
+        speedModifierY,
+        momentumEasingX,
+        momentumEasingY,
+        snapEasingX,
+        snapEasingY,
         snapDelay: 0,
         children: [],
         debugString: "addMomentumSnapScrolling"
@@ -175,6 +231,7 @@ function addMomentumSnapScrolling(
 
     addMomentumScrolling(container, options);
 
+    //Default easing behaviors: ease-in.
     const _easingX = options.snapEasingX || function(remaning, ot, t, total) {return (total - remaning) / 25 + 1};
     const _easingY = options.snapEasingY || function(remaning, ot, t, total) {return (total - remaning) / 25 + 1};
                                                              
@@ -326,24 +383,41 @@ function addMomentumSnapScrolling(
     return snapScrolling;
 }
 
-
-
-
-
-
-
-
+/**
+ * This function enables the elastic momentum scrolling on the passed container
+ * accordingly to what is specified in the passed options parameter. 
+ * @param {*} container An HTMLElement or the window element.
+ * @param {Object} options An object which containing the momentum elastic scrolling preferences/properties listed below.
+ * @param {Boolean} [options.onXAxis=false] True if the elastic momentum smooth scrolling should be enabled on the x-axis of container, false otherwise.
+ * @param {Boolean} [options.onYAxis=false] True if the elastic momentum smooth scrolling should be enabled on the y-axis of container, false otherwise.
+ * @param {Function} [options.callback] A function that will be executed when the container is done with the elastic part of the current scroll-animation.
+ * @param {Function} [options.momentumEasingX] A valid stepLengthCalculator that will control the easing of the momentum smooth scroll part of this 
+ *                                             scroll-animation (on the x-axis) of container. 
+ * @param {Function} [options.momentumEasingY] A valid stepLengthCalculator that will control the easing of the momentum smooth scroll part of this 
+ *                                             scroll-animation (on the y-axis) of container.
+ * @param {Function} [options.elasticEasingX] A valid stepLengthCalculator that will control the easing of the elastic part of this 
+ *                                            scroll-animation (on the x-axis) of container. 
+ * @param {Function} [options.elasticEasingY] A valid stepLengthCalculator that will control the easing of the elastic part of this 
+ *                                            scroll-animation (on the y-axis) of container. 
+ * @param {Number} [options.elasticAmount=100] The region of pixels from the left/top and the right/bottom borders of container that will trigger
+ *                                             the elastic part of this scroll-animation when traspassed by the scroll-position of container.    
+ * @param {Array} [options.children] An array of 1 or 2 objects that have only 1 property:
+ *                                   - element: a direct children of container.
+ *                                   options.children[0] should point to the element that will be left/top aligned after the elastic part of this scroll-animation. 
+ *                                   options.children[1] should point to the element that will be right/bottom aligned after the elastic part of this scroll-animation.
+ * @param {String} [options.debugString="addMomentumScrolling"] A string internally used to log the name of the most upper level function that caused an error/warning.   
+ */
 //export
 function addElasticMomentumScrolling(
     container, 
     options = {
-        onXAxis: null,
-        onYAxis: null,
-        callback: null,
-        momentumEasingX: null,
-        momentumEasingY: null,
-        elasticEasingX: null, 
-        elasticEasingY: null, 
+        onXAxis: false,
+        onYAxis: false,
+        callback,
+        momentumEasingX,
+        momentumEasingY,
+        elasticEasingX, 
+        elasticEasingY, 
         elasticAmount: 100,
         children: [],
         debugString: "addElasticMomentumScrolling"
@@ -364,6 +438,7 @@ function addElasticMomentumScrolling(
     }
         
     const _children = options.children;
+    const _childrenNum = _children.length;
 
     //Check if the options.children parameter is an array.
     if(!Array.isArray(_children)) {
@@ -371,23 +446,21 @@ function addElasticMomentumScrolling(
     }
 
     //Check if the options.children parameter has at most 2 elements.
-    if(_children.length > 2) {
-        uss._errorLogger(options.debugString, "the options.children parameter to have at most 2 elements.", _children);
+    if(_childrenNum < 1 || _childrenNum > 2) {
+        uss._errorLogger(options.debugString, "the options.children parameter to have 1 or 2 elements.", _children);
     }
 
     //Check if the first element of the options.children parameter is a valid object.
-    if(_children.length > 0) {  
-        if(_children[0] === null || typeof _children[0] !== "object" || Array.isArray(_children[0])) {
-            uss._errorLogger(options.debugString, "the elements of options.children to be objects", _children[0]);
-        }
-
-        //When the options.children of addMomentumSnapScrolling will contain only  
-        //this.options.children[0], its alignment will be mandatory-start.
-        _children[0].align = "start";
+    if(_children[0] === null || typeof _children[0] !== "object" || Array.isArray(_children[0])) {
+        uss._errorLogger(options.debugString, "the elements of options.children to be objects", _children[0]);
     }
 
+    //When the options.children of addMomentumSnapScrolling will contain only  
+    //this.options.children[0], its alignment will be mandatory-start.
+    _children[0].align = "start";
+
     //Check if the second element of the options.children parameter is a valid object.
-    if(_children.length > 1) {
+    if(_childrenNum > 1) {
         if(_children[1] === null || typeof _children[1] !== "object" || Array.isArray(_children[1])) {
             uss._errorLogger(options.debugString, "the elements of options.children to be objects", _children[1]);
         }
@@ -483,18 +556,88 @@ function addElasticMomentumScrolling(
         }
     }
 
-    //TODO Test new elastic easings (perhaps see index.html) <------------------------
-    options.snapEasingX = options.elasticEasingX || EASE_OUT_CUBIC(); //NOT FINAL <------------------------------
-    options.snapEasingY = options.elasticEasingY || EASE_OUT_CUBIC(); //NOT FINAL <------------------------------
+    //Default easing behaviors: ease-out-like.
+    options.snapEasingX = options.elasticEasingX || function(remaning) {return Math.ceil(uss._framesTime * remaning / 160)};
+    options.snapEasingY = options.elasticEasingY || function(remaning) {return Math.ceil(uss._framesTime * remaning / 160)};
 
-    //Doesn't work on laptop (60fps monitors)
-    options.snapEasingY = (remaning, originalTimeStamp, timestamp) => {
-        return remaning / 20 + 1;
-    }
-    
     options.elasticEasingX = undefined;
     options.elasticEasingY = undefined;
     options.snapDelay = 60; //Debounce time
 
     addMomentumSnapScrolling(container, options)(); 
+}
+
+
+
+
+
+
+
+
+
+
+//export
+function addSmoothScrollbar(
+    container,
+    options = {
+        onXAxis: false,
+        onYAxis: false,
+        hideTimeoutX: 2000,
+        hideTimeoutY: 2000,
+        debugString: "addSmoothScrollbar",
+    }
+) {
+    __testImports();
+
+    //Check if the options parameter is a valid object.
+    if (options === null || typeof options !== "object" || Array.isArray(options)) {
+        uss._errorLogger("addSmoothScrollbar", "the options parameter to be an object", options);
+    }
+
+    options.debugString = options.debugString || "addSmoothScrollbar";
+
+    //Check if the container is a valid container.
+    if(container !== window && !(container instanceof HTMLElement)) {
+        uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    }
+    
+    const _onXAxis = options.onXAxis;
+    const _onYAxis = options.onYAxis;
+    
+    //Check if at least one axis was requested to be momentum-scrolled.
+    if(!_onXAxis && !_onYAxis) {
+        uss._warningLogger(options.debugString, "was invoked but neither onXAxis or onYAxis were set");
+    }
+
+    let _scrollbar;
+
+    if(_onXAxis) {
+        const _maxScroll = uss.getMaxScrollX(container, false, options);
+
+        //Check if the x-axis of the passed container is actually scrollable. 
+        if(_maxScroll < 1) {
+            uss._errorLogger(options.debugString, "a container that can be scrolled on the x-axis", container);
+        }
+        
+        _scrollbar = _createScrollbar();
+    }
+
+
+    //...
+
+    function _createScrollbar() {
+        const __scrollbarTrack = document.createElement("div");
+        const __scrollbarThumb = document.createElement("div");
+        
+        //TODO
+
+        __scrollbarTrack.appendChild(__scrollbarThumb);
+        
+        return {
+            track: __scrollbarTrack,
+            thumb: __scrollbarThumb,
+        }
+    }
+
+    return _scrollbar;
 }
