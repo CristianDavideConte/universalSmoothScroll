@@ -609,29 +609,93 @@ function addSmoothScrollbar(
         uss._warningLogger(options.debugString, "was invoked but neither onXAxis or onYAxis were set");
     }
 
-    let _scrollbar;
+    let _scrollbars = [];
 
     if(_onXAxis) {
         const _maxScroll = uss.getMaxScrollX(container, false, options);
 
         //Check if the x-axis of the passed container is actually scrollable. 
         if(_maxScroll < 1) {
-            uss._errorLogger(options.debugString, "a container that can be scrolled on the x-axis", container);
+            //uss._errorLogger(options.debugString, "a container that can be scrolled on the x-axis", container);
         }
         
-        _scrollbar = _createScrollbar();
+        const _offset = _onXAxis ? "17px" : "0";
+        _scrollbars.push(
+            _createScrollbar(
+                null,
+                "17px",
+                null, 
+                _offset, 
+                0,
+                0,
+                "x"
+            )
+        );
     }
 
+    if(_onYAxis) {
+        const _maxScroll = uss.getMaxScrollY(container, false, options);
 
-    //...
+        //Check if the y-axis of the passed container is actually scrollable. 
+        if(_maxScroll < 1) {
+            uss._errorLogger(options.debugString, "a container that can be scrolled on the y-axis", container);
+        }
+        
+        const _offset = _onXAxis ? "17px" : "0";
+        _scrollbars.push(
+            _createScrollbar(
+                "17px",
+                null,
+                0, 
+                0, 
+                _offset,
+                null,
+                "y"
+            )
+        );
+    }
 
-    function _createScrollbar() {
+    function _createScrollbar(width, height, top, right, bottom, left, axis) {
         const __scrollbarTrack = document.createElement("div");
         const __scrollbarThumb = document.createElement("div");
-        
-        //TODO
+    
 
+        //Track's size. 
+        __scrollbarTrack.style.height = height;
+        __scrollbarTrack.style.width = width;
+
+        //Thumb's size.
+        __scrollbarThumb.style.height = height;
+        __scrollbarThumb.style.width = width;
+
+
+        //Track's position.
+        __scrollbarTrack.style.zIndex = "2147483647"; //Highest allowed z-index
+        __scrollbarTrack.style.position = "fixed";
+        __scrollbarTrack.style.top = top;
+        __scrollbarTrack.style.right = right;
+        __scrollbarTrack.style.bottom = bottom;
+        __scrollbarTrack.style.left = left;
+
+        //Accessibility styles.
+        __scrollbarTrack.tabIndex = -1;
+        __scrollbarThumb.tabIndex = -1;
+
+        //Debug
+        __scrollbarTrack.style.backgroundColor = "blue";
+        
+        //Hide container's default scrollbars.
+        if(axis === "x") container.style.overflowX = "hidden";
+        else container.style.overflowY = "hidden";
+
+        //Indicates that descendants of the element don't display outside its bounds.
+        //It's use to create a new stacking context so that the position:absolute 
+        //of the scrollbar are always relative to the container.
+        container.style.contain = "paint";
+
+        //Add the scrollbar to the container.
         __scrollbarTrack.appendChild(__scrollbarThumb);
+        container.appendChild(__scrollbarTrack);
         
         return {
             track: __scrollbarTrack,
@@ -639,5 +703,5 @@ function addSmoothScrollbar(
         }
     }
 
-    return _scrollbar;
+    return _scrollbars;
 }
