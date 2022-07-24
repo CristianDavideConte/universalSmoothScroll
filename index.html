@@ -36,6 +36,10 @@
         <div id = "easeFunctionSelector">
           <h2>Select the above anchor's easing</h2>
           <ul id = "easeFunctionSelectorList">
+            
+            <div id = "vertical"></div>
+            <div id = "horizontal"></div>
+          
             <li><a id = "linear"        >linear</a></li>
             <li><a id = "easeInSine"    >easeInSine</a></li>
             <li><a id = "easeInQuad"    >easeInQuad</a></li>
@@ -67,14 +71,14 @@
       </div>
       <div id = "section2" class = "page">
         <section id = "yScroller">
-          <button id = "yScrollerUp">&uarr;</button>
+          <!-- <button id = "yScrollerUp">&uarr;</button> -->
           <div id = "yScrollerSection" class = "scrollerSections">
             <div id = "section12" class = "listItem"></div>
             <div id = "section22" class = "listItem"></div>
             <div id = "section32" class = "listItem"></div>
             <div id = "section42" class = "listItem"></div>
           </div>
-          <button id = "yScrollerDown">&darr;</button>
+          <!-- <button id = "yScrollerDown">&darr;</button> -->
         </section>
       </div>
     </div>
@@ -83,14 +87,14 @@
     <div class = "sections-container">
       <div id = "section3" class = "page">
         <section id = "xScroller">
-          <button id = "xScrollerLeft">&larr;</button>
+          <!-- <button id = "xScrollerLeft">&larr;</button> -->
           <div id = "xScrollerSection" class = "scrollerSections">
             <div id = "section11" class = "listItem"></div>
             <div id = "section21" class = "listItem"></div>
             <div id = "section31" class = "listItem"></div>
             <div id = "section41" class = "listItem"></div>
           </div>
-          <button id = "xScrollerRight">&rarr;</button>
+          <!-- <button id = "xScrollerRight">&rarr;</button> -->
         </section>
       </div>
       <div id = "section4" class = "page">
@@ -246,6 +250,10 @@
       }
     );
 
+    
+    
+
+    
 
     /**
 
@@ -408,7 +416,7 @@
       event.stopPropagation();
       uss.setXStepLengthCalculator(defaultEase, xScrollerSection, true);
       uss.scrollXBy(event.deltaY, xScrollerSection, null, false);
-    }, {passive:false});*/
+    }, {passive:false});
     xScrollerSection.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
 
     xScrollerLeftButton.addEventListener("mousedown",   () => scrollListX(-1), {passive: false});
@@ -425,7 +433,7 @@
     xScrollerRightButton.addEventListener("mouseup",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
     xScrollerLeftButton.addEventListener("mouseout",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
     xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScrollerSection), {passive:false});
-
+    */
 
     function scrollListY(direction) {
       const finalYPosition = direction === -1 ? 0 : uss.getMaxScrollY(yScrollerSection);
@@ -529,7 +537,7 @@
       event.stopPropagation();
       uss.setYStepLengthCalculator(defaultEase, yScrollerSection, true);
       uss.scrollYBy(event.deltaY, yScrollerSection, null, false);
-    }, {passive:false});*/
+    }, {passive:false});
     yScrollerSection.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
 
     yScrollerUpButton.addEventListener("mousedown",    () => scrollListY(-1), {passive: false});
@@ -546,7 +554,8 @@
     yScrollerDownButton.addEventListener("mouseup",  () => uss.stopScrollingY(yScrollerSection), {passive:false});
     yScrollerUpButton.addEventListener("mouseout",   () => uss.stopScrollingY(yScrollerSection), {passive:false});
     yScrollerDownButton.addEventListener("mouseout", () => uss.stopScrollingY(yScrollerSection), {passive:false});
-
+    */
+   
     let bezierTitleTimeout = 0;
     cubicBezierCustomInputParameters[4].addEventListener("click", () => {
       window.clearTimeout(bezierTitleTimeout);
@@ -581,5 +590,15 @@
 
     touchHelper(pageScroller, () => uss.setStepLengthCalculator(defaultEase, pageScroller, true));
     window.init = undefined;
+
+
+    addSmoothScrollbar(
+        xScrollerSection, //easeFunctionSelectorList, 
+        {
+            onYAxis:true,
+            onXAxis:true,
+            transitionDurationX: "0.4s"
+        }
+    )
   }
 </script>
