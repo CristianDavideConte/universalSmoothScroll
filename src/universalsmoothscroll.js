@@ -1684,7 +1684,7 @@ var uss = {
       }
       //Checks if the page initially have a URL containing 
       //a valid fragment and scrolls to it if necessary.
-      window.requestAnimationFrame(_smoothHistoryNavigation);
+      _smoothHistoryNavigation();
     }
 
     for(const _pageLink of document.links) {

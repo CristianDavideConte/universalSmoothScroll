@@ -58,6 +58,55 @@ input {
   background-color: transparent;
 }
 
+.uss-x-axis-scrollbar-track {
+  background-color: blue;
+  transition: 0.3s;
+}
+
+.uss-y-axis-scrollbar-track {
+  background-color: white;
+  transition: 0.3s;
+}
+
+.uss-x-axis-scrollbar-thumb {
+  background-color: red;
+  border-radius: 2vh;
+  transition: 0.3s;
+}
+
+.uss-y-axis-scrollbar-thumb {
+  background-color: black;
+  border-radius: 2vh;
+  transition: 0.3s;
+}
+
+.uss-x-axis-scrollbar-track.uss-scrollbar-hidden,
+.uss-y-axis-scrollbar-track.uss-scrollbar-hidden {
+  opacity: 0.5;
+}
+
+.uss-scrollbar-hidden > .uss-x-axis-scrollbar-thumb,
+.uss-scrollbar-hidden > .uss-y-axis-scrollbar-thumb {
+  border-radius: 0;
+}
+
+#betaBanner {
+  width: 50%;
+  height: 20%;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+
+#betaBanner > p {
+  font-size: 2.3vh;
+}
+
 #header {
   z-index: 2;
   margin-top: 2vh;
@@ -89,11 +138,12 @@ li {
   background-color: rgba(51, 51, 51, 0.9);
 }
 
-li:hover {
+li:hover,
+a:hover {
  background-color: rgba(21, 21, 21, 0.6);
 }
 
-li > a {
+a {
   font-size: 2.3vh;
   height: 100%;
   color: white;
@@ -166,6 +216,11 @@ li > a {
   position: relative;
 }
 
+#section1 > h2 {
+  position: absolute;
+  top: 15%;
+}
+
 #section1,
 #section11,
 #section12 {
@@ -173,16 +228,12 @@ li > a {
 }
 
 #easeFunctionSelector {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  position: relative;
 }
 
 #easeFunctionSelectorList {
   height: 40vh;
+  width: 75vw;
   padding: 25vh 0;        /* For elastic scrolling */
   box-sizing: border-box; /* For elastic scrolling */
   display: flex;
@@ -192,14 +243,18 @@ li > a {
   background-color: rgba(21, 21, 21, 0.6);
 }
 
-#easeFunctionSelectorList > li {
+#easeFunctionSelectorList > a {
   height: 10vh;
   flex-shrink: 0;
+  transition: 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: rgba(51, 51, 51, 0.65);
 }
 
-#easeFunctionSelectorList > li:hover,
-#easeFunctionSelectorList > li.selected {
+#easeFunctionSelectorList > a:hover,
+#easeFunctionSelectorList > a.selected {
   background-color: rgba(21, 21, 21, 0);
 }
 

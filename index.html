@@ -12,6 +12,7 @@
     <script async src = "./src/universalsmoothscroll.js"></script>
   </head>
   <body onload = "init()">
+    <div id = "betaBanner"><p>Beta 6.0.0</p></div>
     <section id = "stopScrollingButtonsSection">
       <button id = "stopScrollingX">STOP X</button>
       <button id = "stopScrollingY">STOP Y</button>
@@ -33,41 +34,37 @@
     <!--SECTION 1 AND 2 -->
     <div class = "sections-container">
       <div id = "section1" class = "page">
-        <div id = "easeFunctionSelector">
           <h2>Select the above anchor's easing</h2>
-          <ul id = "easeFunctionSelectorList">
-            
-            <div id = "vertical"></div>
-            <div id = "horizontal"></div>
-          
-            <li><a id = "linear"        >linear</a></li>
-            <li><a id = "easeInSine"    >easeInSine</a></li>
-            <li><a id = "easeInQuad"    >easeInQuad</a></li>
-            <li><a id = "easeInCubic"   >easeInCubic</a></li>
-            <li><a id = "easeInQuart"   >easeInQuart</a></li>
-            <li><a id = "easeInQuint"   >easeInQuint</a></li>
-            <li><a id = "easeInExpo"    >easeInExpo</a></li>
-            <li><a id = "easeInCirc"    >easeInCirc</a></li>
-            <li><a id = "easeOutSine"   >easeOutSine</a></li>
-            <li><a id = "easeOutQuad"   >easeOutQuad</a></li>
-            <li><a id = "easeOutCubic"  >easeOutCubic</a></li>
-            <li><a id = "easeOutQuart"  >easeOutQuart</a></li>
-            <li><a id = "easeOutQuint"  >easeOutQuint</a></li>
-            <li><a id = "easeOutExpo"   >easeOutExpo</a></li>
-            <li><a id = "easeOutCirc"   >easeOutCirc</a></li>
-            <li><a id = "easeInOutSine" >easeInOutSine</a></li>
-            <li><a id = "easeInOutQuad" >easeInOutQuad</a></li>
-            <li><a id = "easeInOutCubic">easeInOutCubic</a></li>
-            <li><a id = "easeInOutQuart">easeInOutQuart</a></li>
-            <li><a id = "easeInOutQuint">easeInOutQuint</a></li>
-            <li><a id = "easeInOutExpo" >easeInOutExpo</a></li>
-            <li><a id = "easeInOutCirc" >easeInOutCirc</a></li>
+          <div id = "easeFunctionSelector">
+            <div id = "easeFunctionSelectorList">
+              <a id = "linear"        >linear</a>
+              <a id = "easeInSine"    >easeInSine</a>
+              <a id = "easeInQuad"    >easeInQuad</a>
+              <a id = "easeInCubic"   >easeInCubic</a>
+              <a id = "easeInQuart"   >easeInQuart</a>
+              <a id = "easeInQuint"   >easeInQuint</a>
+              <a id = "easeInExpo"    >easeInExpo</a>
+              <a id = "easeInCirc"    >easeInCirc</a>
+              <a id = "easeOutSine"   >easeOutSine</a>
+              <a id = "easeOutQuad"   >easeOutQuad</a>
+              <a id = "easeOutCubic"  >easeOutCubic</a>
+              <a id = "easeOutQuart"  >easeOutQuart</a>
+              <a id = "easeOutQuint"  >easeOutQuint</a>
+              <a id = "easeOutExpo"   >easeOutExpo</a>
+              <a id = "easeOutCirc"   >easeOutCirc</a>
+              <a id = "easeInOutSine" >easeInOutSine</a>
+              <a id = "easeInOutQuad" >easeInOutQuad</a>
+              <a id = "easeInOutCubic">easeInOutCubic</a>
+              <a id = "easeInOutQuart">easeInOutQuart</a>
+              <a id = "easeInOutQuint">easeInOutQuint</a>
+              <a id = "easeInOutExpo" >easeInOutExpo</a>
+              <a id = "easeInOutCirc" >easeInOutCirc</a>
 
-            <li><a id = "easeInBounce"  >easeInBounce</a></li>
-            <li><a id = "easeOutBounce" >easeOutBounce</a></li>
-            <li><a id = "easeInOutBounce" >easeInOutBounce</a></li>
-          </ul>
-        </div>
+              <a id = "easeInBounce"  >easeInBounce</a>
+              <a id = "easeOutBounce" >easeOutBounce</a>
+              <a id = "easeInOutBounce" >easeInOutBounce</a>
+            </div>
+          </div>
       </div>
       <div id = "section2" class = "page">
         <section id = "yScroller">
@@ -219,16 +216,9 @@
     let lastAnchorPressed = null;
 
 
-    uss.setPageScroller(pageScroller); //TODO -> FIX: THIS SHOULD BE NECESSARY
+    uss.setPageScroller(pageScroller); //<----------------------------------------------------TODO -> FIX: THIS SHOULDN'T BE NECESSARY
     uss.setStepLengthCalculator(EASE_LINEAR());
 
-    uss.hrefSetup(null, true, (anchor, el) => {
-      if(anchor !== window && lastAnchorPressed === anchor && uss.isScrolling()) return false;
-      lastAnchorPressed = anchor;
-
-      //Unsets the temporary StepLengthCalculator if there's one.
-      uss.stopScrolling();
-    }, null, false, true);
 
 
 
@@ -592,13 +582,67 @@
     window.init = undefined;
 
 
-    addSmoothScrollbar(
-        xScrollerSection, //easeFunctionSelectorList, 
+    const _bodyScrollbars = addSmoothScrollbar(
+        document.body, 
         {
             onYAxis:true,
             onXAxis:true,
-            transitionDurationX: "0.4s"
+            transitionDurationX: "1s",
+            transitionDurationY: "1s",
+            hideScrollbarX: false
         }
     )
+    _bodyScrollbars[0].track.classList.add("uss-x-axis-scrollbar-track");
+    _bodyScrollbars[0].thumb.classList.add("uss-x-axis-scrollbar-thumb");
+    _bodyScrollbars[1].track.classList.add("uss-y-axis-scrollbar-track");
+    _bodyScrollbars[1].thumb.classList.add("uss-y-axis-scrollbar-thumb");
+    _bodyScrollbars[1].forceUpdate();
+
+    const _xScrollerSectionScrollbars = addSmoothScrollbar(
+        xScrollerSection, 
+        {
+            onXAxis:true,
+            transitionDurationX: "0.4s",
+            hideScrollbarX: true
+        }
+    )
+    _xScrollerSectionScrollbars[0].track.classList.add("uss-x-axis-scrollbar-track");
+    _xScrollerSectionScrollbars[0].thumb.classList.add("uss-x-axis-scrollbar-thumb");
+
+    
+    const _yScrollerSectionScrollbars = addSmoothScrollbar(
+        yScrollerSection, 
+        {
+            onYAxis:true,
+            transitionDurationY: "0.4s",
+            hideScrollbarY: true
+        }
+    )
+    _yScrollerSectionScrollbars[0].track.classList.add("uss-y-axis-scrollbar-track");
+    _yScrollerSectionScrollbars[0].thumb.classList.add("uss-y-axis-scrollbar-thumb");
+
+    const _easeFunctionSelectorListScrollbars = addSmoothScrollbar(
+        easeFunctionSelectorList, 
+        {
+            onYAxis:true,
+            transitionDurationY: "0.4s",
+            hideScrollbarY: true
+        }
+    )
+    _easeFunctionSelectorListScrollbars[0].track.classList.add("uss-y-axis-scrollbar-track");
+    _easeFunctionSelectorListScrollbars[0].thumb.classList.add("uss-y-axis-scrollbar-thumb");
+
+    uss.hrefSetup(null, true, (anchor, el) => {
+      if(anchor !== window && lastAnchorPressed === anchor && uss.isScrolling()) return false;
+      lastAnchorPressed = anchor;
+
+      //Unsets the temporary StepLengthCalculator if there's one.
+      uss.stopScrolling();
+
+      window.requestAnimationFrame(() => {
+        _bodyScrollbars[0].forceUpdate();
+        _bodyScrollbars[1].forceUpdate();
+      })
+    }, null, true, true);
   }
 </script>
