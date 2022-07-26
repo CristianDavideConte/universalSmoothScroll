@@ -58,35 +58,35 @@ input {
   background-color: transparent;
 }
 
-.uss-x-axis-scrollbar-track {
-  background-color: blue;
-  transition: 0.3s;
+.uss-scrollbar-track-x {
+  background-color: rgba(51, 51, 51, 0.9);
+  transition-duration: 0.3s;
 }
 
-.uss-y-axis-scrollbar-track {
+.uss-scrollbar-track-y {
+  background-color: rgba(51, 51, 51, 0.9);
+  transition-duration: 0.3s;
+}
+
+.uss-scrollbar-thumb-x {
   background-color: white;
-  transition: 0.3s;
-}
-
-.uss-x-axis-scrollbar-thumb {
-  background-color: red;
   border-radius: 2vh;
-  transition: 0.3s;
+  transition-duration: 0.3s;
 }
 
-.uss-y-axis-scrollbar-thumb {
+.uss-scrollbar-thumb-y {
   background-color: black;
   border-radius: 2vh;
-  transition: 0.3s;
+  transition-duration: 0.3s;
 }
 
-.uss-x-axis-scrollbar-track.uss-scrollbar-hidden,
-.uss-y-axis-scrollbar-track.uss-scrollbar-hidden {
+.uss-scrollbar-track-x.uss-scrollbar-hidden,
+.uss-scrollbar-track-y.uss-scrollbar-hidden {
   opacity: 0.5;
 }
 
-.uss-scrollbar-hidden > .uss-x-axis-scrollbar-thumb,
-.uss-scrollbar-hidden > .uss-y-axis-scrollbar-thumb {
+.uss-scrollbar-hidden > .uss-scrollbar-thumb-x,
+.uss-scrollbar-hidden > .uss-scrollbar-thumb-y {
   border-radius: 0;
 }
 
@@ -385,7 +385,8 @@ input[type = submit]:hover {
     height: 12vmin;
     flex-direction: row;
     justify-content: center;
-    top: calc(90% - 12vmin / 2);
+    top: auto;
+    bottom: 17px;
     right: calc(50% - 100px);
   }
 }

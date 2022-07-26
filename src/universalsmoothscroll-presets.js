@@ -115,6 +115,7 @@ function addMomentumScrolling(
                                                                     detail: {
                                                                         deltaX: _delta,
                                                                         deltaY: 0,
+                                                                        delayed: false,
                                                                     }
                                                                 })
                                                             );
@@ -129,6 +130,7 @@ function addMomentumScrolling(
                                                                     detail: {
                                                                         deltaX: 0,
                                                                         deltaY: _delta,
+                                                                        delayed: false,
                                                                     }
                                                                 })
                                                             );
@@ -146,6 +148,7 @@ function addMomentumScrolling(
                                                                     detail: {
                                                                         deltaX: _deltaX,
                                                                         deltaY: _deltaY,
+                                                                        delayed: false,
                                                                     }
                                                                 })
                                                             );
@@ -303,6 +306,7 @@ function addMomentumSnapScrolling(
                     detail: {
                         deltaX: _delta,
                         deltaY: 0,
+                        delayed: true,
                     }
                 })
             );
@@ -336,6 +340,7 @@ function addMomentumSnapScrolling(
                     detail: {
                         deltaX: 0,
                         deltaY: _delta,
+                        delayed: true,
                     }
                 })
             );
@@ -391,6 +396,7 @@ function addMomentumSnapScrolling(
                     detail: {
                         deltaX: _deltaX,
                         deltaY: _deltaY,
+                        delayed: true,
                     }
                 })
             );
@@ -712,18 +718,23 @@ function addSmoothScrollbar(
             track: document.createElement("div"),
             thumb: document.createElement("div"),
             engaged: false,
-            forceUpdate: () => {
+            updatePosition: () => {
                 _moveScrollbar(
                     new CustomEvent("ussmove", { 
                         detail: {
                             deltaX: 0.1,
                             deltaY: 0.1,
+                            delayed: false,
                         }
                     })
                 )
             }
         }
     
+        //Default classNames.
+        _scrollbar.track.className = "uss-scrollbar-track-x";
+        _scrollbar.thumb.className = "uss-scrollbar-thumb-x";
+
         //Scrollbar track visibility styles.
         _scrollbar.track.style = `
             position: absolute;
@@ -745,18 +756,16 @@ function addSmoothScrollbar(
         _scrollbar.track.tabIndex = -1;
         _scrollbar.thumb.tabIndex = -1;
   
-        const _scrollContainer = event => { //mousemove event
+        const _scrollContainer = (event) => { //mousemove event
             const __delta = event.movementX; 
-            if(__delta === 0) return; //perhaps < 1? 
+            if(__delta === 0) return; 
 
-            const __containerScrollSize = uss.getMaxScrollX(container);
+            const __containerScrollSize = uss.getMaxScrollX(container, false, options);
             const __trackSize = _scrollbar.track.clientWidth;
             
             const __scrollbarOffset = _scrollbar.moveTimeout ? _scrollbar.moveOffset.deltaX : 0;
             const __scrollMultiplier = __containerScrollSize / __trackSize * 1.3325581395348836;
             const __finalDelta = __delta * __scrollMultiplier; 
-
-            _scrollbar.scrolledContainer = true;
 
             container.dispatchEvent(
                 new WheelEvent("wheel", {
@@ -772,7 +781,7 @@ function addSmoothScrollbar(
 
             window.clearTimeout(_scrollbar.moveTimeout);
             
-            if(_scrollbar.engaged && !_scrollbar.scrolledContainer) {
+            if(_scrollbar.engaged && event.detail.delayed) {
                 _scrollbar.moveOffset = {
                     deltaX: event.detail.deltaX,
                     deltaY: event.detail.deltaY,
@@ -781,11 +790,8 @@ function addSmoothScrollbar(
                 _scrollbar.moveTimeout = window.setTimeout(
                     () => {
                         _scrollbar.thumb.dispatchEvent(
-                            new CustomEvent("ussmove",{
-                                detail: {
-                                    deltaX: event.detail.deltaX,
-                                    deltaY: event.detail.deltaY,
-                                }
+                            new CustomEvent("ussmove", {
+                                detail: event.detail
                             })
                         );
                     }, 
@@ -798,7 +804,7 @@ function addSmoothScrollbar(
             const __thumbSize = _scrollbar.thumb.clientWidth;
             const __trackSize = _scrollbar.track.clientWidth;
 
-            let __scrolledPercentage = uss.getFinalXPosition(container) / uss.getMaxScrollX(container);
+            let __scrolledPercentage = uss.getFinalXPosition(container, options) / uss.getMaxScrollX(container, false, options);
             __scrolledPercentage = __scrolledPercentage > 1 ? 1 :
                                    __scrolledPercentage < 0 ? 0 : 
                                    __scrolledPercentage;
@@ -808,7 +814,6 @@ function addSmoothScrollbar(
             
             _scrollbar.thumb.style.transitionDuration = _scrollbar.engaged ? "0s" : options.transitionDurationX || "0.2s";
             _scrollbar.thumb.style.transform = "translateX(" + __translateAmount + "px)";
-            _scrollbar.scrolledContainer = false;
             _scrollbar.moveTimeout = null;
         }
 
@@ -832,18 +837,23 @@ function addSmoothScrollbar(
             track: document.createElement("div"),
             thumb: document.createElement("div"),
             engaged: false,
-            forceUpdate: () => {
+            updatePosition: () => {
                 _moveScrollbar(
                     new CustomEvent("ussmove", { 
                         detail: {
                             deltaX: 0.1,
                             deltaY: 0.1,
+                            delayed: false,
                         }
                     })
                 )
             }
         }
     
+        //Default classNames.
+        _scrollbar.track.className = "uss-scrollbar-track-y";
+        _scrollbar.thumb.className = "uss-scrollbar-thumb-y";
+        
         //Scrollbar track visibility styles.
         _scrollbar.track.style = `
             position: absolute;
@@ -865,20 +875,21 @@ function addSmoothScrollbar(
         _scrollbar.track.tabIndex = -1;
         _scrollbar.thumb.tabIndex = -1;
   
-        const _scrollContainer = event => { //mousemove event
+        const _scrollContainer = (event) => { //mousemove event
             const __delta = event.movementY; 
             if(__delta === 0) return; 
 
-            const __containerScrollSize = uss.getMaxScrollY(container);
+            console.log("moved")
+
+            const __containerScrollSize = uss.getMaxScrollY(container, false, options);
             const __trackSize = _scrollbar.track.clientHeight;
 
-                if(_scrollbar.moveTimeout) console.log(_scrollbar.moveOffset.deltaY) //DEBUG
-            
             const __scrollbarOffset = _scrollbar.moveTimeout ? _scrollbar.moveOffset.deltaY : 0;
             const __scrollMultiplier = __containerScrollSize / __trackSize * 1.3325581395348836;
             const __finalDelta = __delta * __scrollMultiplier; 
 
-            _scrollbar.scrolledContainer = true;
+            console.log("offset", __scrollbarOffset) //DEBUG
+            console.log(__finalDelta, __finalDelta - __scrollbarOffset)
 
             container.dispatchEvent(
                 new WheelEvent("wheel", {
@@ -894,7 +905,8 @@ function addSmoothScrollbar(
             
             window.clearTimeout(_scrollbar.moveTimeout);
             
-            if(_scrollbar.engaged && !_scrollbar.scrolledContainer) {
+            console.log("arrived", event.detail.delayed)
+            if(_scrollbar.engaged && event.detail.delayed) {
                 _scrollbar.moveOffset = {
                     deltaX: event.detail.deltaX,
                     deltaY: event.detail.deltaY,
@@ -902,12 +914,10 @@ function addSmoothScrollbar(
 
                 _scrollbar.moveTimeout = window.setTimeout(
                     () => {
+                        console.log("dispatched", _scrollbar.moveTimeout)
                         _scrollbar.thumb.dispatchEvent(
-                            new CustomEvent("ussmove",{
-                                detail: {
-                                    deltaX: event.detail.deltaX,
-                                    deltaY: event.detail.deltaY,
-                                }
+                            new CustomEvent("ussmove", {
+                                detail: event.detail
                             })
                         );
                     }, 
@@ -917,10 +927,11 @@ function addSmoothScrollbar(
                 return;
             }
 
+            console.log("executed")
             const __thumbSize = _scrollbar.thumb.clientHeight;
             const __trackSize = _scrollbar.track.clientHeight;
 
-            let __scrolledPercentage = uss.getFinalYPosition(container) / uss.getMaxScrollY(container);
+            let __scrolledPercentage = uss.getFinalYPosition(container, options) / uss.getMaxScrollY(container, false, options);
             __scrolledPercentage = __scrolledPercentage > 1 ? 1 :
                                    __scrolledPercentage < 0 ? 0 : 
                                    __scrolledPercentage;
@@ -930,7 +941,6 @@ function addSmoothScrollbar(
             
             _scrollbar.thumb.style.transitionDuration = _scrollbar.engaged ? "0s" : options.transitionDurationY || "0.2s";
             _scrollbar.thumb.style.transform = "translateY(" + __translateAmount + "px)";
-            _scrollbar.scrolledContainer = false;
             _scrollbar.moveTimeout = null;
         }
 
@@ -945,24 +955,27 @@ function addSmoothScrollbar(
     }   
 
     function _enableScrollbar(scrollbar, scrollContainer, moveScrollbar, hideScrollbar) {
-        const __setScrollbarEngaged = (event, isEngaged) => {
+        const __setScrollbarEngagement = (event, isEngaged) => {
             event.preventDefault();
             event.stopPropagation();            
             scrollbar.engaged = isEngaged;
         } 
 
+        let __hideScrollbarIfNeeded = () => {};
+
         //Engage the scrollbar.
         scrollbar.thumb.addEventListener("mousedown", (event) => {
-            __setScrollbarEngaged(event, true);     
+            __setScrollbarEngagement(event, true);     
             window.addEventListener("mouseup", disengageScrollbar, {passive:false});
             window.addEventListener("mousemove", scrollContainer, {passive:true});   
         }, {passive:false});
         
         //Disengage the scrollbar.
         function disengageScrollbar(event) {            
-            __setScrollbarEngaged(event, false);  
+            __setScrollbarEngagement(event, false);  
             window.removeEventListener("mousemove", scrollContainer, {passive:true});     
             window.removeEventListener("mouseup", disengageScrollbar, {passive:false});   
+            __hideScrollbarIfNeeded();
         }
 
         //Make the scrollbar listen for events that makes it move.
@@ -991,9 +1004,34 @@ function addSmoothScrollbar(
 
         //If requested, make the scrollbar hide.
         if(hideScrollbar) {
+            let __mouseIsHoveringTrack = false;
+            
+            //The scrollbar never hidden if the mouse is on it.
+            scrollbar.track.addEventListener("mouseenter", () => {
+                __mouseIsHoveringTrack = true;
+                if(scrollbar.engaged) return;
+                scrollbar.track.classList.remove("uss-scrollbar-hidden");
+            }, {passive:true});
+            
+            //The scrollbar is hidden if the mouse is not hovering it  
+            //and the scrollbar thumb isn't being used.
+            scrollbar.track.addEventListener("mouseleave", () => {
+                __mouseIsHoveringTrack = false;
+                if(scrollbar.engaged) return;
+                scrollbar.thumb.style.transitionDuration = "";
+                scrollbar.track.classList.add("uss-scrollbar-hidden");
+            }, {passive:true});
+            
+            //Whenever the scrollbar is disengaged,  
+            //check if it should be hidden.
+            __hideScrollbarIfNeeded = () => {
+                if(__mouseIsHoveringTrack) return;
+                scrollbar.thumb.style.transitionDuration = "";
+                scrollbar.track.classList.add("uss-scrollbar-hidden");
+            }
+
+            //The scrollbar is initially hidden.
             scrollbar.track.classList.add("uss-scrollbar-hidden");
-            scrollbar.track.addEventListener("mouseenter", () => scrollbar.track.classList.remove("uss-scrollbar-hidden"), {passive:true});
-            scrollbar.track.addEventListener("mouseleave", () => scrollbar.track.classList.add("uss-scrollbar-hidden"), {passive:true});
         }
     }
 

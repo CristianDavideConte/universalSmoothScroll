@@ -119,6 +119,8 @@
     addElasticMomentumScrolling
   } from "./src/universalsmoothscroll-presets.js"; */
 
+
+
   //Enables smooth scrolling for touch devices
   let isFingerDown;
   function touchHelper(container, init, callback, scrollModifier = delta => {return delta;}, shouldTrackFinger = false, onfingerUp = () => {}) {
@@ -174,7 +176,7 @@
 
 
 
-
+/*
   let backwardPhase;
   function calcScrollDistance(container, scrollLimit, delta, wasTouchEvent = false) { 
     const _finalPos = wasTouchEvent ? uss.getScrollYCalculator(container)() : uss.getFinalYPosition(container);
@@ -192,6 +194,7 @@
 
     return delta;
   }
+  */
 
 
 
@@ -222,23 +225,6 @@
 
 
 
-
-
-    addElasticMomentumScrolling(
-      easeFunctionSelectorList,
-      {
-        onYAxis: true, 
-        elasticAmount: 0.25 * window.innerHeight, //25vh in css
-        children: [
-          {
-            element: easeFunctionSelectorList.children[0]
-          }, 
-          {
-            element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1]
-          },
-        ]
-      }
-    );
 
     
     
@@ -340,20 +326,6 @@
 */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     const listItems = easeFunctionSelectorList.children;
     listItems[0].classList.add("selected");
     for(const li of listItems) {
@@ -393,13 +365,13 @@
     document.getElementById("easeOutBounce").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_OUT_BOUNCE()));
     document.getElementById("easeInOutBounce").addEventListener("click", () => uss.setStepLengthCalculator(EASE_IN_OUT_BOUNCE()));
 
-
+  /*
     function scrollListX(direction) {
       const finalXPosition = direction === -1 ? 0 : uss.getMaxScrollX(xScrollerSection);
       uss.scrollXTo(finalXPosition, xScrollerSection, null, true);
     }
     
-    /*
+    
     uss.setXStepLengthCalculator(EASE_IN_OUT_QUAD(1000), xScrollerSection);
     xScrollerSection.addEventListener("wheel", event => {
       event.preventDefault();
@@ -423,100 +395,16 @@
     xScrollerRightButton.addEventListener("mouseup",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
     xScrollerLeftButton.addEventListener("mouseout",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
     xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScrollerSection), {passive:false});
-    */
+   
 
     function scrollListY(direction) {
       const finalYPosition = direction === -1 ? 0 : uss.getMaxScrollY(yScrollerSection);
       uss.scrollYTo(finalYPosition, yScrollerSection, null, true);
     }
+     */
 
 
-
-    addMomentumScrolling(
-      pageScroller,
-      {
-        onYAxis: true,
-        onXAxis: true,
-        momentumEasingX: EASE_OUT_CUBIC(1000),
-        momentumEasingY: EASE_OUT_CUBIC(1000),
-        speedModifierX: (deltaX, deltaY) => {
-          if(lastAnchorPressed && uss.isScrolling()) {
-            uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
-          }
-          lastAnchorPressed = null;
-          return deltaX;
-        },
-        speedModifierY: (deltaX, deltaY) => {
-          if(lastAnchorPressed && uss.isScrolling()) {
-            uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
-          }
-          lastAnchorPressed = null;
-          return deltaY;
-        },
-      }
-    );
     
-    const __yChildren = Array.from(yScrollerSection.children);
-    const _yChildren = [
-      {
-        element:__yChildren[0],
-        align: "start"
-      },
-      {
-        element:__yChildren[1],
-        align: "end"
-      },
-      {
-        element:__yChildren[2],
-        align: "center"
-      },
-      {
-        element:__yChildren[3],
-        align: "end"
-      }
-    ];
-    addMomentumSnapScrolling(yScrollerSection, {onYAxis: "mandatory", children: _yChildren});
-    
-    const __xChildren = Array.from(xScrollerSection.children);
-    const _xChildren = [
-      {
-        element:__xChildren[0],
-        align: "start"
-      },
-      {
-        element:__xChildren[1],
-        align: "end"
-      },
-      {
-        element:__xChildren[2],
-        align: "center"
-      },
-      {
-        element:__xChildren[3],
-        align: "end"
-      }
-  ];
-  
-  /*
-    const _children = Array.from(xScrollerSection.children)
-                           .reduce(
-                             (prev, curr) => {
-                               prev.push({
-                                 element: curr,
-                                 align: "center"
-                               });
-                               return prev;
-                             }, 
-                             []
-                           );*/
-    addMomentumSnapScrolling(
-      xScrollerSection, 
-      {
-        onXAxis: "mandatory", 
-        speedModifierX: (deltaX, deltaY) => deltaX + deltaY,
-        children: _xChildren
-      }
-    );
 
 
     
@@ -582,6 +470,115 @@
     window.init = undefined;
 
 
+
+    
+
+
+
+    addMomentumScrolling(
+      pageScroller,
+      {
+        onYAxis: true,
+        onXAxis: true,
+        momentumEasingX: EASE_OUT_CUBIC(1000),
+        momentumEasingY: EASE_OUT_CUBIC(1000),
+        speedModifierX: (deltaX, deltaY) => {
+          if(lastAnchorPressed && uss.isScrolling()) {
+            uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
+          }
+          lastAnchorPressed = null;
+          return deltaX;
+        },
+        speedModifierY: (deltaX, deltaY) => {
+          if(lastAnchorPressed && uss.isScrolling()) {
+            uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
+          }
+          lastAnchorPressed = null;
+          return deltaY;
+        },
+      }
+    );
+
+    addElasticMomentumScrolling(
+      easeFunctionSelectorList,
+      {
+        onYAxis: true, 
+        elasticAmount: 0.25 * window.innerHeight, //25vh in css
+        children: [
+          {
+            element: easeFunctionSelectorList.children[0]
+          }, 
+          {
+            element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1]
+          },
+        ]
+      }
+    );
+
+    const __yChildren = Array.from(yScrollerSection.children);
+    const _yChildren = [
+      {
+        element:__yChildren[0],
+        align: "start"
+      },
+      {
+        element:__yChildren[1],
+        align: "end"
+      },
+      {
+        element:__yChildren[2],
+        align: "center"
+      },
+      {
+        element:__yChildren[3],
+        align: "end"
+      }
+    ];
+    addMomentumSnapScrolling(yScrollerSection, {onYAxis: "mandatory", children: _yChildren});
+    
+    const __xChildren = Array.from(xScrollerSection.children);
+    const _xChildren = [
+      {
+        element:__xChildren[0],
+        align: "start"
+      },
+      {
+        element:__xChildren[1],
+        align: "end"
+      },
+      {
+        element:__xChildren[2],
+        align: "center"
+      },
+      {
+        element:__xChildren[3],
+        align: "end"
+      }
+  ];
+  
+  /*
+    const _children = Array.from(xScrollerSection.children)
+                           .reduce(
+                             (prev, curr) => {
+                               prev.push({
+                                 element: curr,
+                                 align: "center"
+                               });
+                               return prev;
+                             }, 
+                             []
+                           );*/
+    addMomentumSnapScrolling(
+      xScrollerSection, 
+      {
+        onXAxis: "mandatory", 
+        snapDelay: 100,
+        speedModifierX: (deltaX, deltaY) => deltaX + deltaY,
+        children: _xChildren
+      }
+    );
+
+
     const _bodyScrollbars = addSmoothScrollbar(
         document.body, 
         {
@@ -589,14 +586,10 @@
             onXAxis:true,
             transitionDurationX: "1s",
             transitionDurationY: "1s",
-            hideScrollbarX: false
+            hideScrollbarX: true,
+            hideScrollbarY: true
         }
     )
-    _bodyScrollbars[0].track.classList.add("uss-x-axis-scrollbar-track");
-    _bodyScrollbars[0].thumb.classList.add("uss-x-axis-scrollbar-thumb");
-    _bodyScrollbars[1].track.classList.add("uss-y-axis-scrollbar-track");
-    _bodyScrollbars[1].thumb.classList.add("uss-y-axis-scrollbar-thumb");
-    _bodyScrollbars[1].forceUpdate();
 
     const _xScrollerSectionScrollbars = addSmoothScrollbar(
         xScrollerSection, 
@@ -606,9 +599,6 @@
             hideScrollbarX: true
         }
     )
-    _xScrollerSectionScrollbars[0].track.classList.add("uss-x-axis-scrollbar-track");
-    _xScrollerSectionScrollbars[0].thumb.classList.add("uss-x-axis-scrollbar-thumb");
-
     
     const _yScrollerSectionScrollbars = addSmoothScrollbar(
         yScrollerSection, 
@@ -618,8 +608,6 @@
             hideScrollbarY: true
         }
     )
-    _yScrollerSectionScrollbars[0].track.classList.add("uss-y-axis-scrollbar-track");
-    _yScrollerSectionScrollbars[0].thumb.classList.add("uss-y-axis-scrollbar-thumb");
 
     const _easeFunctionSelectorListScrollbars = addSmoothScrollbar(
         easeFunctionSelectorList, 
@@ -629,8 +617,6 @@
             hideScrollbarY: true
         }
     )
-    _easeFunctionSelectorListScrollbars[0].track.classList.add("uss-y-axis-scrollbar-track");
-    _easeFunctionSelectorListScrollbars[0].thumb.classList.add("uss-y-axis-scrollbar-thumb");
 
     uss.hrefSetup(null, true, (anchor, el) => {
       if(anchor !== window && lastAnchorPressed === anchor && uss.isScrolling()) return false;
@@ -640,8 +626,8 @@
       uss.stopScrolling();
 
       window.requestAnimationFrame(() => {
-        _bodyScrollbars[0].forceUpdate();
-        _bodyScrollbars[1].forceUpdate();
+        _bodyScrollbars[0].updatePosition();
+        _bodyScrollbars[1].updatePosition();
       })
     }, null, true, true);
   }
