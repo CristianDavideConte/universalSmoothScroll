@@ -17,11 +17,13 @@
  *  - has an "options" object as the second parameter
  *  - every function-specific input should be a property of the "options" parameter
  * 
- * Each of this functions should dispatch the custom "ussmove" 
+ * Each of this functions should dispatch the custom "ussmoverequest" 
  * to their container whenever they directly use:
  *  - the uss.scrollXTo/uss.scrollXBy functions
  *  - the uss.scrollYTo/uss.scrollYBy functions
  *  - the uss.scrollTo/uss.scrollBy functions
+ * This event is used to request the container's controllers (e.g. its smooth scrollbars)
+ * to scroll it whenever it's ok to do so (e.g. scroll only when the user isn't holding down the scrollbar). 
  */
 
 function __testImports() {
@@ -105,58 +107,57 @@ function addMomentumScrolling(
     const _easingX = options.momentumEasingX || function(remaning) {return remaning / 25 + 1};
     const _easingY = options.momentumEasingY || function(remaning) {return remaning / 25 + 1};
 
-    const _momentumScrolling = _onXAxis && !_onYAxis ? (deltaX, deltaY) => { 
-                                                            const _delta = _speedModifierX(deltaX, deltaY);
-                                                            uss.setXStepLengthCalculator(_easingX, container, true, options);
-                                                            uss.scrollXBy(_delta, container, options.callback, false, options);
-                                                            
-                                                            container.dispatchEvent(
-                                                                new CustomEvent("ussmove", { 
-                                                                    detail: {
-                                                                        deltaX: _delta,
-                                                                        deltaY: 0,
-                                                                        delayed: false,
-                                                                    }
-                                                                })
-                                                            );
-                                                        } :
-                               !_onXAxis && _onYAxis ? (deltaX, deltaY) => {
-                                                            const _delta = _speedModifierY(deltaX, deltaY);
-                                                            uss.setYStepLengthCalculator(_easingY, container, true, options);
-                                                            uss.scrollYBy(_delta, container, options.callback, false, options);                                                            
-                                                            
-                                                            container.dispatchEvent(
-                                                                new CustomEvent("ussmove", { 
-                                                                    detail: {
-                                                                        deltaX: 0,
-                                                                        deltaY: _delta,
-                                                                        delayed: false,
-                                                                    }
-                                                                })
-                                                            );
-                                                        } :
-                                                        (deltaX, deltaY) => {
-                                                            const _deltaX = _speedModifierX(deltaX, deltaY);
-                                                            const _deltaY = _speedModifierY(deltaX, deltaY);
+    let _momentumScrolling;
+    let _axis;
 
-                                                            uss.setXStepLengthCalculator(_easingX, container, true, options);
-                                                            uss.setYStepLengthCalculator(_easingY, container, true, options);
-                                                            uss.scrollBy(_deltaX, _deltaY, container, options.callback, false, options);
-                                                            
-                                                            container.dispatchEvent(
-                                                                new CustomEvent("ussmove", { 
-                                                                    detail: {
-                                                                        deltaX: _deltaX,
-                                                                        deltaY: _deltaY,
-                                                                        delayed: false,
-                                                                    }
-                                                                })
-                                                            );
-                                                        };
+    if(_onXAxis && !_onYAxis) {
+        _momentumScrolling = (deltaX, deltaY) => { 
+            uss.setXStepLengthCalculator(_easingX, container, true, options);
+            uss.scrollXBy(_speedModifierX(deltaX, deltaY), container, options.callback, false, options);
+        }
+        _axis = 0;
+    } else if(!_onXAxis && _onYAxis) {
+        _momentumScrolling = (deltaX, deltaY) => {
+            uss.setYStepLengthCalculator(_easingY, container, true, options);
+            uss.scrollYBy(_speedModifierY(deltaX, deltaY), container, options.callback, false, options);                                                            
+        } 
+        _axis = 1;
+    } else {
+        _momentumScrolling = (deltaX, deltaY) => {
+            uss.setXStepLengthCalculator(_easingX, container, true, options);
+            uss.setYStepLengthCalculator(_easingY, container, true, options);
+            uss.scrollBy(
+                _speedModifierX(deltaX, deltaY), 
+                _speedModifierY(deltaX, deltaY), 
+                container, 
+                options.callback, 
+                false, 
+                options
+            );
+        }
+        _axis = 2;
+    }
+                                                        
     container.addEventListener("wheel", (event) => {
         event.preventDefault();
         event.stopPropagation();
-        _momentumScrolling(event.deltaX, event.deltaY);
+
+        const __scrollRequest = new CustomEvent(
+            "ussmoverequest", 
+            { 
+                cancelable: true,
+                detail: {
+                    axis: _axis,
+                    scroller: () => _momentumScrolling(event.deltaX, event.deltaY),
+                }
+            }
+        );
+        container.dispatchEvent(__scrollRequest);
+
+        //If no one has served the scroll request yet.
+        if(!__scrollRequest.defaultPrevented) {
+            _momentumScrolling(event.deltaX, event.deltaY);
+        }
     }, {passive:false});
 }
 
@@ -275,7 +276,8 @@ function addMomentumSnapScrolling(
                                                              
     let _calcDistances, 
         _calcEuclideanDistance, 
-        _snapScroll;
+        _snapScroll,
+        _axis;
 
     if(_onXAxis > -1 && _onYAxis < 0) { //Momentum-snap on the x-axis only. 
         _calcDistances = (containerPos, containerBorders, childPos, align) => {
@@ -297,20 +299,10 @@ function addMomentumSnapScrolling(
         _calcEuclideanDistance = (deltas) => Math.abs(deltas[0]);
 
         _snapScroll = (deltas) => {
-            const _delta = Math.round(deltas[0]);
             uss.setXStepLengthCalculator(_easingX, container, true, options);
-            uss.scrollXBy(_delta, container, _callback, true, options);
-            
-            container.dispatchEvent(
-                new CustomEvent("ussmove", { 
-                    detail: {
-                        deltaX: _delta,
-                        deltaY: 0,
-                        delayed: true,
-                    }
-                })
-            );
+            uss.scrollXBy(Math.round(deltas[0]), container, _callback, true, options);
         }
+        _axis = 0;
     } else if(_onXAxis < 0 && _onYAxis > -1) { //Momentum-snap on the y-axis only.
         _calcDistances = (containerPos, containerBorders, childPos, align) => {
             const _distance = /start/.test(align) ? childPos.top - containerPos.top - containerBorders[0] : 
@@ -331,20 +323,10 @@ function addMomentumSnapScrolling(
         _calcEuclideanDistance = (deltas) => Math.abs(deltas[1]);
 
         _snapScroll = (deltas) => {
-            const _delta = Math.round(deltas[1]); 
             uss.setYStepLengthCalculator(_easingY, container, true, options);
-            uss.scrollYBy(_delta, container, _callback, true, options);
-            
-            container.dispatchEvent(
-                new CustomEvent("ussmove", { 
-                    detail: {
-                        deltaX: 0,
-                        deltaY: _delta,
-                        delayed: true,
-                    }
-                })
-            );
+            uss.scrollYBy(Math.round(deltas[1]), container, _callback, true, options);
         }
+        _axis = 1;
     } else { //Momentum-snap on both axes.
         _calcDistances = (containerPos, containerBorders, childPos, align) => {
             const _distanceX =  /start/.test(align) ? childPos.left - containerPos.left - containerBorders[3] :  
@@ -383,24 +365,13 @@ function addMomentumSnapScrolling(
                                         Math.sqrt(deltas[0] * deltas[0] + deltas[1] * deltas[1]);
         }
 
-        _snapScroll = (deltas) => {
+        _snapScroll = (deltas) => {            
             //Note: Math.round(null) === 0
-            const _deltaX = Math.round(deltas[0]);
-            const _deltaY = Math.round(deltas[1]);
             uss.setXStepLengthCalculator(_easingX, container, true, options);
             uss.setYStepLengthCalculator(_easingY, container, true, options);
-            uss.scrollBy(_deltaX, _deltaY, container, _callback, true, options);
-
-            container.dispatchEvent(
-                new CustomEvent("ussmove", { 
-                    detail: {
-                        deltaX: _deltaX,
-                        deltaY: _deltaY,
-                        delayed: true,
-                    }
-                })
-            );
+            uss.scrollBy(Math.round(deltas[0]), Math.round(deltas[1]), container, _callback, true, options);
         }
+        _axis = 2;
     }
 
     //console.timeEnd("init");
@@ -447,7 +418,23 @@ function addMomentumSnapScrolling(
                 return;
             } 
 
-            _snapScroll(_minDistances);
+            const __scrollRequest = new CustomEvent(
+                "ussmoverequest", 
+                { 
+                    cancelable: true,
+                    detail: {
+                        axis: _axis,
+                        scroller: () => _snapScroll(_minDistances),
+                    }
+                }
+            );
+            container.dispatchEvent(__scrollRequest);
+            
+            //If no one has served the scroll request yet.
+            if(!__scrollRequest.defaultPrevented) {
+                _snapScroll(_minDistances);
+            }
+            
             //console.timeEnd("scroll")
         }, options.snapDelay);
     }
@@ -559,6 +546,10 @@ function addElasticMomentumScrolling(
                 //will be triggered on _children[0] with align = "start".
                 if(_children[0]) options.children = [_children[0]];
 
+                //If the user scrolls in the same direction as the elastic part of
+                //this scroll-animation, it won't encounter resistance. 
+                if(_delta > 0) return _delta; 
+
                 //Mathematical explanation of the below delta's easing: 
                 //_finalPos => f1 = -x + k   //f1 in [0.._elasticAmount]
                 //_progress => f2 = f1 / k   //f2 in [1..0]
@@ -573,6 +564,10 @@ function addElasticMomentumScrolling(
                 //will be triggered on _children[1] with align = "end".
                 if(_children[1]) options.children = [_children[1]];
 
+                //If the user scrolls in the same direction as the elastic part of
+                //this scroll-animation, it won't encounter resistance. 
+                if(_delta < 0) return _delta; 
+                
                 //Mathematical explanation of the below delta's easing: 
                 //_finalPos => f1 = -x + k   //f1 in [_maxScroll - _elasticAmount.._maxScroll]
                 //_progress => f2 = f1 / k   //f2 in [1..0]
@@ -598,6 +593,10 @@ function addElasticMomentumScrolling(
                 //The snap scrolling will be triggered on _children[0] with align: "start".
                 if(_children[0]) options.children = [_children[0]];
 
+                //If the user scrolls in the same direction as the elastic part of
+                //this scroll-animation, it won't encounter resistance. 
+                if(_delta > 0) return _delta; 
+
                 //Mathematical explanation of the below delta's easing: 
                 //_finalPos => f1 = -x + k   //f1 in [0.._elasticAmount]
                 //_progress => f2 = f1 / k   //f2 in [1..0]
@@ -612,6 +611,10 @@ function addElasticMomentumScrolling(
             if(_finalPos >= _maxScroll - _elasticAmount) {
                 //The snap scrolling will be triggered on _children[1] with align: "end".
                 if(_children[1]) options.children = [_children[1]];
+                
+                //If the user scrolls in the same direction as the elastic part of
+                //this scroll-animation, it won't encounter resistance. 
+                if(_delta < 0) return _delta; 
 
                 //Mathematical explanation of the below delta's easing: 
                 //_finalPos => f1 = -x + k   //f1 in [_maxScroll - _elasticAmount.._maxScroll]
@@ -697,19 +700,26 @@ function addSmoothScrollbar(
     let _scrollbars = [];
     const _scrollbarThumbSize = options.thumbSize || 17;
     
-    container.addEventListener("ussmove", (event) => {
+    //Any ussmoverequest is served by the scrollbars not by the container itself.
+    container.addEventListener("ussmoverequest", (event) => {
+        const __newEvent = new CustomEvent(
+            "ussmoverequest", 
+            {
+                cancelable: true,
+                detail: event.detail
+            }
+        );
         for(const scrollbar of _scrollbars) {
-            scrollbar.thumb.dispatchEvent(
-                new CustomEvent("ussmove", {
-                    detail: event.detail
-                })
-            );        
+            scrollbar.thumb.dispatchEvent(__newEvent);
+            if(__newEvent.defaultPrevented) event.preventDefault();
         }
-    }, {passive:true});
+    }, {passive:false});
 
     if(_onXAxis) {
+        container.style.overflowX = "hidden";
+
         //Check if the x-axis of the passed container is actually scrollable. 
-        if(uss.getMaxScrollX(container, false, options) < 1) {
+        if(uss.getMaxScrollX(container, true, options) < 1) {
             uss._errorLogger(options.debugString, "a container that can be scrolled on the x-axis", container);
         }
 
@@ -718,15 +728,19 @@ function addSmoothScrollbar(
             track: document.createElement("div"),
             thumb: document.createElement("div"),
             engaged: false,
+            delayedScroller: null,
             updatePosition: () => {
                 _moveScrollbar(
-                    new CustomEvent("ussmove", { 
-                        detail: {
-                            deltaX: 0.1,
-                            deltaY: 0.1,
-                            delayed: false,
+                    new CustomEvent(
+                        "ussmoverequest", 
+                        { 
+                            cancelable: true,
+                            detail: {
+                                axis: 0,
+                                scroller: () => {}, 
+                            }
                         }
-                    })
+                    )
                 )
             }
         }
@@ -737,6 +751,7 @@ function addSmoothScrollbar(
 
         //Scrollbar track visibility styles.
         _scrollbar.track.style = `
+            contain: style paint;
             position: absolute;
             z-index: 1;
             bottom: 0px;
@@ -756,50 +771,48 @@ function addSmoothScrollbar(
         _scrollbar.track.tabIndex = -1;
         _scrollbar.thumb.tabIndex = -1;
   
-        const _scrollContainer = (event) => { //mousemove event
+        //Scroll the container on a mousemove event by the correspoing amount.
+        const _scrollContainer = (event) => { 
             const __delta = event.movementX; 
             if(__delta === 0) return; 
 
             const __containerScrollSize = uss.getMaxScrollX(container, false, options);
             const __trackSize = _scrollbar.track.clientWidth;
             
-            const __scrollbarOffset = _scrollbar.moveTimeout ? _scrollbar.moveOffset.deltaX : 0;
             const __scrollMultiplier = __containerScrollSize / __trackSize * 1.3325581395348836;
             const __finalDelta = __delta * __scrollMultiplier; 
 
+            _scrollbar.delayedScroller = null;
+            _scrollbar.selfMoveRequest = true;
+
+            //Synchronous call that will execute _moveScrollbar after it.
             container.dispatchEvent(
                 new WheelEvent("wheel", {
-                    deltaX: __finalDelta - __scrollbarOffset,
+                    deltaX: __finalDelta,
                     deltaY: 0,
                     deltaMode: 0,
                 })
             );
         }
 
-        const _moveScrollbar = (event) => { //ussmove event
-            if(event.detail.deltaX === 0) return;
+        //Serve a ussmoverequest event by moving the scrollbar to the correct position.
+        const _moveScrollbar = (event) => {
+            //The event will be served by the other scrollbar.
+            if(event.detail.axis === 1) return;
 
-            window.clearTimeout(_scrollbar.moveTimeout);
-            
-            if(_scrollbar.engaged && event.detail.delayed) {
-                _scrollbar.moveOffset = {
-                    deltaX: event.detail.deltaX,
-                    deltaY: event.detail.deltaY,
-                }
+            //Tell the sender this event has been served.
+            const __alreadyServed = event.defaultPrevented;
+            event.preventDefault();
 
-                _scrollbar.moveTimeout = window.setTimeout(
-                    () => {
-                        _scrollbar.thumb.dispatchEvent(
-                            new CustomEvent("ussmove", {
-                                detail: event.detail
-                            })
-                        );
-                    }, 
-                    200
-                );
-                
+            //The user is still holding down the scrollbar, 
+            //this request will be served on the mouseup event if needed. 
+            if(!_scrollbar.selfMoveRequest && _scrollbar.engaged) {
+                _scrollbar.delayedScroller = event.detail.scroller;
                 return;
             }
+
+            //Update the container's final positions. 
+            if(!__alreadyServed) event.detail.scroller();
 
             const __thumbSize = _scrollbar.thumb.clientWidth;
             const __trackSize = _scrollbar.track.clientWidth;
@@ -814,7 +827,7 @@ function addSmoothScrollbar(
             
             _scrollbar.thumb.style.transitionDuration = _scrollbar.engaged ? "0s" : options.transitionDurationX || "0.2s";
             _scrollbar.thumb.style.transform = "translateX(" + __translateAmount + "px)";
-            _scrollbar.moveTimeout = null;
+            _scrollbar.selfMoveRequest = false;
         }
 
         _enableScrollbar(_scrollbar, _scrollContainer, _moveScrollbar, options.hideScrollbarX);
@@ -822,14 +835,15 @@ function addSmoothScrollbar(
         //Add the scrollbar to the container.
         _scrollbar.track.appendChild(_scrollbar.thumb);
         container.insertBefore(_scrollbar.track, container.firstChild);
-        container.style.overflowX = "hidden";
         
         _scrollbars.push(_scrollbar);
     }
 
     if(_onYAxis) {
+        container.style.overflowY = "hidden";
+
         //Check if the y-axis of the passed container is actually scrollable. 
-        if(uss.getMaxScrollY(container, false, options) < 1) {
+        if(uss.getMaxScrollY(container, true, options) < 1) {
             uss._errorLogger(options.debugString, "a container that can be scrolled on the y-axis", container);
         }
 
@@ -837,15 +851,19 @@ function addSmoothScrollbar(
             track: document.createElement("div"),
             thumb: document.createElement("div"),
             engaged: false,
+            delayedScroller: null,
             updatePosition: () => {
                 _moveScrollbar(
-                    new CustomEvent("ussmove", { 
-                        detail: {
-                            deltaX: 0.1,
-                            deltaY: 0.1,
-                            delayed: false,
+                    new CustomEvent(
+                        "ussmoverequest", 
+                        { 
+                            cancelable: true,
+                            detail: {
+                                axis: 1,
+                                scroller: () => {}, 
+                            }
                         }
-                    })
+                    )
                 )
             }
         }
@@ -853,9 +871,10 @@ function addSmoothScrollbar(
         //Default classNames.
         _scrollbar.track.className = "uss-scrollbar-track-y";
         _scrollbar.thumb.className = "uss-scrollbar-thumb-y";
-        
+
         //Scrollbar track visibility styles.
         _scrollbar.track.style = `
+            contain: style paint;
             position: absolute;
             z-index: 1;
             top: 0px;
@@ -875,59 +894,49 @@ function addSmoothScrollbar(
         _scrollbar.track.tabIndex = -1;
         _scrollbar.thumb.tabIndex = -1;
   
-        const _scrollContainer = (event) => { //mousemove event
+        //Scroll the container on a mousemove event by the correspoing amount.
+        const _scrollContainer = (event) => { 
             const __delta = event.movementY; 
             if(__delta === 0) return; 
 
-            console.log("moved")
-
             const __containerScrollSize = uss.getMaxScrollY(container, false, options);
             const __trackSize = _scrollbar.track.clientHeight;
-
-            const __scrollbarOffset = _scrollbar.moveTimeout ? _scrollbar.moveOffset.deltaY : 0;
+            
             const __scrollMultiplier = __containerScrollSize / __trackSize * 1.3325581395348836;
             const __finalDelta = __delta * __scrollMultiplier; 
 
-            console.log("offset", __scrollbarOffset) //DEBUG
-            console.log(__finalDelta, __finalDelta - __scrollbarOffset)
+            _scrollbar.delayedScroller = null;
+            _scrollbar.selfMoveRequest = true;
 
+            //Synchronous call that will execute _moveScrollbar after it.
             container.dispatchEvent(
                 new WheelEvent("wheel", {
                     deltaX: 0,
-                    deltaY: __finalDelta - __scrollbarOffset,
+                    deltaY: __finalDelta,
                     deltaMode: 0,
                 })
             );
         }
 
-        const _moveScrollbar = (event) => { //ussmove event
-            if(event.detail.deltaY === 0) return;
-            
-            window.clearTimeout(_scrollbar.moveTimeout);
-            
-            console.log("arrived", event.detail.delayed)
-            if(_scrollbar.engaged && event.detail.delayed) {
-                _scrollbar.moveOffset = {
-                    deltaX: event.detail.deltaX,
-                    deltaY: event.detail.deltaY,
-                }
+        //Serve a ussmoverequest event by moving the scrollbar to the correct position.
+        const _moveScrollbar = (event) => {
+            //The event will be served by the other scrollbar.
+            if(event.detail.axis === 0) return;
 
-                _scrollbar.moveTimeout = window.setTimeout(
-                    () => {
-                        console.log("dispatched", _scrollbar.moveTimeout)
-                        _scrollbar.thumb.dispatchEvent(
-                            new CustomEvent("ussmove", {
-                                detail: event.detail
-                            })
-                        );
-                    }, 
-                    200
-                );
-                
+            //Tell the sender this event has been served.
+            const __alreadyServed = event.defaultPrevented;
+            event.preventDefault();
+
+            //The user is still holding down the scrollbar, 
+            //this request will be served on the mouseup event if needed. 
+            if(!_scrollbar.selfMoveRequest && _scrollbar.engaged) {
+                _scrollbar.delayedScroller = event.detail.scroller;
                 return;
             }
 
-            console.log("executed")
+            //Update the container's final positions. 
+            if(!__alreadyServed) event.detail.scroller();
+
             const __thumbSize = _scrollbar.thumb.clientHeight;
             const __trackSize = _scrollbar.track.clientHeight;
 
@@ -936,12 +945,11 @@ function addSmoothScrollbar(
                                    __scrolledPercentage < 0 ? 0 : 
                                    __scrolledPercentage;
 
-
             const __translateAmount = __scrolledPercentage * (__trackSize - __thumbSize);
             
             _scrollbar.thumb.style.transitionDuration = _scrollbar.engaged ? "0s" : options.transitionDurationY || "0.2s";
             _scrollbar.thumb.style.transform = "translateY(" + __translateAmount + "px)";
-            _scrollbar.moveTimeout = null;
+            _scrollbar.selfMoveRequest = false;
         }
 
         _enableScrollbar(_scrollbar, _scrollContainer, _moveScrollbar, options.hideScrollbarY);
@@ -949,10 +957,9 @@ function addSmoothScrollbar(
         //Add the scrollbar to the container.
         _scrollbar.track.appendChild(_scrollbar.thumb);
         container.insertBefore(_scrollbar.track, container.firstChild);
-        container.style.overflowY = "hidden";
         
         _scrollbars.push(_scrollbar);
-    }   
+    }
 
     function _enableScrollbar(scrollbar, scrollContainer, moveScrollbar, hideScrollbar) {
         const __setScrollbarEngagement = (event, isEngaged) => {
@@ -975,11 +982,17 @@ function addSmoothScrollbar(
             __setScrollbarEngagement(event, false);  
             window.removeEventListener("mousemove", scrollContainer, {passive:true});     
             window.removeEventListener("mouseup", disengageScrollbar, {passive:false});   
+
+            //Serve any delayed scroll request if any.
+            if(scrollbar.delayedScroller) {
+                scrollbar.delayedScroller();
+                scrollbar.updatePosition();
+            }
             __hideScrollbarIfNeeded();
         }
 
         //Make the scrollbar listen for events that makes it move.
-        scrollbar.thumb.addEventListener("ussmove", moveScrollbar, {passive:true});
+        scrollbar.thumb.addEventListener("ussmoverequest", moveScrollbar, {passive:false});
 
         //If the user clicks the scrollbar track, the container should be scrolled to
         //the corresponding position and the scrollbar thumb should be moved accordingly.
