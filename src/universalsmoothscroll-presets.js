@@ -1,11 +1,8 @@
 /**
  * TODO:
  * - TURN THIS INTO A MODULE
- * - fix error logging's weird output format
  * - fix momentum snap scrolling bug that stops the scrolling if an anchor link is hovered
- * - scrollbar smooth scrolling
  * 
- * - touch smooth scrolling
  * - smooth scrolling with animation allowed
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
  */

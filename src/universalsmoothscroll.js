@@ -186,9 +186,25 @@ const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
 const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(/disabled/i.test(uss._debugMode)) return;
   
-  //Convert and trim the receivedValue's string
+  //Convert to a string and eventually trim the receivedValue.
   const _receivedValueIsString = typeof receivedValue === "string";
-  receivedValue = receivedValue === null ? "null" : receivedValue === undefined ? "undefined" : receivedValue.name || receivedValue.toString().replace(new RegExp("\n", "g"), "");
+  if(!_receivedValueIsString) {
+    if(receivedValue === null) receivedValue = "null";
+    else if(receivedValue === undefined) receivedValue = "undefined";
+    else if(receivedValue === window) receivedValue = "window";
+    else if(Array.isArray(receivedValue)) receivedValue = "[" + receivedValue.toString() + "]"; 
+    else if(receivedValue instanceof Element) {
+      const _id = receivedValue.id ? "#" + receivedValue.id : "";
+      const _className = receivedValue.className ? "." + receivedValue.className : "";
+      receivedValue = receivedValue.tagName.toLowerCase() + _id + _className;
+    } else {
+      receivedValue = receivedValue.name || 
+                      receivedValue
+                      .toString()
+                      .replace(new RegExp("\n", "g"), "");
+    } 
+  }
+
   if(receivedValue.length > 40) receivedValue = receivedValue.slice(0, 40) + " ...";
   if(_receivedValueIsString) receivedValue = "\"" + receivedValue + "\"";
 
@@ -221,10 +237,27 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
 const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) => {
   if(/disabled/i.test(uss._debugMode)) return;
 
-  //Convert and trim the subject's string
-  subject = subject === null ? "null" : subject === undefined ? "undefined" : subject.name || subject.toString().replace(new RegExp("\n", "g"), "");
-  if(subject.length > 30) subject = subject.slice(0, 30) + " ...";
-  if(keepQuotesForString && typeof subject === "string") subject = "\"" + subject + "\"";
+  //Convert to a string and eventually trim the subject.
+  const _subjectIsString = typeof subject === "string";
+  if(!_subjectIsString) {
+    if(subject === null) subject = "null";
+    else if(subject === undefined) subject = "undefined";
+    else if(subject === window) subject = "window";
+    else if(Array.isArray(subject)) subject = "[" + subject.toString() + "]"; 
+    else if(subject instanceof Element) {
+      const _id = subject.id ? "#" + subject.id : "";
+      const _className = subject.className ? "." + subject.className : "";
+      subject = subject.tagName.toLowerCase() + _id + _className;
+    } else {
+      subject = subject.name || 
+                subject
+                .toString()
+                .replace(new RegExp("\n", "g"), "");
+    }
+  }
+
+  if(subject.length > 40) subject = subject.slice(0, 40) + " ...";
+  if(_subjectIsString && keepQuotesForString) subject = "\"" + subject + "\"";
 
   if(/legacy/i.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
@@ -914,11 +947,7 @@ var uss = {
 
     //The container cannot be scrolled on the x-axis.
     if(uss.getMaxScrollX(container, false, options) < 1) {
-      const _containerName = container === window ? "window" : 
-                                                    container.tagName.toLowerCase() + 
-                                                    (container.id ? "#" + container.id : "") + 
-                                                    (container.className ? "." + container.className : "");
-      uss._warningLogger(_containerName, "is not scrollable on the x-axis", false);
+      uss._warningLogger(container, "is not scrollable on the x-axis", false);
       uss.stopScrollingX(container, callback);
       return; 
     }
@@ -1022,11 +1051,7 @@ var uss = {
 
     //The container cannot be scrolled on the y-axis.
     if(uss.getMaxScrollY(container, false, options) < 1) {
-      const _containerName = container === window ? "window" : 
-                                                    container.tagName.toLowerCase() + 
-                                                    (container.id ? "#" + container.id : "") + 
-                                                    (container.className ? "." + container.className : "");
-      uss._warningLogger(_containerName, "is not scrollable on the y-axis", false);
+      uss._warningLogger(container, "is not scrollable on the y-axis", false);
       uss.stopScrollingY(container, callback);
       return;
     }
