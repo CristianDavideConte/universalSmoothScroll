@@ -168,6 +168,29 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     Internally used by the API to follow the user's accessibility preferences, reverting back every scroll-animation to the default <i>jump-to-position</i> behavior. 
    </td>
   </tr>
+  <tr id = "_onResizeEndCallbacks">
+   <td rowspan = "1" align = "center">
+    <code>_onResizeEndCallbacks</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Array</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>[ ]</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Contains all the functions that should be executed only once the user has finished resizing the browser's window and has <i>interacted</i> with it. <br/>
+    In this case an interaction can be a:
+    <ul>
+      <li>pointerover event</li>
+      <li>pointerdown event</li>
+      <li>touchstart event</li>
+      <li>mousemove event</li>
+      <li>keydown event</li>
+      <li>focus event</li>
+    </ul>
+   </td>
+  </tr>
   <tr id = "_debugMode">
    <td rowspan = "1" align = "center">
     <code>_debugMode</code>

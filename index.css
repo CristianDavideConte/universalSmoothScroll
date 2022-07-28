@@ -58,35 +58,33 @@ input {
   background-color: transparent;
 }
 
-.uss-scrollbar-track-x {
+[data-uss="scrollbar-track-x"] {
   background-color: rgba(51, 51, 51, 0.9);
   transition-duration: 0.3s;
 }
 
-.uss-scrollbar-track-y {
+[data-uss="scrollbar-track-y"] {
   background-color: rgba(51, 51, 51, 0.9);
   transition-duration: 0.3s;
 }
 
-.uss-scrollbar-thumb-x {
+[data-uss="scrollbar-thumb-x"] {
   background-color: white;
   border-radius: 2vh;
   transition-duration: 0.3s;
 }
 
-.uss-scrollbar-thumb-y {
+[data-uss="scrollbar-thumb-y"] {
   background-color: black;
   border-radius: 2vh;
   transition-duration: 0.3s;
 }
 
-.uss-scrollbar-track-x.uss-scrollbar-hidden,
-.uss-scrollbar-track-y.uss-scrollbar-hidden {
+[data-uss-scrollbar-hidden="true"] {
   opacity: 0.5;
 }
 
-.uss-scrollbar-hidden > .uss-scrollbar-thumb-x,
-.uss-scrollbar-hidden > .uss-scrollbar-thumb-y {
+[data-uss-scrollbar-hidden="true"] > div {
   border-radius: 0;
 }
 

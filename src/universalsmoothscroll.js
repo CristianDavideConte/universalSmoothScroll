@@ -69,7 +69,10 @@
  * _pageScroller: object, the value used when an API method requires the "container" input parameter but nothing is passed: 
  *                it should be used to tell the USS API which is the element that scrolls the document.
  * _reducedMotion: boolean, true if the user has enabled any reduce-motion setting devicewise, false otherwise. 
- *                 Internally used by the API to follow the user's accessibility preferences, reverting back every scroll-animation to the default jump-to-position behavior.
+ *                 Internally used by the API to follow the user's accessibility preferences, reverting back every scroll-animation 
+ *                 to the default jump-to-position behavior.
+ * _onResizeEndCallbacks: array, contains all the functions that should be executed only 
+ *                        once the user has finished resizing the browser's window and has interacted with it.
  * _debugMode: string, controls the way the warning and error messages are logged in the browser's console.
  *             If it's set to:
  *             - "disabled" (case insensitive) the API won't show any warning or error message. 
@@ -104,6 +107,7 @@
  * getScrollbarsMaxDimension: function, returns the value of the "_scrollbarsMaxDimension" property.
  * getPageScroller: function, returns the value of the "_pageScroller" property.
  * getReducedMotionState: function, returns the value of the "_reducedMotion" property.
+ * getOnResizeEndCallbacks: function, returns the value of the "_onResizeEndCallbacks" property.
  * getDebugMode: function, returns the value of the "_debugMode" property.
  * setXStepLengthCalculator: function, sets the StepLengthCalculator for (the x-axis of) the passed container if compatible.
  * setYStepLengthCalculator: function, sets the StepLengthCalculator for (the y-axis of) the passed container if compatible.
@@ -113,6 +117,7 @@
  * setStepLength: function, sets both the "_xStepLength" and the "_yStepLength" properties to the passed value if compatible.
  * setMinAnimationFrame: function, sets the "_minAnimationFrame" property to the passed value if compatible.
  * setPageScroller: function, sets the "_pageScroller" property to the passed value if compatible.
+ * addOnResizeEndCallback: function, adds the passed function to the "_onResizeEndCallbacks" array. 
  * setDebugMode: function, sets the "_debugMode" property to the passed value if compatible.
  * setErrorLogger: function, sets the "_errorLogger" property to the passed value if compatible.
  * setWarningLogger: function, sets the "_warningLogger" property to the passed value if compatible.
@@ -253,6 +258,7 @@ var uss = {
   _framesTime: DEFAULT_FRAME_TIME,
   _pageScroller: document.scrollingElement || window,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
+  _onResizeEndCallbacks: [],
   _debugMode: "",
   _errorLogger: DEFAULT_ERROR_LOGGER,
   _warningLogger: DEFAULT_WARNING_LOGGER,
@@ -347,6 +353,7 @@ var uss = {
   },
   getPageScroller: () => uss._pageScroller,
   getReducedMotionState: () => uss._reducedMotion,
+  getOnResizeEndCallbacks: () => uss._onResizeEndCallbacks,
   getDebugMode: () => uss._debugMode, 
   setXStepLengthCalculator: (newCalculator = DEFAULT_XSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false, options = {debugString: "setXStepLengthCalculator"}) => {
     if(typeof newCalculator !== "function") {
@@ -432,6 +439,12 @@ var uss = {
       uss._errorLogger(options.debugString, "the newPageScroller to be an HTMLElement or the Window", newPageScroller);
     }
     uss._pageScroller = newPageScroller;
+  },
+  addOnResizeEndCallback: (newCallback, options = {debugString: "addOnResizeEndCallback"}) => {
+    if(typeof newCallback !== "function") {
+      uss._errorLogger(options.debugString, "the newCallback to be a function", newCallback);
+    }
+    uss._onResizeEndCallbacks.push(newCallback);
   },
   setDebugMode: (newDebugMode = "", options = {debugString: "setDebugMode"}) => {
     if(typeof newDebugMode === "string") {
@@ -1739,25 +1752,51 @@ var uss = {
   }
 }
 
-window.addEventListener("resize", () => {
-  //Update the internal window sizes.
-  uss._windowHeight = window.innerHeight; 
-  uss._windowWidth = window.innerWidth;
-}, {passive:true});
 
-try { //Chrome, Firefox & Safari >= 14
-  window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
-    uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
-    uss.stopScrollingAll();
-  }, {passive:true});
-} catch(e) { //Safari < 14
-  window.matchMedia("(prefers-reduced-motion)").addListener(() => {
-    uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
-    uss.stopScrollingAll();
-  }, {passive:true});
-}
 
 {
+  function onResize() {
+    window.removeEventListener("pointerover", onResize, {passive:true});
+    window.removeEventListener("pointerdown", onResize, {passive:true});
+    window.removeEventListener("touchstart", onResize, {passive:true});
+    window.removeEventListener("mousemove", onResize, {passive:true});
+    window.removeEventListener("keydown", onResize, {passive:true});
+    window.removeEventListener("focus", onResize, {passive:true});
+    _resizeHandled = false;
+    
+    //Update the internal window sizes.
+    uss._windowHeight = window.innerHeight; 
+    uss._windowWidth = window.innerWidth;
+
+    //Flush the internal caches.
+    for(const dataArray of uss._containersData.values()) {
+      dataArray[16] = null;
+      dataArray[17] = null;
+      dataArray[18] = null;
+      dataArray[19] = null;
+      dataArray[20] = null;
+      dataArray[21] = null;
+      dataArray[22] = null;
+      dataArray[23] = null;
+    }
+
+    for(const callback of uss._onResizeEndCallbacks) callback();
+  }
+
+  let _resizeHandled = false;  
+  window.addEventListener("resize", () => {
+    if(_resizeHandled) return;
+    
+    window.addEventListener("pointerover", onResize, {passive:true});
+    window.addEventListener("pointerdown", onResize, {passive:true});
+    window.addEventListener("touchstart", onResize, {passive:true});
+    window.addEventListener("mousemove", onResize, {passive:true});
+    window.addEventListener("keydown", onResize, {passive:true});
+    window.addEventListener("focus", onResize, {passive:true});
+    _resizeHandled = true;
+
+  }, {passive:true});
+
   function __ussInit() {
     //Force the calculation of the _scrollbarsMaxDimension at the startup.
     uss.getScrollbarsMaxDimension(true);
@@ -1796,4 +1835,16 @@ try { //Chrome, Firefox & Safari >= 14
 
   if(document.readyState === "complete") __ussInit();
   else window.addEventListener("load", __ussInit, {passive:true, once:true});
+  
+  try { //Chrome, Firefox & Safari >= 14
+    window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
+      uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
+      uss.stopScrollingAll();
+    }, {passive:true});
+  } catch(e) { //Safari < 14
+    window.matchMedia("(prefers-reduced-motion)").addListener(() => {
+      uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
+      uss.stopScrollingAll();
+    }, {passive:true});
+  }
 }

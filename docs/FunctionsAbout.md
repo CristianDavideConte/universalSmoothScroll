@@ -344,6 +344,21 @@ An _italic_ input parameter's name means that it's an optional input.
    </td>
   </tr> 
     
+  <tr id = "getOnResizeEndCallbacksFun">
+   <td rowspan = "1" align = "center">
+    <code>getOnResizeEndCallbacks</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <strong>✗</strong>
+   </td>
+   <td rowspan = "1" align = "center">
+    <strong>✗</strong>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <a href = "./VariablesAbout.md#_onResizeEndCallbacks"><code>_onResizeEndCallbacks</code></a> property.
+   </td>
+  </tr> 
+
   <tr id = "getDebugModeFun">
    <td rowspan = "1" align = "center">
     <code>getDebugMode</code>
@@ -552,6 +567,23 @@ An _italic_ input parameter's name means that it's an optional input.
    </td>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a> property to the passed value if compatible.
+   </td>
+  </tr> 
+
+  <tr id = "addOnResizeEndCallbackFun">
+   <td rowspan = "1" align = "center">
+    <code>addOnResizeEndCallback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+   <strong>
+    <a href = "./FunctionsAbout.md#addOnResizeEndCallback"><code>newCallback</code></a>
+   </strong>
+   </td>
+   <td rowspan = "1" align = "center">
+    <strong>✗</strong>
+   </td>
+   <td rowspan = "1" align = "left">
+    Adds the passed function to the <a href = "./VariablesAbout.md#_onResizeEndCallbacks"><code>_onResizeEndCallbacks</code></a> array. 
    </td>
   </tr> 
        
@@ -1871,6 +1903,20 @@ The following table describes every entry of the `Input Parameters` column of th
   </td>
   <td rowspan = "1" align = "left">
     A number > 0.
+  </td>
+
+  <tr id = "addOnResizeEndCallback">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#addOnResizeEndCallbackFun"><code>addOnResizeEndCallback</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>newCallback</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Function</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    A function that will be executed only once the user has finished resizing the window and has <a href = "./VariablesAbout.md#_onResizeEndCallbacks"><code><i>interacted</i></code></a> with it.
   </td>
   </tr>
     

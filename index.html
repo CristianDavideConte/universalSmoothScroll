@@ -113,88 +113,6 @@
     addElasticMomentumScrolling
   } from "./src/universalsmoothscroll-presets.js"; */
 
-
-
-  //Enables smooth scrolling for touch devices
-  let isFingerDown;
-  function touchHelper(container, init, callback, scrollModifier = delta => {return delta;}, shouldTrackFinger = false, onfingerUp = () => {}) {
-    let _Y = null;
-    let _X = null;
-
-    container.addEventListener("touchstart", event => {
-      event.stopPropagation();
-      if(event.touches.length > 1) return;
-      _Y = null;
-      _X = null;
-      if(event.target.href === undefined) uss.stopScrolling(container);
-      if(shouldTrackFinger) isFingerDown = true;
-    }, {passive:true});
-
-    container.addEventListener("touchend", event => {
-      event.stopPropagation();
-  		if(event.touches.length > 1) return;
-      _Y = null;
-      _X = null;
-      if(shouldTrackFinger) {
-        isFingerDown = false;
-        onfingerUp();
-      }
-    }, {passive:true});
-
-    container.addEventListener("touchmove", event => {
-      event.stopPropagation();
-      event.preventDefault();
-
-  		if(event.touches.length > 1) return;
-      if(typeof init === "function") init();
-
-      if(_X === null) _X = event.changedTouches[0].clientX;
-      if(_Y === null) _Y = event.changedTouches[0].clientY;
-      const _originalDeltaX = _X - event.changedTouches[0].clientX;
-      const _originalDeltaY = _Y - event.changedTouches[0].clientY;
-      _X -= _originalDeltaX;
-      _Y -= _originalDeltaY;
-      const _absDeltaX = Math.abs(_originalDeltaX);
-      const _absDeltaY = Math.abs(_originalDeltaY);
-
-      const _deltaX = _absDeltaX <= 1 ? _originalDeltaX : _originalDeltaX * Math.log(1e5 * _absDeltaX);
-      const _deltaY = _absDeltaY <= 1 ? _originalDeltaY : _originalDeltaY * Math.log(1e5 * _absDeltaY);
-      
-      uss.scrollBy(scrollModifier(_deltaX), scrollModifier(_deltaY), container, callback, true);
-    }, {passive:false});
-  }
-
-
-
-
-
-
-
-/*
-  let backwardPhase;
-  function calcScrollDistance(container, scrollLimit, delta, wasTouchEvent = false) { 
-    const _finalPos = wasTouchEvent ? uss.getScrollYCalculator(container)() : uss.getFinalYPosition(container);
-    const _maxScroll = uss.getMaxScrollY(container);
-
-    if(_finalPos < scrollLimit && delta < 0) {
-      const _progress = _finalPos / scrollLimit;
-      return delta * Math.pow(_progress, 4); //delta * (1-x)^4
-    }
-
-    if(_finalPos > _maxScroll - scrollLimit && delta > 0) {
-      const _progress = (_maxScroll - _finalPos) / scrollLimit;
-      return delta * Math.pow(_progress, 4); //delta * (1-x)^4
-    }
-
-    return delta;
-  }
-  */
-
-
-
-
-
-
   window.init = () => {
     const pageScroller = document.body;
     const defaultEase = EASE_OUT_CUBIC(1000);
@@ -212,113 +130,8 @@
 
     let lastAnchorPressed = null;
 
-
     uss.setPageScroller(pageScroller); //<----------------------------------------------------TODO -> FIX: THIS SHOULDN'T BE NECESSARY
     uss.setStepLengthCalculator(EASE_LINEAR());
-
-
-
-
-
-    
-    
-
-    
-
-    /**
-
-    //Used to bring the easeFunctionSelectorList to initial position
-    const elasticDebounceTime = 70; //Debounce time in ms
-    easeFunctionSelectorList.scrollTop = 2.5 * easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5);
-    uss.setYStepLengthCalculator(
-      EASE_ELASTIC_Y(
-        (r) => r / 20 + 1,
-        EASE_OUT_CUBIC(),
-        (originalTimestamp, timestamp, currentPos, direction, container) => {
-          if(isFingerDown) return 0;
-          backwardPhase = true;
-          const _elasticLimit = 2.5 * (container.scrollHeight / (container.children.length + 5)); //Container's padding-top/bottom
-          const _maxScroll = uss.getMaxScrollY(container);
-          return currentPos <= _elasticLimit              ? direction * (currentPos - _elasticLimit) :
-                 currentPos >= _maxScroll - _elasticLimit ? direction * (currentPos + _elasticLimit - _maxScroll) :
-                 0;
-        },
-        elasticDebounceTime
-    ), easeFunctionSelectorList);
-
-
-
-
-
-    easeFunctionSelectorList.addEventListener("wheel", event => {
-      event.preventDefault();
-      event.stopPropagation();
-      const _scrollDistance = calcScrollDistance(easeFunctionSelectorList, 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)) - 1, event.deltaY);
-      uss.scrollYBy(_scrollDistance, easeFunctionSelectorList, () => backwardPhase = false, backwardPhase);
-      backwardPhase = false;
-    }, {passive:false});
-
-
-
-
-    let scrollbarTimeout;
-    easeFunctionSelectorList.addEventListener("scroll", (event) => {
-      if(isFingerDown || backwardPhase || uss.isYScrolling(easeFunctionSelectorList)) return;
-      clearTimeout(scrollbarTimeout);
-
-      const _elasticLimit = 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)); //Container's padding-top/bottom
-      const _currentPos = uss.getScrollYCalculator(easeFunctionSelectorList)();
-
-      if(_currentPos < _elasticLimit - 1) {
-        scrollbarTimeout = setTimeout(() => {
-                            if(isFingerDown || backwardPhase || uss.isYScrolling(easeFunctionSelectorList)) return;
-                            easeFunctionSelectorList.style.pointerEvents = "none";
-                            easeFunctionSelectorList.style.overflowY = "hidden";
-                            window.requestAnimationFrame(() => {easeFunctionSelectorList.style.overflowY = "scroll"});
-                            uss.scrollYTo(_currentPos - 1, easeFunctionSelectorList, () => {easeFunctionSelectorList.style.pointerEvents = ""; backwardPhase = false;});
-                          }, 1.5 * elasticDebounceTime);
-        return;
-      }
-
-      const _maxScroll = uss.getMaxScrollY(easeFunctionSelectorList);
-      if(_currentPos > _maxScroll - _elasticLimit + 1) {
-        scrollbarTimeout = setTimeout(() => {
-                            if(isFingerDown || backwardPhase || uss.isYScrolling(easeFunctionSelectorList)) return;
-                            easeFunctionSelectorList.style.pointerEvents = "none";
-                            easeFunctionSelectorList.style.overflowY = "hidden";
-                            window.requestAnimationFrame(() => {easeFunctionSelectorList.style.overflowY = "scroll"});
-                            uss.scrollYTo(_currentPos + 1, easeFunctionSelectorList, () => {easeFunctionSelectorList.style.pointerEvents = ""; backwardPhase = false;});
-                          }, 1.5 * elasticDebounceTime);
-      }
-    }, {passive:false});
-
-
-    
-
-
-
-
-
-
-    touchHelper(easeFunctionSelectorList,
-                null,
-                null,
-                delta => {return calcScrollDistance(easeFunctionSelectorList, 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)), delta, true);},
-                true,
-                () => {
-                  const _elasticLimit = 2.5 * (easeFunctionSelectorList.scrollHeight / (easeFunctionSelectorList.children.length + 5)); //Container's padding-top/bottom
-                  const _currentPos = uss.getScrollYCalculator(easeFunctionSelectorList)();
-                  const maxScroll = uss.getMaxScrollY(easeFunctionSelectorList);
-                  if(_currentPos < _elasticLimit - 1) {
-                    uss.scrollYTo(_currentPos - 1, easeFunctionSelectorList, () => backwardPhase = false);
-                  } else if(_currentPos > maxScroll - _elasticLimit + 1) {
-                    uss.scrollYTo(_currentPos + 1, easeFunctionSelectorList, () => backwardPhase = false);
-                  }
-                }
-               );
-
-*/
-
 
     const listItems = easeFunctionSelectorList.children;
     listItems[0].classList.add("selected");
@@ -358,6 +171,40 @@
     document.getElementById("easeInBounce").addEventListener("click",    () => uss.setStepLengthCalculator(EASE_IN_BOUNCE()));
     document.getElementById("easeOutBounce").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_OUT_BOUNCE()));
     document.getElementById("easeInOutBounce").addEventListener("click", () => uss.setStepLengthCalculator(EASE_IN_OUT_BOUNCE()));
+    
+    let bezierTitleTimeout = 0;
+    cubicBezierCustomInputParameters[4].addEventListener("click", () => {
+      window.clearTimeout(bezierTitleTimeout);
+      let u0, u1, u2, u3;
+      const title = document.getElementById("bezierTitle");
+
+      u0 = Number.parseFloat(cubicBezierCustomInputParameters[0].value);
+      u1 = Number.parseFloat(cubicBezierCustomInputParameters[1].value);
+      u2 = Number.parseFloat(cubicBezierCustomInputParameters[2].value);
+      u3 = Number.parseFloat(cubicBezierCustomInputParameters[3].value);
+
+      if(isNaN(u0) || isNaN(u1) || isNaN(u2) || isNaN(u3)) {
+        title.innerHTML = "Parameters must be numbers from 0 to 1";
+        bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
+        return;
+      }
+
+      const _inputCheck = u0 > 1 || u0 < 0 || u1 > 1 || u1 < 0 || u2 > 1 || u2 < 0 || u3 > 1 || u3 < 0;
+      if(_inputCheck) {
+        title.innerHTML = "Parameters must be numbers from 0 to 1";
+        bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
+        return;
+      }
+
+      uss.setStepLengthCalculator(CUSTOM_CUBIC_BEZIER(u0, u1, u2, u3));
+      title.innerHTML = "All set, try it out !";
+      bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
+    }, {passive:true});
+    
+    document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(pageScroller, () => console.log("scrollX stopped"));}, {passive:true});
+    document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(pageScroller, () => console.log("scrollY stopped"));}, {passive:true});
+
+
 
   /*
     function scrollListX(direction) {
@@ -428,42 +275,6 @@
     yScrollerDownButton.addEventListener("mouseout", () => uss.stopScrollingY(yScrollerSection), {passive:false});
     */
    
-    let bezierTitleTimeout = 0;
-    cubicBezierCustomInputParameters[4].addEventListener("click", () => {
-      window.clearTimeout(bezierTitleTimeout);
-      let u0, u1, u2, u3;
-      const title = document.getElementById("bezierTitle");
-
-      u0 = Number.parseFloat(cubicBezierCustomInputParameters[0].value);
-      u1 = Number.parseFloat(cubicBezierCustomInputParameters[1].value);
-      u2 = Number.parseFloat(cubicBezierCustomInputParameters[2].value);
-      u3 = Number.parseFloat(cubicBezierCustomInputParameters[3].value);
-
-      if(isNaN(u0) || isNaN(u1) || isNaN(u2) || isNaN(u3)) {
-        title.innerHTML = "Parameters must be numbers from 0 to 1";
-        bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
-        return;
-      }
-
-      const _inputCheck = u0 > 1 || u0 < 0 || u1 > 1 || u1 < 0 || u2 > 1 || u2 < 0 || u3 > 1 || u3 < 0;
-      if(_inputCheck) {
-        title.innerHTML = "Parameters must be numbers from 0 to 1";
-        bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
-        return;
-      }
-
-      uss.setStepLengthCalculator(CUSTOM_CUBIC_BEZIER(u0, u1, u2, u3));
-      title.innerHTML = "All set, try it out !";
-      bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
-    }, {passive:true});
-    
-    document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(pageScroller, () => console.log("scrollX stopped"));}, {passive:true});
-    document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(pageScroller, () => console.log("scrollY stopped"));}, {passive:true});
-
-    touchHelper(pageScroller, () => uss.setStepLengthCalculator(defaultEase, pageScroller, true));
-    window.init = undefined;
-
-
 
     
 
@@ -566,7 +377,6 @@
       xScrollerSection, 
       {
         onXAxis: "mandatory", 
-        snapDelay: 100,
         speedModifierX: (deltaX, deltaY) => deltaX + deltaY,
         children: _xChildren
       }
