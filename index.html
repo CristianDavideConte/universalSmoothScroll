@@ -6,17 +6,13 @@
     <title>Universal Smooth Scroll</title>
     <link rel = "icon" type = "image/png" href = "./docs/images/favicon.png">
     <link rel = "stylesheet" type = "text/css" href = "./index.css">
-    <script async src = "./src/universalsmoothscroll-dev-helpers.js"></script>
-    <script async src = "./src/universalsmoothscroll-ease-functions.js"></script>
-    <script async src = "./src/universalsmoothscroll-presets.js"></script> <!--  type = "module" -->
     <script async src = "./src/universalsmoothscroll.js"></script>
+    <script async src = "./src/universalsmoothscroll-ease-functions.js"></script>
+    <script async src = "./src/universalsmoothscroll-dev-helpers.js" type = "module"></script>
+    <script async src = "./src/universalsmoothscroll-presets.js" type = "module"></script> <!--  type = "module" -->
   </head>
-  <body onload = "init()">
+  <body>
     <div id = "betaBanner"><p>Beta 6.0.0</p></div>
-    <section id = "stopScrollingButtonsSection">
-      <button id = "stopScrollingX">STOP X</button>
-      <button id = "stopScrollingY">STOP Y</button>
-    </section>
     <nav id = "header">
       <ul>
         <li><a href = "#section1">YELLOW</a></li>
@@ -105,29 +101,32 @@
 </html>
 
 <!--  type = "module" -->
-<script> 
-  /*
+<script type = "module"> 
+  import {  
+    isValidStepLengthCalculator,
+  } from "./src/universalsmoothscroll-dev-helpers.js";
+
   import {
     addMomentumScrolling, 
     addMomentumSnapScrolling, 
-    addElasticMomentumScrolling
-  } from "./src/universalsmoothscroll-presets.js"; */
+    addElasticMomentumScrolling,
+    addSmoothScrollbar
+  } from "./src/universalsmoothscroll-presets.js"; 
 
-  window.init = () => {
+  window.addEventListener("load", () => {
     const pageScroller = document.body;
-    const defaultEase = EASE_OUT_CUBIC(1000);
 
-    let yScrollerSection = document.getElementsByClassName("scrollerSections")[0];
-    let yScrollerUpButton = document.getElementById("yScrollerUp");
-    let yScrollerDownButton = document.getElementById("yScrollerDown");
+    const yScrollerSection = document.getElementById("yScrollerSection");
+    const yScrollerUpButton = document.getElementById("yScrollerUp");
+    const yScrollerDownButton = document.getElementById("yScrollerDown");
 
-    let xScrollerSection = document.getElementsByClassName("scrollerSections")[1];
-    let xScrollerLeftButton = document.getElementById("xScrollerLeft");
-    let xScrollerRightButton = document.getElementById("xScrollerRight");
+    const xScrollerSection = document.getElementById("xScrollerSection");
+    const xScrollerLeftButton = document.getElementById("xScrollerLeft");
+    const xScrollerRightButton = document.getElementById("xScrollerRight");
 
-    let cubicBezierCustomInputParameters = document.getElementsByTagName("input");
-    let easeFunctionSelectorList = document.getElementById("easeFunctionSelectorList");
-
+    const cubicBezierCustomInputParameters = document.getElementsByTagName("input");
+    const easeFunctionSelectorList = document.getElementById("easeFunctionSelectorList");
+    
     let lastAnchorPressed = null;
 
     uss.setPageScroller(pageScroller); //<----------------------------------------------------TODO -> FIX: THIS SHOULDN'T BE NECESSARY
@@ -201,84 +200,7 @@
       bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
     }, {passive:true});
     
-    document.getElementById("stopScrollingX").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingX(pageScroller, () => console.log("scrollX stopped"));}, {passive:true});
-    document.getElementById("stopScrollingY").addEventListener("click", () => {lastAnchorPressed = null; uss.stopScrollingY(pageScroller, () => console.log("scrollY stopped"));}, {passive:true});
-
-
-
-  /*
-    function scrollListX(direction) {
-      const finalXPosition = direction === -1 ? 0 : uss.getMaxScrollX(xScrollerSection);
-      uss.scrollXTo(finalXPosition, xScrollerSection, null, true);
-    }
     
-    
-    uss.setXStepLengthCalculator(EASE_IN_OUT_QUAD(1000), xScrollerSection);
-    xScrollerSection.addEventListener("wheel", event => {
-      event.preventDefault();
-      event.stopPropagation();
-      uss.setXStepLengthCalculator(defaultEase, xScrollerSection, true);
-      uss.scrollXBy(event.deltaY, xScrollerSection, null, false);
-    }, {passive:false});
-    xScrollerSection.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
-
-    xScrollerLeftButton.addEventListener("mousedown",   () => scrollListX(-1), {passive: false});
-    xScrollerRightButton.addEventListener("mousedown",  () => scrollListX(+1), {passive: false});
-    xScrollerLeftButton.addEventListener("touchstart",  () => scrollListX(-1), {passive: false});
-    xScrollerRightButton.addEventListener("touchstart", () => scrollListX(+1), {passive: false});
-
-    xScrollerLeftButton.addEventListener("touchmove",  event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
-    xScrollerRightButton.addEventListener("touchmove", event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
-
-    xScrollerLeftButton.addEventListener("touchend",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
-    xScrollerRightButton.addEventListener("touchend", () => uss.stopScrollingX(xScrollerSection), {passive:false});
-    xScrollerLeftButton.addEventListener("mouseup",   () => uss.stopScrollingX(xScrollerSection), {passive:false});
-    xScrollerRightButton.addEventListener("mouseup",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
-    xScrollerLeftButton.addEventListener("mouseout",  () => uss.stopScrollingX(xScrollerSection), {passive:false});
-    xScrollerRightButton.addEventListener("mouseout", () => uss.stopScrollingX(xScrollerSection), {passive:false});
-   
-
-    function scrollListY(direction) {
-      const finalYPosition = direction === -1 ? 0 : uss.getMaxScrollY(yScrollerSection);
-      uss.scrollYTo(finalYPosition, yScrollerSection, null, true);
-    }
-     */
-
-
-    
-
-
-    
-    /*
-    uss.setYStepLengthCalculator(EASE_OUT_EXPO(2000), yScrollerSection);
-    yScrollerSection.addEventListener("wheel", event => {
-      event.preventDefault();
-      event.stopPropagation();
-      uss.setYStepLengthCalculator(defaultEase, yScrollerSection, true);
-      uss.scrollYBy(event.deltaY, yScrollerSection, null, false);
-    }, {passive:false});
-    yScrollerSection.addEventListener("touchmove", event => event.stopPropagation(), {passive:true});
-
-    yScrollerUpButton.addEventListener("mousedown",    () => scrollListY(-1), {passive: false});
-    yScrollerDownButton.addEventListener("mousedown",  () => scrollListY(+1), {passive: false});
-    yScrollerUpButton.addEventListener("touchstart",   () => scrollListY(-1), {passive: false});
-    yScrollerDownButton.addEventListener("touchstart", () => scrollListY(+1), {passive: false});
-
-    yScrollerUpButton.addEventListener("touchmove",   event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
-    yScrollerDownButton.addEventListener("touchmove", event => {event.preventDefault(); event.stopPropagation();}, {passive: false});
-
-    yScrollerUpButton.addEventListener("touchend",   () => uss.stopScrollingY(yScrollerSection), {passive:false});
-    yScrollerDownButton.addEventListener("touchend", () => uss.stopScrollingY(yScrollerSection), {passive:false});
-    yScrollerUpButton.addEventListener("mouseup",    () => uss.stopScrollingY(yScrollerSection), {passive:false});
-    yScrollerDownButton.addEventListener("mouseup",  () => uss.stopScrollingY(yScrollerSection), {passive:false});
-    yScrollerUpButton.addEventListener("mouseout",   () => uss.stopScrollingY(yScrollerSection), {passive:false});
-    yScrollerDownButton.addEventListener("mouseout", () => uss.stopScrollingY(yScrollerSection), {passive:false});
-    */
-   
-
-    
-
-
 
     addMomentumScrolling(
       pageScroller,
@@ -434,5 +356,5 @@
         _bodyScrollbars[1].updatePosition();
       })
     }, null, true, true);
-  }
+  }, {passive:true});
 </script>

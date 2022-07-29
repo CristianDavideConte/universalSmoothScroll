@@ -1,8 +1,7 @@
 //TODO 
-// - TURN THIS INTO A MODULE
-// - update docs about it
+// - update docs about this being a module
 
-async function isValidStepLengthCalculator(
+export async function isValidStepLengthCalculator(
     fun, 
     options = {
         container: uss._pageScroller, 
@@ -14,6 +13,7 @@ async function isValidStepLengthCalculator(
     //Check if the options parameter is a valid object.
     if (options === null || typeof options !== "object" || Array.isArray(options)) {
         uss._errorLogger("isValidStepLengthCalculator", "the options parameter to be an object", options);
+        return false;
     }
 
     options.debugString = options.debugString || "isValidStepLengthCalculator";
@@ -21,21 +21,25 @@ async function isValidStepLengthCalculator(
     //Check if the passed stepLengthCalculator is a function.
     if(typeof fun !== "function") {
         uss._errorLogger(options.debugString, "the stepLengthCalculator to be a function", fun);
+        return false;
     }
 
     //Check if the passed container is valid.
     if(options.container !== window && !(options.container instanceof HTMLElement)) {
         uss._errorLogger(options.debugString, "the options.container parameter to be an HTMLElement or the Window", options.container);
+        return false;
     }
 
     //Check if the passed totalScrollAmount is valid.
     if(!Number.isFinite(options.totalScrollAmount) || options.totalScrollAmount < 0) {
         uss._errorLogger(options.debugString, "the options.totalScrollAmount parameter to be a positive number", options.totalScrollAmount);
+        return false;
     }
 
     //Check if the passed timeout is valid.
     if(!Number.isFinite(options.timeout) || options.timeout < 0) {
         uss._errorLogger(options.debugString, "the options.timeout parameter to be a positive number", options.timeout);
+        return false;
     }
     
     const _originalTimestamp = performance.now();
@@ -81,9 +85,9 @@ async function isValidStepLengthCalculator(
     } catch (error) {
         try {
             uss._errorLogger(options.debugString, "the stepLengthCalculator to return a valid step value", error);
-        } catch(e){
-            return false;
-        };
+        } catch(e){} 
+        
+        return false;
     }
 
     //The passed stepLengthCalculator may have entered a loop.

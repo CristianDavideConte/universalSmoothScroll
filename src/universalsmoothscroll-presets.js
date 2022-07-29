@@ -1,8 +1,5 @@
 /**
- * TODO:
- * - TURN THIS INTO A MODULE
- * - fix momentum snap scrolling bug that stops the scrolling if an anchor link is hovered
- * 
+ * TODO: 
  * - smooth scrolling with animation allowed
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
  */
@@ -57,8 +54,7 @@ function __testImports() {
  * @param {Function} [options.momentumEasingY] A valid stepLengthCalculator that will control the easing of this scroll-animation (on the y-axis) of container.
  * @param {String} [options.debugString="addMomentumScrolling"] A string internally used to log the name of the most upper level function that caused an error/warning.   
  */
-//export
-function addMomentumScrolling(
+export function addMomentumScrolling(
     container, 
     options = {
         onXAxis: false,
@@ -76,6 +72,7 @@ function addMomentumScrolling(
     //Check if the options parameter is a valid object.
     if (options === null || typeof options !== "object" || Array.isArray(options)) {
         uss._errorLogger("addMomentumScrolling", "the options parameter to be an object", options);
+        return;
     }
 
     const _onXAxis = options.onXAxis;
@@ -90,11 +87,13 @@ function addMomentumScrolling(
     //If needed, check if the x-axis of the passed container is actually scrollable. 
     if(_onXAxis && uss.getMaxScrollX(container, false, options) < 1) {
         uss._errorLogger(options.debugString, "a container that can be scrolled on the x-axis", container);
+        return;
     }
 
     //If needed, check if the y-axis of the passed container is actually scrollable. 
     if(_onYAxis && uss.getMaxScrollY(container, false, options) < 1) {
         uss._errorLogger(options.debugString, "a container that can be scrolled on the y-axis", container);
+        return;
     }
 
     const _speedModifierX = typeof options.speedModifierX === "function" ? options.speedModifierX : (deltaX, deltaY) => deltaX; 
@@ -104,7 +103,7 @@ function addMomentumScrolling(
     const _easingX = options.momentumEasingX || function(remaning) {return remaning / 25 + 1};
     const _easingY = options.momentumEasingY || function(remaning) {return remaning / 25 + 1};
 
-    let _isPointerDown = false;
+    let _pointersDownCounter = 0;
     let _callbackOnPointerUp = false;
     let _momentumScrolling,
         _axis;
@@ -112,7 +111,7 @@ function addMomentumScrolling(
     //Execute the options.callback only if it's a function and the user insn't holding 
     //the finger down. Wait for the pointerup event otherwise.
     const _callback = typeof options.callback === "function" ? () => {
-        if(_isPointerDown) {
+        if(_pointersDownCounter) {
             _callbackOnPointerUp = true;
             return;
         } 
@@ -166,13 +165,15 @@ function addMomentumScrolling(
         }
     } 
     
-    const _handlePointerUpEvent = () => {
-        _isPointerDown = false;
-        if(_callbackOnPointerUp) {
-            options.callback();
-            _callbackOnPointerUp = false;
+    const _handlePointerUpEvent = () => {        
+        _pointersDownCounter--;
+        if(_pointersDownCounter === 0) {
+            if(_callbackOnPointerUp) {
+                options.callback();
+                _callbackOnPointerUp = false;
+            }
+            window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:true});
         }
-        window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:true});
     } 
     
     container.addEventListener("wheel", (event) => {
@@ -192,8 +193,12 @@ function addMomentumScrolling(
     }, {passive:false});
 
     container.addEventListener("pointerdown", (event) => {
-        _isPointerDown = true;
-        window.addEventListener("pointerup", _handlePointerUpEvent);
+        if(event.pointerType === "mouse") return;
+
+        if(!_pointersDownCounter) {
+            window.addEventListener("pointerup", _handlePointerUpEvent);
+        }
+        _pointersDownCounter++;
     }, {passive:true});
 }
 
@@ -232,8 +237,7 @@ function addMomentumScrolling(
  *                                            Any other value if you want element to be center-aligned on both axes.
  * @param {String} [options.debugString="addMomentumScrolling"] A string internally used to log the name of the most upper level function that caused an error/warning.   
  */
-//export
-function addMomentumSnapScrolling(
+export function addMomentumSnapScrolling(
     container, 
     options = {
         onXAxis,
@@ -256,6 +260,7 @@ function addMomentumSnapScrolling(
     //Check if the options parameter is a valid object.
     if (options === null || typeof options !== "object" || Array.isArray(options)) {
         uss._errorLogger("addMomentumSnapScrolling", "the options parameter to be an object", options);
+        return;
     }
 
     options.debugString = options.debugString || "addMomentumSnapScrolling";
@@ -263,11 +268,13 @@ function addMomentumSnapScrolling(
     //Check if the container is a valid container.
     if(container !== window && !(container instanceof HTMLElement)) {
         uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+        return;
     }
 
     //Check if the options.children parameter is an array.
     if(!Array.isArray(options.children)) {
         uss._errorLogger(options.debugString, "the options.children parameter to be an array", options.children);
+        return;
     }
 
     //Check the elements of the options.children parameter are valid.
@@ -278,11 +285,13 @@ function addMomentumSnapScrolling(
         //Check if the child is an object.
         if (_child === null || typeof _child !== "object" || Array.isArray(_child)) {
             uss._errorLogger(options.debugString, "the elements of options.children to be objects", _child);
+            return;
         }
 
         //Check if child.element is an HTMLElement.
         if(!(_child.element instanceof HTMLElement)) {
             uss._errorLogger(options.debugString, "the element parameter of each options.children object to be an HTMLElement", _child.element);
+            return;
         }
 
         //Remove children that cannot be snap-scrolled by scrolling the passed container. 
@@ -502,8 +511,7 @@ function addMomentumSnapScrolling(
  *                                   options.children[1] should point to the element that will be right/bottom aligned after the elastic part of this scroll-animation.
  * @param {String} [options.debugString="addMomentumScrolling"] A string internally used to log the name of the most upper level function that caused an error/warning.   
  */
-//export
-function addElasticMomentumScrolling(
+export function addElasticMomentumScrolling(
     container, 
     options = {
         onXAxis: false,
@@ -523,6 +531,7 @@ function addElasticMomentumScrolling(
     //Check if the options parameter is a valid object.
     if (options === null || typeof options !== "object" || Array.isArray(options)) {
         uss._errorLogger("addElasticMomentumScrolling", "the options parameter to be an object", options);
+        return;
     }
 
     options.debugString = options.debugString || "addElasticMomentumScrolling";
@@ -530,6 +539,7 @@ function addElasticMomentumScrolling(
     //Check if the container is a valid container.
     if(container !== window && !(container instanceof HTMLElement)) {
         uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+        return;
     }
         
     const _children = options.children;
@@ -538,16 +548,19 @@ function addElasticMomentumScrolling(
     //Check if the options.children parameter is an array.
     if(!Array.isArray(_children)) {
         uss._errorLogger(options.debugString, "the options.children parameter to be an array", _children);
+        return;
     }
 
     //Check if the options.children parameter has at most 2 elements.
     if(_childrenNum < 1 || _childrenNum > 2) {
         uss._errorLogger(options.debugString, "the options.children parameter to have 1 or 2 elements.", _children);
+        return;
     }
 
     //Check if the first element of the options.children parameter is a valid object.
     if(_children[0] === null || typeof _children[0] !== "object" || Array.isArray(_children[0])) {
         uss._errorLogger(options.debugString, "the elements of options.children to be objects", _children[0]);
+        return;
     }
 
     //When the options.children of addMomentumSnapScrolling will contain only  
@@ -558,6 +571,7 @@ function addElasticMomentumScrolling(
     if(_childrenNum > 1) {
         if(_children[1] === null || typeof _children[1] !== "object" || Array.isArray(_children[1])) {
             uss._errorLogger(options.debugString, "the elements of options.children to be objects", _children[1]);
+            return;
         }
         
         //When the options.children of addMomentumSnapScrolling will contain only  
@@ -678,26 +692,35 @@ function addElasticMomentumScrolling(
     addMomentumSnapScrolling(container, options)(); 
 }
 
-
-
-
-
-
-
-
-
-
-//export
-function addSmoothScrollbar(
+/**
+ * This function adds the specified smooth scrollbars onto the passed container.
+ * These scrollbars can controll the momentum scrolling of the passed container. 
+ * @param {*} container An HTMLElement.
+ * @param {Object} options An object which containing the scrollbar's preferences/properties listed below.
+ * @param {Boolean} [options.onXAxis=false] True if a smooth scrollbar should be added on the x-axis of container, false otherwise.
+ * @param {Boolean} [options.onYAxis=false] True if a smooth scrollbar should be added on the y-axis of container, false otherwise.
+ * @param {Boolean} [options.hideScrollbarX=false] True if a data-uss-scrollbar-hidden attribute should indicate (true/false) if the scrollbar on the x-axis of container 
+ *                                                 is currently engaged, false otherwise.
+ * @param {Boolean} [options.hideScrollbarY=false] True if a data-uss-scrollbar-hidden attribute should indicate (true/false) if the scrollbar on the y-axis of container 
+ *                                                 is currently engaged, false otherwise.
+ * @param {Number} [options.thumbSize=17] The default width of the scrollbar on the y-axis of container and 
+ *                                        the default height of the scrollbar on the x-axis of container. 
+ * @param {String} [options.transitionDurationX="0.2s"] This is the value of "transition-duration" css property of the scrollbar-thumb on the x-axis of container
+ *                                                      whenever the scrollbar is not engaged, otherwise it's "0s". 
+ * @param {String} [options.transitionDurationY="0.2s"] This is the value of "transition-duration" css property of the scrollbar-thumb on the y-axis of container
+ *                                                      whenever the scrollbar is not engaged, otherwise it's "0s". 
+ * @param {String} [options.debugString="addSmoothScrollbar"] A string internally used to log the name of the most upper level function that caused an error/warning.   
+ */
+export function addSmoothScrollbar(
     container,
     options = {
         onXAxis: false,
         onYAxis: false,
         hideScrollbarX: false,
         hideScrollbarY: false,
-        thumbSize,
-        transitionDurationX,     
-        transitionDurationY,      
+        thumbSize: 17,
+        transitionDurationX: "0.2s",     
+        transitionDurationY: "0.2s",      
         debugString: "addSmoothScrollbar",
     }
 ) {
@@ -706,22 +729,33 @@ function addSmoothScrollbar(
     //Check if the options parameter is a valid object.
     if (options === null || typeof options !== "object" || Array.isArray(options)) {
         uss._errorLogger("addSmoothScrollbar", "the options parameter to be an object", options);
+        return;
     }
 
     options.debugString = options.debugString || "addSmoothScrollbar";
 
     //Check if the container is a valid container.
     const _containerIsElement = container instanceof HTMLElement;
-    if(container !== window && !_containerIsElement) {
-        uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(!_containerIsElement) {
+        uss._errorLogger(options.debugString, "the container to be an HTMLElement", container);
+        return;
+    }
+    
+    //Check if the thumb size is a finite number.
+    const _scrollbarThumbSize = options.thumbSize || 17;
+    if(!Number.isFinite(_scrollbarThumbSize)) {
+        uss._errorLogger(options.debugString, "the options.thumbSize to be a finite number", options.thumbSize);
+        return;
     }
     
     const _onXAxis = options.onXAxis;
     const _onYAxis = options.onYAxis;
+    let _scrollbars = [];
     
     //Check if at least one axis was requested to be momentum-scrolled.
     if(!_onXAxis && !_onYAxis) {
         uss._warningLogger(options.debugString, "was invoked but neither onXAxis or onYAxis were set");
+        return _scrollbars;
     }
 
     //Check if the parent node has position:static because it breaks the scrollbars positions. 
@@ -731,9 +765,6 @@ function addSmoothScrollbar(
     ) {
         uss._warningLogger(container.parentNode, "has position:static which may affect the scrollbars positioning")
     }
-
-    let _scrollbars = [];
-    const _scrollbarThumbSize = options.thumbSize || 17;
     
     //Any ussmoverequest is handled by the scrollbars not by the container itself.
     container.addEventListener("ussmoverequest", (event) => {
@@ -758,13 +789,14 @@ function addSmoothScrollbar(
         //Check if the x-axis of the passed container is actually scrollable. 
         if(uss.getMaxScrollX(container, true, options) < 1) {
             uss._errorLogger(options.debugString, "a container that can be scrolled on the x-axis", container);
+            return;
         }
 
         const _offset = _onYAxis ? _scrollbarThumbSize : 0;
         const _scrollbar = {
             track: document.createElement("div"),
             thumb: document.createElement("div"),
-            engaged: false,
+            pointerId: null,
             delayedScroller: null,
             updatePosition: () => {
                 _moveScrollbar(
@@ -812,11 +844,16 @@ function addSmoothScrollbar(
   
         //Scroll the container on a pointermove event by the correspoing amount.
         const _scrollContainer = (event) => { 
+            const _eventId = event.detail.pointerId || event.pointerId;
+
+            //Only one pointer at a time can control the scrollbar.
+            if(_scrollbar.pointerId !== null && _eventId !== _scrollbar.pointerId) return;
+
+            const __delta = event.detail.movementX || event.movementX; 
+            if(__delta === 0) return; 
+            
             event.preventDefault();
             event.stopPropagation();
-
-            const __delta = event.movementX; 
-            if(__delta === 0) return; 
 
             const __containerScrollSize = uss.getMaxScrollX(container, false, options);
             const __trackSize = _scrollbar.track.clientWidth;
@@ -850,7 +887,7 @@ function addSmoothScrollbar(
 
             //The user is still holding down the scrollbar, 
             //this request will be handled on the pointerup event if needed. 
-            if(!_scrollbar.selfMoveRequest && _scrollbar.engaged) {
+            if(!_scrollbar.selfMoveRequest && _scrollbar.pointerId !== null) {
                 _scrollbar.delayedScroller = event.detail.scroller;
                 return;
             }
@@ -869,7 +906,7 @@ function addSmoothScrollbar(
 
             const __translateAmount = __scrolledPercentage * (__trackSize - __thumbSize);
             
-            _scrollbar.thumb.style.transitionDuration = _scrollbar.engaged ? "0s" : options.transitionDurationX || "0.2s";
+            _scrollbar.thumb.style.transitionDuration = _scrollbar.pointerId !== null ? "0s" : options.transitionDurationX || "0.2s";
             _scrollbar.thumb.style.transform = "translateX(" + __translateAmount + "px)";
             _scrollbar.selfMoveRequest = false;
         }
@@ -889,12 +926,13 @@ function addSmoothScrollbar(
         //Check if the y-axis of the passed container is actually scrollable. 
         if(uss.getMaxScrollY(container, true, options) < 1) {
             uss._errorLogger(options.debugString, "a container that can be scrolled on the y-axis", container);
+            return;
         }
 
         const _scrollbar = {
             track: document.createElement("div"),
             thumb: document.createElement("div"),
-            engaged: false,
+            pointerId: null,
             delayedScroller: null,
             updatePosition: () => {
                 _moveScrollbar(
@@ -942,11 +980,16 @@ function addSmoothScrollbar(
   
         //Scroll the container on a pointermove event by the correspoing amount.
         const _scrollContainer = (event) => {  
-            event.preventDefault();
-            event.stopPropagation();
-            
-            const __delta = event.movementY; 
+            const _eventId = event.detail.pointerId || event.pointerId;
+
+            //Only one pointer at a time can control the scrollbar.
+            if(_scrollbar.pointerId !== null && _eventId !== _scrollbar.pointerId) return;
+     
+            const __delta = event.detail.movementY || event.movementY; 
             if(__delta === 0) return; 
+
+            event.preventDefault();
+            event.stopPropagation();       
 
             const __containerScrollSize = uss.getMaxScrollY(container, false, options);
             const __trackSize = _scrollbar.track.clientHeight;
@@ -980,7 +1023,7 @@ function addSmoothScrollbar(
 
             //The user is still holding down the scrollbar, 
             //this request will be handled on the pointerup event if needed. 
-            if(!_scrollbar.selfMoveRequest && _scrollbar.engaged) {
+            if(!_scrollbar.selfMoveRequest && _scrollbar.pointerId !== null) {
                 _scrollbar.delayedScroller = event.detail.scroller;
                 return;
             }
@@ -998,7 +1041,7 @@ function addSmoothScrollbar(
 
             const __translateAmount = __scrolledPercentage * (__trackSize - __thumbSize);
             
-            _scrollbar.thumb.style.transitionDuration = _scrollbar.engaged ? "0s" : options.transitionDurationY || "0.2s";
+            _scrollbar.thumb.style.transitionDuration = _scrollbar.pointerId !== null ? "0s" : options.transitionDurationY || "0.2s";
             _scrollbar.thumb.style.transform = "translateY(" + __translateAmount + "px)";
             _scrollbar.selfMoveRequest = false;
         }
@@ -1015,29 +1058,30 @@ function addSmoothScrollbar(
     }
 
     function _enableScrollbar(scrollbar, scrollContainer, moveScrollbar, hideScrollbar) {
-        const __setScrollbarEngagement = (event, isEngaged) => {
+        const __setScrollbarEngagement = (event, id) => {
             event.preventDefault();
-            event.stopPropagation();            
-            scrollbar.engaged = isEngaged;
+            event.stopPropagation();
+            scrollbar.pointerId = id;
         } 
 
         let __hideScrollbarIfNeeded = () => {};
 
         //Engage the scrollbar.
         scrollbar.thumb.addEventListener("pointerdown", (event) => {
-            __setScrollbarEngagement(event, true);     
+            //Only one pointer at a time can control the scrollbar.
+            if(scrollbar.pointerId !== null) return;
+            
+            __setScrollbarEngagement(event, event.pointerId);     
             window.addEventListener("pointerup", disengageScrollbar, {passive:false});
             window.addEventListener("pointermove", scrollContainer, {passive:false});   
-                        
-            if(uss.isScrolling(container)) {
-                uss.stopScrolling(container);
-                scrollbar.updatePosition();
-            }
         }, {passive:false});
         
         //Disengage the scrollbar.
-        function disengageScrollbar(event) {      
-            __setScrollbarEngagement(event, false);  
+        function disengageScrollbar(event) {    
+            //Wait for the initial pointer to leave the touch-surface.
+            if(event.pointerId !== scrollbar.pointerId) return;
+
+            __setScrollbarEngagement(event, null);  
             window.removeEventListener("pointermove", scrollContainer, {passive:false});     
             window.removeEventListener("pointerup", disengageScrollbar, {passive:false});   
 
@@ -1056,15 +1100,26 @@ function addSmoothScrollbar(
         //the corresponding position and the scrollbar thumb should be moved accordingly.
         scrollbar.track.addEventListener("pointerdown", (event) => {
             const _scrollbarThumbPos = scrollbar.thumb.getBoundingClientRect();
-            const _scrollbarCenterX = _scrollbarThumbPos.left + _scrollbarThumbPos.width * 0.5;  
+            const _scrollbarCenterX = _scrollbarThumbPos.left + _scrollbarThumbPos.width * 0.5; 
             const _scrollbarCenterY = _scrollbarThumbPos.top + _scrollbarThumbPos.height * 0.5;  
 
+            //Stop the container without losing the callbacks.
+            if(uss.isScrolling(container)) {
+                const _containerData = uss._containersData.get(container) || [];
+                const _currentXPos = uss.getScrollXCalculator(container)();
+                const _currentYPos = uss.getScrollYCalculator(container)();
+                _containerData[2] = _currentXPos; //finalXPos = currentXPos
+                _containerData[3] = _currentYPos; //finalYPos = currentYPos
+            }
+            
             scrollContainer(
-                new PointerEvent(
-                    "pointermove",
+                new CustomEvent(
+                    "pointerevent",
                     {
-                        movementX: event.clientX - _scrollbarCenterX,
-                        movementY: event.clientY - _scrollbarCenterY,
+                        detail: {
+                            movementX: event.clientX - _scrollbarCenterX,
+                            movementY: event.clientY - _scrollbarCenterY,
+                        }
                     }
                 )
             );
@@ -1078,7 +1133,7 @@ function addSmoothScrollbar(
             //The scrollbar never hidden if the pointer is on it.
             scrollbar.track.addEventListener("pointerenter", () => {
                 __pointerIsHoveringTrack = true;
-                if(scrollbar.engaged) return;
+                if(scrollbar.pointerId !== null) return;
                 scrollbar.track.dataset.ussScrollbarHidden = false; 
             }, {passive:true});
             
@@ -1086,7 +1141,7 @@ function addSmoothScrollbar(
             //and the scrollbar thumb isn't being used.
             scrollbar.track.addEventListener("pointerleave", () => {
                 __pointerIsHoveringTrack = false;
-                if(scrollbar.engaged) return;
+                if(scrollbar.pointerId !== null) return;
                 scrollbar.thumb.style.transitionDuration = "";
                 scrollbar.track.dataset.ussScrollbarHidden = true; 
             }, {passive:true});
