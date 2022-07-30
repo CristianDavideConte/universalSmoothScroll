@@ -207,21 +207,22 @@
       {
         onYAxis: true,
         onXAxis: true,
-        momentumEasingX: EASE_OUT_CUBIC(1000),
-        momentumEasingY: EASE_OUT_CUBIC(1000),
+        momentumEasingX: EASE_OUT_CUBIC(700),
+        momentumEasingY: EASE_OUT_CUBIC(700),
         speedModifierX: (deltaX, deltaY) => {
           if(lastAnchorPressed && uss.isScrolling()) {
             uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
           }
           lastAnchorPressed = null;
-          return deltaX;
+          return _bodyScrollbars[0].pointerId === null && Math.abs(deltaX) < 100 ? 2.5 * deltaX : deltaX;
         },
         speedModifierY: (deltaX, deltaY) => {
           if(lastAnchorPressed && uss.isScrolling()) {
             uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
           }
           lastAnchorPressed = null;
-          return deltaY;
+          console.log(deltaY)
+          return _bodyScrollbars[1].pointerId === null && Math.abs(deltaY) < 100 ? 2.5 * deltaY : deltaY;
         },
       }
     );
@@ -261,7 +262,17 @@
         align: "end"
       }
     ];
-    addMomentumSnapScrolling(yScrollerSection, {onYAxis: "mandatory", children: _yChildren});
+    addMomentumSnapScrolling(
+      yScrollerSection, 
+      {
+        onYAxis: "mandatory", 
+        speedModifierY: (deltaX, deltaY) => {
+          if(_yScrollerScrollbars[0].pointerId === null && Math.abs(deltaY) < 100) deltaY *= 2.5;
+          return deltaY;
+        },
+        children: _yChildren
+      }
+    );
     
     const __xChildren = Array.from(xScrollerSection.children);
     const _xChildren = [
@@ -299,7 +310,11 @@
       xScrollerSection, 
       {
         onXAxis: "mandatory", 
-        speedModifierX: (deltaX, deltaY) => deltaX + deltaY,
+        speedModifierX: (deltaX, deltaY) => {
+          if(_xScrollerScrollbars[0].pointerId === null && Math.abs(deltaX) < 100) deltaX *= 2.5;
+          if(_xScrollerScrollbars[0].pointerId === null && Math.abs(deltaY) < 100) deltaY *= 2.5;
+          return deltaX + deltaY;
+        },
         children: _xChildren
       }
     );
@@ -317,7 +332,7 @@
         }
     )
 
-    const _xScrollerSectionScrollbars = addSmoothScrollbar(
+    const _xScrollerScrollbars = addSmoothScrollbar(
         xScrollerSection, 
         {
             onXAxis:true,
@@ -326,7 +341,7 @@
         }
     )
     
-    const _yScrollerSectionScrollbars = addSmoothScrollbar(
+    const _yScrollerScrollbars = addSmoothScrollbar(
         yScrollerSection, 
         {
             onYAxis:true,
