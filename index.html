@@ -210,38 +210,31 @@
         momentumEasingX: EASE_OUT_CUBIC(700),
         momentumEasingY: EASE_OUT_CUBIC(700),
         speedModifierX: (deltaX, deltaY) => {
-          if(lastAnchorPressed && uss.isScrolling()) {
-            uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
-          }
-          lastAnchorPressed = null;
           return _bodyScrollbars[0].pointerId === null && Math.abs(deltaX) < 100 ? 2.5 * deltaX : deltaX;
         },
         speedModifierY: (deltaX, deltaY) => {
-          if(lastAnchorPressed && uss.isScrolling()) {
-            uss.stopScrolling(pageScroller, () => console.log("Scrolling interrupted on both axises by the User"));
-          }
-          lastAnchorPressed = null;
-          console.log(deltaY)
           return _bodyScrollbars[1].pointerId === null && Math.abs(deltaY) < 100 ? 2.5 * deltaY : deltaY;
         },
       }
     );
 
+    const _elasticOptions = {
+      onYAxis: true, 
+      elasticAmount: 0.25 * window.innerHeight, //25vh in css
+      children: [
+        {
+          element: easeFunctionSelectorList.children[0]
+        }, 
+        {
+          element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1]
+        },
+      ]
+    }
     addElasticMomentumScrolling(
       easeFunctionSelectorList,
-      {
-        onYAxis: true, 
-        elasticAmount: 0.25 * window.innerHeight, //25vh in css
-        children: [
-          {
-            element: easeFunctionSelectorList.children[0]
-          }, 
-          {
-            element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1]
-          },
-        ]
-      }
+      _elasticOptions
     );
+    uss.addOnResizeEndCallback(() => _elasticOptions.elasticAmount = 0.25 * window.innerHeight);
 
     const __yChildren = Array.from(yScrollerSection.children);
     const _yChildren = [
@@ -360,7 +353,7 @@
     )
 
     uss.hrefSetup(null, true, (anchor, el) => {
-      if(anchor !== window && lastAnchorPressed === anchor && uss.isScrolling()) return false;
+      if(anchor && lastAnchorPressed === anchor && uss.isScrolling()) return false;
       lastAnchorPressed = anchor;
 
       //Unsets the temporary StepLengthCalculator if there's one.

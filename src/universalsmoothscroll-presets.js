@@ -240,7 +240,8 @@ export function addMomentumScrolling(
  *                                   - align: "start" if you want element to be left-aligned on the x-axis and top-aligned on the y-axis.
  *                                            "end" if you want element to be right-aligned on the x-axis and bottom-aligned on the y-axis.
  *                                            Any other value if you want element to be center-aligned on both axes.
- * @param {String} [options.debugString="addMomentumScrolling"] A string internally used to log the name of the most upper level function that caused an error/warning.   
+ * @param {String} [options.debugString="addMomentumScrolling"] A string internally used to log the name of the most upper level function that caused an error/warning.  
+ * @returns {Function} A function that when invoked forces container to check and snap-scroll-into-view one of children.element if needed.  
  */
 export function addMomentumSnapScrolling(
     container, 
@@ -515,6 +516,7 @@ export function addMomentumSnapScrolling(
  *                                   options.children[0] should point to the element that will be left/top aligned after the elastic part of this scroll-animation. 
  *                                   options.children[1] should point to the element that will be right/bottom aligned after the elastic part of this scroll-animation.
  * @param {String} [options.debugString="addMomentumScrolling"] A string internally used to log the name of the most upper level function that caused an error/warning.   
+ * @returns {Function} A function that when invoked forces container to be elastic-scrolled if needed.  
  */
 export function addElasticMomentumScrolling(
     container, 
@@ -694,7 +696,10 @@ export function addElasticMomentumScrolling(
     options.elasticEasingY = undefined;
     options.snapDelay = 60; //Debounce time
 
-    addMomentumSnapScrolling(container, options)(); 
+    const _elasticScroll = addMomentumSnapScrolling(container, options);
+    _elasticScroll();
+    
+    return _elasticScroll; 
 }
 
 /**
@@ -714,7 +719,14 @@ export function addElasticMomentumScrolling(
  *                                                      whenever the scrollbar is not engaged, otherwise it's "0s". 
  * @param {String} [options.transitionDurationY="0.2s"] This is the value of "transition-duration" css property of the scrollbar-thumb on the y-axis of container
  *                                                      whenever the scrollbar is not engaged, otherwise it's "0s". 
- * @param {String} [options.debugString="addSmoothScrollbar"] A string internally used to log the name of the most upper level function that caused an error/warning.   
+ * @param {String} [options.debugString="addSmoothScrollbar"] A string internally used to log the name of the most upper level function that caused an error/warning. 
+ * @returns {Array} An array containing one object for each scrollbar requested.
+ *                  Each scrollbar object has this properties:
+ *                  - track {HTMLElement} (public)
+ *                  - thumb {HTMLElement} (public)
+ *                  - pointerId {Number} (private)
+ *                  - delayedScroller {Function} (private)
+ *                  - updatePosition {Function} (public)
  */
 export function addSmoothScrollbar(
     container,
@@ -803,20 +815,6 @@ export function addSmoothScrollbar(
             thumb: document.createElement("div"),
             pointerId: null,
             delayedScroller: null,
-            updatePosition: () => {
-                _moveScrollbar(
-                    new CustomEvent(
-                        "ussmoverequest", 
-                        { 
-                            cancelable: true,
-                            detail: {
-                                axis: 0,
-                                scroller: () => {}, 
-                            }
-                        }
-                    )
-                )
-            }
         }
 
         //Default dataset.
@@ -848,13 +846,12 @@ export function addSmoothScrollbar(
         _scrollbar.thumb.tabIndex = -1;
   
         //Scroll the container on a pointermove event by the correspoing amount.
+        let _selfMoveRequest = false;
         const _scrollContainer = (event) => { 
-            const _eventId = event.pointerId;
-
             //Only one pointer at a time can control the scrollbar.
-            if(_scrollbar.pointerId !== null && _eventId !== _scrollbar.pointerId) return;
+            if(_scrollbar.pointerId !== event.pointerId) return;
 
-            const __delta = event.detail.movementX || event.movementX; 
+            const __delta = event.movementX; 
             if(__delta === 0) return; 
             
             event.preventDefault();
@@ -866,8 +863,8 @@ export function addSmoothScrollbar(
             const __scrollMultiplier = __containerScrollSize / __trackSize * 1.3325581395348836;
             const __finalDelta = __delta * __scrollMultiplier; 
 
+            _selfMoveRequest = true;
             _scrollbar.delayedScroller = null;
-            _scrollbar.selfMoveRequest = true;
 
             //Synchronous call that will execute _moveScrollbar after it.
             container.dispatchEvent(
@@ -881,24 +878,25 @@ export function addSmoothScrollbar(
             );
         }
 
-        //Serve a ussmoverequest event by moving the scrollbar to the correct position.
+        //Handle a ussmoverequest event by moving the scrollbar to the correct position.
         const _moveScrollbar = (event) => {
             //The event will be handled by the other scrollbar.
             if(event.detail.axis === 1) return;
 
-            //Tell the sender this event has been handled.
-            const __alreadyHandled = event.defaultPrevented;
+            //Check if the scroll position of the container has already been updated,
+            //if not use the scroller property of this event to update it. 
+            const __scrollPositionAlreadyUpdated = event.defaultPrevented;
             event.preventDefault();
 
             //The user is still holding down the scrollbar, 
             //this request will be handled on the pointerup event if needed. 
-            if(!_scrollbar.selfMoveRequest && _scrollbar.pointerId !== null) {
+            if(!_selfMoveRequest && _scrollbar.pointerId !== null) {
                 _scrollbar.delayedScroller = event.detail.scroller;
                 return;
             }
             
             //Update the container's final positions. 
-            if(!__alreadyHandled) event.detail.scroller();
+            if(!__scrollPositionAlreadyUpdated) event.detail.scroller();
 
             const __thumbSize = _scrollbar.thumb.clientWidth;
             const __trackSize = _scrollbar.track.clientWidth;
@@ -908,12 +906,11 @@ export function addSmoothScrollbar(
                                    __scrolledPercentage < 0 ? 0 : 
                                    __scrolledPercentage;
 
-
             const __translateAmount = __scrolledPercentage * (__trackSize - __thumbSize);
             
             _scrollbar.thumb.style.transitionDuration = _scrollbar.pointerId !== null ? "0s" : options.transitionDurationX || "0.2s";
             _scrollbar.thumb.style.transform = "translateX(" + __translateAmount + "px)";
-            _scrollbar.selfMoveRequest = false;
+            _selfMoveRequest = false;
         }
 
         const _handlePointerDownOnTrack = (event) => {
@@ -924,23 +921,24 @@ export function addSmoothScrollbar(
             //is not controlling the scrollbar with a pointer.
             if(_scrollbar.pointerId !== null) return;
 
-            uss.stopScrollingX(container);
-            const _thumbPos = _scrollbar.thumb.getBoundingClientRect();
-            const _thumbCenterX = _thumbPos.left + _thumbPos.width * 0.5;
+            //The final scroll-position of container is proportional to  
+            //where the user has clicked inside the scrollbar track.
+            const __currentFinalPos = uss.getFinalXPosition(container);
+            const __containerScrollSize = uss.getMaxScrollX(container, false, options);
+            const __trackSize = _scrollbar.track.clientWidth;
+            const __finalPos = event.offsetX / __trackSize * __containerScrollSize; 
 
-            _scrollContainer(
-                new CustomEvent(
-                    "pointermove",
-                    {
-                        detail: {
-                            movementX: (event.offsetX - _thumbCenterX) / _scrollbar.track.clientWidth * uss.getMaxScrollX(container, false, options)
-                        }
-                    }
-                )
-            );
+            //The scrollbar will already be in the right position, no action needed.
+            if(__currentFinalPos === __finalPos) return;
+
+            //Scroll the container to the calculated position, inform the container that
+            //it's being scrolled so that any effect (snap, elastic, etc...) is applied
+            //and update the scrollbar position.
+            uss.scrollXTo(__finalPos, container);
+            _scrollbar.updatePosition();
         }
 
-        _enableScrollbar(_scrollbar, _scrollContainer, _moveScrollbar, _handlePointerDownOnTrack, options.hideScrollbarX);
+        _scrollbarSetup(_scrollbar, _scrollContainer, _moveScrollbar, _handlePointerDownOnTrack, options.hideScrollbarX);
 
         //Add the scrollbar to the container.
         _scrollbar.track.appendChild(_scrollbar.thumb);
@@ -963,20 +961,6 @@ export function addSmoothScrollbar(
             thumb: document.createElement("div"),
             pointerId: null,
             delayedScroller: null,
-            updatePosition: () => {
-                _moveScrollbar(
-                    new CustomEvent(
-                        "ussmoverequest", 
-                        { 
-                            cancelable: true,
-                            detail: {
-                                axis: 1,
-                                scroller: () => {}, 
-                            }
-                        }
-                    )
-                )
-            }
         }
     
         //Default dataset.
@@ -1008,13 +992,12 @@ export function addSmoothScrollbar(
         _scrollbar.thumb.tabIndex = -1;
   
         //Scroll the container on a pointermove event by the correspoing amount.
+        let _selfMoveRequest = false;
         const _scrollContainer = (event) => {  
-            const _eventId = event.pointerId;
-
             //Only one pointer at a time can control the scrollbar.
-            if(_scrollbar.pointerId !== null && _eventId !== _scrollbar.pointerId) return;
+            if(_scrollbar.pointerId !== event.pointerId) return;
      
-            const __delta = event.detail.movementY || event.movementY; 
+            const __delta = event.movementY; 
             if(__delta === 0) return; 
 
             event.preventDefault();
@@ -1026,8 +1009,8 @@ export function addSmoothScrollbar(
             const __scrollMultiplier = __containerScrollSize / __trackSize * 1.3325581395348836;
             const __finalDelta = __delta * __scrollMultiplier; 
 
+            _selfMoveRequest = true;
             _scrollbar.delayedScroller = null;
-            _scrollbar.selfMoveRequest = true;
 
             //Synchronous call that will execute _moveScrollbar after it.
             container.dispatchEvent(
@@ -1041,24 +1024,25 @@ export function addSmoothScrollbar(
             );
         }
 
-        //Serve a ussmoverequest event by moving the scrollbar to the correct position.
+        //Handle a ussmoverequest event by moving the scrollbar to the correct position.
         const _moveScrollbar = (event) => {
             //The event will be handled by the other scrollbar.
             if(event.detail.axis === 0) return;
 
-            //Tell the sender this event has been handled.
-            const __alreadyHandled = event.defaultPrevented;
+            //Check if the scroll position of the container has already been updated,
+            //if not use the scroller property of this event to update it. 
+            const __scrollPositionAlreadyUpdated = event.defaultPrevented;
             event.preventDefault();
 
             //The user is still holding down the scrollbar, 
             //this request will be handled on the pointerup event if needed. 
-            if(!_scrollbar.selfMoveRequest && _scrollbar.pointerId !== null) {
+            if(!_selfMoveRequest && _scrollbar.pointerId !== null) {
                 _scrollbar.delayedScroller = event.detail.scroller;
                 return;
             }
 
             //Update the container's final positions. 
-            if(!__alreadyHandled) event.detail.scroller();
+            if(!__scrollPositionAlreadyUpdated) event.detail.scroller();
 
             const __thumbSize = _scrollbar.thumb.clientHeight;
             const __trackSize = _scrollbar.track.clientHeight;
@@ -1072,7 +1056,7 @@ export function addSmoothScrollbar(
             
             _scrollbar.thumb.style.transitionDuration = _scrollbar.pointerId !== null ? "0s" : options.transitionDurationY || "0.2s";
             _scrollbar.thumb.style.transform = "translateY(" + __translateAmount + "px)";
-            _scrollbar.selfMoveRequest = false;
+            _selfMoveRequest = false;
         }
 
         const _handlePointerDownOnTrack = (event) => {
@@ -1083,23 +1067,24 @@ export function addSmoothScrollbar(
             //is not controlling the scrollbar with a pointer.
             if(_scrollbar.pointerId !== null) return;
 
-            uss.stopScrollingY(container);
-            const _thumbPos = _scrollbar.thumb.getBoundingClientRect();
-            const _thumbCenterY = _thumbPos.top + _thumbPos.height * 0.5; //TODO The center should be the one at which it would be if the animationDuration was at 0s.
+            //The final scroll-position of container is proportional to  
+            //where the user has clicked inside the scrollbar track.
+            const __currentFinalPos = uss.getFinalYPosition(container);
+            const __containerScrollSize = uss.getMaxScrollY(container, false, options);
+            const __trackSize = _scrollbar.track.clientHeight;
+            const __finalPos = event.offsetY / __trackSize * __containerScrollSize; 
 
-            _scrollContainer(
-                new CustomEvent(
-                    "pointermove",
-                    {
-                        detail: {
-                            movementY: (event.offsetY - _thumbCenterY) / _scrollbar.track.clientHeight * uss.getMaxScrollY(container, false, options)
-                        }
-                    }
-                )
-            );
+            //The scrollbar will already be in the right position, no action needed.
+            if(__currentFinalPos === __finalPos) return;
+
+            //Scroll the container to the calculated position, inform the container that
+            //it's being scrolled so that any effect (snap, elastic, etc...) is applied
+            //and update the scrollbar position.
+            uss.scrollYTo(__finalPos, container);
+            _scrollbar.updatePosition();
         }
 
-        _enableScrollbar(_scrollbar, _scrollContainer, _moveScrollbar, _handlePointerDownOnTrack, options.hideScrollbarY);
+        _scrollbarSetup(_scrollbar, _scrollContainer, _moveScrollbar, _handlePointerDownOnTrack, options.hideScrollbarY);
 
         //Add the scrollbar to the container.
         _scrollbar.track.appendChild(_scrollbar.thumb);
@@ -1110,38 +1095,39 @@ export function addSmoothScrollbar(
         uss.addOnResizeEndCallback(_scrollbar.updatePosition);
     }
 
-    function _enableScrollbar(scrollbar, scrollContainer, moveScrollbar, handlePointerDownOnTrack, hideScrollbar) {
+    function _scrollbarSetup(scrollbar, scrollContainer, moveScrollbar, handlePointerDownOnTrack, hideScrollbar) {
+        scrollbar.updatePosition = () => {
+            container.dispatchEvent(
+                new WheelEvent(
+                    "wheel",
+                    {
+                        deltaX: 0, 
+                        deltaY: 0,
+                    }
+                )
+            );
+        }
+
+        let __hideScrollbarIfNeeded = () => {};
+
+        //Set the scrollbar status to engaged/disengaged by saving the id of
+        //the pointer that is controlling it.
         const __setScrollbarEngagement = (event, id) => {
             event.preventDefault();
             event.stopPropagation();
             scrollbar.pointerId = id;
         } 
 
-        let __hideScrollbarIfNeeded = () => {};
-
-        //Make the scrollbar listen for events that makes it move.
-        scrollbar.thumb.addEventListener("ussmoverequest", moveScrollbar, {passive:false});
-
-        //Engage the scrollbar.
-        scrollbar.thumb.addEventListener("pointerdown", (event) => {
-            //Only one pointer at a time can control the scrollbar.
-            if(scrollbar.pointerId !== null) return;
-        
-            __setScrollbarEngagement(event, event.pointerId);     
-            window.addEventListener("pointerup", disengageScrollbar, {passive:false});
-            window.addEventListener("pointermove", scrollContainer, {passive:false});   
-        }, {passive:false});
-        
-        //Disengage the scrollbar.
-        function disengageScrollbar(event) {    
+        //Disengage the scrollbar and handle any previous delayed scroll request.
+        const __disengageScrollbar = (event) => {    
             //Wait for the initial pointer to leave the touch-surface.
             if(event.pointerId !== scrollbar.pointerId) return;
 
             __setScrollbarEngagement(event, null);  
             window.removeEventListener("pointermove", scrollContainer, {passive:false});     
-            window.removeEventListener("pointerup", disengageScrollbar, {passive:false});   
+            window.removeEventListener("pointerup", __disengageScrollbar, {passive:false});   
 
-            //Serve any delayed scroll request if any.
+            //Handle any delayed scroll request if any.
             if(scrollbar.delayedScroller) {
                 scrollbar.delayedScroller();
                 scrollbar.updatePosition();
@@ -1153,19 +1139,32 @@ export function addSmoothScrollbar(
         //the corresponding position and the scrollbar thumb should be moved accordingly.
         scrollbar.track.addEventListener("pointerdown", handlePointerDownOnTrack, {passive:false});
 
-        //If requested, make the scrollbar hide.
+        //Engage the scrollbar.
+        scrollbar.thumb.addEventListener("pointerdown", (event) => {
+            //Only one pointer at a time can control the scrollbar.
+            if(scrollbar.pointerId !== null) return;
+        
+            __setScrollbarEngagement(event, event.pointerId);     
+            window.addEventListener("pointerup", __disengageScrollbar, {passive:false});
+            window.addEventListener("pointermove", scrollContainer, {passive:false});   
+        }, {passive:false});
+        
+        //Make the scrollbar listen for events that makes it move.
+        scrollbar.thumb.addEventListener("ussmoverequest", moveScrollbar, {passive:false});
+
+        //If requested, keep track of the scrollbar's hidden status.
         if(hideScrollbar) {
             let __pointerIsHoveringTrack = false;
             
-            //The scrollbar never hidden if the pointer is on it.
+            //The scrollbar's status is never set to hidden if the pointer is on it.
             scrollbar.track.addEventListener("pointerenter", () => {
                 __pointerIsHoveringTrack = true;
                 if(scrollbar.pointerId !== null) return;
                 scrollbar.track.dataset.ussScrollbarHidden = false; 
             }, {passive:true});
             
-            //The scrollbar is hidden if the pointer is not hovering it  
-            //and the scrollbar thumb isn't being used.
+            //The scrollbar's status is set to hidden if the pointer  
+            //is not hovering it and the scrollbar thumb isn't being used.
             scrollbar.track.addEventListener("pointerleave", () => {
                 __pointerIsHoveringTrack = false;
                 if(scrollbar.pointerId !== null) return;
@@ -1173,8 +1172,8 @@ export function addSmoothScrollbar(
                 scrollbar.track.dataset.ussScrollbarHidden = true; 
             }, {passive:true});
             
-            //Whenever the scrollbar is disengaged,  
-            //check if it should be hidden.
+            //Whenever the scrollbar is disengaged, check if  
+            //its status should be set to hidden.
             __hideScrollbarIfNeeded = () => {
                 if(__pointerIsHoveringTrack) return;
                 scrollbar.thumb.style.transitionDuration = "";

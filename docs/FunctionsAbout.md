@@ -2832,6 +2832,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <li>The anchor that has been clicked.</li>
     <li>The anchor's destination element.</li>
     </ul>
+    If <code>updateHistory</code> is <code>true</code> and the user navigates through its history, the passed anchor is <code>null</code>.  
   </td>
   </tr>
   <tr>
@@ -2864,7 +2865,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    If <code>true</code>, the browser's history is updated every time a valid anchor is clicked and navigating through history triggers a smooth scroll-animation to the corresponding fragment.
+    If <code>true</code>, the browser's history is updated every time a valid anchor is clicked and navigating through history triggers a smooth scroll-animation to the corresponding fragment. <br/>
     If <code>false</code>, the browser's history is never updated by the API and navigating through history produces the default <i>jump-to-position</i> behavior.
   </td>
   </tr>

@@ -1735,14 +1735,14 @@ var uss = {
         
         //The URL is just "URL/#" or "URL/" 
         if(!_fragment) {
-          if(_init(window, uss._pageScroller) !== false) {
+          if(_init(null, uss._pageScroller) !== false) {
               uss.scrollTo(0, 0, uss._pageScroller, callback);
           }
           return;
         } 
 
         const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
-        if(_elementToReach && _init(window, _elementToReach) !== false) {
+        if(_elementToReach && _init(null, _elementToReach) !== false) {
           uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
         }
       }
