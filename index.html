@@ -174,26 +174,21 @@
     let bezierTitleTimeout = 0;
     cubicBezierCustomInputParameters[4].addEventListener("click", () => {
       window.clearTimeout(bezierTitleTimeout);
-      let u0, u1, u2, u3;
-      const title = document.getElementById("bezierTitle");
 
-      u0 = Number.parseFloat(cubicBezierCustomInputParameters[0].value);
-      u1 = Number.parseFloat(cubicBezierCustomInputParameters[1].value);
-      u2 = Number.parseFloat(cubicBezierCustomInputParameters[2].value);
-      u3 = Number.parseFloat(cubicBezierCustomInputParameters[3].value);
+      for(let i = 0; i < 4; i++) {
+        const ux = Number.parseFloat(cubicBezierCustomInputParameters[i].value);
 
-      if(isNaN(u0) || isNaN(u1) || isNaN(u2) || isNaN(u3)) {
-        title.innerHTML = "Parameters must be numbers from 0 to 1";
-        bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
-        return;
+        if(!Number.isFinite(ux) || ux < 0 || ux > 1) {
+          document.getElementById("bezierTitle").innerHTML = "Parameters must be numbers from 0 to 1";
+          bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
+          return;
+        }
       }
-
-      const _inputCheck = u0 > 1 || u0 < 0 || u1 > 1 || u1 < 0 || u2 > 1 || u2 < 0 || u3 > 1 || u3 < 0;
-      if(_inputCheck) {
-        title.innerHTML = "Parameters must be numbers from 0 to 1";
-        bezierTitleTimeout = window.setTimeout(() => title.innerHTML = "Choose custom cubic-bezier parameters", 5000);
-        return;
-      }
+      
+      const u0 = Number.parseFloat(cubicBezierCustomInputParameters[0].value);
+      const u1 = Number.parseFloat(cubicBezierCustomInputParameters[1].value);
+      const u2 = Number.parseFloat(cubicBezierCustomInputParameters[2].value);
+      const u3 = Number.parseFloat(cubicBezierCustomInputParameters[3].value);
 
       uss.setStepLengthCalculator(CUSTOM_CUBIC_BEZIER(u0, u1, u2, u3));
       title.innerHTML = "All set, try it out !";
@@ -207,14 +202,8 @@
       {
         onYAxis: true,
         onXAxis: true,
-        momentumEasingX: EASE_OUT_CUBIC(700),
-        momentumEasingY: EASE_OUT_CUBIC(700),
-        speedModifierX: (deltaX, deltaY) => {
-          return _bodyScrollbars[0].pointerId === null && Math.abs(deltaX) < 100 ? 2.5 * deltaX : deltaX;
-        },
-        speedModifierY: (deltaX, deltaY) => {
-          return _bodyScrollbars[1].pointerId === null && Math.abs(deltaY) < 100 ? 2.5 * deltaY : deltaY;
-        },
+        momentumEasingX: EASE_OUT_CUBIC(600),
+        momentumEasingY: EASE_OUT_CUBIC(600),
       }
     );
 
@@ -259,10 +248,6 @@
       yScrollerSection, 
       {
         onYAxis: "mandatory", 
-        speedModifierY: (deltaX, deltaY) => {
-          if(_yScrollerScrollbars[0].pointerId === null && Math.abs(deltaY) < 100) deltaY *= 2.5;
-          return deltaY;
-        },
         children: _yChildren
       }
     );
@@ -303,11 +288,6 @@
       xScrollerSection, 
       {
         onXAxis: "mandatory", 
-        speedModifierX: (deltaX, deltaY) => {
-          if(_xScrollerScrollbars[0].pointerId === null && Math.abs(deltaX) < 100) deltaX *= 2.5;
-          if(_xScrollerScrollbars[0].pointerId === null && Math.abs(deltaY) < 100) deltaY *= 2.5;
-          return deltaX + deltaY;
-        },
         children: _xChildren
       }
     );
@@ -318,8 +298,8 @@
         {
             onYAxis:true,
             onXAxis:true,
-            transitionDurationX: "1s",
-            transitionDurationY: "1s",
+            transitionDurationX: "0.6s",
+            transitionDurationY: "0.6s",
             hideScrollbarX: true,
             hideScrollbarY: true
         }

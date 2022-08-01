@@ -97,23 +97,60 @@ export function addMomentumScrolling(
         return;
     }
 
-    const _speedModifierX = typeof options.speedModifierX === "function" ? options.speedModifierX : (deltaX, deltaY) => deltaX; 
-    const _speedModifierY = typeof options.speedModifierY === "function" ? options.speedModifierY : (deltaX, deltaY) => deltaY; 
+    const _speedModifierX = typeof options.speedModifierX !== "function" ? 
+                            (deltaX, deltaY) => {
+                                const __deltaX = Math.abs(deltaX);
+                                if(__deltaX > 60) return deltaX;
+
+                                const __deltaY = Math.abs(deltaY);
+                                if(__deltaX < __deltaY) return 0;
+
+                                const __delta = __deltaX + __deltaY;
+                                const __direction = deltaX > 0 ? 1 : -1;
+
+                                //perhaps non linear function is better ? ease-in ?   
+                                let __multiplier = (__delta - 1) / 19 + 1; //1 if __delta = 1, 2 if __delta = 20 
+                                __multiplier = __multiplier > 4 ? 4 : 
+                                               __multiplier < 1 ? 1 :
+                                               __multiplier;
+                        
+                                return __delta * __multiplier * __direction;
+                            } : options.speedModifierX;
+
+    const _speedModifierY = typeof options.speedModifierY !== "function" ? 
+                            (deltaX, deltaY) => {
+                                const __deltaY = Math.abs(deltaY);
+                                if(__deltaY > 60) return deltaY;
+
+                                const __deltaX = Math.abs(deltaX);
+                                if(__deltaY < __deltaX) return 0;
+
+                                const __delta = __deltaX + __deltaY;
+                                const __direction = deltaY > 0 ? 1 : -1;
+
+                                //perhaps non linear function is better ? ease-in ?   
+                                let __multiplier = (__delta - 1) / 19 + 1; //1 if __delta = 1, 2 if __delta = 20 
+                                __multiplier = __multiplier > 4 ? 4 : 
+                                               __multiplier < 1 ? 1 :
+                                               __multiplier;
+
+                                return __delta * __multiplier * __direction;
+                            } : options.speedModifierY; 
 
     //Default easing behaviors: ease-out.
     const _easingX = options.momentumEasingX || function(remaning) {return remaning / 25 + 1};
     const _easingY = options.momentumEasingY || function(remaning) {return remaning / 25 + 1};
 
     let _pointersDownIds = [];
-    let _callbackOnPointerUp = false;
+    let _onPointerUpCallback = false;
     let _momentumScrolling,
-        _axis;
+        _axisNumber;
 
     //Execute the options.callback only if it's a function and the user  
     //is not holding the pointer down. Wait for the pointerup event otherwise.
     const _callback = typeof options.callback === "function" ? () => {
         if(_pointersDownIds.length > 0) {
-            _callbackOnPointerUp = true;
+            _onPointerUpCallback = true;
             return;
         } 
         options.callback();
@@ -124,13 +161,13 @@ export function addMomentumScrolling(
             uss.setXStepLengthCalculator(_easingX, container, true, options);
             uss.scrollXBy(_speedModifierX(deltaX, deltaY), container, _callback, false, options);
         }
-        _axis = 0;
+        _axisNumber = 0;
     } else if(!_onXAxis && _onYAxis) {
         _momentumScrolling = (deltaX, deltaY) => {
             uss.setYStepLengthCalculator(_easingY, container, true, options);
             uss.scrollYBy(_speedModifierY(deltaX, deltaY), container, _callback, false, options);                                                            
         } 
-        _axis = 1;
+        _axisNumber = 1;
     } else {
         _momentumScrolling = (deltaX, deltaY) => {
             uss.setXStepLengthCalculator(_easingX, container, true, options);
@@ -144,10 +181,10 @@ export function addMomentumScrolling(
                 options
             );
         }
-        _axis = 2;
+        _axisNumber = 2;
     }
 
-    const _handleMoveEvent = (deltaX, deltaY, event) => {
+    const _scrollContainer = (deltaX, deltaY, event) => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -156,7 +193,7 @@ export function addMomentumScrolling(
             { 
                 cancelable: true,
                 detail: {
-                    axis: _axis,
+                    axis: _axisNumber,
                     scroller: () => _momentumScrolling(deltaX, deltaY),
                 }
             }
@@ -168,7 +205,8 @@ export function addMomentumScrolling(
             _momentumScrolling(deltaX, deltaY);
         }
     } 
-    
+
+    const _handlePointerMoveEvent = (event) => _scrollContainer(-event.movementX, -event.movementY, event);
     const _handlePointerUpEvent = (event) => {
         //The pointerup event was triggered by a pointer not related with this container.
         const _pointerIdIndex = _pointersDownIds.indexOf(event.pointerId);
@@ -176,11 +214,13 @@ export function addMomentumScrolling(
 
         _pointersDownIds.splice(_pointerIdIndex, 1);
         if(_pointersDownIds.length === 0) {
-            if(_callbackOnPointerUp) {
-                options.callback();
-                _callbackOnPointerUp = false;
-            }
+            container.removeEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
             window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:true});
+
+            if(_onPointerUpCallback) {
+                options.callback();
+                _onPointerUpCallback = false;
+            }
         }
     } 
     
@@ -195,16 +235,12 @@ export function addMomentumScrolling(
 
         if(_pointersDownIds.length === 0) {
             window.addEventListener("pointerup", _handlePointerUpEvent, {passive:true});
+            container.addEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
         }
         _pointersDownIds.push(event.pointerId);
     }, {passive:false});
 
-    container.addEventListener("pointermove", (event) => {
-        if(_pointersDownIds.length === 0) return;
-        _handleMoveEvent(-event.movementX, -event.movementY, event);  
-    }, {passive:false});
-
-    container.addEventListener("wheel", (event) => _handleMoveEvent(event.deltaX, event.deltaY, event), {passive:false});
+    container.addEventListener("wheel", (event) => _scrollContainer(event.deltaX, event.deltaY, event), {passive:false});
 }
 
 /**
