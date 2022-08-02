@@ -76,6 +76,7 @@ describe("getAllScrollableParents", function() {
                     ).to.be.true;  
                     
                     //test elements with no constraint 
+                    console.log(uss.getAllScrollableParents(_genericElement1))
                     expect(arraysAreEqual(
                             uss.getAllScrollableParents(_genericElement1), 
                             [_genericElementParent11, _genericElementParent12, win.document.body, win]

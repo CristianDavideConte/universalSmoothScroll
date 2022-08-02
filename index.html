@@ -288,7 +288,8 @@
       xScrollerSection, 
       {
         onXAxis: "mandatory", 
-        children: _xChildren
+        children: _xChildren,
+        //speedModifierX: (deltaX, deltaY) => deltaX > 0 ? deltaX : deltaY
       }
     );
 

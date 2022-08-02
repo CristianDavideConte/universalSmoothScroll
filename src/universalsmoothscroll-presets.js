@@ -97,45 +97,8 @@ export function addMomentumScrolling(
         return;
     }
 
-    const _speedModifierX = typeof options.speedModifierX !== "function" ? 
-                            (deltaX, deltaY) => {
-                                const __deltaX = Math.abs(deltaX);
-                                if(__deltaX > 60) return deltaX;
-
-                                const __deltaY = Math.abs(deltaY);
-                                if(__deltaX < __deltaY) return 0;
-
-                                const __delta = __deltaX + __deltaY;
-                                const __direction = deltaX > 0 ? 1 : -1;
-
-                                //perhaps non linear function is better ? ease-in ?   
-                                let __multiplier = (__delta - 1) / 19 + 1; //1 if __delta = 1, 2 if __delta = 20 
-                                __multiplier = __multiplier > 4 ? 4 : 
-                                               __multiplier < 1 ? 1 :
-                                               __multiplier;
-                        
-                                return __delta * __multiplier * __direction;
-                            } : options.speedModifierX;
-
-    const _speedModifierY = typeof options.speedModifierY !== "function" ? 
-                            (deltaX, deltaY) => {
-                                const __deltaY = Math.abs(deltaY);
-                                if(__deltaY > 60) return deltaY;
-
-                                const __deltaX = Math.abs(deltaX);
-                                if(__deltaY < __deltaX) return 0;
-
-                                const __delta = __deltaX + __deltaY;
-                                const __direction = deltaY > 0 ? 1 : -1;
-
-                                //perhaps non linear function is better ? ease-in ?   
-                                let __multiplier = (__delta - 1) / 19 + 1; //1 if __delta = 1, 2 if __delta = 20 
-                                __multiplier = __multiplier > 4 ? 4 : 
-                                               __multiplier < 1 ? 1 :
-                                               __multiplier;
-
-                                return __delta * __multiplier * __direction;
-                            } : options.speedModifierY; 
+    const _speedModifierX = typeof options.speedModifierX === "function" ? options.speedModifierX : (deltaX, deltaY) => deltaX;
+    const _speedModifierY = typeof options.speedModifierY === "function" ? options.speedModifierY : (deltaX, deltaY) => deltaY;
 
     //Default easing behaviors: ease-out.
     const _easingX = options.momentumEasingX || function(remaning) {return remaning / 25 + 1};
@@ -143,7 +106,8 @@ export function addMomentumScrolling(
 
     let _pointersDownIds = [];
     let _onPointerUpCallback = false;
-    let _momentumScrolling,
+    let _touchScrollExtender,
+        _momentumScrolling,
         _axisNumber;
 
     //Execute the options.callback only if it's a function and the user  
@@ -157,18 +121,42 @@ export function addMomentumScrolling(
     } : null;
 
     if(_onXAxis && !_onYAxis) {
+        _touchScrollExtender = () => {
+            const __currentPos = uss.getScrollXCalculator(container)();
+            const __finalPos = uss.getFinalXPosition(container);
+            const __delta = __finalPos - __currentPos; //TODO FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSION
+            
+            _scrollContainer(__delta, 0);
+        }
         _momentumScrolling = (deltaX, deltaY) => { 
             uss.setXStepLengthCalculator(_easingX, container, true, options);
             uss.scrollXBy(_speedModifierX(deltaX, deltaY), container, _callback, false, options);
         }
         _axisNumber = 0;
     } else if(!_onXAxis && _onYAxis) {
+        _touchScrollExtender = () => {
+            const __currentPos = uss.getScrollYCalculator(container)();
+            const __finalPos = uss.getFinalYPosition(container);
+            const __delta = __finalPos - __currentPos;
+
+            _scrollContainer(0, __delta);
+        }
         _momentumScrolling = (deltaX, deltaY) => {
             uss.setYStepLengthCalculator(_easingY, container, true, options);
             uss.scrollYBy(_speedModifierY(deltaX, deltaY), container, _callback, false, options);                                                            
         } 
         _axisNumber = 1;
     } else {
+        _touchScrollExtender = () => {
+            const __currentPosX = uss.getScrollXCalculator(container)();
+            const __currentPosY = uss.getScrollYCalculator(container)();
+            const __finalPosX = uss.getFinalXPosition(container);
+            const __finalPosY = uss.getFinalYPosition(container);
+            const __deltaX = __finalPosX - __currentPosX;
+            const __deltaY = __finalPosY - __currentPosY;
+
+            _scrollContainer(__deltaX, __deltaY);
+        }
         _momentumScrolling = (deltaX, deltaY) => {
             uss.setXStepLengthCalculator(_easingX, container, true, options);
             uss.setYStepLengthCalculator(_easingY, container, true, options);
@@ -185,8 +173,10 @@ export function addMomentumScrolling(
     }
 
     const _scrollContainer = (deltaX, deltaY, event) => {
-        event.preventDefault();
-        event.stopPropagation();
+        if(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
 
         const __scrollRequest = new CustomEvent(
             "ussmoverequest", 
@@ -206,7 +196,28 @@ export function addMomentumScrolling(
         }
     } 
 
-    const _handlePointerMoveEvent = (event) => _scrollContainer(-event.movementX, -event.movementY, event);
+    const _handlePointerMoveEvent = (event) => {
+        _onPointerUpCallback = false;
+
+        const __deltaY = Math.abs(event.movementY);
+        const __deltaX = Math.abs(event.movementX);
+        const __delta = __deltaX + __deltaY;
+        const __directionX = -event.movementX > 0 ? 1 : -1;
+        const __directionY = -event.movementY > 0 ? 1 : -1;
+        
+        if(__deltaX > __deltaY) {
+            _scrollContainer(__directionX * __delta, 0, event);
+            return;
+        } 
+        
+        if(__deltaY > __deltaX) {
+            _scrollContainer(0, __directionY * __delta, event);
+            return;
+        }
+        
+        _scrollContainer(__directionX * __delta, __directionY * __delta, event);
+    }
+
     const _handlePointerUpEvent = (event) => {
         //The pointerup event was triggered by a pointer not related with this container.
         const _pointerIdIndex = _pointersDownIds.indexOf(event.pointerId);
@@ -220,7 +231,11 @@ export function addMomentumScrolling(
             if(_onPointerUpCallback) {
                 options.callback();
                 _onPointerUpCallback = false;
+                return;
             }
+
+            _touchScrollExtender();
+            console.log("current->", uss.getScrollYCalculator(container)(), "final->", uss.getFinalYPosition(container))
         }
     } 
     
@@ -628,99 +643,58 @@ export function addElasticMomentumScrolling(
     if(_onYAxis) options.onYAxis = "mandatory";
 
     const _elasticAmount = options.elasticAmount || 100;
+    const _elasticSpeedModifier = (delta, finalPos, getMaxScroll) => {
+        if(finalPos <= _elasticAmount) {
+            //We're at the left of the passed container, the snap scrolling
+            //will be triggered on _children[0] with align = "start".
+            if(_children[0]) options.children = [_children[0]];
+
+            //If the user scrolls in the same direction as the elastic part of
+            //this scroll-animation, it won't encounter resistance. 
+            if(delta > 0) return delta; 
+
+            //Mathematical explanation of the below delta's easing: 
+            //_finalPos => f1 = -x + k   //f1 in [0.._elasticAmount]
+            //_progress => f2 = f1 / k   //f2 in [1..0]
+            //easing    => f3 = f2^(1.3) //f3 in [0..1]
+            const _progress = Math.max(0, finalPos / _elasticAmount);
+            console.log(delta, delta * Math.pow(_progress, 1.3) - 1)
+            return delta * Math.pow(_progress, 1.3) - 1; //delta * f3 - 1
+        }
+    
+        const _maxScroll = getMaxScroll(container, false, options);
+        if(finalPos >= _maxScroll - _elasticAmount) {
+            //We're at the bottom of the passed container, the snap scrolling
+            //will be triggered on _children[1] with align = "end".
+            if(_children[1]) options.children = [_children[1]];
+
+            //If the user scrolls in the same direction as the elastic part of
+            //this scroll-animation, it won't encounter resistance. 
+            if(delta < 0) return delta; 
+            
+            //Mathematical explanation of the below delta's easing: 
+            //_finalPos => f1 = -x + k   //f1 in [_maxScroll - _elasticAmount.._maxScroll]
+            //_progress => f2 = f1 / k   //f2 in [1..0]
+            //easing    => f3 = f2^(1.3) //f3 in [0..1]
+            const _progress = Math.max(0, (_maxScroll - finalPos) / _elasticAmount);
+            return delta * Math.pow(_progress, 1.3) + 1; //delta * f3 + 1 
+        }
+    
+        //The snap scrolling won't be triggered because we're not 
+        //at any end of the passed container.
+        options.children = [];
+        return delta;
+    }
 
     if(_onXAxis) {
         options.speedModifierX = (deltaX, deltaY) => {
-            const _delta = deltaX;
-            const _finalPos = uss.getFinalXPosition(container, options) + _delta;
-            
-            if(_finalPos <= _elasticAmount) {
-                //We're at the left of the passed container, the snap scrolling
-                //will be triggered on _children[0] with align = "start".
-                if(_children[0]) options.children = [_children[0]];
-
-                //If the user scrolls in the same direction as the elastic part of
-                //this scroll-animation, it won't encounter resistance. 
-                if(_delta > 0) return _delta; 
-
-                //Mathematical explanation of the below delta's easing: 
-                //_finalPos => f1 = -x + k   //f1 in [0.._elasticAmount]
-                //_progress => f2 = f1 / k   //f2 in [1..0]
-                //easing    => f3 = f2^(1.3) //f3 in [0..1]
-                const _progress = Math.max(0, _finalPos / _elasticAmount);
-                return _delta * Math.pow(_progress, 1.3) - 1; //delta * f3 - 1
-            }
-        
-            const _maxScroll = uss.getMaxScrollX(container, false, options);
-            if(_finalPos >= _maxScroll - _elasticAmount) {
-                //We're at the bottom of the passed container, the snap scrolling
-                //will be triggered on _children[1] with align = "end".
-                if(_children[1]) options.children = [_children[1]];
-
-                //If the user scrolls in the same direction as the elastic part of
-                //this scroll-animation, it won't encounter resistance. 
-                if(_delta < 0) return _delta; 
-                
-                //Mathematical explanation of the below delta's easing: 
-                //_finalPos => f1 = -x + k   //f1 in [_maxScroll - _elasticAmount.._maxScroll]
-                //_progress => f2 = f1 / k   //f2 in [1..0]
-                //easing    => f3 = f2^(1.3) //f3 in [0..1]
-                const _progress = Math.max(0, (_maxScroll - _finalPos) / _elasticAmount);
-                return _delta * Math.pow(_progress, 1.3) + 1; //delta * f3 + 1 
-            }
-        
-            //The snap scrolling won't be triggered because we're not 
-            //at any end of the passed container.
-            options.children = [];
-            return _delta;
+            return _elasticSpeedModifier(deltaX, uss.getFinalXPosition(container, options) + deltaX, uss.getMaxScrollX);
         }
     }
-
+    
     if(_onYAxis) {
         options.speedModifierY = (deltaX, deltaY) => {
-            const _delta = deltaY;
-            const _finalPos = uss.getFinalYPosition(container, options) + _delta;
-            
-            //We're at the top of the passed container beyond the _elasticAmount trigger. 
-            if(_finalPos <= _elasticAmount) {
-                //The snap scrolling will be triggered on _children[0] with align: "start".
-                if(_children[0]) options.children = [_children[0]];
-
-                //If the user scrolls in the same direction as the elastic part of
-                //this scroll-animation, it won't encounter resistance. 
-                if(_delta > 0) return _delta; 
-
-                //Mathematical explanation of the below delta's easing: 
-                //_finalPos => f1 = -x + k   //f1 in [0.._elasticAmount]
-                //_progress => f2 = f1 / k   //f2 in [1..0]
-                //easing    => f3 = f2^(1.3) //f3 in [0..1]
-                const _progress = Math.max(0, _finalPos / _elasticAmount);
-                return _delta * Math.pow(_progress, 1.3) - 1; //delta * f3 - 1
-            }
-        
-            const _maxScroll = uss.getMaxScrollY(container, false, options);
-            
-            //We're at the bottom of the passed container beyond the _elasticAmount trigger. 
-            if(_finalPos >= _maxScroll - _elasticAmount) {
-                //The snap scrolling will be triggered on _children[1] with align: "end".
-                if(_children[1]) options.children = [_children[1]];
-                
-                //If the user scrolls in the same direction as the elastic part of
-                //this scroll-animation, it won't encounter resistance. 
-                if(_delta < 0) return _delta; 
-
-                //Mathematical explanation of the below delta's easing: 
-                //_finalPos => f1 = -x + k   //f1 in [_maxScroll - _elasticAmount.._maxScroll]
-                //_progress => f2 = f1 / k   //f2 in [1..0]
-                //easing    => f3 = f2^(1.3) //f3 in [0..1]
-                const _progress = Math.max(0, (_maxScroll - _finalPos) / _elasticAmount);
-                return _delta * Math.pow(_progress, 1.3) + 1; //delta * f3 + 1 
-            }
-
-            //The snap scrolling won't be triggered because we're not 
-            //at any end of the passed container.
-            options.children = [];
-            return _delta;
+            return _elasticSpeedModifier(deltaY, uss.getFinalYPosition(container, options) + deltaY, uss.getMaxScrollY);
         }
     }
 
