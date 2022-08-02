@@ -654,16 +654,16 @@ export function addElasticMomentumScrolling(
             if(delta > 0) return delta; 
 
             //Mathematical explanation of the below delta's easing: 
-            //_finalPos => f1 = -x + k   //f1 in [0.._elasticAmount]
-            //_progress => f2 = f1 / k   //f2 in [1..0]
-            //easing    => f3 = f2^(1.3) //f3 in [0..1]
-            const _progress = Math.max(0, finalPos / _elasticAmount);
-            console.log(delta, delta * Math.pow(_progress, 1.3) - 1)
-            return delta * Math.pow(_progress, 1.3) - 1; //delta * f3 - 1
+            //finalPos => f1 = -x + k   //f1 in [0.._elasticAmount]
+            //_progress => f2 = f1 / k  //f2 in [1..0]
+            //easing    => f3 = f2^(5)  //f3 in [0..1]
+            //Since the result will be a negative number, Math.floor is used to round its |value|.
+            const __progress = Math.max(0, (finalPos - delta) / _elasticAmount);
+            return Math.floor(delta * Math.pow(__progress, 5)); //delta * f3
         }
     
-        const _maxScroll = getMaxScroll(container, false, options);
-        if(finalPos >= _maxScroll - _elasticAmount) {
+        const __maxScroll = getMaxScroll(container, false, options);
+        if(finalPos >= __maxScroll - _elasticAmount) {
             //We're at the bottom of the passed container, the snap scrolling
             //will be triggered on _children[1] with align = "end".
             if(_children[1]) options.children = [_children[1]];
@@ -673,11 +673,12 @@ export function addElasticMomentumScrolling(
             if(delta < 0) return delta; 
             
             //Mathematical explanation of the below delta's easing: 
-            //_finalPos => f1 = -x + k   //f1 in [_maxScroll - _elasticAmount.._maxScroll]
-            //_progress => f2 = f1 / k   //f2 in [1..0]
-            //easing    => f3 = f2^(1.3) //f3 in [0..1]
-            const _progress = Math.max(0, (_maxScroll - finalPos) / _elasticAmount);
-            return delta * Math.pow(_progress, 1.3) + 1; //delta * f3 + 1 
+            //finalPos => f1 = -x + k   //f1 in [_maxScroll - _elasticAmount.._maxScroll]
+            //_progress => f2 = f1 / k  //f2 in [1..0]
+            //easing    => f3 = f2^(5)  //f3 in [0..1]
+            //Since the result will be a positive number, Math.ceil is used to round its |value|.
+            const __progress = Math.max(0, (__maxScroll - finalPos + delta) / _elasticAmount);
+            return Math.ceil(delta * Math.pow(__progress, 5)); //delta * f3
         }
     
         //The snap scrolling won't be triggered because we're not 
