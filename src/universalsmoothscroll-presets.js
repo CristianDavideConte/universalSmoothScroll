@@ -101,7 +101,7 @@ export function addMomentumScrolling(
     const _speedModifierY = typeof options.speedModifierY === "function" ? options.speedModifierY : (deltaX, deltaY) => deltaY;
 
     //Default easing behaviors: ease-out.
-    const _easingX = options.momentumEasingX || function(remaning) {return remaning / 25 + 1};
+    const _easingX = options.momentumEasingX || function(remaning) {return remaning / 25 + 1}; //TODO Not good for touch-driven scrolling
     const _easingY = options.momentumEasingY || function(remaning) {return remaning / 25 + 1};
 
     let _pointersDownIds = [];
@@ -599,7 +599,13 @@ export function addElasticMomentumScrolling(
         uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
         return;
     }
-        
+
+    const _elasticAmount = options.elasticAmount;    
+    if(!Number.isFinite(_elasticAmount)) {
+        uss._errorLogger(options.debugString, "the options.elasticAmount to be finite number", container);
+        return;
+    }
+
     const _children = options.children;
     const _childrenNum = _children.length;
 
@@ -642,9 +648,9 @@ export function addElasticMomentumScrolling(
     if(_onXAxis) options.onXAxis = "mandatory";
     if(_onYAxis) options.onYAxis = "mandatory";
 
-    const _elasticAmount = options.elasticAmount || 100;
     const _elasticSpeedModifier = (delta, finalPos, getMaxScroll) => {
-        if(finalPos <= _elasticAmount) {
+        const __nextFinalPos = finalPos + delta;
+        if(__nextFinalPos <= _elasticAmount) {
             //We're at the left of the passed container, the snap scrolling
             //will be triggered on _children[0] with align = "start".
             if(_children[0]) options.children = [_children[0]];
@@ -656,14 +662,16 @@ export function addElasticMomentumScrolling(
             //Mathematical explanation of the below delta's easing: 
             //finalPos => f1 = -x + k   //f1 in [0.._elasticAmount]
             //_progress => f2 = f1 / k  //f2 in [1..0]
-            //easing    => f3 = f2^(5)  //f3 in [0..1]
+            //easing    => f3 = f2^(3)  //f3 in [0..1]
             //Since the result will be a negative number, Math.floor is used to round its |value|.
-            const __progress = Math.max(0, (finalPos - delta) / _elasticAmount);
-            return Math.floor(delta * Math.pow(__progress, 5)); //delta * f3
+            const __progress = finalPos / _elasticAmount;
+            if(__progress > 1) return _elasticAmount - finalPos;
+            if(__progress < 0) return 0; 
+            return Math.floor(delta * Math.pow(__progress, 3)); //delta * f3
         }
     
         const __maxScroll = getMaxScroll(container, false, options);
-        if(finalPos >= __maxScroll - _elasticAmount) {
+        if(__nextFinalPos >= __maxScroll - _elasticAmount) {
             //We're at the bottom of the passed container, the snap scrolling
             //will be triggered on _children[1] with align = "end".
             if(_children[1]) options.children = [_children[1]];
@@ -675,10 +683,12 @@ export function addElasticMomentumScrolling(
             //Mathematical explanation of the below delta's easing: 
             //finalPos => f1 = -x + k   //f1 in [_maxScroll - _elasticAmount.._maxScroll]
             //_progress => f2 = f1 / k  //f2 in [1..0]
-            //easing    => f3 = f2^(5)  //f3 in [0..1]
+            //easing    => f3 = f2^(3)  //f3 in [0..1]
             //Since the result will be a positive number, Math.ceil is used to round its |value|.
-            const __progress = Math.max(0, (__maxScroll - finalPos + delta) / _elasticAmount);
-            return Math.ceil(delta * Math.pow(__progress, 5)); //delta * f3
+            const __progress = (__maxScroll - finalPos) / _elasticAmount;
+            if(__progress > 1) return __maxScroll - _elasticAmount - finalPos;
+            if(__progress < 0) return 0; 
+            return Math.ceil(delta * Math.pow(__progress, 3)); //delta * f3
         }
     
         //The snap scrolling won't be triggered because we're not 
@@ -689,19 +699,19 @@ export function addElasticMomentumScrolling(
 
     if(_onXAxis) {
         options.speedModifierX = (deltaX, deltaY) => {
-            return _elasticSpeedModifier(deltaX, uss.getFinalXPosition(container, options) + deltaX, uss.getMaxScrollX);
+            return _elasticSpeedModifier(deltaX, uss.getFinalXPosition(container, options), uss.getMaxScrollX);
         }
     }
     
     if(_onYAxis) {
         options.speedModifierY = (deltaX, deltaY) => {
-            return _elasticSpeedModifier(deltaY, uss.getFinalYPosition(container, options) + deltaY, uss.getMaxScrollY);
+            return _elasticSpeedModifier(deltaY, uss.getFinalYPosition(container, options), uss.getMaxScrollY);
         }
     }
 
     //Default easing behaviors: ease-out-like.
-    options.snapEasingX = options.elasticEasingX || function(remaning) {return Math.ceil(uss._framesTime * remaning / 160)};
-    options.snapEasingY = options.elasticEasingY || function(remaning) {return Math.ceil(uss._framesTime * remaning / 160)};
+    options.snapEasingX = options.elasticEasingX || function(remaning) {return Math.ceil(uss._framesTime * remaning / 110)};
+    options.snapEasingY = options.elasticEasingY || function(remaning) {return Math.ceil(uss._framesTime * remaning / 110)};
 
     options.elasticEasingX = undefined;
     options.elasticEasingY = undefined;
