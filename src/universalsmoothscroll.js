@@ -287,7 +287,7 @@ var uss = {
   _windowWidth:  INITIAL_WINDOW_WIDTH,
   _scrollbarsMaxDimension: null,
   _framesTime: DEFAULT_FRAME_TIME,
-  _pageScroller: document.scrollingElement || window,
+  _pageScroller: null,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   _onResizeEndCallbacks: [],
   _debugMode: "",
@@ -382,7 +382,37 @@ var uss = {
 
     return uss._scrollbarsMaxDimension;
   },
-  getPageScroller: () => uss._pageScroller,
+  getPageScroller: (forceCalculation = false) => {
+    //Check if the pageScroller has already been calculated.
+    if(!forceCalculation && (uss._pageScroller === window || uss._pageScroller instanceof HTMLElement)) {
+      return uss._pageScroller;
+    }
+ 
+    //The _pageScroller is the element that can scroll the further between document.documentElement and document.body.
+    //If there's a tie or neither of those can scroll, it's defaulted to the 
+    //the document.scrollingElement (if supported) or the window.
+    const _htmlMaxScrollX = uss.getMaxScrollX(document.documentElement, true, options);
+    const _htmlMaxScrollY = uss.getMaxScrollY(document.documentElement, true, options);
+    const _bodyMaxScrollX = uss.getMaxScrollX(document.body, true, options);
+    const _bodyMaxScrollY = uss.getMaxScrollY(document.body, true, options);
+
+    //Cache the _pageScroller for later use.
+    if(
+      (_htmlMaxScrollX >  _bodyMaxScrollX && _htmlMaxScrollY >= _bodyMaxScrollY) ||
+      (_htmlMaxScrollX >= _bodyMaxScrollX && _htmlMaxScrollY >  _bodyMaxScrollY)
+    ) {
+      uss._pageScroller = document.documentElement;
+    } else if(
+      (_bodyMaxScrollX >  _htmlMaxScrollX && _bodyMaxScrollY >= _htmlMaxScrollY) || 
+      (_bodyMaxScrollX >= _htmlMaxScrollX && _bodyMaxScrollY >  _htmlMaxScrollY) 
+    ) {
+      uss._pageScroller = document.body;
+    } else {
+      uss._pageScroller = document.scrollingElement || window;
+    }
+
+    return uss._pageScroller;
+  },
   getReducedMotionState: () => uss._reducedMotion,
   getOnResizeEndCallbacks: () => uss._onResizeEndCallbacks,
   getDebugMode: () => uss._debugMode, 
@@ -1849,6 +1879,9 @@ var uss = {
   }, {passive:true});
 
   function __ussInit() {
+    //Force the calculation of the _pageScroller.
+    uss.getPageScroller(true);
+
     //Force the calculation of the _scrollbarsMaxDimension at the startup.
     uss.getScrollbarsMaxDimension(true);
 

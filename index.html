@@ -129,9 +129,6 @@
     
     let lastAnchorPressed = null;
 
-    uss.setPageScroller(pageScroller); //<----------------------------------------------------TODO -> FIX: THIS SHOULDN'T BE NECESSARY
-    uss.setStepLengthCalculator(EASE_LINEAR());
-
     const listItems = easeFunctionSelectorList.children;
     listItems[0].classList.add("selected");
     for(const li of listItems) {
@@ -141,35 +138,40 @@
       }, {passive:true});
     }
 
-    document.getElementById("linear").addEventListener("click",          () => uss.setStepLengthCalculator(EASE_LINEAR()));
+    function setEasingsBody(easingX, easingY) {
+      _bodyMomentumScrollingOptions.momentumEasingX = easingX;
+      _bodyMomentumScrollingOptions.momentumEasingY = easingY;
+    }
 
-    document.getElementById("easeInSine").addEventListener("click",      () => uss.setStepLengthCalculator(EASE_IN_SINE()));
-    document.getElementById("easeInQuad").addEventListener("click",      () => uss.setStepLengthCalculator(EASE_IN_QUAD()));
-    document.getElementById("easeInCubic").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_IN_CUBIC()));
-    document.getElementById("easeInQuart").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_IN_QUART()));
-    document.getElementById("easeInQuint").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_IN_QUINT()));
-    document.getElementById("easeInExpo").addEventListener("click",      () => uss.setStepLengthCalculator(EASE_IN_EXPO()));
-    document.getElementById("easeInCirc").addEventListener("click",      () => uss.setStepLengthCalculator(EASE_IN_CIRC()));
+    document.getElementById("linear").addEventListener("click",          () => setEasingsBody(EASE_LINEAR(), EASE_LINEAR()));
 
-    document.getElementById("easeOutSine").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_OUT_SINE()));
-    document.getElementById("easeOutQuad").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_OUT_QUAD()));
-    document.getElementById("easeOutCubic").addEventListener("click",    () => uss.setStepLengthCalculator(EASE_OUT_CUBIC()));
-    document.getElementById("easeOutQuart").addEventListener("click",    () => uss.setStepLengthCalculator(EASE_OUT_QUART()));
-    document.getElementById("easeOutQuint").addEventListener("click",    () => uss.setStepLengthCalculator(EASE_OUT_QUINT()));
-    document.getElementById("easeOutExpo").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_OUT_EXPO()));
-    document.getElementById("easeOutCirc").addEventListener("click",     () => uss.setStepLengthCalculator(EASE_OUT_CIRC()));
+    document.getElementById("easeInSine").addEventListener("click",      () => setEasingsBody(EASE_IN_SINE(), EASE_IN_SINE()));
+    document.getElementById("easeInQuad").addEventListener("click",      () => setEasingsBody(EASE_IN_QUAD(), EASE_IN_QUAD()));
+    document.getElementById("easeInCubic").addEventListener("click",     () => setEasingsBody(EASE_IN_CUBIC(), EASE_IN_CUBIC()));
+    document.getElementById("easeInQuart").addEventListener("click",     () => setEasingsBody(EASE_IN_QUART(), EASE_IN_QUART()));
+    document.getElementById("easeInQuint").addEventListener("click",     () => setEasingsBody(EASE_IN_QUINT(), EASE_IN_QUINT()));
+    document.getElementById("easeInExpo").addEventListener("click",      () => setEasingsBody(EASE_IN_EXPO(), EASE_IN_EXPO()));
+    document.getElementById("easeInCirc").addEventListener("click",      () => setEasingsBody(EASE_IN_CIRC(), EASE_IN_CIRC() ));
 
-    document.getElementById("easeInOutSine").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_OUT_SINE()));
-    document.getElementById("easeInOutQuad").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_OUT_QUAD()));
-    document.getElementById("easeInOutCubic").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC()));
-    document.getElementById("easeInOutQuart").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_QUART()));
-    document.getElementById("easeInOutQuint").addEventListener("click",  () => uss.setStepLengthCalculator(EASE_IN_OUT_QUINT()));
-    document.getElementById("easeInOutExpo").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_OUT_EXPO()));
-    document.getElementById("easeInOutCirc").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_IN_OUT_CIRC()));
+    document.getElementById("easeOutSine").addEventListener("click",     () => setEasingsBody(EASE_OUT_SINE(), EASE_OUT_SINE()));
+    document.getElementById("easeOutQuad").addEventListener("click",     () => setEasingsBody(EASE_OUT_QUAD(), EASE_OUT_QUAD()));
+    document.getElementById("easeOutCubic").addEventListener("click",    () => setEasingsBody(EASE_OUT_CUBIC(), EASE_OUT_CUBIC()));
+    document.getElementById("easeOutQuart").addEventListener("click",    () => setEasingsBody(EASE_OUT_QUART(), EASE_OUT_QUART()));
+    document.getElementById("easeOutQuint").addEventListener("click",    () => setEasingsBody(EASE_OUT_QUINT(), EASE_OUT_QUINT()));
+    document.getElementById("easeOutExpo").addEventListener("click",     () => setEasingsBody(EASE_OUT_EXPO(), EASE_OUT_EXPO()));
+    document.getElementById("easeOutCirc").addEventListener("click",     () => setEasingsBody(EASE_OUT_CIRC(), EASE_OUT_CIRC()));
 
-    document.getElementById("easeInBounce").addEventListener("click",    () => uss.setStepLengthCalculator(EASE_IN_BOUNCE()));
-    document.getElementById("easeOutBounce").addEventListener("click",   () => uss.setStepLengthCalculator(EASE_OUT_BOUNCE()));
-    document.getElementById("easeInOutBounce").addEventListener("click", () => uss.setStepLengthCalculator(EASE_IN_OUT_BOUNCE()));
+    document.getElementById("easeInOutSine").addEventListener("click",   () => setEasingsBody(EASE_IN_OUT_SINE(), EASE_IN_OUT_SINE()));
+    document.getElementById("easeInOutQuad").addEventListener("click",   () => setEasingsBody(EASE_IN_OUT_QUAD(), EASE_IN_OUT_QUAD()));
+    document.getElementById("easeInOutCubic").addEventListener("click",  () => setEasingsBody(EASE_IN_OUT_CUBIC(), EASE_IN_OUT_CUBIC()));
+    document.getElementById("easeInOutQuart").addEventListener("click",  () => setEasingsBody(EASE_IN_OUT_QUART(), EASE_IN_OUT_QUART()));
+    document.getElementById("easeInOutQuint").addEventListener("click",  () => setEasingsBody(EASE_IN_OUT_QUINT(), EASE_IN_OUT_QUINT()));
+    document.getElementById("easeInOutExpo").addEventListener("click",   () => setEasingsBody(EASE_IN_OUT_EXPO(), EASE_IN_OUT_EXPO()));
+    document.getElementById("easeInOutCirc").addEventListener("click",   () => setEasingsBody(EASE_IN_OUT_CIRC(), EASE_IN_OUT_CIRC()));
+
+    document.getElementById("easeInBounce").addEventListener("click",    () => setEasingsBody(EASE_IN_BOUNCE(), EASE_IN_BOUNCE()));
+    document.getElementById("easeOutBounce").addEventListener("click",   () => setEasingsBody(EASE_OUT_BOUNCE(), EASE_OUT_BOUNCE()));
+    document.getElementById("easeInOutBounce").addEventListener("click", () => setEasingsBody(EASE_IN_OUT_BOUNCE(), EASE_IN_OUT_BOUNCE()));
     
     let bezierTitleTimeout = 0;
     cubicBezierCustomInputParameters[4].addEventListener("click", () => {
@@ -197,14 +199,15 @@
     
     
 
+    const _bodyMomentumScrollingOptions = {
+      onYAxis: true,
+      onXAxis: true,
+      momentumEasingX: EASE_LINEAR(), //TODO fix the lag of these
+      momentumEasingY: EASE_LINEAR(),
+    }
     addMomentumScrolling(
       pageScroller,
-      {
-        onYAxis: true,
-        onXAxis: true,
-        //momentumEasingX: EASE_OUT_CUBIC(600), //TODO fix the lag of these
-        //momentumEasingY: EASE_OUT_CUBIC(600),
-      }
+      _bodyMomentumScrollingOptions
     );
 
     const _elasticOptions = {
@@ -271,19 +274,18 @@
         align: "end"
       }
   ];
-  
+
   /*
-    const _children = Array.from(xScrollerSection.children)
-                           .reduce(
-                             (prev, curr) => {
-                               prev.push({
-                                 element: curr,
-                                 align: "center"
-                               });
-                               return prev;
-                             }, 
-                             []
-                           );*/
+  const _children = Array.from(xScrollerSection.children)
+                         .map(
+                          (el) => {
+                            return {
+                              element: el,
+                              align: "center"
+                            }
+                          }
+                         )
+    */
     addMomentumSnapScrolling(
       xScrollerSection, 
       {

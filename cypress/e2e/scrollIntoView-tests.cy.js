@@ -3,7 +3,7 @@ const { constants } = require("../support/constants");
 function _getTotalBorderSize(uss, elements, sizeNum) {
     const _totalBorderSize = elements.reduce(
         (prev, curr) => {
-            const _borders = uss.calcBordersDimensions(curr);
+            const _borders = uss.calcBordersDimensions(curr, true);
             prev[0] += _borders[0];
             prev[1] += _borders[1];
             prev[2] += _borders[2];
@@ -17,7 +17,7 @@ function _getTotalBorderSize(uss, elements, sizeNum) {
 function _getTotalScrollbarsSize(uss, elements, sizeNum) {
     const _totalScrollbarsSize = elements.reduce(
         (prev, curr) => {
-            const _borders = uss.calcScrollbarsDimensions(curr);
+            const _borders = uss.calcScrollbarsDimensions(curr, true);
             prev[0] += _borders[0];
             prev[1] += _borders[1];
             return prev;
