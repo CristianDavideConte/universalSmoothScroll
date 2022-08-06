@@ -1101,7 +1101,7 @@ A _bounce_ occurs when the scroll-animation reaches the highest scrollable value
     * the `currentTimestamp` which indicates the time in milliseconds at which this function is invoked 
     * the `currentPosition` of the container's scrollTop/Left (scrollTop/scrollY for EASE_ELASTIC_Y, scrollLeft/scrollX for EASE_ELASTIC_X)
     * the `direction` of the _(forward part of)_ scroll-animation: 1 if the scrolling was from right-to-left/bottom-to-top, -1 otherwise
-    * the `container` on which the scroll-animation is currently being performed (an HTMLElement that can be scrolled or the window object)
+    * the `container` on which the scroll-animation is currently being performed (an Element that can be scrolled or the Window)
         
   #### The `debounceTime` parameter     
   * It's the time _(in milliseconds)_ that has to elapse after the end of the _(forward part of)_ the scroll-animation in order to start the backward part. <br/> It's an optional parameter. 

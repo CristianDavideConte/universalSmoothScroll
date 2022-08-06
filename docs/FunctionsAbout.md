@@ -774,8 +774,8 @@ An _italic_ input parameter's name means that it's an optional input.
    <td rowspan = "1" align = "left">
     Returns a function that when invoked: 
     <ul> 
-     <li> Returns the scrollLeft property of the passed container if it's an instance of HTMLElement. </li> 
-     <li> Returns the scrollX property of the passed container if it's the window element. </li> 
+     <li> Returns the scrollLeft property of the passed container if it's an instance of Element. </li> 
+     <li> Returns the scrollX property of the passed container if it's the Window. </li> 
     </ul>
    </td>
   </tr> 
@@ -795,8 +795,8 @@ An _italic_ input parameter's name means that it's an optional input.
    <td rowspan = "1" align = "left">
     Returns a function that when invoked: 
     <ul> 
-     <li> Returns the scrollTop property of the passed container if it's an instance of HTMLElement. </li> 
-     <li> Returns the scrollY property of the passed container if it's the window element. </li> 
+     <li> Returns the scrollTop property of the passed container if it's an instance of Element. </li> 
+     <li> Returns the scrollY property of the passed container if it's the Window. </li> 
     </ul>
    </td>
   </tr> 
@@ -1546,7 +1546,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   
@@ -1562,7 +1562,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   
@@ -1577,7 +1577,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   
@@ -1592,7 +1592,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   
@@ -1607,7 +1607,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
 
@@ -1622,7 +1622,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
 
@@ -1637,7 +1637,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   
@@ -1652,7 +1652,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -1678,7 +1678,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -1747,7 +1747,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>  
   </tr>
   <tr>
@@ -1788,7 +1788,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>  
   </tr>
   <tr>
@@ -1829,7 +1829,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>  
   </tr>
   <tr>
@@ -1934,7 +1934,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function that will be executed only once the user has finished resizing the window and has <a href = "./VariablesAbout.md#_onResizeEndCallbacks"><code><i>interacted</i></code></a> with it.
+    A function that will be executed only once the user has finished resizing the Window and has <a href = "./VariablesAbout.md#_onResizeEndCallbacks"><code><i>interacted</i></code></a> with it.
   </td>
   </tr>
     
@@ -2010,7 +2010,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An HTMLElement, an SVGElement or the Window.
   </td>
   </tr>
   <tr>
@@ -2038,7 +2038,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An HTMLElement, an SVGElement or the Window.
   </td>
   </tr>
   <tr>
@@ -2066,7 +2066,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An HTMLElement, an SVGElement or the Window.
   </td>
   </tr>
   <tr>
@@ -2094,7 +2094,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2122,7 +2122,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
         
@@ -2138,7 +2138,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
         
@@ -2154,7 +2154,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2182,7 +2182,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2209,7 +2209,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2235,7 +2235,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2261,7 +2261,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2287,7 +2287,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2336,7 +2336,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2374,7 +2374,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2411,7 +2411,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2460,7 +2460,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2520,7 +2520,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2569,7 +2569,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2608,7 +2608,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An HTMLElement, an SVGElement or the Window.
   </td>
   </tr>
   <tr>
@@ -2673,7 +2673,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An HTMLElement, an SVGElement or the Window.
   </td>
   </tr>
   <tr>
@@ -2722,7 +2722,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2748,7 +2748,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>
@@ -2774,7 +2774,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    An HTMLElement or the window element.
+    An Element or the Window.
   </td>
   </tr>
   <tr>

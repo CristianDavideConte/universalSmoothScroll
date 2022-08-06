@@ -40,15 +40,15 @@ A: Every Universal Smooth Scroll API function call has this structure: `uss.name
 <br/>
 
 ## Q: Can I pass a `React.Component` as either the `container` or the `element` value ? 
-A: No, you have to pass either an `HTMLElement` or the `window` element. <br/>
-This problem can be easily solved by looking for the elements in the DOM with `getElementById`, `getElementsByClassName`, etc... or by using either React's [`Refs`](https://en.reactjs.org/docs/refs-and-the-dom.html) or the [`React.findDOMNode`](https://en.reactjs.org/docs/react-dom.html#finddomnode) method to obtain the `HTMLElement` from your `ReactElements`. <br/>
+A: No, you have to pass either an `HTMLElement`, an `SVGElement` or the `window`. <br/>
+This problem can be easily solved by looking for the elements in the DOM with `getElementById`, `getElementsByClassName`, etc... or by using either React's [`Refs`](https://en.reactjs.org/docs/refs-and-the-dom.html) or the [`React.findDOMNode`](https://en.reactjs.org/docs/react-dom.html#finddomnode) method to obtain the `Element` from your `ReactElements`. <br/>
 
 For istance:
 ```javascript
 /*
  * In this example I want to create a scrollable React Component which
  * has a button that smoothly scrolls the Component when clicked.
- * To get the corresponding HTMLElement I'll use React's ref and the document.getElementById method. 
+ * To get the corresponding Element I'll use React's ref and the document.getElementById method. 
  */
 class myApp extends React.Component {
   constructor(props) {
@@ -60,10 +60,10 @@ class myApp extends React.Component {
     return(
       <div id="myID" ref={this.myRef}> { /* I'm using the ref on the container I want to scroll */ }
         <button onClick={
-          {/* Option A: retrieve the HTMLElement with the help of the ref */}
+          {/* Option A: retrieve the Element with the help of the ref */}
           () => uss.scrollYBy(500, {this.myRef.current}); 
           
-          {/* Option B: retrieve the HTMLElement with js */}
+          {/* Option B: retrieve the Element with js */}
           () => uss.scrollYBy(500, document.getElementById("myID"));
         }>
         </button>
@@ -135,7 +135,7 @@ A stepLengthCalculator is always passed the following input parameters _(in this
 * the `totalScrollAmount` of the current scroll-animation in px _(always positive)_
 * the `currentPosition` of the container's scrollTop/Left (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/scrollX otherwise)
 * the `finalPosition` that the container's scrollTop/Left has to reach (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/scrollX otherwise)
-* the `container` on which the scroll-animation is currently being performed (an HTMLElement that can be scrolled or the window object) <br/>
+* the `container` on which the scroll-animation is currently being performed (an Element that can be scrolled or the Window) <br/>
 
 Imagine that a scroll-animation is like a stair: you know when/from where you started walking up/down the stair, how much time has passed since, how long the the stair is and where you are right now.<br/>
 This stair could have many steps and you can decide that you want to rest and don't make any step _(return 0)_, go up _(return a number > 0)_ or go down _(return a number < 0)_ by telling the API through the return value of a stepLengthCalculator.<br/>   
@@ -268,7 +268,7 @@ A: Unlike any other callback parameter of the USS API, this is a function that g
 
 This `init` function is always passed the following input parameters _(in this order)_:
 * the anchor that has been clicked
-* the element that has to be reached (the HTMLElement that has the same id of the anchors's `href` parameter) <br/>
+* the element that has to be reached (the Element that has the same id of the anchors's `href` parameter) <br/>
 
 If the `init` function returns `false` the scroll-animation is prevented. 
 

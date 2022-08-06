@@ -25,8 +25,8 @@ export async function isValidStepLengthCalculator(
     }
 
     //Check if the passed container is valid.
-    if(options.container !== window && !(options.container instanceof HTMLElement)) {
-        uss._errorLogger(options.debugString, "the options.container parameter to be an HTMLElement or the Window", options.container);
+    if(options.container !== window && !(options.container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the options.container parameter to be an Element or the Window", options.container);
         return false;
     }
 

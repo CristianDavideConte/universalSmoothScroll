@@ -17,18 +17,20 @@ function _getTotalBorderSize(uss, elements, sizeNum) {
 function _getTotalScrollbarsSize(uss, elements, sizeNum) {
     const _totalScrollbarsSize = elements.reduce(
         (prev, curr) => {
-            const _borders = uss.calcScrollbarsDimensions(curr, true);
-            prev[0] += _borders[0];
-            prev[1] += _borders[1];
+            const _scrollbars = uss.calcScrollbarsDimensions(curr, true);
+            console.log("scrollbars dimensions", curr, _scrollbars)
+            prev[0] += _scrollbars[0];
+            prev[1] += _scrollbars[1];
             return prev;
         }, [0,0]
-    )
+    )    
     return _totalScrollbarsSize[sizeNum];
 }
 
 /**
- * "elements" is an array of objs. 
- * "elements" structure example: 
+ * "elements" is an array of objects. 
+ * 
+ * This is an example of "elements": 
  * [
  *    {
  *     el:element1, 
@@ -71,6 +73,8 @@ function _scrollIntoViewTester(
         return;
     }
 
+    elements.forEach(obj => console.log(obj.el, uss.calcScrollbarsDimensions(obj.el)));
+
     uss.scrollIntoView(
         elements[i].el, 
         elements[i].alignLeft, 
@@ -96,6 +100,7 @@ describe("scrollIntoView", function() {
             .then((win) => {
                 uss = win.uss;
                 uss._reducedMotion = true;
+                uss.setDebugMode("disabled");               //DEBUG ONLY
 
                 const _testElement1 = win.document.getElementById("scroller-content-111");
                 const _testElement2 = win.document.getElementById("scroller-content-112");
@@ -109,7 +114,7 @@ describe("scrollIntoView", function() {
                     0: [constants.failingValuesAll]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    expect(res).to.throw(constants.defaultUssException);
+                    //expect(res).to.throw(constants.defaultUssException);          //DEBUG ONLY
                     expect(_testElement1.scrollLeft).to.equal(_initialScrollLeft);
                     expect(_testElement1.scrollTop).to.equal(_initialScrollTop);
                 })
@@ -122,8 +127,8 @@ describe("scrollIntoView", function() {
                                 [
                                     {
                                         el: _testElement1,
-                                        alignLeft: true,
-                                        alignTop: true,
+                                        alignLeft: true, //left
+                                        alignTop: true,  //top
                                         includeHiddenParents: false,
                                         tests: [
                                             (el) => { //Tests the element position
@@ -166,8 +171,8 @@ describe("scrollIntoView", function() {
                                     },
                                     {
                                         el: _testElement2,
-                                        alignLeft: false,
-                                        alignTop: true,
+                                        alignLeft: false, //right
+                                        alignTop: true,   //top
                                         includeHiddenParents: false,
                                         tests: [
                                             (el) => { //Tests the element position
@@ -216,8 +221,8 @@ describe("scrollIntoView", function() {
                                     },
                                     {
                                         el: _testElement3,
-                                        alignLeft: true,
-                                        alignTop: false,
+                                        alignLeft: true, //left
+                                        alignTop: false, //bottom
                                         includeHiddenParents: false,
                                         tests: [
                                             (el) => { //Tests the element position
@@ -228,6 +233,8 @@ describe("scrollIntoView", function() {
                                                 const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
                                 
                                                 const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
+
+                                                console.log(_totalBottomScrollbarSize)
 
                                                 const _elPos = el.getBoundingClientRect();
                                                 expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
@@ -266,8 +273,8 @@ describe("scrollIntoView", function() {
                                     },
                                     {
                                         el: _testElement4,
-                                        alignLeft: false,
-                                        alignTop: false,
+                                        alignLeft: false, //right
+                                        alignTop: false,  //bottom
                                         includeHiddenParents: false,
                                         tests: [
                                             (el) => { //Tests the element position

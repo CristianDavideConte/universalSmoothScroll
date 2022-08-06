@@ -1,8 +1,8 @@
 /*
  * CONSTANTS (INTERNAL USE):
  *
- * INITIAL_WINDOW_HEIGHT: number, the window's inner height (in px) when the page is first loaded.
- * INITIAL_WINDOW_WIDTH: number, the window's inner width (in px) when the page is first loaded.
+ * INITIAL_WINDOW_HEIGHT: number, the Window's inner height (in px) when the page is first loaded.
+ * INITIAL_WINDOW_WIDTH: number, the Window's inner width (in px) when the page is first loaded.
  * DEFAULT_XSTEP_LENGTH: number, the initial value of the "_xStepLength" property: it represents the default number of pixels scrolled in a single scroll-animation's step on the x-axis. 
  *                       It's 16px at 412px of (initial window's) width and 23px at 1920px of (initial window's) width.
  * DEFAULT_YSTEP_LENGTH: number, The initial value of the "_yStepLength" property: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. 
@@ -133,11 +133,11 @@
  *                        [3] contains the left border's width (in px) of the passed element.
  *                        The returned border sizes don't take into consideration the css "transform" property's effects. 
  * getScrollXCalculator: function, returns a function that returns:
- *                       - The scrollLeft property of the passed container if it's an instance of HTMLElement.
- *                       - The scrollX property of the passed container if it's the window element.
+ *                       - The scrollLeft property of the passed container if it's an instance of Element.
+ *                       - The scrollX property of the passed container if it's the Window.
  * getScrollYCalculator: function, returns a function that returns:
- *                       - The scrollTop property of the passed container if it's an instance of HTMLElement.
- *                       - The scrollY property of the passed container if it's the window element.
+ *                       - The scrollTop property of the passed container if it's an instance of Element.
+ *                       - The scrollY property of the passed container if it's the Window.
  * getMaxScrollX: function, returns the highest reacheable scrollLeft/scrollX value of the passed container.
  * getMaxScrollY: function, returns the highest reacheable scrollTop/scrollY value of the passed container.
  * getXScrollableParent: function, returns the first scrollable container (on the x-axis) of the passed element or null if it doesn't have one. 
@@ -294,25 +294,25 @@ var uss = {
   _errorLogger: DEFAULT_ERROR_LOGGER,
   _warningLogger: DEFAULT_WARNING_LOGGER,
   isXScrolling: (container = uss._pageScroller, options = {debugString: "isXScrolling"}) => {
-    if(container === window || container instanceof HTMLElement) {
+    if(container === window || container instanceof Element) {
       const _containerData = uss._containersData.get(container) || [];
       return !!_containerData[0];
     }
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   isYScrolling: (container = uss._pageScroller, options = {debugString: "isYScrolling"}) => {
-    if(container === window || container instanceof HTMLElement) {
+    if(container === window || container instanceof Element) {
       const _containerData = uss._containersData.get(container) || [];
       return !!_containerData[1];
     }
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   isScrolling: (container = uss._pageScroller, options = {debugString: "isScrolling"}) => {
-    if(container === window || container instanceof HTMLElement) { 
+    if(container === window || container instanceof Element) { 
       const _containerData = uss._containersData.get(container) || [];
       return !!_containerData[0] || !!_containerData[1];
     }
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getFinalXPosition: (container = uss._pageScroller, options = {debugString: "getFinalXPosition"}) => {
     //If there's no scroll-animation on the x-axis, the current position is returned instead.
@@ -325,34 +325,34 @@ var uss = {
     return _containerData[3] === 0 ? 0 : _containerData[3] || uss.getScrollYCalculator(container, options)();
   },
   getScrollXDirection: (container = uss._pageScroller, options = {debugString: "getScrollXDirection"}) => {
-    if(container === window || container instanceof HTMLElement) { 
+    if(container === window || container instanceof Element) { 
       //If there's no scroll-animation on the x-axis, 0 is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[4] || 0;
     }
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getScrollYDirection: (container = uss._pageScroller, options = {debugString: "getScrollYDirection"}) => {
-    if(container === window || container instanceof HTMLElement) { 
+    if(container === window || container instanceof Element) { 
       //If there's no scroll-animation on the y-axis, 0 is returned instead.
       const _containerData = uss._containersData.get(container) || [];
       return _containerData[5] || 0;
     }
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);  
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);  
   },
   getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getXStepLengthCalculator"}) => {
-    if(container === window || container instanceof HTMLElement) { 
+    if(container === window || container instanceof Element) { 
       const _containerData = uss._containersData.get(container) || [];
       return getTemporary ? _containerData[14] : _containerData[12];
     }
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getYStepLengthCalculator"}) => {    
-    if(container === window || container instanceof HTMLElement) { 
+    if(container === window || container instanceof Element) { 
       const _containerData = uss._containersData.get(container) || [];
       return getTemporary ? _containerData[15] : _containerData[13];
     }
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getXStepLength: () => uss._xStepLength,
   getYStepLength: () => uss._yStepLength,
@@ -382,15 +382,15 @@ var uss = {
 
     return uss._scrollbarsMaxDimension;
   },
-  getPageScroller: (forceCalculation = false) => {
+  getPageScroller: (forceCalculation = false, options = {debugString: "getPageScroller"}) => {
     //Check if the pageScroller has already been calculated.
-    if(!forceCalculation && (uss._pageScroller === window || uss._pageScroller instanceof HTMLElement)) {
+    if(!forceCalculation && uss._pageScroller) {
       return uss._pageScroller;
     }
  
     //The _pageScroller is the element that can scroll the further between document.documentElement and document.body.
     //If there's a tie or neither of those can scroll, it's defaulted to the 
-    //the document.scrollingElement (if supported) or the window.
+    //the document.scrollingElement (if supported) or the Window.
     const _htmlMaxScrollX = uss.getMaxScrollX(document.documentElement, true, options);
     const _htmlMaxScrollY = uss.getMaxScrollY(document.documentElement, true, options);
     const _bodyMaxScrollX = uss.getMaxScrollX(document.body, true, options);
@@ -421,8 +421,8 @@ var uss = {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(container !== window && !(container instanceof Element)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
       return;
     }
     const _oldData = uss._containersData.get(container);
@@ -439,8 +439,8 @@ var uss = {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(container !== window && !(container instanceof Element)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
       return;
     }
     const _oldData = uss._containersData.get(container);
@@ -457,8 +457,8 @@ var uss = {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(container !== window && !(container instanceof Element)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
       return;
     }
     const _oldData = uss._containersData.get(container);
@@ -506,8 +506,8 @@ var uss = {
     uss._minAnimationFrame = newMinAnimationFrame;
   },
   setPageScroller: (newPageScroller, options = {debugString: "setPageScroller"}) => {
-    if(newPageScroller !== window && !(newPageScroller instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the newPageScroller to be an HTMLElement or the Window", newPageScroller);
+    if(newPageScroller !== window && !(newPageScroller instanceof Element)) {
+      uss._errorLogger(options.debugString, "the newPageScroller to be an Element or the Window", newPageScroller);
       return;
     }
     uss._pageScroller = newPageScroller;
@@ -551,9 +551,9 @@ var uss = {
       return _containerData[18]; //Vertical scrollbar's width
     }
 
-    if(element === window) element = document.scrollingElement || uss.getPageScroller();
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
+    if(element === window) element = uss.getPageScroller();
+    if(!(element instanceof HTMLElement || element instanceof SVGElement)) {
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement, an SVGElement or the Window", element);
       return;
     }
 
@@ -601,9 +601,9 @@ var uss = {
       return _containerData[19]; //Horizontal scrollbar's height
     }
 
-    if(element === window) element = document.scrollingElement || uss.getPageScroller();
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
+    if(element === window) element = uss.getPageScroller();
+    if(!(element instanceof HTMLElement || element instanceof SVGElement)) {
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement, an SVGElement or the Window", element);
       return;
     }
 
@@ -651,9 +651,9 @@ var uss = {
       return [_containerData[18], _containerData[19]]; //[Vertical scrollbar's width, Horizontal scrollbar's height]
     }
 
-    if(element === window) element = document.scrollingElement || uss.getPageScroller();
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
+    if(element === window) element = uss.getPageScroller();
+    if(!(element instanceof HTMLElement || element instanceof SVGElement)) {
+      uss._errorLogger(options.debugString, "the element to be an HTMLElement, an SVGElement or the Window", element);
       return;
     }
 
@@ -725,9 +725,9 @@ var uss = {
       ];
     }
 
-    if(element === window) element = document.scrollingElement || uss.getPageScroller();
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
+    if(element === window) element = uss.getPageScroller();
+    if(!(element instanceof Element)) {
+      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
       return;
     }
     
@@ -754,14 +754,14 @@ var uss = {
     return _bordersDimensions;
   },
   getScrollXCalculator: (container = uss._pageScroller, options = {debugString: "getScrollXCalculator"}) => {
-    if(container === window)             return () => window.scrollX;
-    if(container instanceof HTMLElement) return () => container.scrollLeft;
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);                                       
+    if(container === window)         return () => window.scrollX;
+    if(container instanceof Element) return () => container.scrollLeft;
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);                                       
   },
   getScrollYCalculator: (container = uss._pageScroller, options = {debugString: "getScrollYCalculator"}) => {
-    if(container === window)             return () => window.scrollY;
-    if(container instanceof HTMLElement) return () => container.scrollTop;
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(container === window)         return () => window.scrollY;
+    if(container instanceof Element) return () => container.scrollTop;
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getMaxScrollX: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollX"}) => {
     //Check if the maxScrollX value for the passed container has already been calculated. 
@@ -781,7 +781,7 @@ var uss = {
 
       return _maxScroll;
     }
-    if(container instanceof HTMLElement) {
+    if(container instanceof Element) {
       const _originalXPosition = container.scrollLeft;
       container.scrollLeft = 1073741824; //highest safe scroll value: 2^30 = 1073741824
       const _maxScroll = container.scrollLeft;
@@ -793,7 +793,7 @@ var uss = {
       
       return _maxScroll;
     }
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getMaxScrollY: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollY"}) => {
     //Check if the maxScrollY value for the passed container has already been calculated. 
@@ -813,7 +813,7 @@ var uss = {
 
       return _maxScroll;
     }
-    if(container instanceof HTMLElement) {
+    if(container instanceof Element) {
       const _originalYPosition = container.scrollTop;
       container.scrollTop = 1073741824; //highest safe scroll value: 2^30 = 1073741824
       const _maxScroll = container.scrollTop;
@@ -825,12 +825,12 @@ var uss = {
 
       return _maxScroll;
     }
-    uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
     if(element === window) return null;
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
+    if(!(element instanceof Element)) {
+      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
       return;
     }
     
@@ -868,8 +868,8 @@ var uss = {
   },   
   getYScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
     if(element === window) return null;
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
+    if(!(element instanceof Element)) {
+      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
       return;
     }
     
@@ -907,8 +907,8 @@ var uss = {
   },     
   getScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getScrollableParent"}) => {
     if(element === window) return null;
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
+    if(!(element instanceof Element)) {
+      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
       return;
     }
     
@@ -946,8 +946,8 @@ var uss = {
   },    
   getAllScrollableParents: (element, includeHiddenParents = false, callback, options = {debugString: "getAllScrollableParents"}) => {
     if(element === window) return [];
-    if(!(element instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the element to be an HTMLElement or the Window", element);
+    if(!(element instanceof Element)) {
+      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
       return;
     }
     
@@ -1335,11 +1335,6 @@ var uss = {
     _initPhase = false;
     uss.scrollYBy(deltaY, container, _scrollYCallback, stillStart, options);
   },
-  
-  /**
-   * TODO: USE THE NEW uss.calcXScrollbarDimension and uss.calcYScrollbarDimension functions
-   *  Possibly optimize the elementFinalX/Y calculations (isn't alignToRight => elementFinalX = container.right?)
-   */
   scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoView"}) => {
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
@@ -1350,8 +1345,8 @@ var uss = {
       return;
     }
     
-    //If the window and the html/body elements are scrollable parents of the passed element, 
-    //scrolling the window can actually scroll the other two.
+    //If the Window and the html/body elements are scrollable parents of the passed element, 
+    //scrolling the Window can actually scroll the other two.
     //If this is the case remove the redundant html/body element.
     if(_containers[_containerIndex] === window) {
       const _html = document.documentElement;
@@ -1386,24 +1381,24 @@ var uss = {
 
     _scrollContainer();
 
-    //Tests if scrolling the window also scrolls the passed element.
+    //Tests if scrolling the Window also scrolls the passed element.
     function _canWindowScrollElement(element) {
-      //Save the original scroll positions of the window and the element.
+      //Save the original scroll positions of the Window and the element.
       const _originalWindowXPosition = window.scrollX;
       const _originalWindowYPosition = window.scrollY; 
       const _originalElementXPosition = element.scrollLeft;
       const _originalElementYPosition = element.scrollTop; 
 
-      //Scroll the window and the element to a known initial position.
+      //Scroll the Window and the element to a known initial position.
       window.scroll(0,0);
       element.scroll(0,0);
 
-      //Scroll the window and test if the element has the same scroll positions.
+      //Scroll the Window and test if the element has the same scroll positions.
       window.scroll(100, 100);
       const _windowScrollsElement = element.scrollLeft === window.scrollX && 
                                     element.scrollTop === window.scrollY;
       
-      //Restore the original scroll positions of the window and the element.
+      //Restore the original scroll positions of the Window and the element.
       if(!_windowScrollsElement) {
         element.scroll(_originalElementXPosition, _originalElementYPosition);
       }
@@ -1428,7 +1423,7 @@ var uss = {
       const _containerWidth  = _containerRect.width;
       const _containerHeight = _containerRect.height;
 
-      const _elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the window
+      const _elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the Window
       const _elementWidth  = _elementRect.width;
       const _elementHeight = _elementRect.height;
       const _elementInitialX = _elementRect.left - _containerRect.left; //_currentElement's x-coordinate relative to it's container
@@ -1467,12 +1462,6 @@ var uss = {
       else _callback();
     }
   },
-
-  
-  /**
-   * TODO: USE THE NEW uss.calcXScrollbarDimension and uss.calcYScrollbarDimension functions
-   */
-
   scrollIntoViewIfNeeded: (element, alignToCenter = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoViewIfNeeded"}) => {
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
@@ -1483,8 +1472,8 @@ var uss = {
       return;
     }
     
-    //If the window and the html/body elements are scrollable parents of the passed element, 
-    //scrolling the window can actually scroll the other two.
+    //If the Window and the html/body elements are scrollable parents of the passed element, 
+    //scrolling the Window can actually scroll the other two.
     //If this is the case remove the redundant html/body element.
     if(_containers[_containerIndex] === window) {
       const _html = document.documentElement;
@@ -1519,24 +1508,24 @@ var uss = {
 
     _scrollContainer();
 
-    //Tests if scrolling the window also scrolls the passed element.
+    //Tests if scrolling the Window also scrolls the passed element.
     function _canWindowScrollElement(element) {
-      //Save the original scroll positions of the window and the element.
+      //Save the original scroll positions of the Window and the element.
       const _originalWindowXPosition = window.scrollX;
       const _originalWindowYPosition = window.scrollY; 
       const _originalElementXPosition = element.scrollLeft;
       const _originalElementYPosition = element.scrollTop; 
 
-      //Scroll the window and the element to a known initial position.
+      //Scroll the Window and the element to a known initial position.
       window.scroll(0,0);
       element.scroll(0,0);
 
-      //Scroll the window and test if the element has the same scroll positions.
+      //Scroll the Window and test if the element has the same scroll positions.
       window.scroll(100, 100);
       const _windowScrollsElement = element.scrollLeft === window.scrollX && 
                                     element.scrollTop === window.scrollY;
       
-      //Restore the original scroll positions of the window and the element.
+      //Restore the original scroll positions of the Window and the element.
       if(!_windowScrollsElement) {
         element.scroll(_originalElementXPosition, _originalElementYPosition);
       }
@@ -1561,7 +1550,7 @@ var uss = {
       const _containerWidth  = _containerRect.width;
       const _containerHeight = _containerRect.height;
 
-      const _elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the window
+      const _elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the Window
       const _elementWidth  = _elementRect.width;
       const _elementHeight = _elementRect.height;
       const _elementInitialX = _elementRect.left - _containerRect.left; //_currentElement's x-coordinate relative to it's container
@@ -1629,8 +1618,8 @@ var uss = {
     }
   },
   stopScrollingX: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingX"}) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(container !== window && !(container instanceof Element)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
       return;
     }
     const _containerData = uss._containersData.get(container) || [];
@@ -1659,8 +1648,8 @@ var uss = {
     if(typeof callback === "function") callback();
   },
   stopScrollingY: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingY"}) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(container !== window && !(container instanceof Element)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
       return;
     }
     const _containerData = uss._containersData.get(container) || [];
@@ -1689,8 +1678,8 @@ var uss = {
     if(typeof callback === "function") callback();
   },
   stopScrolling: (container = uss._pageScroller, callback, options = {debugString: "stopScrolling"}) => {
-    if(container !== window && !(container instanceof HTMLElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(container !== window && !(container instanceof Element)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
       return;
     }
     const _containerData = uss._containersData.get(container) || [];
@@ -1778,7 +1767,8 @@ var uss = {
       }
       //Checks if the page initially have a URL containing 
       //a valid fragment and scrolls to it if necessary.
-      window.requestAnimationFrame(_smoothHistoryNavigation);
+      if(document.readyState === "complete") _smoothHistoryNavigation();
+      else window.addEventListener("load", _smoothHistoryNavigation, {passive:true, once:true});
     }
 
     for(const _pageLink of document.links) {

@@ -40,7 +40,7 @@ function __testImports() {
 /**
  * This function enables the momentum smooth scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
- * @param {*} container An HTMLElement or the window element.
+ * @param {*} container An Element or the Window.
  * @param {Object} options An object which containing the momentum smooth scrolling preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if the momentum smooth scrolling should be enabled on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=false] True if the momentum smooth scrolling should be enabled on the y-axis of container, false otherwise.
@@ -261,7 +261,7 @@ export function addMomentumScrolling(
 /**
  * This function enables the momentum snap scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
- * @param {*} container An HTMLElement or the window element.
+ * @param {*} container An Element or the Window.
  * @param {Object} options An object which containing the momentum snap scrolling preferences/properties listed below.
  * @param {Boolean} [options.onXAxis] "mandatory" to always trigger the snap-into-view behavior (on the x-axis) of this scroll-animation.
  *                                    "proximity" to trigger the snap-into-view behavior (on the x-axis) of this scroll-animation only if there's one of the 
@@ -323,8 +323,8 @@ export function addMomentumSnapScrolling(
     options.debugString = options.debugString || "addMomentumSnapScrolling";
 
     //Check if the container is a valid container.
-    if(container !== window && !(container instanceof HTMLElement)) {
-        uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
     }
 
@@ -345,9 +345,9 @@ export function addMomentumSnapScrolling(
             return;
         }
 
-        //Check if child.element is an HTMLElement.
-        if(!(_child.element instanceof HTMLElement)) {
-            uss._errorLogger(options.debugString, "the element parameter of each options.children object to be an HTMLElement", _child.element);
+        //Check if child.element is an Element.
+        if(!(_child.element instanceof Element)) {
+            uss._errorLogger(options.debugString, "the element parameter of each options.children object to be an Element", _child.element);
             return;
         }
 
@@ -547,7 +547,7 @@ export function addMomentumSnapScrolling(
 /**
  * This function enables the elastic momentum scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
- * @param {*} container An HTMLElement or the window element.
+ * @param {*} container An Element or the Window.
  * @param {Object} options An object which containing the momentum elastic scrolling preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if the elastic momentum smooth scrolling should be enabled on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=false] True if the elastic momentum smooth scrolling should be enabled on the y-axis of container, false otherwise.
@@ -595,8 +595,8 @@ export function addElasticMomentumScrolling(
     options.debugString = options.debugString || "addElasticMomentumScrolling";
 
     //Check if the container is a valid container.
-    if(container !== window && !(container instanceof HTMLElement)) {
-        uss._errorLogger(options.debugString, "the container to be an HTMLElement or the Window", container);
+    if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
     }
 
@@ -726,7 +726,7 @@ export function addElasticMomentumScrolling(
 /**
  * This function adds the specified smooth scrollbars onto the passed container.
  * These scrollbars can controll the momentum scrolling of the passed container. 
- * @param {*} container An HTMLElement.
+ * @param {*} container An Element.
  * @param {Object} options An object which containing the scrollbar's preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if a smooth scrollbar should be added on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=false] True if a smooth scrollbar should be added on the y-axis of container, false otherwise.
@@ -773,9 +773,9 @@ export function addSmoothScrollbar(
     options.debugString = options.debugString || "addSmoothScrollbar";
 
     //Check if the container is a valid container.
-    const _containerIsElement = container instanceof HTMLElement;
+    const _containerIsElement = container instanceof Element;
     if(!_containerIsElement) {
-        uss._errorLogger(options.debugString, "the container to be an HTMLElement", container);
+        uss._errorLogger(options.debugString, "the container to be an Element", container);
         return;
     }
     

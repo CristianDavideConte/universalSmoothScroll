@@ -155,7 +155,7 @@ The following table describes every entry of the `Input Parameters` column of th
      <code>Object</code>
    </td>
    <td rowspan = "1" align = "left">
-     An HTMLElement or the window element.
+     An Element or the Window.
    </td>
   </tr>
   

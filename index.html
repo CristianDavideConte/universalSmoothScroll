@@ -114,8 +114,6 @@
   } from "./src/universalsmoothscroll-presets.js"; 
 
   window.addEventListener("load", () => {
-    const pageScroller = document.body;
-
     const yScrollerSection = document.getElementById("yScrollerSection");
     const yScrollerUpButton = document.getElementById("yScrollerUp");
     const yScrollerDownButton = document.getElementById("yScrollerDown");
@@ -199,6 +197,10 @@
     
     
 
+
+
+    
+
     const _bodyMomentumScrollingOptions = {
       onYAxis: true,
       onXAxis: true,
@@ -206,7 +208,7 @@
       momentumEasingY: EASE_LINEAR(),
     }
     addMomentumScrolling(
-      pageScroller,
+      uss.getPageScroller(),
       _bodyMomentumScrollingOptions
     );
 

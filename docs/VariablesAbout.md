@@ -94,7 +94,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <a href = "./ConstantsAbout.md#INITIAL_WINDOW_HEIGHT"><code>INITIAL_WINDOW_HEIGHT</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    The current window's inner height <i>(in px)</i>.
+    The current Window's inner height <i>(in px)</i>.
    </td>
   </tr>
   <tr id = "_windowWidth">
@@ -108,7 +108,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <a href = "./ConstantsAbout.md#INITIAL_WINDOW_WIDTH"><code>INITIAL_WINDOW_WIDTH</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    The current window's inner width <i>(in px)</i>.
+    The current Window's inner width <i>(in px)</i>.
    </td>
   </tr>
   <tr id = "_scrollbarsMaxDimension">
@@ -147,7 +147,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <code>Object</code>
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "https://developer.mozilla.org/en-US/docs/Web/API/Document/scrollingElement"><code>document.scrollingElement</code></a> or <code>window</code>
+    <code>null</code>
    </td>
    <td rowspan = "1" align = "left">
     The value used when an API method requires the <code>container</code> input parameter but nothing is passed: it should be used to tell the USS API which is the element that scrolls the document.
