@@ -3,13 +3,14 @@
 
 # Download
 In order to use this API you first have to download the needed scripts. <br/>
-In total, there are 3 files available:
+There are 3 files available:
 
 <table>
  <thead>
   <tr>
    <th>File name</th>
    <th>Importance</th>
+   <th>Type</th>
    <th>Purpose</th>
   </tr>
  </thead>
@@ -21,6 +22,9 @@ In total, there are 3 files available:
    <td rowspan = "1" align = "center">
     <code>required</code>
    </td>
+   <td rowspan = "1" align = "center">
+    <code>script</code>
+   </td>
    <td rowspan = "1" align = "left">
     Contains <i>(the minified version of)</i> the API itself.
    </td>
@@ -31,6 +35,9 @@ In total, there are 3 files available:
    </td>
    <td rowspan = "1" align = "center">
     <code>optional</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"><code>module</code></a>
    </td>
    <td rowspan = "1" align = "left">
     Contains <i>(the minified version of)</i> a high level ease-functions library which allows you to effordlessly customize the timings and the behaviors of your scroll-animations. 
@@ -44,14 +51,17 @@ In total, there are 3 files available:
    <td rowspan = "1" align = "center">
     <code>optional</code>
    </td>
+   <td rowspan = "1" align = "center">
+    <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"><code>module</code></a>
+   </td>
    <td rowspan = "1" align = "left">
-    Contains <i>(the minified version of)</i> a library specifically written to help you with some of the more advanced aspects of this API.
+    Contains <i>(the minified version of)</i> a library specifically written <strong>to help you</strong> with some of the more advanced aspects of this API (only useful during testing).
    </td>
  </tr>
  </tbody>
 </table>
 
-Each one of the download options below will give you full access to all the above described scripts, so choose freely the download method you prefer.
+Each one of the download options below will give you full access to all the above described files, so choose freely the download method you prefer.
 
 ---
 
@@ -71,8 +81,7 @@ The files will be saved as a _.tgz archive_: extract them and you're good to go.
 ---
 
 ## Github
-Whenever a new version of the API is published, a new release is drafted. <br/>
-Each release has a changelog and the latest versions of the above mentioned files attached as assets. <br/>
+Each new release of the API has a changelog and the latest versions of the above mentioned files are attached as <code>Assets</code>. <br/>
 All the USS API releases are available in the [`releases section`](https://github.com/CristianDavideConte/universalSmoothScroll/releases).
 
 <br/>

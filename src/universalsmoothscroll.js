@@ -1,19 +1,19 @@
 /*
  * CONSTANTS (INTERNAL USE):
  *
- * INITIAL_WINDOW_HEIGHT: number, the Window's inner height (in px) when the page is first loaded.
  * INITIAL_WINDOW_WIDTH: number, the Window's inner width (in px) when the page is first loaded.
+ * INITIAL_WINDOW_HEIGHT: number, the Window's inner height (in px) when the page is first loaded.
  * DEFAULT_XSTEP_LENGTH: number, the initial value of the "_xStepLength" property: it represents the default number of pixels scrolled in a single scroll-animation's step on the x-axis. 
- *                       It's 16px at 412px of (initial window's) width and 23px at 1920px of (initial window's) width.
+ *                       It's 16px at 412px of (initial Window's) width and 23px at 1920px of (initial Window's) width.
  * DEFAULT_YSTEP_LENGTH: number, The initial value of the "_yStepLength" property: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. 
- *                       It's 38px at 789px of (initial window's) height and 22px at 1920px of (initial window's) height.
- * DEFAULT_MIN_ANIMATION_FRAMES: number, The initial value of the "_minAnimationFrame" property: 
- *                               it represents the default lowest number of frames any scroll-animation should last if no StepLengthCalculator is set for a container.
+ *                       It's 38px at 789px of (initial Window's) height and 22px at 1920px of (initial Window's) height.
+ * DEFAULT_MIN_ANIMATION_FRAMES: number, the initial value of the "_minAnimationFrame" property: 
+ *                               it represents the default lowest number of frames any scroll-animation on a container should last if no StepLengthCalculator is set for it.
  * DEFAULT_FRAME_TIME: number, the initial value of the "_framesTime" property: it's 16.6 and it initially assumes that the user's browser/screen is refreshing at 60fps. 
- * DEFAULT_XSTEP_LENGTH_CALCULATOR: function, returns how long each animation-step on the x-axis must be in order to target the "_minAnimationFrame" property value. 
- *                                  This is the default stepLengthCalculator for scroll-animations on the x-axis of every container that doesn't have a custom stepLengthCalculator set. 
- * DEFAULT_YSTEP_LENGTH_CALCULATOR: function, returns how long each animation-step on the y-axis must be in order to target the "_minAnimationFrame" property value. 
- *                                  This is the default stepLengthCalculator for scroll-animations on the y-axis of every container that doesn't have a custom stepLengthCalculator set. 
+ * DEFAULT_XSTEP_LENGTH_CALCULATOR: function, the default stepLengthCalculator for scroll-animations on the x-axis of every container that doesn't have a custom stepLengthCalculator set.
+ *                                  Controls how long each animation-step on the x-axis must be (in px) in order to target the "_minAnimationFrame" property value. 
+ * DEFAULT_YSTEP_LENGTH_CALCULATOR: function, the default stepLengthCalculator for scroll-animations on the y-axis of every container that doesn't have a custom stepLengthCalculator set.
+ *                                  Controls how long each animation-step on the y-axis must be (in px) in order to target the "_minAnimationFrame" property value. 
  * DEFAULT_ERROR_LOGGER: function, the initial value of the "_errorLogger" property: it logs the API error messages inside the browser's console.
  * DEFAULT_WARNING_LOGGER: function, the initial value of the "_warningLogger" property: it logs the API warning messages inside the browser's console.
  */
@@ -23,8 +23,8 @@
  * VARIABLES (INTERNAL USE):
  *
  * _containersData: Map(Container, Array[]), a map in which:
- *                  1) A key is a DOM element internally called "container".
- *                  2) A value is an array with 14 values, which are:
+ *                  1) The keys are an instances of Element or the Window and they're internally called "containers".
+ *                  2) The values are arrays:
  *                     [0] contains the ID of a requested scroll-animation on the x-axis of this container provided by the requestAnimationFrame method.
  *                         It's null or undefined if no scroll-animation on the x-axis of this container is currently being performed.
  *                     [1] contains the ID of a requested scroll-animation on the y-axis of this container provided by the requestAnimationFrame method.
@@ -59,25 +59,36 @@
  *                     [21] contains the cached value of the right border's width (in px) of this container.
  *                     [22] contains the cached value of the bottom border's height (in px) of this container.
  *                     [23] contains the cached value of the left border's width (in px) of this container.
- * _xStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a single scroll-animation's step on the x-axis of that container.
- * _yStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a single scroll-animation's step on the y-axis of that container.
- * _minAnimationFrame: number, if there's no StepLengthCalculator set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
- * _windowHeight: number, the current window's inner heigth (in px).
- * _windowWidth: number, the current window's inner width (in px).
- * _scrollbarsMaxDimension: number, the highest amount of pixels any scrollbar on the page can occupy (it's browser dependent).
+ * _xStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a
+ *                       single scroll-animation's step on the x-axis of that container.
+ * _yStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a
+ *                       single scroll-animation's step on the y-axis of that container.
+ * _minAnimationFrame: number, this represents the lowest number of frames any scroll-animation on a container should last if no 
+ *                     stepLengthCalculator is set for it.
+ * _windowWidth: number, the current Window's inner width (in px).
+ * _windowHeight: number, the current Window's inner height (in px).
+ * _scrollbarsMaxDimension: number, the highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
  * _framesTime: number, the time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
- * _pageScroller: object, the value used when an API method requires the "container" input parameter but nothing is passed: 
- *                it should be used to tell the USS API which is the element that scrolls the document.
+ * _pageScroller: object, the element that scrolls the document. 
+ *                        It's also the value used when an API method requires the container input parameter but nothing is passed.
  * _reducedMotion: boolean, true if the user has enabled any reduce-motion setting devicewise, false otherwise. 
- *                 Internally used by the API to follow the user's accessibility preferences, reverting back every scroll-animation 
+ *                 Internally used by the API to follow the user's accessibility preferences by reverting back every scroll-animation 
  *                 to the default jump-to-position behavior.
  * _onResizeEndCallbacks: array, contains all the functions that should be executed only 
- *                        once the user has finished resizing the browser's window and has interacted with it.
- * _debugMode: string, controls the way the warning and error messages are logged in the browser's console.
+ *                        once the user has finished resizing the browser's Window and has interacted with it.
+ *                        An interaction can be a:
+ *                         - pointerover event
+ *                         - pointerdown event
+ *                         - touchstart event
+ *                         - mousemove event
+ *                         - keydown event
+ *                         - focus event
+ * _debugMode: string, controls the way the warning and error messages are logged by the default error/warning loggers.
  *             If it's set to:
  *             - "disabled" (case insensitive) the API won't show any warning or error message. 
  *             - "legacy" (case insensitive) the API won't style any warning or error message.
- *             Any other value will make the warning and error messages be displayed with the default API's styling.
+ *             - Any other string will make the warning and error messages be displayed with the default API's styling.
+ *             Custom values of the _errorLogger and/or _warningLogger properties should respect this preference.
  * _errorLogger: function, logs the API error messages inside the browser's console.
  * _warningLogger: function, logs the API warning messages inside the browser's console.
  */
@@ -163,6 +174,7 @@
  */
 "use strict";
 
+{
 const INITIAL_WINDOW_WIDTH  = window.innerWidth;
 const INITIAL_WINDOW_HEIGHT = window.innerHeight;
 const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);                         //16px at 412px of width  && 23px at 1920px of width 
@@ -278,13 +290,13 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 }
 
-var uss = {
+window.uss = {
   _containersData: new Map(),
   _xStepLength: DEFAULT_XSTEP_LENGTH,
   _yStepLength: DEFAULT_YSTEP_LENGTH,
   _minAnimationFrame: DEFAULT_MIN_ANIMATION_FRAMES,
-  _windowHeight: INITIAL_WINDOW_HEIGHT,
   _windowWidth:  INITIAL_WINDOW_WIDTH,
+  _windowHeight: INITIAL_WINDOW_HEIGHT,
   _scrollbarsMaxDimension: null,
   _framesTime: DEFAULT_FRAME_TIME,
   _pageScroller: null,
@@ -1825,100 +1837,99 @@ var uss = {
 
 
 
-{
-  function onResize() {
-    window.removeEventListener("pointerover", onResize, {passive:true});
-    window.removeEventListener("pointerdown", onResize, {passive:true});
-    window.removeEventListener("touchstart", onResize, {passive:true});
-    window.removeEventListener("mousemove", onResize, {passive:true});
-    window.removeEventListener("keydown", onResize, {passive:true});
-    window.removeEventListener("focus", onResize, {passive:true});
-    _resizeHandled = false;
-    
-    //Update the internal window sizes.
-    uss._windowHeight = window.innerHeight; 
-    uss._windowWidth = window.innerWidth;
+function onResize() {
+  window.removeEventListener("pointerover", onResize, {passive:true});
+  window.removeEventListener("pointerdown", onResize, {passive:true});
+  window.removeEventListener("touchstart", onResize, {passive:true});
+  window.removeEventListener("mousemove", onResize, {passive:true});
+  window.removeEventListener("keydown", onResize, {passive:true});
+  window.removeEventListener("focus", onResize, {passive:true});
+  _resizeHandled = false;
+  
+  //Update the internal Window sizes.
+  uss._windowWidth = window.innerWidth;
+  uss._windowHeight = window.innerHeight; 
 
-    //Flush the internal caches.
-    for(const dataArray of uss._containersData.values()) {
-      dataArray[16] = null;
-      dataArray[17] = null;
-      dataArray[18] = null;
-      dataArray[19] = null;
-      dataArray[20] = null;
-      dataArray[21] = null;
-      dataArray[22] = null;
-      dataArray[23] = null;
+  //Flush the internal caches.
+  for(const dataArray of uss._containersData.values()) {
+    dataArray[16] = null;
+    dataArray[17] = null;
+    dataArray[18] = null;
+    dataArray[19] = null;
+    dataArray[20] = null;
+    dataArray[21] = null;
+    dataArray[22] = null;
+    dataArray[23] = null;
+  }
+
+  for(const callback of uss._onResizeEndCallbacks) callback();
+}
+
+let _resizeHandled = false;  
+window.addEventListener("resize", () => {
+  if(_resizeHandled) return;
+  
+  window.addEventListener("pointerover", onResize, {passive:true});
+  window.addEventListener("pointerdown", onResize, {passive:true});
+  window.addEventListener("touchstart", onResize, {passive:true});
+  window.addEventListener("mousemove", onResize, {passive:true});
+  window.addEventListener("keydown", onResize, {passive:true});
+  window.addEventListener("focus", onResize, {passive:true});
+  _resizeHandled = true;
+
+}, {passive:true});
+
+function __ussInit() {
+  //Force the calculation of the _pageScroller.
+  uss.getPageScroller(true);
+
+  //Force the calculation of the _scrollbarsMaxDimension at the startup.
+  uss.getScrollbarsMaxDimension(true);
+
+  //Calculate the average frames' time of the user's screen. 
+  //(and the corresponding minAnimationFrame.) //<---------------------------------------------------------------------TO LOOK MORE INTO
+  const __totalMeasurementsNumber = 3;
+  const __totalFramesInMeasurement = 60; //How many frames are considered in a single measurement 
+  let __totalFramesTime = 0;
+  let __currentMeasurementsLeft = __totalMeasurementsNumber; 
+  let __currentFrameCount = __totalFramesInMeasurement;
+  let __originalTimestamp = performance.now();
+  window.requestAnimationFrame(function __calcFrameTime(_currentTimestamp) {
+    __currentFrameCount--;
+    if(__currentFrameCount > 0) {
+      window.requestAnimationFrame(__calcFrameTime);
+      return;
     }
 
-    for(const callback of uss._onResizeEndCallbacks) callback();
-  }
+    __currentMeasurementsLeft--;
+    __totalFramesTime += (_currentTimestamp - __originalTimestamp) / __totalFramesInMeasurement;
 
-  let _resizeHandled = false;  
-  window.addEventListener("resize", () => {
-    if(_resizeHandled) return;
-    
-    window.addEventListener("pointerover", onResize, {passive:true});
-    window.addEventListener("pointerdown", onResize, {passive:true});
-    window.addEventListener("touchstart", onResize, {passive:true});
-    window.addEventListener("mousemove", onResize, {passive:true});
-    window.addEventListener("keydown", onResize, {passive:true});
-    window.addEventListener("focus", onResize, {passive:true});
-    _resizeHandled = true;
+    //Start a new measurement.
+    if(__currentMeasurementsLeft > 0) {
+      __currentFrameCount = __totalFramesInMeasurement;
+      __originalTimestamp = performance.now();
+      window.requestAnimationFrame(__calcFrameTime);
+      return;
+    }
 
+    //All the measurements have been completed.
+    uss._framesTime = Math.min(DEFAULT_FRAME_TIME, __totalFramesTime / __totalMeasurementsNumber); //At least 60fps.
+    //uss._minAnimationFrame = 1000 / uss._framesTime; //<---------------------------------------------------------------------TO LOOK MORE INTO
+  });
+}
+
+if(document.readyState === "complete") __ussInit();
+else window.addEventListener("load", __ussInit, {passive:true, once:true});
+
+try { //Chrome, Firefox & Safari >= 14
+  window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
+    uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
+    uss.stopScrollingAll();
   }, {passive:true});
-
-  function __ussInit() {
-    //Force the calculation of the _pageScroller.
-    uss.getPageScroller(true);
-
-    //Force the calculation of the _scrollbarsMaxDimension at the startup.
-    uss.getScrollbarsMaxDimension(true);
-
-    //Calculate the average frames' time of the user's screen. 
-    //(and the corresponding minAnimationFrame.) //<---------------------------------------------------------------------TO LOOK MORE INTO
-    const __totalMeasurementsNumber = 3;
-    const __totalFramesInMeasurement = 60; //How many frames are considered in a single measurement 
-    let __totalFramesTime = 0;
-    let __currentMeasurementsLeft = __totalMeasurementsNumber; 
-    let __currentFrameCount = __totalFramesInMeasurement;
-    let __originalTimestamp = performance.now();
-    window.requestAnimationFrame(function __calcFrameTime(_currentTimestamp) {
-      __currentFrameCount--;
-      if(__currentFrameCount > 0) {
-        window.requestAnimationFrame(__calcFrameTime);
-        return;
-      }
-
-      __currentMeasurementsLeft--;
-      __totalFramesTime += (_currentTimestamp - __originalTimestamp) / __totalFramesInMeasurement;
-
-      //Start a new measurement.
-      if(__currentMeasurementsLeft > 0) {
-        __currentFrameCount = __totalFramesInMeasurement;
-        __originalTimestamp = performance.now();
-        window.requestAnimationFrame(__calcFrameTime);
-        return;
-      }
-
-      //All the measurements have been completed.
-      uss._framesTime = __totalFramesTime / __totalMeasurementsNumber;
-      //uss._minAnimationFrame = 1000 / uss._framesTime; //<---------------------------------------------------------------------TO LOOK MORE INTO
-    });
-  }
-
-  if(document.readyState === "complete") __ussInit();
-  else window.addEventListener("load", __ussInit, {passive:true, once:true});
-  
-  try { //Chrome, Firefox & Safari >= 14
-    window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
-      uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
-      uss.stopScrollingAll();
-    }, {passive:true});
-  } catch(e) { //Safari < 14
-    window.matchMedia("(prefers-reduced-motion)").addListener(() => {
-      uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
-      uss.stopScrollingAll();
-    }, {passive:true});
-  }
+} catch(e) { //Safari < 14
+  window.matchMedia("(prefers-reduced-motion)").addListener(() => {
+    uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
+    uss.stopScrollingAll();
+  }, {passive:true});
+}
 }

@@ -2,11 +2,12 @@
 <br/>
 
 # Internal Variables 
-Once imported, the [`universalsmoothscroll-min.js`](./Download.md) script will automatically declare and initialize _(in the global scope of your application)_ the `uss` object. <br/>
-This object has the below listed properties and they're internally used by the API to control the scroll-animations' behaviors. <br/>
-Even though it's _possible_ to directly modify these properties it's ***highly discouraged***: the best way to get/set them is through the provided [`accessors`](./FunctionsAbout.md).
+The [`universalsmoothscroll-min.js`](./Download.md) script will declare and initialize the `uss` object ***as a public property of [`Window`](https://developer.mozilla.org/en-US/docs/Web/API/Window)***. <br/>
+This object has the below listed properties and they're internally used by it to control all the API's scroll-animations. <br/>
+These properties are also mentioned in other sections of the documentation so may find this helpful.
 
 ### N.B.
+Even though it's _possible_ to directly modify these properties it's ***highly discouraged***: the best way to get/set them is through the provided [`accessors`](./FunctionsAbout.md).
 Manually altering the properties listed below may cause the API to not function properly. <br/>
 Moreover any one of them can be renamed, deleted and/or repurposed at any time by an update.
 <br/>
@@ -22,6 +23,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
   </tr>
  </thead>
  <tbody>
+
   <tr id = "_containersData">
    <td rowspan = "1" align = "center">
     <code>_containersData</code>
@@ -30,15 +32,16 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <code>Map</code>
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"><code>new Map()</code></a>
+    <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map"><code>new Map</code></a>
    </td>
    <td rowspan = "1" align = "left">
     A Map in which: 
     <ul> 
-     <li> The keys are DOM elements internally called <code>container</code>. </li> 
-     <li> The values are <a href = "./VariablesAbout.md#the-_containersdata-arrays"><code>arrays of 16 values</code></a>. </li>
+     <li> The keys are an instances of <a href = "https://developer.mozilla.org/en-US/docs/Web/API/Element"><code>Element</code></a> or the <a href = "https://developer.mozilla.org/en-US/docs/Web/API/Window"><code>Window</code></a> and they're internally called <code>containers</code>. </li> 
+     <li> The values are <a href = "./VariablesAbout.md#the-_containersdata-arrays"><code>arrays</code></a>. </li>
     </ul>
    </td>
+
   </tr>
     <tr id = "_xStepLength">
    <td rowspan = "1" align = "center">
@@ -54,7 +57,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
    </td>
   </tr>
-  </tr>
+
   <tr id = "_yStepLength">
    <td rowspan = "1" align = "center">
     <code>_yStepLength</code>
@@ -69,6 +72,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set for a container, this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
    </td>
   </tr>
+
   <tr id = "_minAnimationFrame">
    <td rowspan = "1" align = "center">
     <code>_minAnimationFrame</code>
@@ -80,23 +84,10 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <a href = "./ConstantsAbout.md#DEFAULT_MIN_ANIMATION_FRAMES"><code>DEFAULT_MIN_ANIMATION_FRAMES</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    If there's no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set for a container, this represent the minimum number of frames any scroll-animation, on any axis of that container, should last.
+    This represents the lowest number of frames any scroll-animation on a container should last if no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is set for it. <br/> 
    </td>
   </tr>
-  <tr id = "_windowHeight">
-   <td rowspan = "1" align = "center">
-    <code>_windowHeight</code>
-   </td>
-   <td rowspan = "1" align = "center">
-    <code>Number</code>
-   </td>
-   <td rowspan = "1" align = "center">
-    <a href = "./ConstantsAbout.md#INITIAL_WINDOW_HEIGHT"><code>INITIAL_WINDOW_HEIGHT</code></a>
-   </td>
-   <td rowspan = "1" align = "left">
-    The current Window's inner height <i>(in px)</i>.
-   </td>
-  </tr>
+
   <tr id = "_windowWidth">
    <td rowspan = "1" align = "center">
     <code>_windowWidth</code>
@@ -111,6 +102,22 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     The current Window's inner width <i>(in px)</i>.
    </td>
   </tr>
+
+  <tr id = "_windowHeight">
+   <td rowspan = "1" align = "center">
+    <code>_windowHeight</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "./ConstantsAbout.md#INITIAL_WINDOW_HEIGHT"><code>INITIAL_WINDOW_HEIGHT</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    The current Window's inner height <i>(in px)</i>.
+   </td>
+  </tr>
+
   <tr id = "_scrollbarsMaxDimension">
    <td rowspan = "1" align = "center">
     <code>_scrollbarsMaxDimension</code>
@@ -122,9 +129,10 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     Depends on the user's browser
    </td>
    <td rowspan = "1" align = "left">
-    The highest amount of pixels any scrollbar on the page can occupy <i>(it's browser dependent)</i>.
+    The highest number of pixels any scrollbar on the page can occupy <i>(it's browser dependent)</i>.
    </td>
   </tr>
+
   <tr id = "_framesTime">
    <td rowspan = "1" align = "center">
     <code>_framesTime</code>
@@ -136,9 +144,10 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <a href = "./ConstantsAbout.md#DEFAULT_FRAME_TIME"><code>DEFAULT_FRAME_TIME</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    The time in milliseconds between two consecutive browser's frame repaints <i>(e.g. at 60fps this is 16.6ms)</i>.
+    The time in milliseconds between two consecutive browser's frame repaints <i>(e.g. at <code>60</code><sub>fps</sub> this is <code>16.6</code><sub>ms</sub>)</i>.
    </td>
   </tr>
+  
   <tr id = "_pageScroller">
    <td rowspan = "1" align = "center">
     <code>_pageScroller</code>
@@ -147,12 +156,14 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <code>Object</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>null</code>
+    Depends on the webpage style
    </td>
    <td rowspan = "1" align = "left">
-    The value used when an API method requires the <code>container</code> input parameter but nothing is passed: it should be used to tell the USS API which is the element that scrolls the document.
+    The element that scrolls the document. <br/>
+    It's also the value used when an API method requires the <code>container</code> input parameter but nothing is passed.
    </td>
   </tr>
+
   <tr id = "_reducedMotion">
    <td rowspan = "1" align = "center">
     <code>_reducedMotion</code>
@@ -165,9 +176,10 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "left">
     True if the user has enabled any <code>reduce-motion</code> setting devicewise, false otherwise. <br/> 
-    Internally used by the API to follow the user's accessibility preferences, reverting back every scroll-animation to the default <i>jump-to-position</i> behavior. 
+    Internally used by the API to follow the user's accessibility preferences by reverting back every scroll-animation to the default  <i>jump-to-position</i> behavior. 
    </td>
   </tr>
+
   <tr id = "_onResizeEndCallbacks">
    <td rowspan = "1" align = "center">
     <code>_onResizeEndCallbacks</code>
@@ -176,11 +188,11 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <code>Array</code>
    </td>
    <td rowspan = "1" align = "center">
-    <code>[ ]</code>
+    <code>[]</code>
    </td>
    <td rowspan = "1" align = "left">
-    Contains all the functions that should be executed only once the user has finished resizing the browser's window and has <i>interacted</i> with it. <br/>
-    In this case an interaction can be a:
+    Contains all the functions that should be executed only once the user has finished resizing the browser's window and has <strong><i>interacted</i></strong> with it. <br/>
+    An interaction can be a:
     <ul>
       <li>pointerover event</li>
       <li>pointerdown event</li>
@@ -191,6 +203,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     </ul>
    </td>
   </tr>
+
   <tr id = "_debugMode">
    <td rowspan = "1" align = "center">
     <code>_debugMode</code>
@@ -202,16 +215,17 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     <code>""</code>
    </td>
    <td rowspan = "1" align = "left">
-   Controls the way the warning and error messages are logged in the browser's console. <br/> 
+   Controls the way the warning and error messages are logged by the default error/warning loggers. <br/> 
    If it's set to: 
    <ul> 
     <li><code>"disabled"</code> <i>(case insensitive)</i> the API won't show any warning or error message. </li> 
     <li><code>"legacy"</code> <i>(case insensitive)</i> the API won't style any warning or error message. </li> 
+    <li>Any other <i><strong>string</strong></i> will make the warning/error messages be displayed with the default API's styling. </li>
    </ul> 
-    Any other <i><strong>string</strong></i> will make the warnings and error messages be displayed with the default API's styling. <br/>
     Custom values of the <a href = "./VariablesAbout.md#_errorLogger"><code>_errorLogger</code></a>  and/or <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger</code></a> properties should respect this preference.
    </td>
-  </tr>  
+  </tr> 
+
   <tr id = "_errorLogger">
    <td rowspan = "1" align = "center">
     <code>_errorLogger</code>
@@ -226,6 +240,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     Logs the API error messages inside the browser's console.
    </td>
   </tr>
+
   <tr id = "_warningLogger">
    <td rowspan = "1" align = "center">
     <code>_warningLogger</code>
@@ -240,6 +255,7 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
     Logs the API warning messages inside the browser's console.
    </td>
   </tr>
+
  </tbody>
 </table>
 
@@ -247,9 +263,8 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
 <br/>
 
 ## The `_containersData` arrays
-The `_containersData` variable is a map and its values are 16-cells-long arrays. <br/>
-
-This is what each cell contains: 
+The [`_containersData`](./VariablesAbout.md#_containersData) variable is a [`Map`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map) and its `values` are arrays. <br/>
+This is what each array contains: 
 <br/>
 <br/>
 
@@ -259,8 +274,8 @@ Index | Type | Description
 `1` | `Number` | Contains the ID of a requested scroll-animation on the y-axis of this container provided by the [`requestAnimationFrame`](https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame) method.<br/> It's `null` or `undefined` if no scroll-animation on the y-axis of this container is currently being performed. 
 `2` | `Number` | Contains the final position _(in px)_ at which this container will be at the end of the current scroll-animation on the x-axis. 
 `3` | `Number` | Contains the final position _(in px_) at which this container will be at the end of the current scroll-animation on the y-axis. 
-`4` | `Number` | Contains the direction of the current scroll-animation on the x-axis of this container: <br/> 1 if the scrolling is from right-to-left, -1 otherwise.
-`5` | `Number` | Contains the direction of the current scroll-animation on the y-axis of this container: <br/> 1 if the scrolling is from bottom-to-top, -1 otherwise.
+`4` | `Number` | Contains the direction of the current scroll-animation on the x-axis of this container: <br/> `1` if the scrolling is from right-to-left, `-1` otherwise.
+`5` | `Number` | Contains the direction of the current scroll-animation on the y-axis of this container: <br/> `1` if the scrolling is from bottom-to-top, `-1` otherwise.
 `6` | `Number` | Contains the total amount of pixels that have to be scrolled by current scroll-animation on the x-axis of this container. 
 `7` | `Number` | Contains the total amount of pixels that have to be scrolled by current scroll-animation on the y-axis of this container. 
 `8` | `Number` | Contains the starting time in milliseconds _(as a [`DOMHighResTimeStamp`](https://developer.mozilla.org/en-US/docs/Web/API/DOMHighResTimeStamp))_ of the current scroll-animation on the x-axis of this container. <br/> It's `null` if a scroll-animation on the x-axis of this container has been scheduled but has not been performed yet or if a scroll-animation with [`stillStart = false`](FunctionsAbout.md#scrollXBy) has been requested.
@@ -280,8 +295,7 @@ Index | Type | Description
 `22` | `Number` | Contains the cached value of the bottom border's height _(in px)_ of this container.
 `23` | `Number` | Contains the cached value of the left border's width _(in px)_ of this container.
 
-### N.B.
-***"This container"*** refers to the key linked to each array.
+`This container` refers to the `key` linked to each array.
 
 <br/>
 

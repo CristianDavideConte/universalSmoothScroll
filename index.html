@@ -7,9 +7,9 @@
     <link rel = "icon" type = "image/png" href = "./docs/images/favicon.png">
     <link rel = "stylesheet" type = "text/css" href = "./index.css">
     <script async src = "./src/universalsmoothscroll.js"></script>
-    <script async src = "./src/universalsmoothscroll-ease-functions.js"></script>
+    <script async src = "./src/universalsmoothscroll-ease-functions.js" type = "module"></script>
     <script async src = "./src/universalsmoothscroll-dev-helpers.js" type = "module"></script>
-    <script async src = "./src/universalsmoothscroll-presets.js" type = "module"></script> <!--  type = "module" -->
+    <script async src = "./src/universalsmoothscroll-presets.js" type = "module"></script>
   </head>
   <body>
     <div id = "betaBanner"><p>Beta 6.0.0</p></div>
@@ -100,8 +100,40 @@
   </body>
 </html>
 
-<!--  type = "module" -->
 <script type = "module"> 
+  import {
+    CUSTOM_CUBIC_HERMITE_SPLINE,
+    CUSTOM_BEZIER_CURVE,
+    CUSTOM_CUBIC_BEZIER,
+    EASE_LINEAR,
+    EASE_IN_SINE,
+    EASE_IN_QUAD,
+    EASE_IN_CUBIC,
+    EASE_IN_QUART,
+    EASE_IN_QUINT,
+    EASE_IN_EXPO,
+    EASE_IN_CIRC,
+    EASE_IN_BOUNCE,
+    EASE_OUT_SINE,
+    EASE_OUT_QUAD,
+    EASE_OUT_CUBIC,
+    EASE_OUT_QUART,
+    EASE_OUT_QUINT,
+    EASE_OUT_EXPO,
+    EASE_OUT_CIRC,
+    EASE_OUT_BOUNCE,
+    EASE_IN_OUT_SINE,
+    EASE_IN_OUT_QUAD,
+    EASE_IN_OUT_CUBIC,
+    EASE_IN_OUT_QUART,
+    EASE_IN_OUT_QUINT,
+    EASE_IN_OUT_EXPO,
+    EASE_IN_OUT_CIRC,
+    EASE_IN_OUT_BOUNCE,
+    EASE_ELASTIC_X, //Will be deprecated
+    EASE_ELASTIC_Y  //Will be deprecated
+  } from "./src/universalsmoothscroll-ease-functions.js";
+  
   import {  
     isValidStepLengthCalculator,
   } from "./src/universalsmoothscroll-dev-helpers.js";

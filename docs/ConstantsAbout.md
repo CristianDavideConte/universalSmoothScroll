@@ -2,13 +2,9 @@
 <br/>
 
 # Internal Constants
-Once imported, the [`universalsmoothscroll-min.js`](./Download.md) script will automatically declare and initialize _(in the global scope of your application)_ all the constants listed below. <br/>
-They are internally used by the USS API for initialization purposes and can normally be ignored. <br/>
-They are only useful if you want to reset the `uss` object to its initial state or if you just want to better understand how this API works. <br/>
+In this section you will find all the internal constants used by this API: they are private and they're declared with the keywork [`const`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const) therefore they can't be overwritten. <br/>
+They are used by the [`uss`](./HowItWorks.md) object for initialization and reset purposes, but they are also mentioned in other sections of the documentation so may find this helpful.
 
-### N.B.
-All the variables listed below are declared with the keywork [`const`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const) and therefore they can't be overwritten.
-<br/>
 <br/>
 
 <table>
@@ -20,6 +16,17 @@ All the variables listed below are declared with the keywork [`const`](https://d
   </tr>
  </thead>
  <tbody>
+   <tr id = "INITIAL_WINDOW_WIDTH">
+   <td rowspan = "1" align = "center">
+    <code>INITIAL_WINDOW_WIDTH</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1">
+    The Window's inner width <i>(in px)</i> when the page is first loaded.
+   </td>
+  </tr>
   <tr id = "INITIAL_WINDOW_HEIGHT">
    <td rowspan = "1" align = "center">
     <code>INITIAL_WINDOW_HEIGHT</code>
@@ -28,18 +35,7 @@ All the variables listed below are declared with the keywork [`const`](https://d
     <code>Number</code>
    </td>
    <td rowspan = "1">
-    The window's inner height <i>(in px)</i> when the page is first loaded.
-   </td>
-  </tr>
-  <tr id = "INITIAL_WINDOW_WIDTH">
-   <td rowspan = "1" align = "center">
-    <code>INITIAL_WINDOW_WIDTH</code>
-   </td>
-   <td rowspan = "1" align = "center">
-    <code>Number</code>
-   </td>
-   <td rowspan = "1">
-    The window's inner width <i>(in px)</i> when the page is first loaded.
+    The Window's inner height <i>(in px)</i> when the page is first loaded.
    </td>
   </tr>
   <tr id = "DEFAULT_XSTEP_LENGTH">
@@ -51,7 +47,7 @@ All the variables listed below are declared with the keywork [`const`](https://d
    </td>
    <td rowspan = "1">
     The initial value of the <a href = "./VariablesAbout.md#_xStepLength"><code>_xStepLength</code></a> property: it represents the default number of pixels scrolled in a single scroll-animation's step on the x-axis. <br/> 
-    It's <strong>16px at 412px</strong> of <i>(initial window's)</i> width and <strong>23px at 1920px</strong> of <i>(initial window's)</i> width.
+    It's <strong>16px at 412px</strong> of <i>(initial Window's)</i> width and <strong>23px at 1920px</strong> of <i>(initial Window's)</i> width.
    </td>
   </tr>
   <tr id = "DEFAULT_YSTEP_LENGTH">
@@ -63,7 +59,7 @@ All the variables listed below are declared with the keywork [`const`](https://d
    </td>
    <td rowspan = "1">
     The initial value of the <a href = "./VariablesAbout.md#_yStepLength"><code>_yStepLength</code></a> property: it represents the default number of pixels scrolled in a single scroll-animation's step on the y-axis. <br/> 
-    It's <strong>38px at 789px</strong> of <i>(initial window's)</i> height and <strong>22px at 1920px</strong> of <i>(initial window's)</i> height.
+    It's <strong>38px at 789px</strong> of <i>(initial Window's)</i> height and <strong>22px at 1920px</strong> of <i>(initial Window's)</i> height.
    </td>
   </tr>
   <tr id = "DEFAULT_MIN_ANIMATION_FRAMES">
@@ -74,8 +70,8 @@ All the variables listed below are declared with the keywork [`const`](https://d
     <code>Number</code>
    </td>
    <td rowspan = "1">
-    The initial value of the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property: it represents the default lowest number of frames any scroll-animation should last if no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is set for a container. <br/> 
-    It's <strong>51 frames at 929px</strong> of <i>(initial window's)<i> height.
+    The initial value of the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property: it represents the default lowest number of frames any scroll-animation on a container should last if no <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is set for it. <br/> 
+    It's <strong>51 frames at 929px</strong> of <i>(initial Window's)<i> height.
    </td>
   </tr>
   <tr id = "DEFAULT_FRAME_TIME">
@@ -86,7 +82,7 @@ All the variables listed below are declared with the keywork [`const`](https://d
     <code>Number</code>
    </td>
    <td rowspan = "1">
-    The initial value of the <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> property: it's <code>16.6ms</code> and it initially assumes that the user's browser/screen is refreshing at 60fps.
+    The initial value of the <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> property: it's <code>16.6</code><sub>ms</sub> and it initially assumes that the user's browser/screen is refreshing at <code>60</code><sub>fps</sub>.
    </td>
   </tr>
   <tr id = "DEFAULT_XSTEP_LENGTH_CALCULATOR">
@@ -97,8 +93,8 @@ All the variables listed below are declared with the keywork [`const`](https://d
     <code>Function</code>
    </td>
    <td rowspan = "1">
-    Returns how long each animation-step on the x-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
-    This is the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for scroll-animations on the x-axis of every container that doesn't have a custom <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set. 
+    The default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for scroll-animations on the x-axis of every container that doesn't have a custom <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set. <br/>
+    Controls how long each animation-step on the x-axis must be (in px) in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value.
    </td>
   </tr>
   <tr id = "DEFAULT_YSTEP_LENGTH_CALCULATOR">
@@ -109,8 +105,8 @@ All the variables listed below are declared with the keywork [`const`](https://d
     <code>Function</code>
    </td>
    <td rowspan = "1">
-    Returns how long each animation-step on the y-axis must be in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value. <br/>
-    This is the default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for scroll-animations on the y-axis of every container that doesn't have a custom <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set. 
+    The default <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for scroll-animations on the y-axis of every container that doesn't have a custom <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> set. <br/>
+    Controls how long each animation-step on the y-axis must be (in px) in order to target the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property value.
    </td>
   </tr>
   <tr id = "DEFAULT_ERROR_LOGGER">

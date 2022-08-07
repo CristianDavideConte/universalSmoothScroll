@@ -27,10 +27,10 @@
 </p>
 <h1 align="center">Universal Smooth Scroll</h1>
 
-A ***lightweight and very fast javascript library*** that provides enriched versions of the browsers' scrolling APIs with support for ***smooth-scrolling***, ***callbacks*** and many other features. <br/>
+A ***lightweight*** and ***very fast*** javascript library that provides enriched versions of the browsers' scrolling APIs with support for ***smooth-scrolling***, ***callbacks*** and many other features. <br/>
 ***Multiple scroll-animations*** on one or more containers can be played at the same time with full controll over them. <br/>
-***Every scroll-animation*** triggered by the API ***can be interrupted*** at any time and ***supports user-defined custom ease functions***. <br/>
-***Custom animations based on the scroll position*** are also extremly easy to implement. <br/>
+***Every scroll-animation*** triggered by the API ***can be interrupted*** at any time and supports user-defined ***custom ease*** functions. <br/>
+This API is also fully compatible with ***Typescript, React.js, Next.js*** and many other javascript frameworks. <br/>
 
 You can try most of the features on: 
 * [`The Official Playground`](https://cristiandavideconte.github.io/universalSmoothScroll/)
@@ -41,6 +41,9 @@ You can try most of the features on:
 
 # Table of Contents
 <table>
+ <thead>
+    <th>Main Sections</th>
+ </thead>
  <tbody>
   <tr>
    <td align = "center">
@@ -59,25 +62,25 @@ You can try most of the features on:
     <a href = "./docs/HowItWorks.md"><code>How it works</code></a>   
    </td>
   </tr>
-          
-  <tr>
-   <td align = "center">
-    <a href = "./docs/ConstantsAbout.md"><code>Internal Constants</code></a>   
-   </td>
-  </tr>
-     
-  <tr>
-   <td align = "center">
-    <a href = "./docs/VariablesAbout.md"><code>Internal Variables</code></a>   
-   </td>
-  </tr>
-     
+
   <tr>
    <td align = "center">
     <a href = "./docs/FunctionsAbout.md"><code>Available Functions</code></a>   
    </td>
   </tr>
      
+  <tr>
+   <td align = "center">
+    <a href = "./docs/FAQ.md"><code>F.A.Q.</code></a>   
+   </td>
+  </tr>
+     
+  <tr>
+   <th align = "center">
+    Optional Libraries 
+   </th>
+  </tr>
+         
   <tr>
    <td align = "center">
     <a href = "./docs/EaseFunctions.md"><code>Ease-Functions library</code></a>   
@@ -90,9 +93,22 @@ You can try most of the features on:
    </td>
   </tr>
 
+
+  <tr>
+   <th align = "center">
+    Advanced Sections 
+   </th>
+  </tr>
+           
   <tr>
    <td align = "center">
-    <a href = "./docs/FAQ.md"><code>F.A.Q.</code></a>   
+    <a href = "./docs/ConstantsAbout.md"><code>Internal Constants</code></a>   
+   </td>
+  </tr>
+
+  <tr>
+   <td align = "center">
+    <a href = "./docs/VariablesAbout.md"><code>Internal Variables</code></a>   
    </td>
   </tr>
  </tbody>
@@ -126,13 +142,13 @@ KaiOS Browser | ❔
 <br/>
 
 # Support Me
-If you want to support my work you can simply star the project or make a donation. <br/> 
+If you want to support my work you can simply ***⭐ the project*** or ***make a donation***. <br/> 
 For donations you can either use the GitHub [`sponsor button`](https://github.com/sponsors/CristianDavideConte) or the PayPal [`donate button`](https://www.paypal.com/donate/?hosted_button_id=9ZH3MVR56C7M8) above.<br/>
-Support is appreciated but it's not compulsory in any way nor needed in order to use any of my work!
+Support is appreciated but it's not compulsory in any way in order to use any of my work.
 
 ---
 <br/>
 
 # Contact Me
 If you find a bug, have a suggestion, a feature request, or if you simply want to contact me, use [`my website`](https://cristiandavideconte.github.io/myPersonalWebPage). <br/>
-Feel free to reach out !
+Feel free to reach out!

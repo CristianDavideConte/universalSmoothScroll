@@ -9,8 +9,7 @@ Click the links below to understand what the imported scripts do:
 
 
 ## API script 
-The `universalsmoothscroll-min.js` script will declare and initialize ***(in the global scope of your application)*** both the API's [`constants`](./ConstantsAbout.md) and the `uss` object. <br/>
-
+The `universalsmoothscroll-min.js` script will declare and initialize the `uss` object ***as a public property of [`Window`](https://developer.mozilla.org/en-US/docs/Web/API/Window)***. <br/>
 The `uss` object's properties are the API's functionalities and they can either be: <br/>
 * [`variables`](./VariablesAbout.md) _(mostly used internally)_
 * [`functions`](./FunctionsAbout.md) _(publicly available)_ <br/>
@@ -27,7 +26,6 @@ uss._xStepLength
 uss.getXStepLength() //Getter
 uss.setXStepLength() //Setter
 ```
-<br/>
 
 The main scrolling [`functions`](./FunctionsAbout.md) are:
 * [`scrollXTo`](./FunctionsAbout.md#scrollXToFun),  [`scrollYTo`](./FunctionsAbout.md#scrollYToFun) and [`scrollTo`](./FunctionsAbout.md#scrollToFun)
@@ -42,7 +40,7 @@ Any scroll-animation can be stopped at any time by using:
 There's also a handy function for anchor's smooth scrolling management:
 * [`hrefSetup`](./FunctionsAbout.md#hrefSetupFun)
 
-<br/>
+---
 
 The documentation about the API's functions is available in the [`Available Functions`](./FunctionsAbout.md) section. 
 
