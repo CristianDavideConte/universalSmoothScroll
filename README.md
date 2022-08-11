@@ -77,19 +77,19 @@ You can try most of the features on:
      
   <tr>
    <th align = "center">
-    Optional Libraries 
+    Additional Libraries 
    </th>
   </tr>
          
   <tr>
    <td align = "center">
-    <a href = "./docs/EaseFunctions.md"><code>Ease-Functions library</code></a>   
+    <a href = "./docs/EaseFunctions.md"><code>Ease-Functions</code></a>   
    </td>
   </tr>
           
   <tr>
    <td align = "center">
-    <a href = "./docs/DevHelpers.md"><code>Dev-Helpers library</code></a>   
+    <a href = "./docs/DevHelpers.md"><code>Dev-Helpers</code></a>   
    </td>
   </tr>
 

@@ -3,7 +3,7 @@
 
 # Internal Variables 
 The [`universalsmoothscroll-min.js`](./Download.md) script will declare and initialize the `uss` object ***as a public property of [`Window`](https://developer.mozilla.org/en-US/docs/Web/API/Window)***. <br/>
-This object has the below listed properties and they're internally used by it to control all the API's scroll-animations. <br/>
+This object has the below listed properties and they're internally used to control all the API's scroll-animations. <br/>
 These properties are also mentioned in other sections of the documentation so may find this helpful.
 
 ### N.B.

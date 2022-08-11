@@ -3,8 +3,7 @@
 
 # Installation
 In order to use any script you downloaded in the [`Download`](./Download.md) section, ***you must import it into your project***. <br/>
-Look for the `index.html` file of your project: this will be the API's entrypoint. <br/>
-Use the`index.html`'s `<head>` section to import the script/s. <br/>  
+Look for the `<head>` section of the `index.html` file of your project: this will be the API's entrypoint. <br/>
 
 For example: <br/>
 ```html

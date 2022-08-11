@@ -1853,13 +1853,13 @@ function onResize() {
   //Flush the internal caches.
   for(const dataArray of uss._containersData.values()) {
     dataArray[16] = null;
-    dataArray[17] = null;
-    dataArray[18] = null;
-    dataArray[19] = null;
-    dataArray[20] = null;
-    dataArray[21] = null;
-    dataArray[22] = null;
-    dataArray[23] = null;
+    dataArray[17] = null; 
+    dataArray[18] = null; //Perhaps use a mutation observer
+    dataArray[19] = null; //Perhaps use a mutation observer
+    dataArray[20] = null; //Perhaps use a resize observer 
+    dataArray[21] = null; //Perhaps use a resize observer 
+    dataArray[22] = null; //Perhaps use a resize observer 
+    dataArray[23] = null; //Perhaps use a resize observer 
   }
 
   for(const callback of uss._onResizeEndCallbacks) callback();

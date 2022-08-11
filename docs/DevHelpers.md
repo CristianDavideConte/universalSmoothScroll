@@ -1,11 +1,29 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
 <br/>
 
-# Dev-Helpers library
-This library contains functions that should help you with the more challenging aspect of the Universal Smooth Scroll API (e.g. how to create a correct [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator)). <br/>
-This library is meant to be used during the development phase of your website only and it's not internally used by the API, so it should be removed from the project before the deployment phase (nothing will happen if you leave it there, don't worry).
+# Dev-Helpers <sup><code>library</code></sup>
+## Import
+This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Installation.md) script in your project first. <br/>
+This library is also a [`module`]("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules") so each function you see below must be imported before you can use it.
 
-In this library each function has this structure: `functionName(mandatoryParam1, ...mandatoryParamN, options)`. <br/>
+For example:
+```javascript
+  //The name of these and more other functions is in the table below.
+  import {
+    isValidStepLengthCalculator
+  } from "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-dev-helpers-min.js";
+
+  //From here I can start using the imported functions.
+  ...
+```
+
+---
+
+## Usage
+This library contains functions that should help you with the more challenging aspect of the Universal Smooth Scroll API (e.g. how to create a correct [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator)). <br/>
+This library is meant to be used during the development phase of your website only and it's not internally used by the API, so it should be removed from the project before the deployment phase (nothing will happens if you forgot to, don't worry).
+
+In this library each function has this structure: `functionName(mandatoryParam1, ... , mandatoryParamN, options)`. <br/>
 The `options` parameter must either be completely omitted or fully specified. <br/> 
 
 For instance: 
@@ -29,14 +47,9 @@ if(!result1 || !result2) {
 }
 ```
 
-### N.B.
-This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Installation.md) script in your project first. <br/>
-Once imported, the [`universalsmoothscroll-dev-helpers`](./Download.md) library will automatically declare and initialize _(in the global scope of your application)_ all the functions listed below. <br/>
-<br/>
-
-Note: <br/> 
+<strong>Note:</strong> </br> 
 A **bold** input parameter's name means that it's a mandatory input. <br/>
-An _italic_ input parameter's name means that it's an optional input.
+An _italic_ input parameter's name means that it's an optional parameter. <br/>
 
 <table>
  <thead>
@@ -67,7 +80,8 @@ An _italic_ input parameter's name means that it's an optional input.
    <td rowspan = "4" align = "left">
     Tests the passed function by performing a dummy scroll-animation <i>(no actual scroll takes place)</i>. <br/> 
     Errors/warnings will be logged in the console during the testing process. <br/>
-    Returns <code>true</code> if the passed function is a valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>, <code>false</code> otherwise.
+    Returns <code>true</code> if the passed function is a valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>. <br/>
+    Returns <code>false</code> otherwise.
    </td>
   </tr>
 

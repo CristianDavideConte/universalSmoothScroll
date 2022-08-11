@@ -3,12 +3,12 @@
 
 # Download
 In order to use this API you first have to download the needed scripts. <br/>
-There are 3 files available:
+There are 3 available:
 
 <table>
  <thead>
   <tr>
-   <th>File name</th>
+   <th>Script Name</th>
    <th>Importance</th>
    <th>Type</th>
    <th>Purpose</th>
@@ -26,7 +26,7 @@ There are 3 files available:
     <code>script</code>
    </td>
    <td rowspan = "1" align = "left">
-    Contains <i>(the minified version of)</i> the API itself.
+    Contains the API itself.
    </td>
  </tr>
   <tr id = "universalsmoothscroll-ease-functions-min-file">
@@ -40,7 +40,7 @@ There are 3 files available:
     <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"><code>module</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Contains <i>(the minified version of)</i> a high level ease-functions library which allows you to effordlessly customize the timings and the behaviors of your scroll-animations. 
+    Contains a high level library which allows you to effordlessly customize the timings and the behaviors of your scroll-animations. 
    </td>
  </tr>
  </tr>
@@ -55,13 +55,13 @@ There are 3 files available:
     <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"><code>module</code></a>
    </td>
    <td rowspan = "1" align = "left">
-    Contains <i>(the minified version of)</i> a library specifically written <strong>to help you</strong> with some of the more advanced aspects of this API (only useful during testing).
+    Contains a library specifically written <strong>to help you</strong> with some of the more advanced aspects of this API <i>(useful during testing)</i>.
    </td>
  </tr>
  </tbody>
 </table>
 
-Each one of the download options below will give you full access to all the above described files, so choose freely the download method you prefer.
+Each one of the download options below will give you full access to all scripts, so choose freely the download method you prefer.
 
 ---
 
@@ -75,14 +75,13 @@ All the scripts will be downloaded inside your `node_module` folder.
 
 ## jsDelivr
 Visit [`jsDelivr`](https://www.jsdelivr.com/package/npm/universalsmoothscroll) and click the download button. <br/>
-The files will be saved as a _.tgz archive_: extract them and you're good to go. 
+The files will be saved as a `.tgz archive`: extract them and you're good to go. 
 <br/>
 
 ---
 
-## Github
-Each new release of the API has a changelog and the latest versions of the above mentioned files are attached as <code>Assets</code>. <br/>
-All the USS API releases are available in the [`releases section`](https://github.com/CristianDavideConte/universalSmoothScroll/releases).
+## Github releases
+In the [`Releases`](https://github.com/CristianDavideConte/universalSmoothScroll/releases) section you can find all the API versions and the above mentioned scripts available for download (`Assets` below each changelog).
 
 <br/>
 
