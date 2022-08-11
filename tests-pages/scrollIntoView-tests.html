@@ -7,10 +7,10 @@
         <script async src = "./src/universalsmoothscroll-presets.js" type = "module"></script>
         <style>
             body {
+                overflow: scroll;
                 display: grid;
                 justify-content: center;
                 align-items: center;
-                overflow: scroll;
                 width: 2000px;
                 height: 2000px;
             }
@@ -23,15 +23,16 @@
                 background-color: blue;    
             }
             .scroller-container {
+                overflow: scroll;
                 display: flex;
                 flex-direction: row;
-                overflow: scroll;
                 width: 1000px;
                 height: 1000px;
                 margin: 50px 0px;
                 border: 20px dotted white;
             }
             .scroller-content {
+                overflow: hidden;
                 width: 2000px;
                 height: 2000px;
                 padding: 50px;

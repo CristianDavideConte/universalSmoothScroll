@@ -1,5 +1,6 @@
 /**
  * TODO: 
+ * - Move to Object based architecture
  * - add speedModifiers to momentumElasticScrolling without breaking the scrolling
  * - smooth scrolling with animation allowed
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)

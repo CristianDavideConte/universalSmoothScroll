@@ -1,6 +1,15 @@
-//TODO 
-// - update docs about this being a module
-
+/**
+ * This function tests whether the passed fun is a valid stepLengthCalculator.
+ * No actual scroll-animation takes place, so no scroll events are dispatched.
+ * This function is non-blocking/asynchronous.
+ * @param {Function} fun The function to test.
+ * @param {Object} options An object which contains the testing preferences listed below.
+ * @param {*} [options.container=uss._pageScroller] The container againist which fun should be tested. 
+ * @param {Number} [options.totalScrollAmount=100] The total amount of pixels againist which fun should be tested. 
+ * @param {Number} [options.timeout=5000] The amount of milliseconds after which the test forcefully returns a result. 
+ * @param {String} [options.debugString="isValidStepLengthCalculator"] A string internally used to log the name of the most upper level function that caused an error/warning.
+ * @returns True if the function is a valid stepLengthCalculator, false otherwise.
+ */
 export async function isValidStepLengthCalculator(
     fun, 
     options = {

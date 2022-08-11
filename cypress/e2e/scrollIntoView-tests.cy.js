@@ -73,13 +73,15 @@ function _scrollIntoViewTester(
         return;
     }
 
-    elements.forEach(obj => console.log(obj.el, uss.calcScrollbarsDimensions(obj.el)));
-
+    uss._containersData = new Map();
+    
     uss.scrollIntoView(
         elements[i].el, 
         elements[i].alignLeft, 
         elements[i].alignTop, 
         () => {
+            console.log(uss._containersData)
+            console.log(uss.getAllScrollableParents(elements[i].el))
             //Test the correct alignment of the current element
             for(const test of elements[i].tests) {  
                 test(elements[i].el);
@@ -102,21 +104,21 @@ describe("scrollIntoView", function() {
                 uss._reducedMotion = true;
                 uss.setDebugMode("disabled");               //DEBUG ONLY
 
-                const _testElement1 = win.document.getElementById("scroller-content-111");
-                const _testElement2 = win.document.getElementById("scroller-content-112");
-                const _testElement3 = win.document.getElementById("scroller-content-121");
-                const _testElement4 = win.document.getElementById("scroller-content-121");
+                const _testElement111 = win.document.getElementById("scroller-content-111");
+                const _testElement112 = win.document.getElementById("scroller-content-112");
+                const _testElement121 = win.document.getElementById("scroller-content-121");
+                const _testElement122 = win.document.getElementById("scroller-content-122");
 
-                const _initialScrollLeft = _testElement1.scrollLeft; 
-                const _initialScrollTop = _testElement1.scrollTop; 
+                const _initialScrollLeft = _testElement111.scrollLeft; 
+                const _initialScrollTop = _testElement111.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
                     0: [constants.failingValuesAll]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     //expect(res).to.throw(constants.defaultUssException);          //DEBUG ONLY
-                    expect(_testElement1.scrollLeft).to.equal(_initialScrollLeft);
-                    expect(_testElement1.scrollTop).to.equal(_initialScrollTop);
+                    expect(_testElement111.scrollLeft).to.equal(_initialScrollLeft);
+                    expect(_testElement111.scrollTop).to.equal(_initialScrollTop);
                 })
                 .then(() => {
                     cy.waitForUssCallback(
@@ -126,7 +128,7 @@ describe("scrollIntoView", function() {
                                 resolve,
                                 [
                                     {
-                                        el: _testElement1,
+                                        el: _testElement111,
                                         alignLeft: true, //left
                                         alignTop: true,  //top
                                         includeHiddenParents: false,
@@ -170,7 +172,7 @@ describe("scrollIntoView", function() {
                                         ]
                                     },
                                     {
-                                        el: _testElement2,
+                                        el: _testElement112,
                                         alignLeft: false, //right
                                         alignTop: true,   //top
                                         includeHiddenParents: false,
@@ -220,7 +222,7 @@ describe("scrollIntoView", function() {
                                         ]
                                     },
                                     {
-                                        el: _testElement3,
+                                        el: _testElement121,
                                         alignLeft: true, //left
                                         alignTop: false, //bottom
                                         includeHiddenParents: false,
@@ -233,8 +235,6 @@ describe("scrollIntoView", function() {
                                                 const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
                                 
                                                 const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                console.log(_totalBottomScrollbarSize)
 
                                                 const _elPos = el.getBoundingClientRect();
                                                 expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
@@ -272,7 +272,7 @@ describe("scrollIntoView", function() {
                                         ]
                                     },
                                     {
-                                        el: _testElement4,
+                                        el: _testElement122,
                                         alignLeft: false, //right
                                         alignTop: false,  //bottom
                                         includeHiddenParents: false,
