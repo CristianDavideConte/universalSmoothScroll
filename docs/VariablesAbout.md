@@ -298,5 +298,3 @@ Index | Type | Description
 `This container` refers to the `key` linked to each array.
 
 <br/>
-
-#### <p align="right"><a href = "./FunctionsAbout.md"><code>Go to next section &#8680;</code></a></p>

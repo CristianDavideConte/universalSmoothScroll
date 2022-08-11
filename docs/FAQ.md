@@ -3,122 +3,51 @@
 
 <h1 align = "center">F.A.Q.</h1>
 
-This section contains a collection of the most asked questions about the UniversalSmoothScroll API. <br/>
+This section contains a collection of the frequently asked questions about the UniversalSmoothScroll API and its libraries. <br/>
 If the answer you are looking for is not here, you can always [`contact me`](https://github.com/CristianDavideConte/universalSmoothScroll#contact-me).
 <br/><br/>
 
-
-## Q: Can I use the API in a `React` project ?
-A: Yes, as described in the [`Installation`](./Installation.md) section, just import the scripts in your `index.html` file and then you can start using the API. <br/>
-
----
-<br/>
-
-## Q: Can I use the API in a `typescript` project ?
-A: Yes, as described in the [`Installation`](./Installation.md) section, just import the scripts in your `index.html` file and then you can start using the API. <br/>
-If you encounter the `Cannot find name 'uss'` error (or something like that) you have to manually declare the `uss` object by adding the `declare var uss: any` line in you typescript declaration file (the one that ends with `.d.ts`).
+## Q: How do I invoke the API methods ?  
+A: Every UniversalSmoothScroll API function has this structure: `uss.nameOfTheMethod(param1, param2, ...)`.
 
 ---
 <br/>
 
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-behavior: smooth`_ CSS property ?
-A: No, they won't work on those containers.
+A: No, remove the `scroll-behavior:smooth` property before using this API.
 
 ---
 <br/>
 
 ## Q: Can I use the API scrolling methods on containers that have the _`scroll-snap-type`_ CSS property ?
-A: No, they won't work on those containers.
+A: No, remove the `scroll-snap-type` property before using this API.
 
 ---
 <br/>
 
-## Q: How do I invoke the API methods ?  
-A: Every Universal Smooth Scroll API function call has this structure: `uss.nameOfTheMethod(param1, param2 ...)`.
+## Q: Can I use the API in a `React` project ?
+A: Yes.
 
 ---
 <br/>
 
-## Q: Can I pass a `React.Component` as either the `container` or the `element` value ? 
-A: No, you have to pass either an `HTMLElement`, an `SVGElement` or the `window`. <br/>
-This problem can be easily solved by looking for the elements in the DOM with `getElementById`, `getElementsByClassName`, etc... or by using either React's [`Refs`](https://en.reactjs.org/docs/refs-and-the-dom.html) or the [`React.findDOMNode`](https://en.reactjs.org/docs/react-dom.html#finddomnode) method to obtain the `Element` from your `ReactElements`. <br/>
-
-For istance:
-```javascript
-/*
- * In this example I want to create a scrollable React Component which
- * has a button that smoothly scrolls the Component when clicked.
- * To get the corresponding Element I'll use React's ref and the document.getElementById method. 
- */
-class myApp extends React.Component {
-  constructor(props) {
-    super(props);
-    this.myRef = React.createRef(); //Create the referece to the DOM node
-  }
-  ... 
-  render() {
-    return(
-      <div id="myID" ref={this.myRef}> { /* I'm using the ref on the container I want to scroll */ }
-        <button onClick={
-          {/* Option A: retrieve the Element with the help of the ref */}
-          () => uss.scrollYBy(500, {this.myRef.current}); 
-          
-          {/* Option B: retrieve the Element with js */}
-          () => uss.scrollYBy(500, document.getElementById("myID"));
-        }>
-        </button>
-        ...
-      </div>
-    );
-  }
-}
-```
+## Q: Can I use the API in a `Next.js` project ?
+A: Yes.
 
 ---
 <br/>
 
-## Q: Can I apply an easing to the scroll-animations ?
-A: Yes, you can create a custom [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) and apply it with:
-* [`setXStepLengthCalculator`](./FunctionsAbout.md#setXStepLengthCalculatorFun) for the scroll-animations on the x-axis of your container.
-* [`setYStepLengthCalculator`](./FunctionsAbout.md#setYStepLengthCalculatorFun) for the scroll-animations on the y-axis of your container. 
-* [`setStepLengthCalculator`](./FunctionsAbout.md#setStepLengthCalculatorFun) for the scroll-animations on both axes of your container. 
-
-For example:<br/>
-```javascript
-uss.setYStepLengthCalculator(
-    //This function is a custom stepLengthCalculator
-    (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => { 
-        return remaning / 15 + 1;
-    }
-);
-```
-<br/>You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EaseFunctions.md) library.<br/>
-
-For istance:<br/>
-```javascript
-uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
-```
+## Q: Can I use the API in a `Svelte` project ?
+A: Yes.
 
 ---
 <br/>
 
-## Q: Can I make my scroll-animation last a certain amount of time?
+## Q: Can I use the API in a `typescript` project ?
 A: Yes. <br/>
-If you try to write a custom [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) you will notice it will be passed both the original timestamp _(relative to the beginning of the scroll-animation)_ and the current timestamp as respectively the second and third arguments.<br/>
-You can use them to make the scroll-animations last any amount of time you want.<br/>
-_(quick tip: the elapsed time is just `currentTimestap - originalTimestamp`)_.<br/>
-
-You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EaseFunctions.md) library with a specific duration.<br/>
-
-For example:<br/>
-```javascript
-/**
- * In this case I use the EASE_LINEAR function so that
- * every scroll-animation on our container will always last 2 seconds
- * on any screen resolution and refresh rate.
- */
-uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); 
-```
+If you encounter the `Cannot find name 'uss'` error (or something like that) you have to manually declare `uss` by adding: <br/>
+ `declare var uss: any` <br/>
+in your Typescript declaration file (the one that ends with `.d.ts`).
 
 ---
 <br/>
@@ -137,7 +66,7 @@ A stepLengthCalculator is always passed the following input parameters _(in this
 * the `finalPosition` that the container's scrollTop/Left has to reach (scrollTop/scrollY if the scroll-animation is on the y-axis, scrollLeft/scrollX otherwise)
 * the `container` on which the scroll-animation is currently being performed (an Element that can be scrolled or the Window) <br/>
 
-Imagine that a scroll-animation is like a stair: you know when/from where you started walking up/down the stair, how much time has passed since, how long the the stair is and where you are right now.<br/>
+Imagine that a scroll-animation is like a stair: you know when/where you started walking up/down the stair, how much time has passed since, how long the the stair is and where you are right now.<br/>
 This stair could have many steps and you can decide that you want to rest and don't make any step _(return 0)_, go up _(return a number > 0)_ or go down _(return a number < 0)_ by telling the API through the return value of a stepLengthCalculator.<br/>   
 
 This function can be invoked by the API thousands of times during a single scroll-animation and that's why it gets passed all the parameters described above.<br/>
@@ -164,10 +93,14 @@ uss.setYStepLengthCalculator(myStepLengthCalculator, myContainer, false);
 
 You don't have to write your own stepLengthCalculator if you don't want to. <br/>
 The API will still function even if you don't specify any _(the scroll behavior/easing will be linear)_.<br/>
-You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EaseFunctions.md) library to get a stepLengthCalculator. <br/>
+You can also use the ease-functions available in the [`Ease-Functions`](./EaseFunctions.md) library to get a stepLengthCalculator. <br/>
 
 For example:<br/>
 ```javascript
+import {
+  EASE_OUT_CUBIC
+} from "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-ease-functions-min.js";
+
 /*
  * This stepLengthCalculator will make our scroll-animations on the x axis of myContainer 
  * always last 1 second and it will make sure that 
@@ -177,13 +110,17 @@ uss.setXStepLengthCalculator(EASE_OUT_CUBIC(1000), myContainer);
 ```
 <br/>
 
-On [`easings.net`](https://easings.net/) you can find out more about the way the stepLengthCalculators provided by [`universalsmoothscroll-ease-functions`](./Download.md) library will affect your scroll-animations.
-<br/><br/>
+On [`easings.net`](https://easings.net/) you can find out more about the way the stepLengthCalculators provided by [`Ease-Functions`](./Download.md) library will affect your scroll-animations.
+<br/>
 
 If you're not sure if your stepLengthCalculator is valid just use the [`isValidStepLengthCalculator`](./DevHelpers.md#isValidStepLengthCalculator) function of the [`Dev-Helpers`](./DevHelpers.md) library. <br/>
 
 E.g.:<br/>
 ```javascript
+import {
+  isValidStepLengthCalculator
+} from "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-dev-helpers-min.js";
+
 /*
  * This stepLengthCalculator won't return a valid stepLength after
  * the value of i is greater than 10.
@@ -194,17 +131,78 @@ const myBrokenCalculator = (i = 0) => {
 }
 
 /*
- * Suppose we've already imported the Dev-Helpers library.
  * The isValidStepLengthCalculator non-blocking function will create
  * a dummy scroll-animation for the passed container (no actual scroll takes place)
  * to test our stepLengthCalculator.
  */
-const isValid = await isValidStepLengthCalculator(myBrokenCalculator, myContainer);
+const isValid = await isValidStepLengthCalculator(
+  myBrokenCalculator, 
+  {
+    container: myContainer,
+    totalScrollAmount: 1000, //1000px
+    timeout: 2000,           //2s
+  }
+);
+
 if(!isValid) {
   //Fix the stepLengthCalculator...
 }
 ```
+
+---
 <br/>
+
+
+## Q: Can I apply an easing to the scroll-animations ?
+A: Yes, you can create a custom [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) and apply it with:
+* [`setXStepLengthCalculator`](./FunctionsAbout.md#setXStepLengthCalculatorFun) for the scroll-animations on the x-axis of your container.
+* [`setYStepLengthCalculator`](./FunctionsAbout.md#setYStepLengthCalculatorFun) for the scroll-animations on the y-axis of your container. 
+* [`setStepLengthCalculator`](./FunctionsAbout.md#setStepLengthCalculatorFun) for the scroll-animations on both axes of your container. 
+
+For example:<br/>
+```javascript
+uss.setYStepLengthCalculator(
+    //This function is a custom stepLengthCalculator
+    (remaning, originalTimestamp, timestamp, total, currentY, finalY, container) => { 
+        return remaning / 15 + 1;
+    }
+);
+```
+<br/>You can also use the ease-functions available in the [`Ease-Functions`](./EaseFunctions.md) library.<br/>
+
+For istance:<br/>
+```javascript
+import {
+  EASE_IN_OUT_CUBIC
+} from "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-ease-functions-min.js";
+
+uss.setStepLengthCalculator(EASE_IN_OUT_CUBIC(), myContainer);
+```
+
+---
+<br/>
+
+## Q: Can I make my scroll-animation last a certain amount of time?
+A: Yes. <br/>
+If you try to write a custom [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) you will notice it will be passed both the original timestamp _(relative to the beginning of the scroll-animation)_ and the current timestamp as respectively the 2<sup>nd</sup> and 3<sup>rd</sup> arguments.<br/>
+You can use them to make the scroll-animations last any amount of time you want.<br/>
+_(quick tip: the elapsed time is just `currentTimestap - originalTimestamp`)_.<br/>
+
+You can also use the ease-functions available in the [`Ease-Functions`](./EaseFunctions.md) library with a specific duration.<br/>
+
+For example:<br/>
+```javascript
+import {
+  EASE_LINEAR
+} from "YOUR_JAVASCRIPT_FOLDER/universalsmoothscroll-ease-functions-min.js";
+
+/**
+ * In this case I use the EASE_LINEAR function so that
+ * every scroll-animation on our container will always last 2 seconds
+ * on any screen resolution and refresh rate.
+ */
+uss.setStepLengthCalculator(EASE_LINEAR(2000), myContainer); 
+```
 
 ---
 <br/>
@@ -250,14 +248,21 @@ uss.setPageScroller(document.body);
 //We initially tell the API to scroll the body to (0,100).
 uss.scrollYTo(100);
 
+//Suppose we've repainted and the body is now at (0, 70).
+
 //Example A:
-//we "invert" the scroll animation's direction going (100 - 150 = -50).
-uss.scrollYBy(-150, uss.getPageScroller(), () => console.log("direction inverted"), false);
+//we "invert" the scroll animation's direction going (100 - 50 = 50 but we're at 70px already).
+//A new scroll animation is created in this case.
+uss.scrollYBy(-50, uss.getPageScroller(), () => console.log("direction inverted"), false);
 
 //Example B:
-//we reduce the totalScrollAmount of the scroll-animation to 0 (100 - 100 = 0).
+//we reduce the totalScrollAmount of the scroll-animation to 0 (100 - 30 = 70 and we're at 70px already).
 //The callback is executed immediately.
-uss.scrollYBy(-100, uss.getPageScroller(), () => console.log("immediately executed"), false);
+uss.scrollYBy(-30, uss.getPageScroller(), () => console.log("A"), false);
+console.log("B"); 
+//Expected result: 
+//A
+//B
 ```
 
 ---
@@ -268,20 +273,19 @@ A: Unlike any other callback parameter of the USS API, this is a function that g
 
 This `init` function is always passed the following input parameters _(in this order)_:
 * the anchor that has been clicked
-* the element that has to be reached (the Element that has the same id of the anchors's `href` parameter) <br/>
+* the element that has to be reached 
 
-If the `init` function returns `false` the scroll-animation is prevented. 
+If the `init` function returns `false` no scroll-animation takes place. 
 
-
-For example: <br/>
+For example: 
 ```javascript
 /**
  * In this example, every time an anchor link is clicked 
  * the document.body's background color is randomly changed.
  */
 function changeBackgroundColor(number) {
-  //I want to prevent the anchor from scrolling to its linked element
-  //if the passed number is higher than 1.
+  //We want to prevent the anchor from scrolling to its 
+  //linked element if the passed number is higher than 1.
   if(number > 1) return false;
 
   document.body.style.backgroundColor = "rgb(" + Math.random() * 255 + "," + 
@@ -289,7 +293,12 @@ function changeBackgroundColor(number) {
                                                  Math.random() * 255 + ")"; 
   //No return is needed if you don't want to prevent the scrolling.
 }
-uss.hrefSetup(true, true, () => changeBackgroundColor(Math.random() * 2));
+
+uss.hrefSetup(
+  true,                                          //alignToLeft
+  true,                                          //alignToTop
+  () => changeBackgroundColor(Math.random() * 2) //init
+);
 ```
 
 ---
@@ -312,12 +321,14 @@ function myEaseFunction(remaning) {
 uss.setYStepLengthCalculator(myEaseFunction, myContainer); 
 
 myContainer.addEventListener("wheel", event => {
-  event.preventDefault(); //Prevent the classic scroll
-  uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
+  event.preventDefault(); //Prevent the classic scroll 
+  
+  //StillStart = false, will make the scroll-animation follow the mousewheel speed
+  uss.scrollYBy(event.deltaY, myContainer, myCallback, false);
 }, {passive:false});
 ```
 
-You can also use the ease-functions available in the [`universalsmoothscroll-ease-functions`](./EaseFunctions.md) library. <br/>
+You can also use the ease-functions available in the [`Ease-Functions`](./EaseFunctions.md) library. <br/>
 
 For istance: <br/>
 ```javascript
@@ -325,8 +336,48 @@ uss.setYStepLengthCalculator(EASE_OUT_QUAD(), myContainer);
 
 myContainer.addEventListener("wheel", event => {
   event.preventDefault(); //Prevent the classic scroll
-  uss.scrollYBy(event.deltaY, myContainer, myCallback, false); //StillStart = false, will make the scroll-animation follow the mousewheel speed
+  
+  //StillStart = false, will make the scroll-animation follow the mousewheel speed
+  uss.scrollYBy(event.deltaY, myContainer, myCallback, false); 
 }, {passive:false});
+```
+
+---
+<br/>
+
+## Q: Can I pass a `React.Component` as either the `container` or the `element` value ? 
+A: No, you have to pass either an `HTMLElement`, an `SVGElement` or the `Window`. <br/>
+This problem can be easily solved by looking for the elements in the DOM with `getElementById`, `getElementsByClassName`, etc... or by using either React's [`Refs`](https://en.reactjs.org/docs/refs-and-the-dom.html) or the [`React.findDOMNode`](https://en.reactjs.org/docs/react-dom.html#finddomnode) method to obtain the `Element` from your `ReactElements`. <br/>
+
+For istance:
+```javascript
+/*
+ * In this example I want to create a scrollable React Component which
+ * has a button that smoothly scrolls the Component when clicked.
+ * To get the corresponding Element I'll use React's ref and the document.getElementById method. 
+ */
+class myApp extends React.Component {
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef(); //Create the referece to the DOM node
+  }
+  ... 
+  render() {
+    return(
+      <div id="myID" ref={this.myRef}> { /* I'm using the ref on the container I want to scroll */ }
+        <button onClick={
+          {/* Option A: retrieve the Element with the help of the ref */}
+          () => uss.scrollYBy(500, {this.myRef.current}); 
+          
+          {/* Option B: retrieve the Element with js */}
+          () => uss.scrollYBy(500, document.getElementById("myID"));
+        }>
+        </button>
+        ...
+      </div>
+    );
+  }
+}
 ```
 
 ---

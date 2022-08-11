@@ -199,4 +199,6 @@ The following table describes every entry of the `Input Parameters` column of th
  </tbody>
 <table>
 
+<!--
 #### <p align="right"><a href = "./FAQ.md"><code>Go to next section &#8680;</code></a></p>
+-->

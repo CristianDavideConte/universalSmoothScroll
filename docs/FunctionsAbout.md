@@ -2,9 +2,12 @@
 <br/>
 
 # Available Functions
-Once imported, the [`universalsmoothscroll-min.js`](./Download.md) script will automatically declare and initialize _(in the global scope of your application)_ the `uss` object. <br/>
-This object has the below listed properties and they are the core functionalities of the Universal Smooth Scroll API. <br/>
-Each one of these functions can be invoked in this way: `uss.nameOfTheFunction(param1, param2, ...)`. <br/>
+## Import
+Once imported the `universalsmoothscroll-min.js` script will declare and initialize the `uss` object ***as a public property of [`Window`](https://developer.mozilla.org/en-US/docs/Web/API/Window)***. <br/>
+This object has the below listed properties and they are the core functionalities of the Universal Smooth Scroll API. 
+
+## Usage
+Each one of the `uss` functions can be invoked in this way: `uss.nameOfTheFunction(param1, param2, ...)`. <br/>
 
 For instance:
 ```javascript
@@ -17,15 +20,16 @@ For instance:
  * - the API is requested to extend the scroll-animation by 50px and 
  *   log "Done" instead of "dOnE" when finished.
  */
-uss.setYStepLengthCalculator((r) => {return r / 20 + 1;}, myContainer);
+uss.setYStepLengthCalculator(r => r / 20 + 1, myContainer);
 uss.scrollYTo(500, myContainer, () => console.log("dOnE"));             
 uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);      
 ```
-<br/>
 
-Note: <br/> 
-A **bold** input parameter's name means that it's a mandatory input _(its default value is always a <strong>✗</strong>)_. <br/>
-An _italic_ input parameter's name means that it's an optional input.
+---
+
+<strong>Note:</strong> </br> 
+A **bold** input parameter's name means that it's a mandatory input _(its default value is always <code><strong>✗</strong></code>)_. <br/>
+An _italic_ input parameter's name means that it's an optional parameter. <br/>
 
 <table>
  <thead>
@@ -266,22 +270,7 @@ An _italic_ input parameter's name means that it's an optional input.
     Returns the value of the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property.
    </td>
   </tr> 
-      
-  <tr id = "getWindowHeightFun">
-   <td rowspan = "1" align = "center">
-    <code>getWindowHeight</code>
-   </td>
-   <td rowspan = "1" align = "center">
-    <strong>✗</strong>
-   </td>
-   <td rowspan = "1" align = "center">
-    <strong>✗</strong>
-   </td>
-   <td rowspan = "1" align = "left">
-    Returns the value of the <a href = "./VariablesAbout.md#_windowHeight"><code>_windowHeight</code></a> property.
-   </td>
-  </tr> 
-           
+
   <tr id = "getWindowWidthFun">
    <td rowspan = "1" align = "center">
     <code>getWindowWidth</code>
@@ -294,6 +283,21 @@ An _italic_ input parameter's name means that it's an optional input.
    </td>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_windowWidth"><code>_windowWidth</code></a> property.
+   </td>
+  </tr> 
+
+  <tr id = "getWindowHeightFun">
+   <td rowspan = "1" align = "center">
+    <code>getWindowHeight</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <strong>✗</strong>
+   </td>
+   <td rowspan = "1" align = "center">
+    <strong>✗</strong>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <a href = "./VariablesAbout.md#_windowHeight"><code>_windowHeight</code></a> property.
    </td>
   </tr> 
           
@@ -646,14 +650,14 @@ An _italic_ input parameter's name means that it's an optional input.
    </td>
    <td rowspan = "1" align = "center">
    <strong>
-    <a href = "./FunctionsAbout.md#calcXScrollbarDimension"><code>element</code></a>
+    <a href = "./FunctionsAbout.md#calcXScrollbarDimension"><code>container</code></a>
    </strong>
    </td>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
    <td rowspan = "2" align = "left">
-    Returns the vertical scrollbar's width <i> (in px) </i> of the passed element. </li>
+    Returns the vertical scrollbar's width <i> (in px) </i> of the passed container. </li>
    </td>
   </tr> 
   <tr>
@@ -673,14 +677,14 @@ An _italic_ input parameter's name means that it's an optional input.
    </td>
    <td rowspan = "1" align = "center">
    <strong>
-    <a href = "./FunctionsAbout.md#calcYScrollbarDimension"><code>element</code></a>
+    <a href = "./FunctionsAbout.md#calcYScrollbarDimension"><code>container</code></a>
    </strong>
    </td>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
    <td rowspan = "2" align = "left">
-    Returns the horizontal scrollbar's height <i> (in px) </i> of the passed element. </li>
+    Returns the horizontal scrollbar's height <i> (in px) </i> of the passed container. </li>
    </td>
   </tr> 
   <tr>
@@ -700,7 +704,7 @@ An _italic_ input parameter's name means that it's an optional input.
    </td>
    <td rowspan = "1" align = "center">
    <strong>
-    <a href = "./FunctionsAbout.md#calcScrollbarsDimensions"><code>element</code></a>
+    <a href = "./FunctionsAbout.md#calcScrollbarsDimensions"><code>container</code></a>
    </strong>
    </td>
    <td rowspan = "1" align = "center">
@@ -709,8 +713,8 @@ An _italic_ input parameter's name means that it's an optional input.
    <td rowspan = "2" align = "left">
     Returns an array containing 2 numbers: 
     <ol start="0">
-     <li> Contains the vertical scrollbar's width <i> (in px) </i> of the passed element. </li> 
-     <li> Contains the horizontal scrollbar's height <i> (in px) </i> of the passed element. </li> 
+     <li> Contains the vertical scrollbar's width <i> (in px) </i> of the passed container. </li> 
+     <li> Contains the horizontal scrollbar's height <i> (in px) </i> of the passed container. </li> 
     </ol>
    </td>
   </tr> 
@@ -731,7 +735,7 @@ An _italic_ input parameter's name means that it's an optional input.
    </td>
    <td rowspan = "1" align = "center">
    <strong>
-    <a href = "./FunctionsAbout.md#calcBordersDimensions"><code>element</code></a>
+    <a href = "./FunctionsAbout.md#calcBordersDimensions"><code>container</code></a>
    </strong>
    </td>
    <td rowspan = "1" align = "center">
@@ -740,10 +744,10 @@ An _italic_ input parameter's name means that it's an optional input.
    <td rowspan = "2" align = "left">
     Returns an array containing 4 numbers: 
     <ol start="0"> 
-     <li> Contains the top border's height <i> (in px) </i> of the passed element. </li> 
-     <li> Contains the right border's width <i> (in px) </i> of the passed element. </li> 
-     <li> Contains the bottom border's height <i> (in px) </i> of the passed element. </li> 
-     <li> Contains the left border's width <i> (in px) </i> of the passed element. </li> 
+     <li> Contains the top border's height <i> (in px) </i> of the passed container. </li> 
+     <li> Contains the right border's width <i> (in px) </i> of the passed container. </li> 
+     <li> Contains the bottom border's height <i> (in px) </i> of the passed container. </li> 
+     <li> Contains the left border's width <i> (in px) </i> of the passed container. </li> 
     </ol>
     The returned border sizes don't take into consideration the css <code>transform</code> property's effects.
    </td>
@@ -1860,7 +1864,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Number</code>
   </td>
   <td rowspan = "1" align = "left">
-    A number > 0.
+    A finite number > 0.
   </td>
   </tr>
   
@@ -1875,7 +1879,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Number</code>
   </td>
   <td rowspan = "1" align = "left">
-    A number > 0.
+    A finite number > 0.
   </td>
   </tr>
     
@@ -1890,7 +1894,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Number</code>
   </td>
   <td rowspan = "1" align = "left">
-    A number > 0.
+    A finite number > 0.
   </td>
   </tr>
   
@@ -1905,7 +1909,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Number</code>
   </td>
   <td rowspan = "1" align = "left">
-    A number > 0.
+    A finite number > 0.
   </td>
   </tr>
     
@@ -1920,7 +1924,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Number</code>
   </td>
   <td rowspan = "1" align = "left">
-    A number > 0.
+    A finite number > 0.
   </td>
 
   <tr id = "addOnResizeEndCallback">
@@ -2004,7 +2008,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <a href = "./FunctionsAbout.md#calcXScrollbarDimensionFun"><code>calcXScrollbarDimension</code></a>
   </td>
   <td rowspan = "1" align = "center">
-    <code>element</code>
+    <code>container</code>
   </td>
   <td rowspan = "1" align = "center">
     <code>Object</code>
@@ -2032,7 +2036,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <a href = "./FunctionsAbout.md#calcYScrollbarDimensionFun"><code>calcYScrollbarDimension</code></a>
   </td>
   <td rowspan = "1" align = "center">
-    <code>element</code>
+    <code>container</code>
   </td>
   <td rowspan = "1" align = "center">
     <code>Object</code>
@@ -2060,7 +2064,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <a href = "./FunctionsAbout.md#calcScrollbarsDimensionsFun"><code>calcScrollbarsDimensions</code></a>
   </td>
   <td rowspan = "1" align = "center">
-    <code>element</code>
+    <code>container</code>
   </td>
   <td rowspan = "1" align = "center">
     <code>Object</code>
@@ -2088,7 +2092,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <a href = "./FunctionsAbout.md#calcBordersDimensionsFun"><code>calcBordersDimensions</code></a>
   </td>
   <td rowspan = "1" align = "center">
-    <code>element</code>
+    <code>container</code>
   </td>
   <td rowspan = "1" align = "center">
     <code>Object</code>
@@ -2892,4 +2896,4 @@ The following table describes every entry of the `Input Parameters` column of th
 
 <br/>
 
-#### <p align="right"><a href = "./EaseFunctions.md"><code>Go to next section &#8680;</code></a></p>
+#### <p align="right"><a href = "./FAQ.md"><code>Go to next section &#8680;</code></a></p>
