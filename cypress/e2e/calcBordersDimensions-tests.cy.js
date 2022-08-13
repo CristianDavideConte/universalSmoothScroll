@@ -18,6 +18,24 @@ describe("calcBordersDimensions", function() {
                 uss = win.uss;
                 const _maxDim = 10; //See css styles of calcBordersDimensions-tests.html
                 
+                uss._containersData = new Map();
+                expect(uss._containersData.size).to.equal(0);
+
+                //Test if the window's borders are cached correctly. 
+                const _windowBordersDimensions = uss.calcBordersDimensions(win, true);
+                expect(arraysAreEqual(
+                        _windowBordersDimensions,
+                        uss.calcBordersDimensions(uss.getPageScroller(true))
+                        )
+                ).to.be.true;
+                const _windowBordersCachedDimensions = uss._containersData.get(win).slice(20, 24);
+                expect(arraysAreEqual(
+                        _windowBordersDimensions,
+                        _windowBordersCachedDimensions
+                        )
+                ).to.be.true;
+
+
                 cy.testFailingValues(uss.calcBordersDimensions, {
                     0: [constants.failingValuesAll,
                         [true, false],

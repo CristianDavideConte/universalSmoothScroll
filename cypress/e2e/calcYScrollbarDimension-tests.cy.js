@@ -24,6 +24,15 @@ describe("calcYScrollbarDimension", function() {
             .then((win) => {
                 uss = win.uss;
                 
+                uss._containersData = new Map();
+                expect(uss._containersData.size).to.equal(0);
+
+                //Test if the window's y scrollbar is cached correctly. 
+                const _windowYScrollbarDimension = uss.calcYScrollbarDimension(win, true);
+                expect(_windowYScrollbarDimension).to.equal(uss.calcYScrollbarDimension(uss.getPageScroller(true)));
+                const _windowYScrollbarCachedDimension = uss._containersData.get(win)[19];
+                expect(_windowYScrollbarDimension).to.equal(_windowYScrollbarCachedDimension);
+
                 cy.testFailingValues(uss.calcYScrollbarDimension, {
                     0: [constants.failingValuesAll,
                         [true, false],

@@ -556,6 +556,11 @@ window.uss = {
     uss._warningLogger = newWarningLogger;
   }, 
   calcXScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
+    if(container !== window && !(container instanceof HTMLElement || container instanceof SVGElement)) {
+      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
+      return;
+    }
+
     //Check if the scrollbarDimension on the x-axis of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -563,41 +568,37 @@ window.uss = {
       return _containerData[18]; //Vertical scrollbar's width
     }
 
-    if(container === window) container = uss.getPageScroller();
-    if(!(container instanceof HTMLElement || container instanceof SVGElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
-      return;
+    let _scrollbarDimension;
+
+    //The scrollbars can only be 0px on this webpage.
+    if(uss.getScrollbarsMaxDimension(false) === 0) {
+      _scrollbarDimension = 0;
+    } else if(container === window) { 
+      options.debugString = "calcXScrollbarDimension(uss.getPageScroller())";
+      _scrollbarDimension = uss.getPageScroller(false) === window ? 0 : uss.calcXScrollbarDimension(uss.getPageScroller(false), forceCalculation, options);
+    } else {
+      const _style = window.getComputedStyle(container);
+      const _originalWidth  = Number.parseInt(_style.width);
+      const _clientWidth  = container.clientWidth;
+      const _originalOverflowY = container.style.overflowY;
+      const _originalScrollLeft = container.scrollLeft;
+
+      //The properties of _style are automatically updated whenever the style is changed.
+      container.style.overflowY = "hidden"; //The container is forced to hide its vertical scrollbars
+    
+      //When the vertical scrollbar is hidden the container's width increases only if 
+      //it was originally showing a scrollbar, otherwise it remains the same. 
+      _scrollbarDimension = Number.parseInt(_style.width) - _originalWidth; //Vertical scrollbar's width
+
+      //If the container is not scrollable but has "overflow:scroll"
+      //the dimensions can only be calculated by using clientWidth.
+      //If the overflow is "visible" the dimensions are < 0.
+      if(_scrollbarDimension === 0)    _scrollbarDimension = container.clientWidth - _clientWidth;
+      else if(_scrollbarDimension < 0) _scrollbarDimension = 0;
+      
+      container.style.overflowY = _originalOverflowY;
+      container.scrollLeft = _originalScrollLeft;
     }
-
-    if(container === window || uss.getScrollbarsMaxDimension(false) === 0) {
-      //Cache the value for later use.
-      _containerData[18] = 0;
-      if(!_oldData) uss._containersData.set(container, _containerData);
-
-      return 0; //Vertical scrollbar's width
-    }
-
-    const _style = window.getComputedStyle(container);
-    const _originalWidth  = Number.parseInt(_style.width);
-    const _clientWidth  = container.clientWidth;
-    const _originalOverflowY = container.style.overflowY;
-    const _originalScrollLeft = container.scrollLeft;
-
-    //The properties of _style are automatically updated whenever the style is changed.
-    container.style.overflowY = "hidden"; //The container is forced to hide its vertical scrollbars
-   
-    //When the vertical scrollbar is hidden the container's width increases only if 
-    //it was originally showing a scrollbar, otherwise it remains the same. 
-    let _scrollbarDimension = Number.parseInt(_style.width) - _originalWidth; //Vertical scrollbar's width
-
-    //If the container is not scrollable but has "overflow:scroll"
-    //the dimensions can only be calculated by using clientWidth.
-    //If the overflow is "visible" the dimensions are < 0.
-    if(_scrollbarDimension === 0)    _scrollbarDimension = container.clientWidth - _clientWidth;
-    else if(_scrollbarDimension < 0) _scrollbarDimension = 0;
-     
-    container.style.overflowY = _originalOverflowY;
-    container.scrollLeft = _originalScrollLeft;
 
     //Cache the value for later use.
     _containerData[18] = _scrollbarDimension;
@@ -606,6 +607,11 @@ window.uss = {
     return _scrollbarDimension;
   },
   calcYScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcYScrollbarDimension"}) => {
+    if(container !== window && !(container instanceof HTMLElement || container instanceof SVGElement)) {
+      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
+      return;
+    }
+
     //Check if the scrollbarDimension on the y-axis of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -613,41 +619,37 @@ window.uss = {
       return _containerData[19]; //Horizontal scrollbar's height
     }
 
-    if(container === window) container = uss.getPageScroller();
-    if(!(container instanceof HTMLElement || container instanceof SVGElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
-      return;
+    let _scrollbarDimension;
+
+    //The scrollbars can only be 0px on this webpage.
+    if(uss.getScrollbarsMaxDimension(false) === 0) {
+      _scrollbarDimension = 0;
+    } else if(container === window) { 
+      options.debugString = "calcYScrollbarDimension(uss.getPageScroller())";
+      _scrollbarDimension = uss.getPageScroller(false) === window ? 0 : uss.calcYScrollbarDimension(uss.getPageScroller(false), forceCalculation, options);
+    } else {
+      const _style = window.getComputedStyle(container);
+      const _originalHeight = Number.parseInt(_style.height);   
+      const _clientHeight = container.clientHeight;
+      const _originalOverflowX = container.style.overflowX;
+      const _originalScrollTop  = container.scrollTop;
+
+      //The properties of _style are automatically updated whenever the style is changed.
+      container.style.overflowX = "hidden"; //The container is forced to hide its horizontal scrollbars
+    
+      //When the horizontal scrollbar is hidden the container's height increases only if 
+      //it was originally showing a scrollbar, otherwise it remains the same. 
+      _scrollbarDimension = Number.parseInt(_style.height) - _originalHeight; //Horizontal scrollbar's height
+
+      //If the container is not scrollable but has "overflow:scroll"
+      //the dimensions can only be calculated by using clientHeight.
+      //If the overflow is "visible" the dimensions are < 0.
+      if(_scrollbarDimension === 0)    _scrollbarDimension = container.clientHeight - _clientHeight;
+      else if(_scrollbarDimension < 0) _scrollbarDimension = 0;
+      
+      container.style.overflowX = _originalOverflowX;
+      container.scrollTop = _originalScrollTop;
     }
-
-    if(container === window || uss.getScrollbarsMaxDimension(false) === 0) {
-      //Cache the value for later use.
-      _containerData[19] = 0;
-      if(!_oldData) uss._containersData.set(container, _containerData);
-
-      return 0; //Horizontal scrollbar's height
-    }
-
-    const _style = window.getComputedStyle(container);
-    const _originalHeight = Number.parseInt(_style.height);   
-    const _clientHeight = container.clientHeight;
-    const _originalOverflowX = container.style.overflowX;
-    const _originalScrollTop  = container.scrollTop;
-
-    //The properties of _style are automatically updated whenever the style is changed.
-    container.style.overflowX = "hidden"; //The container is forced to hide its horizontal scrollbars
-   
-    //When the horizontal scrollbar is hidden the container's height increases only if 
-    //it was originally showing a scrollbar, otherwise it remains the same. 
-    let _scrollbarDimension = Number.parseInt(_style.height) - _originalHeight; //Horizontal scrollbar's height
-
-    //If the container is not scrollable but has "overflow:scroll"
-    //the dimensions can only be calculated by using clientHeight.
-    //If the overflow is "visible" the dimensions are < 0.
-    if(_scrollbarDimension === 0)    _scrollbarDimension = container.clientHeight - _clientHeight;
-    else if(_scrollbarDimension < 0) _scrollbarDimension = 0;
-     
-    container.style.overflowX = _originalOverflowX;
-    container.scrollTop = _originalScrollTop;
 
     //Cache the value for later use.
     _containerData[19] = _scrollbarDimension;
@@ -656,61 +658,64 @@ window.uss = {
     return _scrollbarDimension;
   },
   calcScrollbarsDimensions: (container, forceCalculation = false, options = {debugString: "calcScrollbarsDimensions"}) => {
-    //Check if the scrollbarsDimensions of the passed container have already been calculated. 
-    const _oldData = uss._containersData.get(container);
-    const _containerData = _oldData || [];
-    if(!forceCalculation && Number.isFinite(_containerData[18]) && Number.isFinite(_containerData[19])) {
-      return [_containerData[18], _containerData[19]]; //[Vertical scrollbar's width, Horizontal scrollbar's height]
-    }
-
-    if(container === window) container = uss.getPageScroller();
-    if(!(container instanceof HTMLElement || container instanceof SVGElement)) {
+    if(container !== window && !(container instanceof HTMLElement || container instanceof SVGElement)) {
       uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
       return;
     }
 
-    if(container === window || uss.getScrollbarsMaxDimension(false) === 0) {
-      //Cache the values for later use.
-      _containerData[18] = 0;
-      _containerData[19] = 0;
-      if(!_oldData) uss._containersData.set(container, _containerData);
-
-      return [0,0]; //[Vertical scrollbar's width, Horizontal scrollbar's height]
+    //Check if the scrollbarsDimensions of the passed container have already been calculated. 
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+    if(!forceCalculation && Number.isFinite(_containerData[18]) && Number.isFinite(_containerData[19])) {
+      return [
+        _containerData[18], //Vertical scrollbar's width
+        _containerData[19]  //Horizontal scrollbar's height
+      ];
     }
 
-    const _scrollbarsDimensions = [];
-    const _style = window.getComputedStyle(container);
-    const _originalWidth  = Number.parseInt(_style.width);
-    const _originalHeight = Number.parseInt(_style.height);   
-    const _clientWidth  = container.clientWidth;
-    const _clientHeight = container.clientHeight;
-    const _originalOverflowX = container.style.overflowX;
-    const _originalOverflowY = container.style.overflowY;
-    const _originalScrollLeft = container.scrollLeft;
-    const _originalScrollTop  = container.scrollTop;
+    let _scrollbarsDimensions;
 
-    //The properties of _style are automatically updated whenever the style is changed.
-    container.style.overflowX = "hidden"; //The container is forced to hide its horizontal scrollbars
-    container.style.overflowY = "hidden"; //The container is forced to hide its vertical scrollbars
-   
-    //When the scrollbars are hidden the container's width/height increase only if 
-    //it was originally showing scrollbars, otherwise they remain the same. 
-    _scrollbarsDimensions[0] = Number.parseInt(_style.width)  - _originalWidth;  //Vertical scrollbar's width
-    _scrollbarsDimensions[1] = Number.parseInt(_style.height) - _originalHeight; //Horizontal scrollbar's height
+    //The scrollbars can only be 0px on this webpage.
+    if(uss.getScrollbarsMaxDimension(false) === 0) {
+      _scrollbarsDimensions = [0,0];
+    } else if(container === window) { 
+      options.debugString = "calcScrollbarsDimensions(uss.getPageScroller())";
+      _scrollbarsDimensions = uss.getPageScroller(false) === window ? [0,0] : uss.calcScrollbarsDimensions(uss.getPageScroller(false), forceCalculation, options);
+    } else {
+      _scrollbarsDimensions = [];
+      const _style = window.getComputedStyle(container);
+      const _originalWidth  = Number.parseInt(_style.width);
+      const _originalHeight = Number.parseInt(_style.height);   
+      const _clientWidth  = container.clientWidth;
+      const _clientHeight = container.clientHeight;
+      const _originalOverflowX = container.style.overflowX;
+      const _originalOverflowY = container.style.overflowY;
+      const _originalScrollLeft = container.scrollLeft;
+      const _originalScrollTop  = container.scrollTop;
 
-    //If the container is not scrollable but has "overflow:scroll"
-    //the dimensions can only be calculated by using clientWidth/clientHeight.
-    //If the overflow is "visible" the dimensions are < 0.
-    if(_scrollbarsDimensions[0] === 0)    _scrollbarsDimensions[0] = container.clientWidth - _clientWidth;
-    else if(_scrollbarsDimensions[0] < 0) _scrollbarsDimensions[0] = 0;
+      //The properties of _style are automatically updated whenever the style is changed.
+      container.style.overflowX = "hidden"; //The container is forced to hide its horizontal scrollbars
+      container.style.overflowY = "hidden"; //The container is forced to hide its vertical scrollbars
     
-    if(_scrollbarsDimensions[1] === 0)    _scrollbarsDimensions[1] = container.clientHeight - _clientHeight;
-    else if(_scrollbarsDimensions[1] < 0) _scrollbarsDimensions[1] = 0;
-     
-    container.style.overflowX = _originalOverflowX;
-    container.style.overflowY = _originalOverflowY;
-    container.scrollLeft = _originalScrollLeft;
-    container.scrollTop  = _originalScrollTop;
+      //When the scrollbars are hidden the container's width/height increase only if 
+      //it was originally showing scrollbars, otherwise they remain the same. 
+      _scrollbarsDimensions[0] = Number.parseInt(_style.width)  - _originalWidth;  //Vertical scrollbar's width
+      _scrollbarsDimensions[1] = Number.parseInt(_style.height) - _originalHeight; //Horizontal scrollbar's height
+
+      //If the container is not scrollable but has "overflow:scroll"
+      //the dimensions can only be calculated by using clientWidth/clientHeight.
+      //If the overflow is "visible" the dimensions are < 0.
+      if(_scrollbarsDimensions[0] === 0)    _scrollbarsDimensions[0] = container.clientWidth - _clientWidth;
+      else if(_scrollbarsDimensions[0] < 0) _scrollbarsDimensions[0] = 0;
+      
+      if(_scrollbarsDimensions[1] === 0)    _scrollbarsDimensions[1] = container.clientHeight - _clientHeight;
+      else if(_scrollbarsDimensions[1] < 0) _scrollbarsDimensions[1] = 0;
+      
+      container.style.overflowX = _originalOverflowX;
+      container.style.overflowY = _originalOverflowY;
+      container.scrollLeft = _originalScrollLeft;
+      container.scrollTop  = _originalScrollTop;
+    }
 
     //Cache the values for later use.
     _containerData[18] = _scrollbarsDimensions[0];
@@ -720,6 +725,11 @@ window.uss = {
     return _scrollbarsDimensions;
   },
   calcBordersDimensions: (container, forceCalculation = false, options = {debugString: "calcBordersDimensions"}) => {
+    if(container !== window && !(container instanceof Element)) {
+      uss._errorLogger(options.debugString, "the container to be an Element the Window", container);
+      return;
+    }
+
     //Check if the bordersDimensions of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -737,25 +747,21 @@ window.uss = {
       ];
     }
 
-    if(container === window) container = uss.getPageScroller();
-    if(!(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
-    
-    let _bordersDimensions; 
-    if(container === window) {
-      _bordersDimensions = [0,0,0,0];
+    let _bordersDimensions;
+
+    if(container === window) { 
+      options.debugString = "calcBordersDimensions(uss.getPageScroller())";
+      _bordersDimensions = uss.getPageScroller(false) === window ? [0,0,0,0] : uss.calcBordersDimensions(uss.getPageScroller(false), forceCalculation, options);
     } else {
       const _style = window.getComputedStyle(container);
       _bordersDimensions = [
-                             Number.parseInt(_style.borderTopWidth),
-                             Number.parseInt(_style.borderRightWidth),
-                             Number.parseInt(_style.borderBottomWidth),
-                             Number.parseInt(_style.borderLeftWidth)
-                           ];
+                              Number.parseInt(_style.borderTopWidth),
+                              Number.parseInt(_style.borderRightWidth),
+                              Number.parseInt(_style.borderBottomWidth),
+                              Number.parseInt(_style.borderLeftWidth)
+                            ];
     }
-  
+
     //Cache the values for later use.
     _containerData[20] = _bordersDimensions[0]; //top
     _containerData[21] = _bordersDimensions[1]; //right

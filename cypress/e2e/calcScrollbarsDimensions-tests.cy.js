@@ -23,7 +23,24 @@ describe("calcScrollbarsDimensions", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
-                
+                                
+                uss._containersData = new Map();
+                expect(uss._containersData.size).to.equal(0);
+
+                //Test if the window's scrollbars are cached correctly. 
+                const _windowScrollbarsDimensions = uss.calcScrollbarsDimensions(win, true);
+                expect(arraysAreEqual(
+                        _windowScrollbarsDimensions,
+                        uss.calcScrollbarsDimensions(uss.getPageScroller(true))
+                        )
+                ).to.be.true;
+                const _windowScrollbarsCachedDimensions = uss._containersData.get(win).slice(18, 20);
+                expect(arraysAreEqual(
+                        _windowScrollbarsDimensions,
+                        _windowScrollbarsCachedDimensions
+                        )
+                ).to.be.true;
+
                 cy.testFailingValues(uss.calcScrollbarsDimensions, {
                     0: [constants.failingValuesAll,
                         [true, false],
