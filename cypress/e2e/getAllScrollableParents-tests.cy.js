@@ -16,7 +16,7 @@ describe("getAllScrollableParents", function() {
         cy.window()
           .then((win) => {
                 uss = win.uss;
-                            
+
                 cy.testFailingValues(uss.getAllScrollableParents, {
                     0: [constants.failingValuesAll, 
                         [true, false],
@@ -76,7 +76,6 @@ describe("getAllScrollableParents", function() {
                     ).to.be.true;  
                     
                     //test elements with no constraint 
-                    console.log(uss.getAllScrollableParents(_genericElement1))
                     expect(arraysAreEqual(
                             uss.getAllScrollableParents(_genericElement1), 
                             [_genericElementParent11, _genericElementParent12, win.document.body, win]

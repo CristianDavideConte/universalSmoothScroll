@@ -6,7 +6,7 @@
         <script async src = "./src/universalsmoothscroll-dev-helpers.js" type = "module"></script>
         <script async src = "./src/universalsmoothscroll-presets.js" type = "module"></script>
         <style>
-            html, body {
+            html, body, .small-scroller {
                 width: 1000px;
                 height: 1000px;
                 overflow: scroll;
@@ -17,14 +17,14 @@
                 overflow: scroll;
             }
             .x-scroller {
-                width: 2000px;
+                width: 1000px;
                 height: 2000px;
                 overflow-x: scroll;
                 overflow-y: visible;
             }
             .y-scroller {
                 width: 2000px;
-                height: 2000px;
+                height: 1000px;
                 overflow-y: scroll;
                 overflow-x: visible;
             }
@@ -45,21 +45,21 @@
     <body>
         <div class = "position-fixed" id = "position-fixed-element"></div>
 
-        <div class = "scroller"  id = "generic-element-parent-12">
+        <div class = "small-scroller"  id = "generic-element-parent-12">
             <div class = "scroller"  id = "generic-element-parent-11">
                 <div class = "scrollable-content" id = "generic-element-1"></div>
             </div>
         </div>
 
-        <div class = "scroller" id = "should-not-be-the-scrollable-parent">
-            <div class = "scroller position-fixed" id = "generic-element-parent-22">
+        <div class = "small-scroller" id = "should-not-be-the-scrollable-parent">
+            <div class = "small-scroller position-fixed" id = "generic-element-parent-22">
                 <div class = "scroller" id = "generic-element-parent-21">
                     <div class = "scrollable-content" id = "generic-element-2"></div>
                 </div>
             </div>
         </div>
         
-        <div class = "scroller" id = "generic-element-parent-32">
+        <div class = "small-scroller" id = "generic-element-parent-32">
             <div class = "scroller" id = "generic-element-parent-31">
                 <div class = "no-scroller">
                     <div class = "scrollable-content" id = "generic-element-3"></div>
