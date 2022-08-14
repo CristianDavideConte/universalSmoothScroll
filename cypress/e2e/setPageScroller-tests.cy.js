@@ -9,7 +9,7 @@ describe("setPageScroller", function() {
               uss = win.uss;
 
               uss.setPageScroller(win);
-              expect(uss.getPageScroller()).to.equal(win);
+              expect(uss.getPageScroller(false)).to.equal(win);
                             
               cy.testFailingValues(uss.setPageScroller, {
                 0: [constants.failingValuesAll]
@@ -20,26 +20,10 @@ describe("setPageScroller", function() {
               })
               .then(() => {
                 uss.setPageScroller(win.document.documentElement);
-                expect(uss.getPageScroller()).to.equal(win.document.documentElement);
+                expect(uss.getPageScroller(false)).to.equal(win.document.documentElement);
                 
                 uss.setPageScroller(win.document.body);
-                expect(uss.getPageScroller()).to.equal(win.document.body);
-  
-                cy.waitForUssCallback(
-                    (resolve) => {
-                        uss.scrollTo(100, 200, uss.getPageScroller(), () => {
-                            expect(uss.getScrollXCalculator(uss.getPageScroller())()).to.equal(100);
-                            expect(uss.getScrollYCalculator(uss.getPageScroller())()).to.equal(200);
-                            
-                            uss.scrollBy(-100, -200, uss.getPageScroller(), resolve);
-                        });
-                    }
-                ).then(
-                    () => {
-                        expect(uss.getScrollXCalculator(uss.getPageScroller())()).to.equal(0);
-                        expect(uss.getScrollYCalculator(uss.getPageScroller())()).to.equal(0);
-                    }
-                );
+                expect(uss.getPageScroller(false)).to.equal(win.document.body);
               });
           });        
     })
