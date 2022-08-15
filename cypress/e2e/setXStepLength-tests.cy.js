@@ -1,5 +1,9 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("setXStepLength-tests.html"); 
+})
+
 describe("setXStepLength", function() {
     let uss;
     let _testStepInvalidTypeString = "";
@@ -7,7 +11,6 @@ describe("setXStepLength", function() {
     let _testStepValidType1 = 10;
     let _testStepValidType2 = 5;
     it("Tests the setXStepLength method", function() {
-        cy.visit("setXStepLength-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

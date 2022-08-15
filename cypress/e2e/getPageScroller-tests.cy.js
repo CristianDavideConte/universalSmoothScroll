@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("getPageScroller-tests.html"); 
+})
+
 describe("getPageScroller", function() {
     let uss;
     it("Tests the getPageScroller method", function() {
-        cy.visit("getPageScroller-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

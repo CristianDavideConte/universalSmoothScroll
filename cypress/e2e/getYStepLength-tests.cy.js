@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("getYStepLength-tests.html"); 
+})
+  
 describe("getYStepLength", function() {
     let uss;
     it("Tests the getYStepLength method", function() {
-        cy.visit("getYStepLength-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

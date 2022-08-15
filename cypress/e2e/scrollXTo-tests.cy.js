@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("scrollXTo-tests.html"); 
+})
+
 describe("scrollXTo", function() {
     let uss;
     it("Horizontally scrolls the test element to n pixels", function() {
-        cy.visit("scrollXTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -37,7 +40,6 @@ describe("scrollXTo-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped", function() {
-        cy.visit("scrollXTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -63,7 +65,6 @@ describe("scrollXToBy-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped and restarted with the scrollXBy method", function() {
-        cy.visit("scrollXTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -92,7 +93,6 @@ describe("scrollXToTo-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped and restarted with the scrollXTo method", function() {
-        cy.visit("scrollXTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -131,7 +131,6 @@ describe("scrollXTo-StoppedScrollingWhileAnimating", function() {
         }
     }
     it("Tests the scrollXTo method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
-        cy.visit("scrollXTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -167,7 +166,6 @@ describe("scrollXTo-scrollXTo-ReplaceScrollingWhileAnimating", function() {
         }
     }
     it("Tests if the scrollXTo method can replace the current scroll-animation from inside a stepLengthCalculator", function() {
-        cy.visit("scrollXTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

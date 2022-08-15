@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("scrollYTo-tests.html"); 
+})
+
 describe("scrollYTo", function() {
     let uss;
     it("Vertically scrolls the test element to n pixels", function() {
-        cy.visit("scrollYTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -37,7 +40,6 @@ describe("scrollYTo-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollYTo method whenever a scroll-animation is immediately stopped", function() {
-        cy.visit("scrollYTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -63,7 +65,6 @@ describe("scrollYToBy-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollYTo method whenever a scroll-animation is immediately stopped and restarted with the scrollYBy method", function() {
-        cy.visit("scrollYTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -92,7 +93,6 @@ describe("scrollYToTo-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollYTo method whenever a scroll-animation is immediately stopped and restarted with the scrollYTo method", function() {
-        cy.visit("scrollYTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -167,7 +167,6 @@ describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating", function() {
         }
     }
     it("Tests if the scrollYTo method can replace the current scroll-animation from inside a stepLengthCalculator", function() {
-        cy.visit("scrollYTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

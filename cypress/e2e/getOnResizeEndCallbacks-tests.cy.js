@@ -9,10 +9,13 @@ function arraysAreEqual(arr1, arr2) {
     return true;
 }
 
+beforeEach(() => {
+    cy.visit("getOnResizeEndCallbacks-tests.html"); 
+})
+
 describe("getOnResizeEndCallbacks", function() {
     let uss;
     it("Tests the getOnResizeEndCallbacks method", function() {
-        cy.visit("getOnResizeEndCallbacks-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

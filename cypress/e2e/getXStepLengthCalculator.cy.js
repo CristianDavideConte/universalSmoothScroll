@@ -1,11 +1,14 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+  cy.visit("getXStepLengthCalculator-tests.html"); 
+})
+
 describe("getXStepLengthCalculator", function() {
     let uss;
     let nonTempTestCalculator = () => 10;
     let tempTestCalculator = r => r / 20 + 1;
     it("Tests the getXStepLengthCalculator method", function() {
-      cy.visit("getXStepLengthCalculator-tests.html"); 
       cy.window()
         .then((win) => {
             uss = win.uss;

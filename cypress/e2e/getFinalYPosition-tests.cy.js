@@ -1,10 +1,13 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+  cy.visit("getFinalYPosition-tests.html");
+})
+
 describe("getFinalYPosition", function() {
     let uss;
     let finalYPosition;
     it("Tests the getFinalYPosition method", function() {
-      cy.visit("getFinalYPosition-tests.html");
       cy.window()
         .then((win) => {
           uss = win.uss;

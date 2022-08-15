@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("getDebugMode-tests.html"); 
+})
+
 describe("getDebugMode", function() {
     let uss;
     it("Tests the getDebugMode method", function() {
-        cy.visit("getDebugMode-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

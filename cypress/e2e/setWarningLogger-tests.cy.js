@@ -1,12 +1,15 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+  cy.visit("setWarningLogger-tests.html"); 
+})
+
 describe("setWarningLogger", function() {
   let uss;
   let validLogger1 = (a,b,c) => console.log(a,b,c);
   let validLogger2 = () => console.log("");
   let validLogger3 = () => {}
   it("Tests the setWarningLogger method", function() {
-      cy.visit("setWarningLogger-tests.html"); 
       cy.window()
         .then((win) => {
             uss = win.uss;

@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("scrollXBy-tests.html"); 
+})
+
 describe("scrollXBy", function() {
     let uss;
     it("Horizontally scrolls the test element by n pixels", function() {
-        cy.visit("scrollXBy-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -49,7 +52,6 @@ describe("scrollXToBy-StillStart-True", function() {
         }
     }
     it("Horizontally scrolls the test element to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
-        cy.visit("scrollXBy-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -94,7 +96,6 @@ describe("scrollXToBy-StillStart-False", function() {
         }
     }
     it("Horizontally scrolls the test element to n1 pixels and then extends that animation by n2 pixels", function() {
-        cy.visit("scrollXBy-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -138,7 +139,6 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating", functio
         }
     }
     it("Tests if the scrollYBy method with stillStart = \"false\" can extend a scroll-animation from inside a stepLengthCalculator", function() {
-        cy.visit("scrollXBy-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

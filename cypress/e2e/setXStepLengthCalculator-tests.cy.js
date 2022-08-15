@@ -1,12 +1,15 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("setXStepLengthCalculator-tests.html"); 
+})
+
 describe("setXStepLengthCalculator", function() {
     let uss;
     let _testCalculatorValidType1 = () => 10;
     let _testCalculatorValidType2 = () => 5;
     let _testCalculatorValidType3 = () => 0.000001; //Valid but takes more than the default testing timeout
     it.only("Tests the setXStepLengthCalculator method", function() {
-        cy.visit("setXStepLengthCalculator-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

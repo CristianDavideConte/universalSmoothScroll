@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("scrollTo-tests.html"); 
+})
+
 describe("scrollTo", function() {
     let uss;
     it("Horizontally and vertically scrolls the test element to n1,n2 pixels", function() {
-        cy.visit("scrollTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -38,7 +41,6 @@ describe("scrollTo", function() {
 describe("scrollTo-immediatelyStoppedScrolling", function() {
     let uss;
     it("Tests the scrollTo method whenever a scroll-animation is immediately stopped", function() {
-        cy.visit("scrollTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -70,7 +72,6 @@ describe("scrollToBy-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollTo method whenever a scroll-animation is immediately stopped and restarted with the scrollBy method", function() {
-        cy.visit("scrollTo-tests.html"); 
         cy.window()
         .then((win) => {
             uss = win.uss;
@@ -100,7 +101,6 @@ describe("scrollToTo-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;
     it("Tests the scrollTo method whenever a scroll-animation is immediately stopped and restarted with the scrollTo method", function() {
-        cy.visit("scrollTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -150,7 +150,6 @@ describe("scrollTo-StoppedScrollingWhileAnimating", function() {
         }
     }
     it("Tests the scrollTo method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
-        cy.visit("scrollTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -187,7 +186,6 @@ describe("scrollTo-scrollTo-ReplaceScrollingWhileAnimating", function() {
         }
     }
     it("Tests if the scrollTo method can replace the current scroll-animation from inside a stepLengthCalculator", function() {
-        cy.visit("scrollTo-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

@@ -4,6 +4,7 @@
  * - add speedModifiers to momentumElasticScrolling without breaking the scrolling
  * - smooth scrolling with animation allowed
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
+ * - when scrollbars are one on top of each other the active state and the clicks of the bottom ones should be ignored.
  */
 
 

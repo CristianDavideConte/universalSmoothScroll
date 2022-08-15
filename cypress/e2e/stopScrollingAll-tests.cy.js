@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("stopScrollingAll-tests.html"); 
+})
+
 describe("stopScrollingAll", function() {
     let uss;
     it("Tests the stopScrollingAll method", function() {
-        cy.visit("stopScrollingAll-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -75,7 +78,6 @@ describe("stopScrollingAll", function() {
 describe("stopScrollingAll-immediatelyStopped", function() {
     let uss;
     it("Initialize a series of scroll-animations on both the x-axis and the y-axis of all scrollable containers and immediately stop them", function() {
-        cy.visit("stopScrollingAll-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

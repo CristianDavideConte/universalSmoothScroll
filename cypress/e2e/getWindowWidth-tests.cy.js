@@ -1,5 +1,9 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("getWindowWidth-tests.html"); 
+})
+
 describe("getWindowWidth", function() {
     let uss;
     const resolutions = [[640, 480],

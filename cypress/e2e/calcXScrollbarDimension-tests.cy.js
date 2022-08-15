@@ -9,6 +9,10 @@ function arraysAreEqual(arr1, arr2) {
     return true;
 }
 
+beforeEach(() => {
+    cy.visit("calcXScrollbarDimension-tests.html"); 
+})
+
 describe("calcXScrollbarDimension", function() {
     let uss;
 
@@ -19,7 +23,6 @@ describe("calcXScrollbarDimension", function() {
         ];
     }
     it("Tests the calcXScrollbarDimension method", function() {
-        cy.visit("calcXScrollbarDimension-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -108,7 +111,6 @@ describe("calcXScrollbarDimension-webkit-scrollbar-modifiers", function() {
         ];
     }
     it("Tests the calcXScrollbarDimension method with elements that have the ::webkit-scrollbar css modifier", function() {
-        cy.visit("calcXScrollbarDimension-tests.html"); 
         cy.window()
             .then((win) => {
                 //Firefox doens't support the ::webkit-scrollbar css modifier

@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+  cy.visit("getMaxScrollX-tests.html"); 
+})
+
 describe("getMaxScrollX", function() {
     let uss;
     it("Tests the getMaxScrollX method", function() {
-        cy.visit("getMaxScrollX-tests.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;

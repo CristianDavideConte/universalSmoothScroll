@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("getMinAnimationFrame-tests.html"); 
+})
+
 describe("getMinAnimationFrame", function() {
     let uss;
     it("Tests the getMinAnimationFrame method", function() {
-        cy.visit("getMinAnimationFrame-tests.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;

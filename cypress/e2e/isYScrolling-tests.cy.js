@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("isYScrolling-tests.html"); 
+})
+
 describe("isYScrolling", function() {
     let uss;
     it("Tests the isYScrolling method", function() {
-        cy.visit("isYScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -48,7 +51,6 @@ describe("isYScrolling-StoppedScrollingWhileAnimating", function() {
         }
     }
     it("Tests the isYScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
-        cy.visit("isYScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

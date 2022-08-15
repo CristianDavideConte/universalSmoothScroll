@@ -90,11 +90,21 @@ function _scrollIntoViewTester(
     );
 }
 
+beforeEach(() => {
+    //Whenever the page is scaled (perhaps there isn't enough space to respect the defaul 1000x660 viewport),
+    //the number pixels scrolled is inconsistent/may vary.
+    //Cypress doesn't correctly report the window.innerWidth/window.innerHeight whenever the page is scaled, 
+    //so there's no way to adjust the tests.
+    //This is a quick fix: shrink the viewport down to 100x200 so that is extremly unlikely that 
+    //the page ever get scaled.
+    //This trick doens't affect the test results.
+    cy.viewport(100, 200); 
+    cy.visit("scrollIntoView-tests.html"); 
+})
+
 describe("scrollIntoView-corners-alignements", function() {
     let uss;
     it.only("Tests the scrollIntoView method with the 4 corners alignments", function() {
-        cy.viewport(1000, 660)
-        cy.visit("scrollIntoView-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -335,8 +345,6 @@ describe("scrollIntoView-corners-alignements", function() {
 describe("scrollIntoView-center-alignements", function() {
     let uss;
     it.only("Tests the scrollIntoView method with the 5 center alignments", function() {
-        cy.viewport(1000, 660)
-        cy.visit("scrollIntoView-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

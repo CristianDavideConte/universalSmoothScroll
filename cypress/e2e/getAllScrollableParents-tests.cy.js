@@ -9,10 +9,13 @@ function arraysAreEqual(arr1, arr2) {
     return true;
 }
 
+beforeEach(() => {
+        cy.visit("getAllScrollableParents-tests.html"); 
+})
+
 describe("getAllScrollableParents", function() {
     let uss;
     it("Tests the getAllScrollableParents method", function() {
-        cy.visit("getAllScrollableParents-tests.html"); 
         cy.window()
           .then((win) => {
                 uss = win.uss;

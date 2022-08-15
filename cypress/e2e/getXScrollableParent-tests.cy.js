@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+  cy.visit("getXScrollableParent-tests.html"); 
+})
+
 describe("getXScrollableParent", function() {
     let uss;
     it("Tests the getXScrollableParent method", function() {
-        cy.visit("getXScrollableParent-tests.html"); 
         cy.window()
           .then((win) => {
               uss = win.uss;

@@ -9,10 +9,13 @@ function arraysAreEqual(arr1, arr2) {
     return true;
 }
 
+beforeEach(() => {
+    cy.visit("calcBordersDimensions-tests.html"); 
+})
+
 describe("calcBordersDimensions", function() {
     let uss;
     it("Tests the calcBordersDimensions method", function() {
-        cy.visit("calcBordersDimensions-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;

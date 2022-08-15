@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+  cy.visit("getScrollYDirection-tests.html"); 
+})
+
 describe("getScrollYDirection", function() {
     let uss;
     it("Tests the getScrollYDirection method", function() {
-      cy.visit("getScrollYDirection-tests.html"); 
       cy.window()
         .then((win) => {
           uss = win.uss;

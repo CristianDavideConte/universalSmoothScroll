@@ -1,10 +1,13 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+  cy.visit("getScrollYCalculator-tests.html"); 
+})
+
 describe("getScrollYCalculator", function() {
     let uss;
     let result = false;
     it("Tests the getScrollYCalculator method", function() {
-      cy.visit("getScrollYCalculator-tests.html"); 
       cy.window()
         .then((win) => {
             uss = win.uss;

@@ -1,9 +1,12 @@
 const { constants } = require("../support/constants");
 
+beforeEach(() => {
+    cy.visit("isScrolling-tests.html"); 
+})
+  
 describe("isScrolling-scrollXAnimation", function() {
     let uss;
     it("Tests the isScrolling method", function() {
-        cy.visit("isScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -36,7 +39,6 @@ describe("isScrolling-scrollXAnimation", function() {
 describe("isScrolling-scrollYAnimation", function() {
     let uss;
     it("Tests the isScrolling method", function() {
-        cy.visit("isScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -69,7 +71,6 @@ describe("isScrolling-scrollYAnimation", function() {
 describe("isScrolling-scrollXYAnimation", function() {
     let uss;
     it("Tests the isScrolling method", function() {
-        cy.visit("isScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -114,7 +115,6 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function
         }
     }
     it("Tests the isScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
-        cy.visit("isScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -142,8 +142,6 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function
 
 describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function() {
     let uss;
-    let wasScrolling;
-    let isScrolling;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -157,7 +155,6 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function
         }
     }
     it("Tests the isScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
-        cy.visit("isScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -185,8 +182,6 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function
 
 describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
     let uss;
-    let wasScrolling;
-    let isScrolling;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -199,7 +194,6 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
         }
     }
     it("Tests the isScrolling method whenever the scroll-animation on the x-axis is stopped inside a stepLengthCalculator", function() {
-        cy.visit("isScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -227,8 +221,6 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
 
 describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
     let uss;
-    let wasScrolling;
-    let isScrolling;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -241,7 +233,6 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
         }
     }
     it("Tests the isScrolling method whenever the scroll-animation on the y-axis is stopped inside a stepLengthCalculator", function() {
-        cy.visit("isScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -269,8 +260,6 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
 
 describe("isScrolling-StopBothAxisScrollingWhileAnimating", function() {
     let uss;
-    let wasScrolling;
-    let isScrolling;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -284,7 +273,6 @@ describe("isScrolling-StopBothAxisScrollingWhileAnimating", function() {
         }
     }
     it("Tests the isScrolling method whenever the scroll-animations on both the x-axis and the y-axis are stopped from inside a stepLengthCalculator", function() {
-        cy.visit("isScrolling-tests.html"); 
         cy.window()
             .then((win) => {
                 uss = win.uss;
