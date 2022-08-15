@@ -47,6 +47,8 @@ if(!result1 || !result2) {
 }
 ```
 
+---
+
 <strong>Note:</strong> </br> 
 A **bold** input parameter's name means that it's a mandatory input. <br/>
 An _italic_ input parameter's name means that it's an optional parameter. <br/>
