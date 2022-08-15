@@ -6,7 +6,7 @@ beforeEach(() => {
 
 describe("scrollTo", function() {
     let uss;
-    it("Horizontally and vertically scrolls the test element to n1,n2 pixels", function() {
+    it("Horizontally and vertically scrolls the test element to (n1,n2) pixels", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;

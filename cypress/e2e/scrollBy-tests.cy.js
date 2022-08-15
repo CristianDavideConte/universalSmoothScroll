@@ -6,7 +6,7 @@ beforeEach(() => {
 
 describe("scrollBy", function() {
     let uss;
-    it("Horizontally and vertically scrolls the test element by n1,n2 pixels", function() {
+    it("Horizontally and vertically scrolls the test element by (n1,n2) pixels", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -56,7 +56,7 @@ describe("scrollToBy-StillStart-True", function() {
         
         return total;
     }
-    it("Horizontally and vertically scrolls the test element to n1a, n1b pixels and then replace that animation with a n2a,n2b pixels scroll", function() {
+    it("Horizontally and vertically scrolls the test element to (n1a,n1b) pixels and then replace that animation with a (n2a,n2b) pixels scroll", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -106,7 +106,7 @@ describe("scrollToBy-StillStart-False", function() {
         
         return total;
     }
-    it("Horizontally and vertically scrolls the test element to n1a, n1b pixels and then extends that animation by n2a, n2b pixels", function() {
+    it("Horizontally and vertically scrolls the test element to (n1a,n1b) pixels and then extends that animation by (n2a,n2b) pixels", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
