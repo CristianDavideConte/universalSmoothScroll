@@ -1,0 +1,355 @@
+h2,
+a {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Edge, Opera and Firefox */
+  -webkit-user-drag: none;
+}
+
+h2,
+input,
+button {
+  text-align: center;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+  color: white;
+}
+
+html {
+  overflow: hidden;
+}
+
+body {
+  overflow: scroll;
+}
+
+button,
+input {
+  transition: 0.3s;
+  font-size: 2.3vh;
+}
+
+button {
+  background-color: rgba(51, 51, 51, 0.9);
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: rgba(21, 21, 21, 0.6);
+}
+
+input {
+  background-color: transparent;
+}
+
+[data-uss="scrollbar-track-x"] {
+  background-color: rgba(51, 51, 51, 0.9);
+  transition-duration: 0.3s;
+}
+
+[data-uss="scrollbar-track-y"] {
+  background-color: rgba(51, 51, 51, 0.9);
+  transition-duration: 0.3s;
+}
+
+[data-uss="scrollbar-thumb-x"] {
+  background-color: white;
+  border-radius: 2vh;
+  transition-duration: 0.3s;
+}
+
+[data-uss="scrollbar-thumb-y"] {
+  background-color: black;
+  border-radius: 2vh;
+  transition-duration: 0.3s;
+}
+
+[data-uss-scrollbar-hidden="true"] {
+  opacity: 0.5;
+}
+
+[data-uss-scrollbar-hidden="true"] > div {
+  border-radius: 0;
+}
+
+#betaBanner {
+  width: 50%;
+  height: 20%;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+  background: black;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+}
+
+#betaBanner > p {
+  font-size: 2.3vh;
+}
+
+#header {
+  z-index: 2;
+  margin-top: 2vh;
+  position: fixed;
+  width: calc(100% - 17px);
+  height: 100px;
+  display: flex;
+  justify-content: center;
+}
+
+#header > ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(1vw, 1fr));
+  grid-template-rows: repeat(1, 100px);
+}
+
+ul {
+  width: 75%;
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  width: 100%;
+  height: 100%;
+  transition: 0.3s;
+  background-color: rgba(51, 51, 51, 0.9);
+}
+
+li:hover,
+a:hover {
+ background-color: rgba(21, 21, 21, 0.6);
+}
+
+a {
+  font-size: 2.3vh;
+  height: 100%;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.sections-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+}
+
+#xScrollerSection {
+  display: flex;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  height: 100%;
+  width: 100%;
+}
+
+#yScrollerSection {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  height: 100%;
+  width: 100%;
+}
+
+#section1 {
+  position: relative;
+}
+
+#section1 > h2 {
+  position: absolute;
+  top: 15%;
+}
+
+#section1,
+#section11,
+#section12 {
+  background: linear-gradient(45deg, rgba(228,255,0,1) 0%, rgba(255,132,0,1) 100%);
+}
+
+#easeFunctionSelector {
+  position: relative;
+}
+
+#easeFunctionSelectorList {
+  height: 40vh;
+  width: 75vw;
+  padding: 25vh 0;        /* For elastic scrolling */
+  box-sizing: border-box; /* For elastic scrolling */
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
+  overscroll-behavior: contain;
+  background-color: rgba(21, 21, 21, 0.6);
+}
+
+#easeFunctionSelectorList > a {
+  height: 10vh;
+  flex-shrink: 0;
+  transition: 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(51, 51, 51, 0.65);
+}
+
+#easeFunctionSelectorList > a:hover,
+#easeFunctionSelectorList > a.selected {
+  background-color: rgba(21, 21, 21, 0);
+}
+
+#xScroller {
+  position: relative;
+  width: 71vmin;
+  height: 71vmin;
+  display: flex;
+}
+
+.listItem {
+  width: 100%;
+  height: 100%;
+  flex-shrink: 0;
+}
+
+
+#xScroller > button {
+  z-index: 0;
+  position: absolute;
+  color:white;
+  font-size: 10vmin;
+  height: 70vmin;
+  width: 20vmin;
+  border: none;
+}
+
+#xScrollerLeft {
+  margin-right: 70vmin;
+}
+
+#xScrollerRight {
+  margin-left: 70vmin;
+  -webkit-transform: translateX(-100%);
+  transform: translateX(-100%);
+}
+
+#section2,
+#section21,
+#section22 {
+  background: linear-gradient(45deg, rgba(0,56,255,1) 0%, rgba(0,249,255,1) 100%);
+}
+
+#yScroller {
+  position: relative;
+  width: 71vmin;
+  height: 71vmin;
+  display: flex;
+  flex-direction: column;
+}
+
+#yScroller > button {
+  z-index: 0;
+  position: absolute;
+  color:white;
+  font-size: 10vmin;
+  height: 20vmin;
+  width: 70vmin;
+  border: none;
+}
+
+#yScrollerUp {
+  margin-bottom: 70vmin;
+}
+
+#yScrollerDown {
+  margin-top: 70vmin;
+  -webkit-transform: translateY(-100%);
+  transform: translateY(-100%);
+}
+
+#section3,
+#section31,
+#section32 {
+  background: linear-gradient(45deg, rgba(201,0,255,1) 0%, rgba(255,0,44,1) 100%);
+}
+
+#section4,
+#section41,
+#section42 {
+  background: linear-gradient(45deg, rgba(0,255,244,1) 0%, rgba(0,255,29,1) 100%);
+}
+
+#customBezierParameterSection {
+  width: 75%;
+  height: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#customBezierParameterSection > h2 {
+  color: black;
+}
+
+#customBezierParameterSection > ul {
+  width: 75%;
+  height: 10vh;
+}
+
+input {
+  width: 100%;
+  height: 100%;
+  color: white;
+  border: none;
+  outline: none;
+}
+
+input[type = submit] {
+  width: 75%;
+  height: 10vh;
+  cursor: pointer;
+  background-color: rgba(51, 51, 51, 0.9);;
+}
+
+input[type = submit]:hover {
+   background-color: rgba(21, 21, 21, 0.6);
+}
+
+@media only screen and (max-width: 1250px), (max-height: 870px)  {
+  li > a {
+      font-size: 1.9vh;
+  }
+}

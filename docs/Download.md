@@ -2,16 +2,66 @@
 <br/>
 
 # Download
-In order to use the USS API you first have to download the needed scripts which you can get in many ways. <br/>
+In order to use this API you first have to download the needed scripts. <br/>
+There are 3 available:
 
-In total, there are two files available:
-* `universalsmoothscroll-min.js`                
-* `universalsmoothscroll-ease-functions-min.js` 
-  
-The former is always required and contains _(the minified version of)_ the API itself. <br/> 
-The latter is optional instead and contains _(the minified version of)_ an easing-functions library which you may find useful later on. <br/>
+<table>
+ <thead>
+  <tr>
+   <th>Script Name</th>
+   <th>Importance</th>
+   <th>Type</th>
+   <th>Purpose</th>
+  </tr>
+ </thead>
+ <tbody>
+ <tr id = "universalsmoothscroll-min-file">
+   <td rowspan = "1" align = "center">
+    <code>universalsmoothscroll-min.js</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>required</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>script</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Contains the API itself.
+   </td>
+ </tr>
+  <tr id = "universalsmoothscroll-ease-functions-min-file">
+   <td rowspan = "1" align = "center">
+    <code>universalsmoothscroll-ease-functions-min.js</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>optional</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"><code>module</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Contains a high level library which allows you to effordlessly customize the timings and the behaviors of your scroll-animations. 
+   </td>
+ </tr>
+ </tr>
+  <tr id = "universalsmoothscroll-dev-helpers-min-file">
+   <td rowspan = "1" align = "center">
+    <code>universalsmoothscroll-dev-helpers-min.js</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>optional</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <a href = "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules"><code>module</code></a>
+   </td>
+   <td rowspan = "1" align = "left">
+    Contains a library specifically written <strong>to help you</strong> with some of the more advanced aspects of this API <i>(useful during testing)</i>.
+   </td>
+ </tr>
+ </tbody>
+</table>
 
-Each one of the download options will give you access to all the above described scripts, so choose freely the download method you prefer.
+Each one of the download options below will give you full access to all scripts, so choose freely the download method you prefer.
 
 ---
 
@@ -25,15 +75,13 @@ All the scripts will be downloaded inside your `node_module` folder.
 
 ## jsDelivr
 Visit [`jsDelivr`](https://www.jsdelivr.com/package/npm/universalsmoothscroll) and click the download button. <br/>
-The files will be saved as a _.tgz archive_: extract them and you're good to go. 
+The files will be saved as a `.tgz archive`: extract them and you're good to go. 
 <br/>
 
 ---
 
-## Github
-Whenever a new version of the API is published, a new release is drafted. <br/>
-Each release has a changelog and the latest versions of the above mentioned files attached as assets. <br/>
-All the USS API releases are available in the [`releases section`](https://github.com/CristianDavideConte/universalSmoothScroll/releases).
+## Github releases
+In the [`Releases`](https://github.com/CristianDavideConte/universalSmoothScroll/releases) section you can find all the API versions and the above mentioned scripts available for download (`Assets` below each changelog).
 
 <br/>
 
