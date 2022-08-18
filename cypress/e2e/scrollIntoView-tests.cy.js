@@ -91,13 +91,13 @@ function _scrollIntoViewTester(
 }
 
 beforeEach(() => {
-    //Whenever the page is scaled (perhaps there isn't enough space to respect the defaul 1000x660 viewport),
+    //Whenever the page is scaled (perhaps there isn't enough space to respect the default 1000x660 viewport),
     //the number pixels scrolled is inconsistent/may vary.
     //Cypress doesn't correctly report the window.innerWidth/window.innerHeight whenever the page is scaled, 
     //so there's no way to adjust the tests.
     //This is a quick fix: shrink the viewport down so that is unlikely that the page ever get scaled.
     //This trick doens't affect the test results.
-    cy.viewport(650, 700); 
+    cy.viewport(100, 200); 
     cy.visit("scrollIntoView-tests.html"); 
 })
 
@@ -717,7 +717,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                     cy.waitForUssCallback(
                         (resolve) => {
                             //Set up the scroll position to force the "nearest" alignment to be left-top.
-                            uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY());
+                            uss.scrollTo(0, uss.getMaxScrollY());
 
                             _scrollIntoViewTester(
                                 uss,
@@ -772,7 +772,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 const _parent = _nextEl.parentElement.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX() / 2, uss.getMaxScrollY());
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, 0, _parent);
-                                                uss.scrollTo(uss.getMaxScrollX(_container) / 4, 0, _container);
+                                                uss.scrollTo(uss.getMaxScrollX(_container) / 8, 0, _container);
                                             }
                                         ]
                                     },
@@ -838,7 +838,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 const _nextEl = _testElement112;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _nextEl.parentElement.parentElement;
-                                                uss.scrollTo(0, uss.getMaxScrollY());
+                                                uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY());
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
                                             }
@@ -897,7 +897,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 const _nextEl = _testElement111;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _nextEl.parentElement.parentElement;
-                                                uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY() / 2);
+                                                uss.scrollTo(0, uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_parent) / 8, _parent);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_container) / 2, _container);
                                             }
@@ -966,7 +966,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 const _parent = _nextEl.parentElement.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX() / 2, uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, uss.getMaxScrollY(_parent) / 8, _parent);
-                                                uss.scrollTo(uss.getMaxScrollX(_container) / 4, uss.getMaxScrollY(_container) / 2, _container);
+                                                uss.scrollTo(uss.getMaxScrollX(_container) / 8, uss.getMaxScrollY(_container) / 4, _container);
                                             }
                                         ]
                                     },
@@ -1038,7 +1038,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 const _nextEl = _testElement112;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _nextEl.parentElement.parentElement;
-                                                uss.scrollTo(0, uss.getMaxScrollY() / 2);
+                                                uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent) / 8, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container) / 2, _container);
                                             }
@@ -1108,7 +1108,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 const _nextEl = _testElement121;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _nextEl.parentElement.parentElement;
-                                                uss.scrollTo(uss.getMaxScrollX(), 0);
+                                                uss.scrollTo(0, 0);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
                                             }
@@ -1238,7 +1238,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 const _nextEl = _testElement122;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _nextEl.parentElement.parentElement;
-                                                uss.scrollTo(0, 0);
+                                                uss.scrollTo(uss.getMaxScrollX(), 0);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
                                             }
