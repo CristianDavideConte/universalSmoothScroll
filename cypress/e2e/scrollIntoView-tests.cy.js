@@ -966,7 +966,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 const _parent = _nextEl.parentElement.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX() / 2, uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, uss.getMaxScrollY(_parent) / 8, _parent);
-                                                uss.scrollTo(uss.getMaxScrollX(_container) / 8, uss.getMaxScrollY(_container) / 4, _container);
+                                                uss.scrollTo(uss.getMaxScrollX(_container) / 8, uss.getMaxScrollY(_container) / 2, _container);
                                             }
                                         ]
                                     },
