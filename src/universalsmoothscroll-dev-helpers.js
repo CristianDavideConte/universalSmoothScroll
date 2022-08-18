@@ -91,9 +91,9 @@ export async function isValidStepLengthCalculator(
         await new Promise((resolve, reject) => {
             window.requestAnimationFrame(() => _tester(resolve, reject));
         });
-    } catch (error) {
+    } catch(result) {
         try {
-            uss._errorLogger(options.debugString, "the stepLengthCalculator to return a valid step value", error);
+            uss._errorLogger(options.debugString, "the stepLengthCalculator to return a valid stepLength value", result);
         } catch(e){} 
         
         return false;

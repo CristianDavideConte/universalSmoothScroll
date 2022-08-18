@@ -118,7 +118,13 @@ describe("scrollIntoView-corners-alignements", function() {
                 const _initialScrollTop = _testElement111.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
-                    0: [constants.failingValuesAll]
+                    0: [
+                        constants.failingValuesAll,
+                        [true, false],
+                        [true, false],
+                        [undefined],
+                        [true, false],
+                       ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);          
@@ -358,7 +364,13 @@ describe("scrollIntoView-center-alignements", function() {
                 const _initialScrollTop = _testElement111.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
-                    0: [constants.failingValuesAll]
+                    0: [
+                        constants.failingValuesAll,
+                        [true, false],
+                        [true, false],
+                        [undefined],
+                        [true, false],
+                       ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);          
@@ -706,7 +718,13 @@ describe("scrollIntoView-nearest-alignements", function() {
                 const _initialScrollTop = _testElement111.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
-                    0: [constants.failingValuesAll]
+                    0: [
+                        constants.failingValuesAll,
+                        [true, false],
+                        [true, false],
+                        [undefined],
+                        [true, false],
+                       ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);          

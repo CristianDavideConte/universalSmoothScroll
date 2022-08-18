@@ -1,18 +1,20 @@
 <html>
   <head>
     <meta charset = "UTF-8">
-    <meta name = "Description" content = "Universal smooth scroll demo">
+    <meta name = "Description" content = "UniversalSmoothScroll Official Playground">
     <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
-    <title>Universal Smooth Scroll</title>
+    <title>UniversalSmoothScroll</title>
     <link rel = "icon" type = "image/png" href = "./docs/images/favicon.png">
     <link rel = "stylesheet" type = "text/css" href = "./index.css">
+    
     <script async src = "./src/universalsmoothscroll.js"></script>
     <script async src = "./src/universalsmoothscroll-ease-functions.js" type = "module"></script>
     <script async src = "./src/universalsmoothscroll-dev-helpers.js" type = "module"></script>
-    <script async src = "./src/universalsmoothscroll-presets.js" type = "module"></script>
+
+    <script async src = "./src/universalsmoothscroll-presets.js" type = "module"></script> <!-- Work in progress -->
   </head>
   <body>
-    <div id = "betaBanner"><p>Beta 6.0.0</p></div>
+    <div id = "betaBanner"><p>Ver. 6.0.0</p></div>
     <nav id = "header">
       <ul>
         <li><a href = "#section1">YELLOW</a></li>
@@ -236,8 +238,8 @@
     const _bodyMomentumScrollingOptions = {
       onYAxis: true,
       onXAxis: true,
-      momentumEasingX: EASE_LINEAR(), //TODO fix the lag of these
-      momentumEasingY: EASE_LINEAR(),
+      momentumEasingX: EASE_OUT_CUBIC(),//EASE_LINEAR(), //TODO fix the lag of these
+      momentumEasingY: EASE_OUT_CUBIC()//EASE_LINEAR(),
     }
     addMomentumScrolling(
       uss.getPageScroller(),
@@ -381,5 +383,5 @@
         _bodyScrollbars[1].updatePosition();
       })
     }, null, true, true);
-  }, {passive:true});
+  }, {passive:true}, {once:true});
 </script>
