@@ -2625,7 +2625,7 @@ The following table describes every entry of the `Input Parameters` column of th
   <td rowspan = "1" align = "left">
     <code>true</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable parents should be to the left. <br/>
     <code>false</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable parents should be to the right. <br/>
-    <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
+    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
     <strong><i>Any other value</i></strong>, if the alignment <i>(on the x-axis)</i> of <code>element</code> and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
@@ -2639,7 +2639,7 @@ The following table describes every entry of the `Input Parameters` column of th
   <td rowspan = "1" align = "left">
     <code>true</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable parents should be to the left. <br/>
     <code>false</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable parents should be to the right. <br/>
-    <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
+    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
     <strong><i>Any other value</i></strong>, if the alignment <i>(on the y-axis)</i> of <code>element</code> and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
@@ -2821,7 +2821,7 @@ The following table describes every entry of the `Input Parameters` column of th
   <td rowspan = "1" align = "left">
     <code>true</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the left. <br/>
     <code>false</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the right. <br/>
-    <code>"nearest"</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
+    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
     <strong><i>Any other value</i></strong>, if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
@@ -2835,7 +2835,7 @@ The following table describes every entry of the `Input Parameters` column of th
   <td rowspan = "1" align = "left">
     <code>true</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the left. <br/>
     <code>false</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the right. <br/>
-    <code>"nearest"</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
+    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
     <strong><i>Any other value</i></strong>, if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
