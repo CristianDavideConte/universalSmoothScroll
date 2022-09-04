@@ -1,15 +1,46 @@
-class UssMomentumScroller {
+export class UssSmoothScroller {
+
+    #axisNumber; //Axis number for the smooth scrolling
+
     #pointersDownIds = [];
     #onPointerUpCallback = false;
+    
     #touchScrollExtender;
     #momentumScrolling;
-    #axisNumber;
 
+    //The constructor assumes that the options object is valid.
+    //All the checks are done before invoking it.
     constructor(container, options) {
-        this.container = container;
 
-        this.onXAxis = options.onXAxis;
-        this.onYAxis = options.onYAxis;
+        //The container is already a UssSmoothScroller and this constructor has
+        //been called from a super class, the setup had already been done.
+        if(container instanceof UssSmoothScroller) {
+            this.container = container.container;
+    
+            this.onXAxis = container.onXAxis;
+            this.onYAxis = container.onYAxis;
+
+            this.callback = container.callback;
+            
+            this.speedModifierX = container.speedModifierX;
+            this.speedModifierY = container.speedModifierY;
+            
+            this.momentumEasingX = container.momentumEasingX;
+            this.momentumEasingY = container.momentumEasingY;
+            
+            this.debugString = container.debugString;
+    
+            //Perhaps destroy the container to avoid duplication ???
+
+            return;
+        } 
+
+        this.container = container;
+        
+        //TODO: check if this is ok with the options objects of 
+        //"addMomentumSnapScrolling" and "addMomentumElasticScrolling"
+        this.onXAxis = !!options.onXAxis;
+        this.onYAxis = !!options.onYAxis;
 
         this.callback = options.callback;
         
@@ -21,41 +52,51 @@ class UssMomentumScroller {
         
         this.debugString = options.debugString;
 
-        //Execute the options.callback only if it's a function and the user  
-        //is not holding the pointer down. Wait for the pointerup event otherwise.
-        const _callback = typeof options.callback === "function" ? () => {
+        //Execute the this.callback only if the user is not holding
+        //the pointer down, wait for the pointerup event otherwise.
+        const _callback = () => {
             if(this.#pointersDownIds.length > 0) {
                 this.#onPointerUpCallback = true;
                 return;
             } 
-            options.callback();
-        } : null;
+            this.callback();
+        }
 
         if(this.onXAxis && !this.onYAxis) {
             this.#touchScrollExtender = () => {
                 const __currentPos = uss.getScrollXCalculator(container)();
                 const __finalPos = uss.getFinalXPosition(container);
-                const __delta = __finalPos - __currentPos; //TODO FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSION
+
+                //TODO 
+                //FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSION
+                const __delta = __finalPos - __currentPos; 
                 
                 _scrollContainer(__delta, 0);
             }
+
             this.#momentumScrolling = (deltaX, deltaY) => { 
                 uss.setXStepLengthCalculator(this.momentumEasingX, container, true, options);
                 uss.scrollXBy(this.speedModifierX(deltaX, deltaY), container, _callback, false, options);
             }
+
             this.#axisNumber = 0;
         } else if(!this.onXAxis && this.onYAxis) {
             this.#touchScrollExtender = () => {
                 const __currentPos = uss.getScrollYCalculator(container)();
                 const __finalPos = uss.getFinalYPosition(container);
+                
+                //TODO 
+                //FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSION
                 const __delta = __finalPos - __currentPos;
 
                 _scrollContainer(0, __delta);
             }
+
             this.#momentumScrolling = (deltaX, deltaY) => {
                 uss.setYStepLengthCalculator(this.momentumEasingY, container, true, options);
                 uss.scrollYBy(this.speedModifierY(deltaX, deltaY), container, _callback, false, options);                                                            
             } 
+
             this.#axisNumber = 1;
         } else {
             this.#touchScrollExtender = () => {
@@ -63,11 +104,15 @@ class UssMomentumScroller {
                 const __currentPosY = uss.getScrollYCalculator(container)();
                 const __finalPosX = uss.getFinalXPosition(container);
                 const __finalPosY = uss.getFinalYPosition(container);
+                
+                //TODO 
+                //FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSIONS
                 const __deltaX = __finalPosX - __currentPosX;
                 const __deltaY = __finalPosY - __currentPosY;
 
                 _scrollContainer(__deltaX, __deltaY);
             }
+
             this.#momentumScrolling = (deltaX, deltaY) => {
                 uss.setXStepLengthCalculator(this.momentumEasingX, container, true, options);
                 uss.setYStepLengthCalculator(this.momentumEasingY, container, true, options);
@@ -80,9 +125,12 @@ class UssMomentumScroller {
                     options
                 );
             }
+            
             this.#axisNumber = 2;
         }
 
+        //Inform other components that the container should be scrolled.
+        //If needed, this function scrolls the container.
         const _scrollContainer = (deltaX, deltaY, event) => {
             if(event) {
                 event.preventDefault();
@@ -140,16 +188,16 @@ class UssMomentumScroller {
                 window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:true});
 
                 if(this.#onPointerUpCallback) {
-                    options.callback();
+                    this.callback();
                     this.#onPointerUpCallback = false;
                     return;
                 }
 
                 this.#touchScrollExtender();
-                console.log("current->", uss.getScrollYCalculator(container)(), "final->", uss.getFinalYPosition(container))
             }
         } 
         
+        //Needed for the pointerevents to work as expected. 
         container.style.touchAction = "none";
         
         container.addEventListener("pointerdown", (event) => {
