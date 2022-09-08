@@ -3,7 +3,7 @@
 
 <h1 align = "center">F.A.Q.</h1>
 
-This section contains a collection of the frequently asked questions about the UniversalSmoothScroll API and its libraries. <br/>
+This section contains a collection of the frequently asked questions about the Universal Smooth Scroll API and its libraries. <br/>
 If the answer you are looking for is not here, you can always [`contact me`](https://github.com/CristianDavideConte/universalSmoothScroll#contact-me).
 <br/><br/>
 
