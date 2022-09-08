@@ -46,7 +46,9 @@ A: Yes.
 ## Q: Can I use the API in a `typescript` project ?
 A: Yes. <br/>
 If you encounter the `Cannot find name 'uss'` error (or something like that) you have to manually declare `uss` by adding: <br/>
- `declare var uss: any` <br/>
+```typescript
+declare var uss: any
+```
 in your Typescript declaration file (the one that ends with `.d.ts`).
 
 ---
