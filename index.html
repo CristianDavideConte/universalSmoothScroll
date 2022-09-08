@@ -143,13 +143,14 @@
   import {
     //addMomentumScrolling, 
     //addMomentumSnapScrolling, 
-    addElasticMomentumScrolling,
+    //addElasticMomentumScrolling,
     addSmoothScrollbar
   } from "./src/universalsmoothscroll-presets.js"; 
 
   import {
-    addMomentumScrolling,
-    addMomentumSnapScrolling,
+    addSmoothScrolling,
+    addSnapScrolling,
+    addElasticScrolling,
   } from "./src/preset-library-beta/universalsmoothscroll-presets.js"
 
   window.addEventListener("load", () => {
@@ -241,7 +242,7 @@
       momentumEasingX: EASE_OUT_CUBIC(),//EASE_LINEAR(), //TODO fix the lag of these
       momentumEasingY: EASE_OUT_CUBIC()//EASE_LINEAR(),
     }
-    addMomentumScrolling(
+    addSmoothScrolling(
       uss.getPageScroller(),
       _bodyMomentumScrollingOptions
     );
@@ -258,7 +259,7 @@
         },
       ]
     }
-    addElasticMomentumScrolling(
+    addElasticScrolling(
       easeFunctionSelectorList,
       _elasticOptions
     );
@@ -283,7 +284,7 @@
         align: "end"
       }
     ];
-    addMomentumSnapScrolling(
+    addSnapScrolling(
       yScrollerSection, 
       {
         onYAxis: "mandatory", 
@@ -322,20 +323,20 @@
                           }
                          )
     */
-    addMomentumSnapScrolling(
-      addMomentumScrolling(
+    addSnapScrolling(
+      addSmoothScrolling(
         xScrollerSection, 
         {
           onXAxis: true,
           speedModifierX: (deltaX, deltaY) => {
-            console.log(deltaX, deltaY)
+            //console.log(deltaX, deltaY)
             return deltaX + deltaY;
           },
           callback: () => console.log("end of momentum")
         }
       ),
       {
-        onYAxis: "mandatory", 
+        onXAxis: "mandatory", 
         children: _xChildren,
         callback: () => console.log("end of snap")
       }
