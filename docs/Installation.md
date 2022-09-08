@@ -29,7 +29,11 @@ The functions inside the modules will need to be imported before you can use the
 
 ### N.B. 
 If you're using `Typescript` in your project, you may encounter the `Cannot find name 'yourVariable'` error (or something like that). <br/>
-In order to solve this problem, you have to manually declare `yourVariable` by adding `declare var yourVariable: any` in your Typescript declaration file (the one that ends with `.d.ts`). <br/>
+In order to solve this problem, you have to manually declare `yourVariable` by adding:
+```typescript
+declare var yourVariable: any
+``` 
+in your Typescript declaration file (the one that ends with `.d.ts`). <br/>
 
 If don't have access to the `index.html` file _(or you simply don't have it)_ another way to import the USS API is to create inside your project _(via javascript or whichever language you're using)_ as many `Script` elements as the files you previously downloaded and link them to their paths. <br/>
 
