@@ -8,7 +8,7 @@ If the answer you are looking for is not here, you can always [`contact me`](htt
 <br/><br/>
 
 ## Q: How do I invoke the API methods ?  
-A: Every UniversalSmoothScroll API function has this structure: `uss.nameOfTheMethod(param1, param2, ...)`.
+A: Every Universal Smooth Scroll API function has this structure: `uss.nameOfTheMethod(param1, param2, ...)`.
 
 ---
 <br/>
