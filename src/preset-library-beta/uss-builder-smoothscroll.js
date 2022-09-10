@@ -1,12 +1,10 @@
 export class SmoothScrollBuilder {
     
-    #axisNumber; //Axis number for the smooth scrolling
-
     #pointersDownIds = [];
     #onPointerUpCallback = false;
     
     #touchScrollExtender;
-    #momentumScrolling;
+    #smoothScroller;
 
     //Parameters already sanitized.
     constructor(container, options) {
@@ -15,21 +13,24 @@ export class SmoothScrollBuilder {
     }
 
     build() {
+        this.onXAxis = this.options.onXAxis;
+        this.onYAxis = this.options.onYAxis;
+
         //Save the original callback so that even if it's modified by other builders,
         //we still have a reference to it.
         this.callback = this.options.callback;
 
-        //Execute the this.callback only if the user is not holding
-        //the pointer down, wait for the pointerup event otherwise.
+        this.scrollbarX = { updatePosition: () => {} };
+        this.scrollbarY = { updatePosition: () => {} };
+
+        //Execute the this.callback only if the user is not holding any scrollbar
+        //or the pointer down, wait for the pointerup event otherwise.
         const _callback = () => {
-            if(this.#pointersDownIds.length > 0) {
-                this.#onPointerUpCallback = true;
-                return;
-            } 
-            this.callback();
+            if(this.#pointersDownIds.length === 0) this.callback();
+            else this.#onPointerUpCallback = true;
         }
 
-        if(this.options.onXAxis && !this.options.onYAxis) {
+        if(this.onXAxis && !this.onYAxis) {
             this.#touchScrollExtender = () => {
                 const __currentPos = uss.getScrollXCalculator(this.container)();
                 const __finalPos = uss.getFinalXPosition(this.container);
@@ -41,13 +42,11 @@ export class SmoothScrollBuilder {
                 _scrollContainer(__delta, 0);
             }
 
-            this.#momentumScrolling = (deltaX, deltaY) => { 
+            this.#smoothScroller = (deltaX, deltaY) => { 
                 uss.setXStepLengthCalculator(this.options.momentumEasingX, this.container, true, this.options);
                 uss.scrollXBy(this.options.speedModifierX(deltaX, deltaY), this.container, _callback, false, this.options);
             }
-
-            this.#axisNumber = 0;
-        } else if(!this.options.onXAxis && this.options.onYAxis) {
+        } else if(!this.onXAxis && this.onYAxis) {
             this.#touchScrollExtender = () => {
                 const __currentPos = uss.getScrollYCalculator(this.container)();
                 const __finalPos = uss.getFinalYPosition(this.container);
@@ -59,12 +58,10 @@ export class SmoothScrollBuilder {
                 _scrollContainer(0, __delta);
             }
 
-            this.#momentumScrolling = (deltaX, deltaY) => {
+            this.#smoothScroller = (deltaX, deltaY) => {
                 uss.setYStepLengthCalculator(this.options.momentumEasingY, this.container, true, this.options);
                 uss.scrollYBy(this.options.speedModifierY(deltaX, deltaY), this.container, _callback, false, this.options);                                                            
             } 
-
-            this.#axisNumber = 1;
         } else {
             this.#touchScrollExtender = () => {
                 const __currentPosX = uss.getScrollXCalculator(this.container)();
@@ -80,7 +77,7 @@ export class SmoothScrollBuilder {
                 _scrollContainer(__deltaX, __deltaY);
             }
 
-            this.#momentumScrolling = (deltaX, deltaY) => {
+            this.#smoothScroller = (deltaX, deltaY) => {
                 uss.setXStepLengthCalculator(this.options.momentumEasingX, this.container, true, this.options);
                 uss.setYStepLengthCalculator(this.options.momentumEasingY, this.container, true, this.options);
                 uss.scrollBy(
@@ -92,8 +89,6 @@ export class SmoothScrollBuilder {
                     this.options
                 );
             }
-            
-            this.#axisNumber = 2;
         }
 
         //Inform other components that the this.container should be scrolled.
@@ -104,22 +99,9 @@ export class SmoothScrollBuilder {
                 event.stopPropagation();
             }
 
-            const __scrollRequest = new CustomEvent(
-                "ussmoverequest", 
-                { 
-                    cancelable: true,
-                    detail: {
-                        axis: this.#axisNumber,
-                        scroller: () => this.#momentumScrolling(deltaX, deltaY),
-                    }
-                }
-            );
-            this.originalContainer.dispatchEvent(__scrollRequest);
-
-            //If no one has handled the scroll request yet.
-            if(!__scrollRequest.defaultPrevented) {
-                this.#momentumScrolling(deltaX, deltaY);
-            }
+            this.#smoothScroller(deltaX, deltaY);
+            this.scrollbarX.updatePosition();
+            this.scrollbarY.updatePosition();
         } 
 
         const _handlePointerMoveEvent = (event) => {
@@ -146,10 +128,10 @@ export class SmoothScrollBuilder {
 
         const _handlePointerUpEvent = (event) => {
             //The pointerup event was triggered by a pointer not related with this this.originalContainer.
-            const _pointerIdIndex = this.#pointersDownIds.indexOf(event.pointerId);
-            if(_pointerIdIndex < 0) return;
+            const __pointerIdIndex = this.#pointersDownIds.indexOf(event.pointerId);
+            if(__pointerIdIndex < 0) return;
 
-            this.#pointersDownIds.splice(_pointerIdIndex, 1);
+            this.#pointersDownIds.splice(__pointerIdIndex, 1);
             if(this.#pointersDownIds.length === 0) {
                 this.originalContainer.removeEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
                 window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:true});
@@ -167,21 +149,40 @@ export class SmoothScrollBuilder {
         //Needed for the pointerevents to work as expected. 
         this.originalContainer.style.touchAction = "none";
         
-        this.originalContainer.addEventListener("pointerdown", (event) => {
+        this.originalContainer.addEventListener("pointerdown", (event) => {    
+            event.preventDefault();
+            event.stopPropagation();        
+
+            this.#pointersDownIds.push(event.pointerId);
+
+            //Attach the listeners only on the first pointerdown event.
+            if(this.#pointersDownIds.length === 1) {
+                window.addEventListener("pointerup", _handlePointerUpEvent, {passive:true});
+            }
+
             //The pointerdown event is not relevant for scrolling if the pointer is a mouse.
             if(event.pointerType === "mouse") return;
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            if(this.#pointersDownIds.length === 0) {
-                window.addEventListener("pointerup", _handlePointerUpEvent, {passive:true});
+            
+            //Attach the listeners only on the first pointerdown event.
+            if(this.#pointersDownIds.length === 1) {
                 this.originalContainer.addEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
             }
-            this.#pointersDownIds.push(event.pointerId);
         }, {passive:false});
 
         this.originalContainer.addEventListener("wheel", (event) => _scrollContainer(event.deltaX, event.deltaY, event), {passive:false});
+    }
+
+    /**
+     * The passed callback will be added to the callback queue.
+     * The passed callback will be the last to be invoked.
+     * @param {Function} callback A function that will be invoked after all the current callback's queue functions.
+     */
+    addCallback(callback) {
+        const _originalCallback = this.originalBuilder.callback;
+        this.originalBuilder.callback = () => {
+            _originalCallback();
+            callback();
+        }
     }
 
     get originalContainer() {

@@ -11,7 +11,7 @@
     <script async src = "./src/universalsmoothscroll-ease-functions.js" type = "module"></script>
     <script async src = "./src/universalsmoothscroll-dev-helpers.js" type = "module"></script>
 
-    <script async src = "./src/universalsmoothscroll-presets.js" type = "module"></script> <!-- Work in progress -->
+    <script async src = "./src/preset-library-beta/universalsmoothscroll-presets.js" type = "module"></script> <!-- Work in progress -->
   </head>
   <body>
     <div id = "betaBanner"><p>Beta 6.1.0</p></div>
@@ -141,16 +141,10 @@
   } from "./src/universalsmoothscroll-dev-helpers.js";
 
   import {
-    //addMomentumScrolling, 
-    //addMomentumSnapScrolling, 
-    //addElasticMomentumScrolling,
-    addSmoothScrollbar
-  } from "./src/universalsmoothscroll-presets.js"; 
-
-  import {
     addSmoothScrolling,
     addSnapScrolling,
     addElasticScrolling,
+    addSmoothScrollbar
   } from "./src/preset-library-beta/universalsmoothscroll-presets.js"
 
   window.addEventListener("load", () => {
@@ -236,16 +230,25 @@
 
     
 
-    const _bodyMomentumScrollingOptions = {
-      onYAxis: true,
-      onXAxis: true,
-      momentumEasingX: EASE_OUT_CUBIC(),//EASE_LINEAR(), //TODO fix the lag of these
-      momentumEasingY: EASE_OUT_CUBIC()//EASE_LINEAR(),
-    }
-    addSmoothScrolling(
-      uss.getPageScroller(),
-      _bodyMomentumScrollingOptions
-    );
+    const _bodySmoothScrollBuilder = addSmoothScrollbar(
+        addSmoothScrolling(
+          uss.getPageScroller(),
+          {
+            onYAxis: true,
+            onXAxis: true,
+            momentumEasingX: EASE_OUT_CUBIC(),//EASE_LINEAR(), //TODO fix the lag of these
+            momentumEasingY: EASE_OUT_CUBIC()//EASE_LINEAR(),
+          }
+        ), 
+        {
+            onYAxis:true,
+            onXAxis:true,
+            transitionDurationX: "0.6s",
+            transitionDurationY: "0.6s",
+            hideScrollbarX: true,
+            hideScrollbarY: true
+        }
+    )
 
     const _elasticOptions = {
       onYAxis: true, 
@@ -259,10 +262,18 @@
         },
       ]
     }
-    addElasticScrolling(
-      easeFunctionSelectorList,
-      _elasticOptions
-    );
+    
+    const _easeFunctionSelectorListScrollbars = addSmoothScrollbar(
+      addElasticScrolling(
+        easeFunctionSelectorList,
+        _elasticOptions
+      ), 
+      {
+          onYAxis:true,
+          transitionDurationY: "0.4s",
+          hideScrollbarY: true
+      }
+    )
     uss.addOnResizeEndCallback(() => _elasticOptions.elasticAmount = 0.25 * window.innerHeight);
 
     const __yChildren = Array.from(yScrollerSection.children);
@@ -284,13 +295,21 @@
         align: "end"
       }
     ];
-    addSnapScrolling(
-      yScrollerSection, 
+    
+    const _yScrollerScrollbars = addSmoothScrollbar(
+      addSnapScrolling(
+        yScrollerSection, 
+        {
+          onYAxis: "mandatory", 
+          children: _yChildren
+        }
+      ), 
       {
-        onYAxis: "mandatory", 
-        children: _yChildren
+          onYAxis:true,
+          transitionDurationY: "0.4s",
+          hideScrollbarY: true
       }
-    );
+    )
     
     const __xChildren = Array.from(xScrollerSection.children);
     const _xChildren = [
@@ -323,64 +342,39 @@
                           }
                          )
     */
-    addSnapScrolling(
-      addSmoothScrolling(
-        xScrollerSection, 
-        {
-          onXAxis: true,
-          speedModifierX: (deltaX, deltaY) => {
-            //console.log(deltaX, deltaY)
-            return deltaX + deltaY;
-          },
-          callback: () => console.log("end of momentum")
-        }
-      ),
-      {
-        onXAxis: "mandatory", 
-        children: _xChildren,
-        callback: () => console.log("end of snap")
-      }
-    );
-
-
-    const _bodyScrollbars = addSmoothScrollbar(
-        document.body, 
-        {
-            onYAxis:true,
-            onXAxis:true,
-            transitionDurationX: "0.6s",
-            transitionDurationY: "0.6s",
-            hideScrollbarX: true,
-            hideScrollbarY: true
-        }
-    )
-
+   
     const _xScrollerScrollbars = addSmoothScrollbar(
-        xScrollerSection, 
+      addSnapScrolling(
+        addSmoothScrolling(
+          xScrollerSection, 
+          {
+            onXAxis: true,
+            speedModifierX: (deltaX, deltaY) => {
+              //console.log(deltaX, deltaY)
+              return deltaX + deltaY;
+            },
+            callback: () => console.log("end of momentum")
+          }
+        ),
         {
-            onXAxis:true,
-            transitionDurationX: "0.4s",
-            hideScrollbarX: true
+          onXAxis: "mandatory", 
+          children: _xChildren,
+          callback: () => console.log("end of snap")
         }
+      ), 
+      {
+          onXAxis:true,
+          transitionDurationX: "0.4s",
+          hideScrollbarX: true
+      }
     )
     
-    const _yScrollerScrollbars = addSmoothScrollbar(
-        yScrollerSection, 
-        {
-            onYAxis:true,
-            transitionDurationY: "0.4s",
-            hideScrollbarY: true
-        }
-    )
 
-    const _easeFunctionSelectorListScrollbars = addSmoothScrollbar(
-        easeFunctionSelectorList, 
-        {
-            onYAxis:true,
-            transitionDurationY: "0.4s",
-            hideScrollbarY: true
-        }
-    )
+
+
+
+
+
 
     uss.hrefSetup(null, true, (anchor, el) => {
       if(anchor && lastAnchorPressed === anchor && uss.isScrolling()) return false;
@@ -390,8 +384,8 @@
       uss.stopScrolling();
 
       window.requestAnimationFrame(() => {
-        _bodyScrollbars[0].updatePosition();
-        _bodyScrollbars[1].updatePosition();
+        _bodySmoothScrollBuilder.scrollbarX.updatePosition();
+        _bodySmoothScrollBuilder.scrollbarY.updatePosition();
       })
     }, null, true, true);
   }, {passive:true}, {once:true});

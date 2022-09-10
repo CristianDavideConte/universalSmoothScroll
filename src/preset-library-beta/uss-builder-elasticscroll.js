@@ -8,6 +8,9 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
     }
 
     build() {
+        this.onXAxis = this.options.onXAxis;
+        this.onYAxis = this.options.onYAxis;
+
         this.elasticAmount = this.options.elasticAmount;
         this.elasticChildren = this.options.children;
 
@@ -66,17 +69,21 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
             return delta;
         }
 
-        if(this.options.onXAxis) {
+        if(this.onXAxis) {
             this.originalBuilder.options.speedModifierX = (deltaX, deltaY) => {
                 return this.elasticSpeedModifier(deltaX, uss.getFinalXPosition(this.originalContainer, this.options), uss.getMaxScrollX);
             }
         }
         
-        if(this.options.onYAxis) {
+        if(this.onYAxis) {
             this.originalBuilder.options.speedModifierY = (deltaX, deltaY) => {
                 return this.elasticSpeedModifier(deltaY, uss.getFinalYPosition(this.originalContainer, this.options), uss.getMaxScrollY);
             }
         }
+    }
+
+    addCallback(callback) {
+        this.originalBuilder.addCallback(callback);
     }
 
     get originalContainer() {
@@ -85,5 +92,13 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
 
     get originalBuilder() {
         return this.container.originalBuilder;
+    }
+    
+    get scrollbarX() {
+        return this.originalBuilder.scrollbarX;
+    }
+
+    get scrollbarY() {
+        return this.originalBuilder.scrollbarY;
     }
 }

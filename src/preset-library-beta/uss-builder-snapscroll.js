@@ -15,8 +15,6 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
                        /proximity/.test(this.options.onYAxis) ? 1 : // 1 === "proximity"
                                                                 0;  // 0 === no snap on y-axis
 
-        //console.log(this.originalBuilder, this.options, this.originalContainer, this.originalBuilder.options)
-
         this.originalBuilder.options.debugString = this.options.debugString;
 
         if(this.onXAxis && !this.onYAxis) { //Momentum-snap on the x-axis only. 
@@ -127,8 +125,6 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
                     return;
                 }  
 
-                console.log("original", _originalCallback, "\nnew", this.options.callback, "\ncombined", this.originalBuilder.callback)
-
                 const _containerPos = this.originalContainer.getBoundingClientRect();
                 const _containerBorders = uss.calcBordersDimensions(this.originalContainer, false, this.options);
 
@@ -157,32 +153,18 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
                     return;
                 } 
 
-                const __scrollRequest = new CustomEvent(
-                    "ussmoverequest", 
-                    { 
-                        cancelable: true,
-                        detail: {
-                            axis: this.axisNumber,
-                            scroller: () => this.snapScroll(_minDistances),
-                        }
-                    }
-                );
-                this.originalContainer.dispatchEvent(__scrollRequest);
-
-                //If no one has handled the scroll request yet.
-                if(!__scrollRequest.defaultPrevented) {
-                    this.snapScroll(_minDistances);
-                }
+                this.snapScroll(_minDistances);
+                this.scrollbarX.updatePosition();
+                this.scrollbarY.updatePosition();
             }, this.options.snapDelay);
         }
 
-        //The underlying UssSmoothScroller manages the callbacks.
-        const _originalCallback = this.originalBuilder.callback;
-        this.originalBuilder.callback = () => {
-            _originalCallback();
-            this.snapScrolling();
-        }
+        this.addCallback(this.snapScrolling);
         this.snapScrolling();
+    }
+
+    addCallback(callback) {
+        this.originalBuilder.addCallback(callback);
     }
 
     get originalContainer() {
@@ -191,5 +173,13 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
 
     get originalBuilder() {
         return this.container.originalBuilder;
+    }
+    
+    get scrollbarX() {
+        return this.originalBuilder.scrollbarX;
+    }
+
+    get scrollbarY() {
+        return this.originalBuilder.scrollbarY;
     }
 }
