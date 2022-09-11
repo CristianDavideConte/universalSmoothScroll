@@ -236,8 +236,8 @@
           {
             onYAxis: true,
             onXAxis: true,
-            momentumEasingX: EASE_OUT_CUBIC(),//EASE_LINEAR(), //TODO fix the lag of these
-            momentumEasingY: EASE_OUT_CUBIC()//EASE_LINEAR(),
+            easingX: EASE_OUT_CUBIC(),//EASE_LINEAR(), //TODO fix the lag of these
+            easingY: EASE_OUT_CUBIC(10000)//EASE_LINEAR(),
           }
         ), 
         {
@@ -245,8 +245,6 @@
             onXAxis:true,
             transitionDurationX: "0.6s",
             transitionDurationY: "0.6s",
-            hideScrollbarX: true,
-            hideScrollbarY: true
         }
     )
 
@@ -271,7 +269,6 @@
       {
           onYAxis:true,
           transitionDurationY: "0.4s",
-          hideScrollbarY: true
       }
     )
     uss.addOnResizeEndCallback(() => _elasticOptions.elasticAmount = 0.25 * window.innerHeight);
@@ -307,7 +304,6 @@
       {
           onYAxis:true,
           transitionDurationY: "0.4s",
-          hideScrollbarY: true
       }
     )
     
@@ -353,7 +349,7 @@
               //console.log(deltaX, deltaY)
               return deltaX + deltaY;
             },
-            callback: () => console.log("end of momentum")
+            callback: () => console.log("end of smoooth scroll")
           }
         ),
         {
@@ -365,11 +361,8 @@
       {
           onXAxis:true,
           transitionDurationX: "0.4s",
-          hideScrollbarX: true
       }
     )
-    
-
 
 
 

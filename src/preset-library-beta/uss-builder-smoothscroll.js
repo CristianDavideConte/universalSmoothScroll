@@ -32,8 +32,8 @@ export class SmoothScrollBuilder {
 
         if(this.onXAxis && !this.onYAxis) {
             this.#touchScrollExtender = () => {
-                const __currentPos = uss.getScrollXCalculator(this.container)();
-                const __finalPos = uss.getFinalXPosition(this.container);
+                const __currentPos = uss.getScrollXCalculator(this.originalContainer)();
+                const __finalPos = uss.getFinalXPosition(this.originalContainer);
 
                 //TODO 
                 //FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSION
@@ -43,13 +43,13 @@ export class SmoothScrollBuilder {
             }
 
             this.#smoothScroller = (deltaX, deltaY) => { 
-                uss.setXStepLengthCalculator(this.options.momentumEasingX, this.container, true, this.options);
-                uss.scrollXBy(this.options.speedModifierX(deltaX, deltaY), this.container, _callback, false, this.options);
+                uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
+                uss.scrollXBy(this.options.speedModifierX(deltaX, deltaY), this.originalContainer, _callback, false, this.options);
             }
         } else if(!this.onXAxis && this.onYAxis) {
             this.#touchScrollExtender = () => {
-                const __currentPos = uss.getScrollYCalculator(this.container)();
-                const __finalPos = uss.getFinalYPosition(this.container);
+                const __currentPos = uss.getScrollYCalculator(this.originalContainer)();
+                const __finalPos = uss.getFinalYPosition(this.originalContainer);
                 
                 //TODO 
                 //FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSION
@@ -59,15 +59,15 @@ export class SmoothScrollBuilder {
             }
 
             this.#smoothScroller = (deltaX, deltaY) => {
-                uss.setYStepLengthCalculator(this.options.momentumEasingY, this.container, true, this.options);
-                uss.scrollYBy(this.options.speedModifierY(deltaX, deltaY), this.container, _callback, false, this.options);                                                            
+                uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);
+                uss.scrollYBy(this.options.speedModifierY(deltaX, deltaY), this.originalContainer, _callback, false, this.options);                                                            
             } 
         } else {
             this.#touchScrollExtender = () => {
-                const __currentPosX = uss.getScrollXCalculator(this.container)();
-                const __currentPosY = uss.getScrollYCalculator(this.container)();
-                const __finalPosX = uss.getFinalXPosition(this.container);
-                const __finalPosY = uss.getFinalYPosition(this.container);
+                const __currentPosX = uss.getScrollXCalculator(this.originalContainer)();
+                const __currentPosY = uss.getScrollYCalculator(this.originalContainer)();
+                const __finalPosX = uss.getFinalXPosition(this.originalContainer);
+                const __finalPosY = uss.getFinalYPosition(this.originalContainer);
                 
                 //TODO 
                 //FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSIONS
@@ -78,12 +78,12 @@ export class SmoothScrollBuilder {
             }
 
             this.#smoothScroller = (deltaX, deltaY) => {
-                uss.setXStepLengthCalculator(this.options.momentumEasingX, this.container, true, this.options);
-                uss.setYStepLengthCalculator(this.options.momentumEasingY, this.container, true, this.options);
+                uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
+                uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);
                 uss.scrollBy(
                     this.options.speedModifierX(deltaX, deltaY), 
                     this.options.speedModifierY(deltaX, deltaY), 
-                    this.container, 
+                    this.originalContainer, 
                     _callback, 
                     false, 
                     this.options
@@ -91,7 +91,7 @@ export class SmoothScrollBuilder {
             }
         }
 
-        //Inform other components that the this.container should be scrolled.
+        //Inform other components that the this.originalContainer should be scrolled.
         //If needed, this function scrolls the this.originalContainer.
         const _scrollContainer = (deltaX, deltaY, event) => {
             if(event) {
@@ -154,19 +154,17 @@ export class SmoothScrollBuilder {
             event.stopPropagation();        
 
             this.#pointersDownIds.push(event.pointerId);
+            
+            if(this.#pointersDownIds.length > 1) return;
 
             //Attach the listeners only on the first pointerdown event.
-            if(this.#pointersDownIds.length === 1) {
-                window.addEventListener("pointerup", _handlePointerUpEvent, {passive:true});
-            }
+            window.addEventListener("pointerup", _handlePointerUpEvent, {passive:true});
 
             //The pointerdown event is not relevant for scrolling if the pointer is a mouse.
             if(event.pointerType === "mouse") return;
             
             //Attach the listeners only on the first pointerdown event.
-            if(this.#pointersDownIds.length === 1) {
-                this.originalContainer.addEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
-            }
+            this.originalContainer.addEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
         }, {passive:false});
 
         this.originalContainer.addEventListener("wheel", (event) => _scrollContainer(event.deltaX, event.deltaY, event), {passive:false});

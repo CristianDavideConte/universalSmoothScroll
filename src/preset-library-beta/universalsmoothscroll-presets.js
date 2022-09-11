@@ -47,21 +47,21 @@ function effectShoudBeApplied(options, checker = value => !!value) {
 }
 
 /**
- * This function enables the momentum smooth scrolling on the passed container
+ * This function enables the smooth scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
  * @param {*} container An Element, the Window or a SmoothScrollBuilder.
- * @param {Object} options An object which containing the momentum smooth scrolling preferences/properties listed below.
- * @param {Boolean} [options.onXAxis=false] True if the momentum smooth scrolling should be enabled on the x-axis of container, false otherwise.
- * @param {Boolean} [options.onYAxis=true] True if the momentum smooth scrolling should be enabled on the y-axis of container, false otherwise.
- * @param {Function} [options.callback] A function that will be executed when the container is done with the current momentum smooth scrolling scroll-animation.
+ * @param {Object} options An object which containing the smooth scrolling preferences/properties listed below.
+ * @param {Boolean} [options.onXAxis=false] True if the smooth scrolling should be enabled on the x-axis of container, false otherwise.
+ * @param {Boolean} [options.onYAxis=true] True if the smooth scrolling should be enabled on the y-axis of container, false otherwise.
+ * @param {Function} [options.callback] A function that will be executed when the container is done with the current smooth scrolling scroll-animation.
  * @param {Function} [options.speedModifierX] A function that must return the number of pixel that will be added to the current total scrolling amount (on the x-axis)
- *                                            of this momentum smooth scrolling scroll-animation.
+ *                                            of this smooth scrolling scroll-animation.
  *                                            It will be passed the deltaX and the deltaY of the wheel event that triggered this scroll-animation.
  * @param {Function} [options.speedModifierY] A function that must return the number of pixel that will be added to the current total scrolling amount (on the y-axis)
- *                                            of this momentum smooth scrolling scroll-animation.
+ *                                            of this smooth scrolling scroll-animation.
  *                                            It will be passed the deltaX and the deltaY of the wheel event that triggered this scroll-animation.
- * @param {Function} [options.momentumEasingX] A valid stepLengthCalculator that will control the easing of this scroll-animation (on the x-axis) of container. 
- * @param {Function} [options.momentumEasingY] A valid stepLengthCalculator that will control the easing of this scroll-animation (on the y-axis) of container.
+ * @param {Function} [options.easingX] A valid stepLengthCalculator that will control the easing of this scroll-animation (on the x-axis) of container. 
+ * @param {Function} [options.easingY] A valid stepLengthCalculator that will control the easing of this scroll-animation (on the y-axis) of container.
  * 
  * @returns {SmoothScrollBuilder} The underling SmoothScrollBuilder used for this effect.  
  */
@@ -73,8 +73,8 @@ export function addSmoothScrolling(
         callback: null,
         speedModifierX: (deltaX, deltaY) => deltaX,
         speedModifierY: (deltaX, deltaY) => deltaY,
-        momentumEasingX: (remaning) => remaning / 25 + 1,
-        momentumEasingY: (remaning) => remaning / 25 + 1,
+        easingX: (remaning) => remaning / 25 + 1,
+        easingY: (remaning) => remaning / 25 + 1,
     }
 ) {
     if(container instanceof SmoothScrollBuilder) return container;
@@ -116,8 +116,8 @@ export function addSmoothScrolling(
 
     //TODO Not good for touch-driven scrolling
     //Default easing behaviors: ease-out.
-    if(typeof options.momentumEasingX !== "function") options.momentumEasingX = (remaning) => remaning / 25 + 1;
-    if(typeof options.momentumEasingY !== "function") options.momentumEasingY = (remaning) => remaning / 25 + 1;
+    if(typeof options.easingX !== "function") options.easingX = (remaning) => remaning / 25 + 1;
+    if(typeof options.easingY !== "function") options.easingY = (remaning) => remaning / 25 + 1;
 
     const _builder = new SmoothScrollBuilder(container, options);
     _builder.build();
@@ -129,10 +129,10 @@ export function addSmoothScrolling(
 
 
 /**
- * This function enables the momentum snap scrolling on the passed container
+ * This function enables the snap scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
  * @param {*} container An Element, the Window or a SmoothScrollBuilder.
- * @param {Object} options An object which containing the momentum snap scrolling preferences/properties listed below.
+ * @param {Object} options An object which containing the snap scrolling preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] "mandatory" to always trigger the snap-into-view behavior (on the x-axis) of this scroll-animation.
  *                                          "proximity" to trigger the snap-into-view behavior (on the x-axis) of this scroll-animation only if there's one of the 
  *                                           children.elements not further from its snap-point than half of his width. 
@@ -144,7 +144,7 @@ export function addSmoothScrolling(
  *                                   - align: "start" if you want element to be left-aligned on the x-axis and top-aligned on the y-axis.
  *                                            "end" if you want element to be right-aligned on the x-axis and bottom-aligned on the y-axis.
  *                                            Any other value if you want element to be center-aligned on both axes.
- * @param {Number} [options.snapDelay=0] The number of milliseconds that will be waited from the end of the momentum smooth scroll part of this scroll-animation 
+ * @param {Number} [options.snapDelay=0] The number of milliseconds that will be waited from the end of the smooth scroll part of this scroll-animation 
  *                                       in order to trigger the beginning of the snap-into-view part.
  * @param {Function} [options.snapEasingX] A valid stepLengthCalculator that will control the easing of the snap-into-view part of this 
  *                                         scroll-animation (on the x-axis) of container. 
@@ -179,7 +179,7 @@ export function addSnapScrolling(
     }
 
     //The callback should be called after the snapScrolling instead of 
-    //being called at the end of the momentumScrolling.
+    //being called at the end of the smooth scrolling.
     const _originalCallback = typeof options.callback === "function" ? options.callback : () => {};
     options.callback = () => {};
     container = addSmoothScrolling(container, options);
@@ -229,12 +229,12 @@ export function addSnapScrolling(
 
 
 /**
- * This function enables the elastic momentum scrolling on the passed container
+ * This function enables the elastic scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
  * @param {*} container An Element, the Window or a SmoothScrollBuilder.
- * @param {Object} options An object which containing the momentum elastic scrolling preferences/properties listed below.
- * @param {Boolean} [options.onXAxis=false] True if the elastic momentum smooth scrolling should be enabled on the x-axis of container, false otherwise.
- * @param {Boolean} [options.onYAxis=true] True if the elastic momentum smooth scrolling should be enabled on the y-axis of container, false otherwise.
+ * @param {Object} options An object which containing the elastic scrolling preferences/properties listed below.
+ * @param {Boolean} [options.onXAxis=false] True if the elastic smooth scrolling should be enabled on the x-axis of container, false otherwise.
+ * @param {Boolean} [options.onYAxis=true] True if the elastic smooth scrolling should be enabled on the y-axis of container, false otherwise.
  * @param {Array} [options.children] An array of 1 or 2 objects that have only 1 property:
  *                                   - element: a direct children of container.
  *                                   options.children[0] should point to the element that will be left/top aligned after the elastic part of this scroll-animation. 
@@ -314,17 +314,13 @@ export function addElasticScrolling(
 
 /**
  * This function adds the specified smooth scrollbars onto the passed container.
- * These scrollbars can controll the momentum scrolling of the passed container. 
+ * These scrollbars can controll the smooth scrolling of the passed container. 
  * @param {*} container An Element.
  * @param {Object} options An object which containing the scrollbar's preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if a smooth scrollbar should be added on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=true] True if a smooth scrollbar should be added on the y-axis of container, false otherwise.
  * @param {Number} [options.thumbSize=17] The default width of the scrollbar on the y-axis of container and 
  *                                        the default height of the scrollbar on the x-axis of container. 
- * @param {Boolean} [options.hideScrollbarX=false] True if a data-uss-scrollbar-hidden attribute should indicate (true/false) if the scrollbar on the x-axis of container 
- *                                                 is currently engaged, false otherwise.
- * @param {Boolean} [options.hideScrollbarY=false] True if a data-uss-scrollbar-hidden attribute should indicate (true/false) if the scrollbar on the y-axis of container 
- *                                                 is currently engaged, false otherwise.
  * @param {String} [options.transitionDurationX="0.2s"] This is the value of "transition-duration" css property of the scrollbar-thumb on the x-axis of container
  *                                                      whenever the scrollbar is not engaged, otherwise it's "0s". 
  * @param {String} [options.transitionDurationY="0.2s"] This is the value of "transition-duration" css property of the scrollbar-thumb on the y-axis of container
@@ -345,8 +341,6 @@ export function addSmoothScrollbar(
         onXAxis: false,
         onYAxis: true,
         thumbSize: 17,
-        hideScrollbarX: false,
-        hideScrollbarY: false,
         transitionDurationX: "0.2s",     
         transitionDurationY: "0.2s",      
     } 
@@ -374,16 +368,6 @@ export function addSmoothScrollbar(
 
     container = addSmoothScrolling(container, options);
 
-    //Check if the x-axis of the passed container.originalContainer is actually scrollable. 
-    if(options.onXAxis && uss.getMaxScrollX(container.originalContainer, true, options) < 1) {
-        uss._warningLogger(container.originalContainer, "cannot be scrolled on the x-axis");
-    }
-
-    //Check if the y-axis of the passed container.originalContainer is actually scrollable. 
-    if(options.onYAxis && uss.getMaxScrollY(container.originalContainer, true, options) < 1) {
-        uss._warningLogger(container.originalContainer, "cannot be scrolled on the y-axis");
-    }
-    
     //Check if the parent node has position:static because it breaks the scrollbars positions. 
     if(container.originalContainer !== document.body && 
        container.originalContainer !== document.documentElement &&

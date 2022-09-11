@@ -80,11 +80,11 @@ input {
   transition-duration: 0.3s;
 }
 
-[data-uss-scrollbar-hidden="true"] {
+[data-uss-scrollbar-idle="true"] {
   opacity: 0.5;
 }
 
-[data-uss-scrollbar-hidden="true"] > div {
+[data-uss-scrollbar-idle="true"] > div {
   border-radius: 0;
 }
 
