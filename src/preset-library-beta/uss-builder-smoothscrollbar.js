@@ -16,15 +16,13 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         if(this.onYAxis) this.originalContainer.style.overflowY = "hidden";
 
         if(this.onXAxis) {
-            //Cache the updated maxScrollX value.
-            uss.getMaxScrollX(this.originalContainer, true, this.options);
-
             const _offset = this.onYAxis ? this.options.thumbSize : 0;
             const _scrollbar = {
                 track: document.createElement("div"),
                 thumb: document.createElement("div"),
                 pointerId: null,
-                isEngaged: () => _scrollbar.pointerId !== null
+                isEngaged: () => _scrollbar.pointerId !== null,
+                updateCache: () => uss.getMaxScrollX(this.originalContainer, true, this.options)
             }
 
             //Default dataset.
@@ -36,12 +34,12 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 contain: style paint;
                 touch-action: none;
                 position: absolute;
-                z-index: 1;
+                z-index: 9999;
                 bottom: 0px;
                 left: 0px;
                 width: calc(100% - ${_offset}px);
                 height: ${this.options.thumbSize}px;
-            `
+            ` 
 
             //Scrollbar thumb visibility styles.
             _scrollbar.thumb.style = `
@@ -68,7 +66,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 
                 const __translateAmount = __scrolledPercentage * (__trackSize - __thumbSize);
 
-                _scrollbar.thumb.style.transitionDuration = _scrollbar.isEngaged() ? "0s" : this.options.transitionDurationX || "0.2s";
+                _scrollbar.thumb.style.transitionDuration = _scrollbar.isEngaged() ? "0s" : this.options.transitionDurationX;
                 _scrollbar.thumb.style.transform = "translateX(" + __translateAmount + "px)";
             }
 
@@ -111,10 +109,12 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 //is not controlling the scrollbar with a pointer.
                 if(_scrollbar.isEngaged()) return;
 
+                const __containerScrollSize = uss.getMaxScrollX(this.originalContainer, false, this.options);
+                if(__containerScrollSize === 0) return;
+
                 //The final scroll-position of container is proportional to  
                 //where the user has clicked inside the scrollbar track.
                 const __currentFinalPos = uss.getFinalXPosition(this.originalContainer);
-                const __containerScrollSize = uss.getMaxScrollX(this.originalContainer, false, this.options);
                 const __trackSize = _scrollbar.track.clientWidth;
                 const __finalPos = event.offsetX / __trackSize * __containerScrollSize; 
 
@@ -133,7 +133,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            _scrollbarSetup(this.originalContainer, _scrollbar, _scrollContainer, _handlePointerDownOnTrack);
+            this.scrollbarXObserver = _scrollbarSetup(this.originalContainer, _scrollbar, _scrollContainer, _handlePointerDownOnTrack);
 
             //Add the scrollbar to the container.
             _scrollbar.track.appendChild(_scrollbar.thumb);
@@ -145,14 +145,12 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         }
 
         if(this.onYAxis) {
-            //Cache the updated maxScrollY value.
-            uss.getMaxScrollY(this.originalContainer, true, this.options);
-            
             const _scrollbar = {
                 track: document.createElement("div"),
                 thumb: document.createElement("div"),
                 pointerId: null,
-                isEngaged: () => _scrollbar.pointerId !== null
+                isEngaged: () => _scrollbar.pointerId !== null,
+                updateCache: () => uss.getMaxScrollY(this.originalContainer, true, this.options)
             }
         
             //Default dataset.
@@ -164,7 +162,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 contain: style paint;
                 touch-action: none;
                 position: absolute;
-                z-index: 1;
+                z-index: 9999;
                 top: 0px;
                 right: 0px;
                 width: ${this.options.thumbSize}px;
@@ -184,7 +182,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             _scrollbar.thumb.tabIndex = -1;
     
             //Updates the scrollbar position and manages 
-            //the underlying SmoothScrollBuilder callback execution.
+            //the underlying SmoothScrollBuilder callback execution. 
             _scrollbar.updatePosition = () => {
                 const __thumbSize = _scrollbar.thumb.clientHeight;
                 const __trackSize = _scrollbar.track.clientHeight;
@@ -196,7 +194,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 
                 const __translateAmount = __scrolledPercentage * (__trackSize - __thumbSize);
                 
-                _scrollbar.thumb.style.transitionDuration = _scrollbar.isEngaged() ? "0s" : this.options.transitionDurationY || "0.2s";
+                _scrollbar.thumb.style.transitionDuration = _scrollbar.isEngaged() ? "0s" : this.options.transitionDurationY;
                 _scrollbar.thumb.style.transform = "translateY(" + __translateAmount + "px)";
             }
 
@@ -238,10 +236,12 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 //is not controlling the scrollbar with a pointer.
                 if(_scrollbar.isEngaged()) return;
 
+                const __containerScrollSize = uss.getMaxScrollY(this.originalContainer, false, this.options);
+                if(__containerScrollSize === 0) return;
+
                 //The final scroll-position of container is proportional to  
                 //where the user has clicked inside the scrollbar track.
                 const __currentFinalPos = uss.getFinalYPosition(this.originalContainer);
-                const __containerScrollSize = uss.getMaxScrollY(this.originalContainer, false, this.options);
                 const __trackSize = _scrollbar.track.clientHeight;
                 const __finalPos = event.offsetY / __trackSize * __containerScrollSize; 
 
@@ -260,7 +260,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            _scrollbarSetup(this.originalContainer, _scrollbar, _scrollContainer, _handlePointerDownOnTrack);
+            this.scrollbarYObserver = _scrollbarSetup(this.originalContainer, _scrollbar, _scrollContainer, _handlePointerDownOnTrack);
 
             //Add the scrollbar to the container.
             _scrollbar.track.appendChild(_scrollbar.thumb);
@@ -308,10 +308,6 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
             
-            //If the user clicks the scrollbar track, the container should be scrolled to
-            //the corresponding position and the scrollbar thumb should be moved accordingly.
-            scrollbar.track.addEventListener("pointerdown", handlePointerDownOnTrack, {passive:false});
-
             //Engage the scrollbar.
             scrollbar.thumb.addEventListener("pointerdown", (event) => {
                 //Only one pointer at a time can control the scrollbar.
@@ -332,6 +328,10 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }, {passive:false});
             
+            //If the user clicks the scrollbar track, the container should be scrolled to
+            //the corresponding position and the scrollbar thumb should be moved accordingly.
+            scrollbar.track.addEventListener("pointerdown", handlePointerDownOnTrack, {passive:false});
+
             //The scrollbar's status is never set to idle if the pointer is on it.
             scrollbar.track.addEventListener("pointerenter", (event) => {
                 __pointerIsHoveringTrack = true;
@@ -350,6 +350,16 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 
             //The scrollbar is initially in idle.
             scrollbar.track.dataset.ussScrollbarIdle = true; 
+
+            //If new children are added/removed from the originalContainer (and its children) update the maxScrollX/Y
+            //cached values and the scrollbar position (useful for lazy loading).
+            const __mutationObserver = new MutationObserver(() => {
+                scrollbar.updateCache(); 
+                scrollbar.updatePosition();
+            });
+            __mutationObserver.observe(originalContainer, { childList: true, subtree: true });
+
+            return __mutationObserver;
         }
     }
 

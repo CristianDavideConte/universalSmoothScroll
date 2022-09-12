@@ -1,18 +1,17 @@
 /**
  * TODO: 
- * - Move to Object based architecture
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * - smooth scrolling with animation allowed
- * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
- * - when scrollbars are one on top of each other the active state and the clicks of the bottom ones should be ignored.
  * - fix mobile multitasking freezing scrollbars
+ * - allow scroll to be propagated to the containers underneath if the current one is at its maxScrollX/Y or 0 and its requested to scroll
+ * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
  */
 
 
 /**
  * Each of this functions should have an input interface that:
  *  - has the container as the first parameter
- *  - has an "options" object as the second parameter
+ *  - has an "options" Object as the second parameter
  *  - every function-specific input should be a property of the "options" parameter
  */
 
@@ -49,8 +48,8 @@ function effectShoudBeApplied(options, checker = value => !!value) {
 /**
  * This function enables the smooth scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
- * @param {*} container An Element, the Window or a SmoothScrollBuilder.
- * @param {Object} options An object which containing the smooth scrolling preferences/properties listed below.
+ * @param {*} container An Element or a SmoothScrollBuilder.
+ * @param {Object} options An Object which containing the smooth scrolling preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if the smooth scrolling should be enabled on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=true] True if the smooth scrolling should be enabled on the y-axis of container, false otherwise.
  * @param {Function} [options.callback] A function that will be executed when the container is done with the current smooth scrolling scroll-animation.
@@ -79,17 +78,17 @@ export function addSmoothScrolling(
 ) {
     if(container instanceof SmoothScrollBuilder) return container;
 
-    //Check if the options parameter is a valid object.
+    //Check if the options parameter is a valid Object.
     if (!isObject(options)) {
-        uss._errorLogger("addSmoothScrolling", "the options parameter to be an object", options);
+        uss._errorLogger("addSmoothScrolling", "the options parameter to be an Object", options);
         return;
     }
 
     options.debugString = options.debugString || "addSmoothScrolling";
-    
+        
     //Check if the container is a valid container.
-    if(container !== window && !(container instanceof Element)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    if(!(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or a SmoothScrollBuilder", container);
         return;
     }
 
@@ -131,15 +130,15 @@ export function addSmoothScrolling(
 /**
  * This function enables the snap scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
- * @param {*} container An Element, the Window or a SmoothScrollBuilder.
- * @param {Object} options An object which containing the snap scrolling preferences/properties listed below.
+ * @param {*} container An Element or a SmoothScrollBuilder.
+ * @param {Object} options An Object which containing the snap scrolling preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] "mandatory" to always trigger the snap-into-view behavior (on the x-axis) of this scroll-animation.
  *                                          "proximity" to trigger the snap-into-view behavior (on the x-axis) of this scroll-animation only if there's one of the 
  *                                           children.elements not further from its snap-point than half of his width. 
  * @param {Boolean} [options.onYAxis="mandatory"] "mandatory" to always trigger the snap-into-view behavior (on the y-axis) of this scroll-animation.
  *                                                "proximity" to trigger the snap-into-view behavior (on the y-axis) of this scroll-animation only if there's one of the 
  *                                                children.elements not further from its snap-point than half of his height. 
- * @param {Array} [options.children] An array of objects that have 2 properties:
+ * @param {Array} [options.children] An array of Objects that have 2 properties:
  *                                   - element: a direct children of container that you want to snap-into-view.
  *                                   - align: "start" if you want element to be left-aligned on the x-axis and top-aligned on the y-axis.
  *                                            "end" if you want element to be right-aligned on the x-axis and bottom-aligned on the y-axis.
@@ -164,9 +163,9 @@ export function addSnapScrolling(
         snapEasingY: (remaning, ot, t, total) => (total - remaning) / 25 + 1,
     }, 
 ) {
-    //Check if the options parameter is a valid object.
+    //Check if the options parameter is a valid Object.
     if (!isObject(options)) {
-        uss._errorLogger("addSmoothScrolling", "the options parameter to be an object", options);
+        uss._errorLogger("addSmoothScrolling", "the options parameter to be an Object", options);
         return;
     }
 
@@ -196,15 +195,15 @@ export function addSnapScrolling(
     for(let i = 0; i < _childrenNum; i++) {
         const _child = options.children[i];
         
-        //Check if the child is an object.
+        //Check if the child is an Object.
         if (_child === null || typeof _child !== "object" || Array.isArray(_child)) {
-            uss._errorLogger(options.debugString, "the elements of options.children to be objects", _child);
+            uss._errorLogger(options.debugString, "the elements of options.children to be Objects", _child);
             return;
         }
 
         //Check if child.element is an Element.
         if(!(_child.element instanceof Element)) {
-            uss._errorLogger(options.debugString, "the element parameter of each options.children object to be an Element", _child.element);
+            uss._errorLogger(options.debugString, "the element parameter of each options.children Object to be an Element", _child.element);
             return;
         }
 
@@ -231,11 +230,11 @@ export function addSnapScrolling(
 /**
  * This function enables the elastic scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
- * @param {*} container An Element, the Window or a SmoothScrollBuilder.
- * @param {Object} options An object which containing the elastic scrolling preferences/properties listed below.
+ * @param {*} container An Element or a SmoothScrollBuilder.
+ * @param {Object} options An Object which containing the elastic scrolling preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if the elastic smooth scrolling should be enabled on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=true] True if the elastic smooth scrolling should be enabled on the y-axis of container, false otherwise.
- * @param {Array} [options.children] An array of 1 or 2 objects that have only 1 property:
+ * @param {Array} [options.children] An array of 1 or 2 Objects that have only 1 property:
  *                                   - element: a direct children of container.
  *                                   options.children[0] should point to the element that will be left/top aligned after the elastic part of this scroll-animation. 
  *                                   options.children[1] should point to the element that will be right/bottom aligned after the elastic part of this scroll-animation.
@@ -259,9 +258,9 @@ export function addElasticScrolling(
         elasticEasingY: (remaning) => Math.ceil(uss._framesTime * remaning / 110), 
     }, 
 ) {
-    //Check if the options parameter is a valid object.
+    //Check if the options parameter is a valid Object.
     if (!isObject(options)) {
-        uss._errorLogger("addElasticScrolling", "the options parameter to be an object", options);
+        uss._errorLogger("addElasticScrolling", "the options parameter to be an Object", options);
         return;
     }
 
@@ -316,7 +315,7 @@ export function addElasticScrolling(
  * This function adds the specified smooth scrollbars onto the passed container.
  * These scrollbars can controll the smooth scrolling of the passed container. 
  * @param {*} container An Element.
- * @param {Object} options An object which containing the scrollbar's preferences/properties listed below.
+ * @param {Object} options An Object which containing the scrollbar's preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if a smooth scrollbar should be added on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=true] True if a smooth scrollbar should be added on the y-axis of container, false otherwise.
  * @param {Number} [options.thumbSize=17] The default width of the scrollbar on the y-axis of container and 
@@ -327,8 +326,8 @@ export function addElasticScrolling(
  *                                                      whenever the scrollbar is not engaged, otherwise it's "0s". 
  * 
  * //TODO Change
- * @returns {Array} An array containing one object for each scrollbar requested.
- *                  Each scrollbar object has this properties:
+ * @returns {Array} An array containing one Object for each scrollbar requested.
+ *                  Each scrollbar Object has this properties:
  *                  - track {HTMLElement} (public)
  *                  - thumb {HTMLElement} (public)
  *                  - pointerId {Number} (private)
@@ -345,9 +344,9 @@ export function addSmoothScrollbar(
         transitionDurationY: "0.2s",      
     } 
 ) {
-    //Check if the options parameter is a valid object.
+    //Check if the options parameter is a valid Object.
     if (!isObject(options)) {
-        uss._errorLogger("addSmoothScrollbar", "the options parameter to be an object", options);
+        uss._errorLogger("addSmoothScrollbar", "the options parameter to be an Object", options);
         return;
     }
 
@@ -376,6 +375,9 @@ export function addSmoothScrollbar(
         uss._warningLogger(container.originalContainer.parentNode, "has position:static which may affect the scrollbars positioning")
     }
     
+    if(typeof options.transitionDurationX !== "string") options.transitionDurationX = "0.2s";
+    if(typeof options.transitionDurationY !== "string") options.transitionDurationY = "0.2s";
+
     const _builder = new SmoothScrollbarBuilder(container, options);
     _builder.build();
 
