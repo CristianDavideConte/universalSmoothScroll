@@ -1,5 +1,6 @@
 /**
  * TODO: 
+ * - remove the hard-coded transitionDuration from the SmoothScrollbars implementations
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * - smooth scrolling with animation allowed
  * - fix mobile multitasking freezing scrollbars

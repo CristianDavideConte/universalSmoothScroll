@@ -22,6 +22,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 thumb: document.createElement("div"),
                 pointerId: null,
                 isEngaged: () => _scrollbar.pointerId !== null,
+                updateThumbLength: () => _scrollbar.thumb.style.width = _scrollbar.track.clientWidth * _scrollbar.track.clientWidth / this.originalContainer.scrollWidth,
                 updateCache: () => uss.getMaxScrollX(this.originalContainer, true, this.options)
             }
 
@@ -45,7 +46,6 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             _scrollbar.thumb.style = `
                 position: absolute;
                 touch-action: none;
-                width: 25%;
                 height: 100%;
             `
 
@@ -56,12 +56,12 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             //Updates the scrollbar position and manages 
             //the underlying SmoothScrollBuilder callback execution.
             _scrollbar.updatePosition = () => {
-                const __thumbSize = _scrollbar.thumb.clientWidth;
+                const __thumbSize = Number.parseInt(_scrollbar.thumb.style.width);
                 const __trackSize = _scrollbar.track.clientWidth;
 
                 let __scrolledPercentage = uss.getFinalXPosition(this.originalContainer, this.options) / uss.getMaxScrollX(this.originalContainer, false, this.options);
                 __scrolledPercentage = __scrolledPercentage > 1 ? 1 :
-                                       __scrolledPercentage < 0 ? 0 : 
+                                       __scrolledPercentage < 0 || !__scrolledPercentage ? 0 : 
                                        __scrolledPercentage;
 
                 const __translateAmount = __scrolledPercentage * (__trackSize - __thumbSize);
@@ -81,13 +81,11 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 const __delta = event.movementX; 
                 if(__delta === 0) return; 
 
-                const __containerScrollSize = uss.getMaxScrollX(this.originalContainer, false, this.options);
-                if(__containerScrollSize === 0) return;
+                const __containerScrollSize = this.originalContainer.scrollWidth;
+                const __containerClientSize = this.originalContainer.clientWidth;
+                if(__containerScrollSize === __containerClientSize) return;
 
-                const __trackSize = _scrollbar.track.clientWidth;
-                const __scrollMultiplier = __containerScrollSize / __trackSize * 1.3325581395348836;
-                const __finalDelta = __delta * __scrollMultiplier; 
-               
+                const __finalDelta = __delta * __containerScrollSize / __containerClientSize;
 
                 //Synchronous call that will execute updatePosition after it.
                 this.originalContainer.dispatchEvent(
@@ -140,8 +138,6 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             this.originalContainer.insertBefore(_scrollbar.track, this.originalContainer.firstChild);
             
             this.originalBuilder.scrollbarX = _scrollbar;
-
-            uss.addOnResizeEndCallback(this.originalBuilder.scrollbarX.updatePosition);
         }
 
         if(this.onYAxis) {
@@ -150,6 +146,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 thumb: document.createElement("div"),
                 pointerId: null,
                 isEngaged: () => _scrollbar.pointerId !== null,
+                updateThumbLength: () => _scrollbar.thumb.style.height = _scrollbar.track.clientHeight * _scrollbar.track.clientHeight / this.originalContainer.scrollHeight,
                 updateCache: () => uss.getMaxScrollY(this.originalContainer, true, this.options)
             }
         
@@ -174,7 +171,6 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 position: absolute;
                 touch-action: none;
                 width: 100%;
-                height: 25%;
             `
 
             //Accessibility styles.
@@ -184,12 +180,12 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             //Updates the scrollbar position and manages 
             //the underlying SmoothScrollBuilder callback execution. 
             _scrollbar.updatePosition = () => {
-                const __thumbSize = _scrollbar.thumb.clientHeight;
+                const __thumbSize = Number.parseInt(_scrollbar.thumb.style.height);
                 const __trackSize = _scrollbar.track.clientHeight;
 
                 let __scrolledPercentage = uss.getFinalYPosition(this.originalContainer, this.options) / uss.getMaxScrollY(this.originalContainer, false, this.options);
                 __scrolledPercentage = __scrolledPercentage > 1 ? 1 :
-                                       __scrolledPercentage < 0 ? 0 : 
+                                       __scrolledPercentage < 0 || !__scrolledPercentage ? 0 : 
                                        __scrolledPercentage;
 
                 const __translateAmount = __scrolledPercentage * (__trackSize - __thumbSize);
@@ -208,13 +204,12 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         
                 const __delta = event.movementY; 
                 if(__delta === 0) return; 
+                
+                const __containerScrollSize = this.originalContainer.scrollHeight;
+                const __containerClientSize = this.originalContainer.clientHeight;
+                if(__containerScrollSize === __containerClientSize) return;
 
-                const __containerScrollSize = uss.getMaxScrollY(this.originalContainer, false, this.options);
-                if(__containerScrollSize === 0) return;
-
-                const __trackSize = _scrollbar.track.clientHeight;
-                const __scrollMultiplier = __containerScrollSize / __trackSize * 1.3325581395348836;
-                const __finalDelta = __delta * __scrollMultiplier; 
+                const __finalDelta = __delta * __containerScrollSize / __containerClientSize;
 
                 //Synchronous call that will execute updatePosition after it.
                 this.originalContainer.dispatchEvent(
@@ -267,8 +262,6 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             this.originalContainer.insertBefore(_scrollbar.track, this.originalContainer.firstChild);
             
             this.originalBuilder.scrollbarY = _scrollbar;
-
-            uss.addOnResizeEndCallback(this.originalBuilder.scrollbarY.updatePosition);
         }
 
         function _scrollbarSetup(originalContainer, scrollbar, scrollContainerFun, handlePointerDownOnTrack) {
@@ -351,13 +344,17 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             //The scrollbar is initially in idle.
             scrollbar.track.dataset.ussScrollbarIdle = true; 
 
+            uss.addOnResizeEndCallback(scrollbar.updateThumbLength);
+            uss.addOnResizeEndCallback(scrollbar.updatePosition);
+
             //If new children are added/removed from the originalContainer (and its children) update the maxScrollX/Y
             //cached values and the scrollbar position (useful for lazy loading).
-            const __mutationObserver = new MutationObserver(() => {
+            const __mutationObserver = new MutationObserver((mutationList) => {
                 scrollbar.updateCache(); 
+                scrollbar.updateThumbLength();
                 scrollbar.updatePosition();
             });
-            __mutationObserver.observe(originalContainer, { childList: true, subtree: true });
+            __mutationObserver.observe(originalContainer, { childList: true });
 
             return __mutationObserver;
         }

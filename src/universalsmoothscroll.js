@@ -1014,11 +1014,16 @@ window.uss = {
     }
 
     //The container cannot be scrolled on the x-axis.
-    if(uss.getMaxScrollX(container, false, options) < 1) {
+    const _maxScrollX = uss.getMaxScrollX(container, false, options);
+    if(_maxScrollX < 1) {
       uss._warningLogger(container, "is not scrollable on the x-axis", false);
       uss.stopScrollingX(container, callback);
       return; 
     }
+
+    finalXPosition = finalXPosition < 0 ? 0 : 
+                     finalXPosition > _maxScrollX ? _maxScrollX :
+                     finalXPosition;
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
     let _totalScrollAmount = finalXPosition - _scrollXCalculator();
@@ -1119,11 +1124,16 @@ window.uss = {
     }
 
     //The container cannot be scrolled on the y-axis.
-    if(uss.getMaxScrollY(container, false, options) < 1) {
+    const _maxScrollY = uss.getMaxScrollY(container, false, options);
+    if(_maxScrollY < 1) {
       uss._warningLogger(container, "is not scrollable on the y-axis", false);
       uss.stopScrollingY(container, callback);
       return;
     }
+
+    finalYPosition = finalYPosition < 0 ? 0 : 
+                     finalYPosition > _maxScrollY ? _maxScrollY :
+                     finalYPosition;
 
     const _scrollYCalculator = uss.getScrollYCalculator(container);
     let _totalScrollAmount = finalYPosition - _scrollYCalculator();

@@ -99,9 +99,11 @@ export class SmoothScrollBuilder {
                 event.stopPropagation();
             }
 
+            if(deltaX === 0 && deltaY === 0) return;
+
             this.#smoothScroller(deltaX, deltaY);
-            this.scrollbarX.updatePosition();
-            this.scrollbarY.updatePosition();
+            if(uss.isXScrolling(this.originalContainer)) this.scrollbarX.updatePosition();
+            if(uss.isYScrolling(this.originalContainer)) this.scrollbarY.updatePosition();
         } 
 
         const _handlePointerMoveEvent = (event) => {
