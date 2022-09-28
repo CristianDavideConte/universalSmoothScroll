@@ -1921,10 +1921,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>newPageScroller</code>
   </td>
   <td rowspan = "1" align = "center">
-    <code>Number</code>
+    <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    A finite number > 0.
+    An Element or the Window.
   </td>
 
   <tr id = "addOnResizeEndCallback">
