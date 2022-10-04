@@ -34,22 +34,22 @@ describe("setYStepLengthCalculator", function() {
                 })
                 .then(() => {
                     //test valid stepLengthCalculators
-                    uss.setYStepLengthCalculator(_testCalculatorValidType1, _testElement, false, true);
+                    uss.setYStepLengthCalculator(_testCalculatorValidType1, _testElement, false);
                     expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType1);  
 
-                    uss.setYStepLengthCalculator(_testCalculatorValidType2, _testElement, false, true);
+                    uss.setYStepLengthCalculator(_testCalculatorValidType2, _testElement, false);
                     expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType2);  
 
-                    uss.setYStepLengthCalculator(_testCalculatorValidType3, _testElement, false, true);
+                    uss.setYStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
                     expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
                     
-                    uss.setYStepLengthCalculator(_testCalculatorValidType2, _testElement, true, true);
+                    uss.setYStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
                     expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2); 
 
                     uss.stopScrollingY();
                     expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
                     
-                    uss.setYStepLengthCalculator(_testCalculatorValidType2, _testElement, true, true);
+                    uss.setYStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
                     expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
                     
                     cy.waitForUssCallback(

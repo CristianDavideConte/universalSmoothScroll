@@ -135,3 +135,62 @@ describe("stopScrollingAll-immediatelyStopped", function() {
             });         
     });
 })
+
+describe("stopScrollingAll containersData integrity", function() {
+    let uss;
+    it("Checks if the stopScrollingAll function cleans the uss._containersData's arrays correctly", function() {
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+
+                cy.testFailingValues(uss.stopScrollingAll, {
+                    0: [constants.failingValuesNoUndefined]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.be.undefined;
+                    expect(uss.isScrolling()).to.be.false;
+                })
+                .then(() => {
+                    uss._containersData = new Map();
+
+                    const _testCalculatorNonTemporary = () => 10;
+                    const _testCalculatorTemporary = () => 20;
+                    const _maxScrollX = uss.getMaxScrollX(uss.getPageScroller());
+                    const _maxScrollY = uss.getMaxScrollY(uss.getPageScroller());
+                    const _xScrollbarSize = uss.calcXScrollbarDimension(uss.getPageScroller());
+                    const _yScrollbarSize = uss.calcYScrollbarDimension(uss.getPageScroller());
+                    const _bordersSizes = uss.calcBordersDimensions(uss.getPageScroller());
+
+                    uss.setXStepLengthCalculator(_testCalculatorNonTemporary, uss.getPageScroller(), false);
+                    uss.setXStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
+                    uss.setYStepLengthCalculator(_testCalculatorNonTemporary, uss.getPageScroller(), false);
+                    uss.setYStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
+
+                    uss.stopScrollingAll();
+
+                    const _containerData = uss._containersData.get(uss.getPageScroller());
+                    
+                    //Check if the _containerData doesn't contain unecessary leftover values. 
+                    for(let i = 0; i < 12; i++) {
+                        expect(_containerData[i]).to.be.undefined;
+                    }
+                    
+                    //Check if the stepLengthCalculators are preserved.
+                    expect(_containerData[12]).to.equal(_testCalculatorNonTemporary); //xStepLengthCalculator non temporary
+                    expect(_containerData[13]).to.equal(_testCalculatorNonTemporary); //yStepLengthCalculator non temporary
+                    expect(_containerData[14]).to.be.undefined;                       //xStepLengthCalculator temporary
+                    expect(_containerData[15]).to.be.undefined;                       //yStepLengthCalculator temporary
+
+                    //Check if the cached values are preserved.
+                    expect(_containerData[16]).to.equal(_maxScrollX);
+                    expect(_containerData[17]).to.equal(_maxScrollY);
+                    expect(_containerData[18]).to.equal(_xScrollbarSize);
+                    expect(_containerData[19]).to.equal(_yScrollbarSize);
+                    expect(_containerData[20]).to.equal(_bordersSizes[0]);
+                    expect(_containerData[21]).to.equal(_bordersSizes[1]);
+                    expect(_containerData[22]).to.equal(_bordersSizes[2]);
+                    expect(_containerData[23]).to.equal(_bordersSizes[3]);
+                });
+            });         
+    });
+});
