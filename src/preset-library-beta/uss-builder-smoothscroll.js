@@ -20,10 +20,11 @@ export class SmoothScrollBuilder {
         //we still have a reference to it.
         this.callback = this.options.callback;
 
+        //Default scrollbars objects.
         this.scrollbarX = { updatePosition: () => {} };
         this.scrollbarY = { updatePosition: () => {} };
 
-        //Execute the this.callback only if the user is not holding any scrollbar
+        //Execute this.callback only if the user is not holding any scrollbar
         //or the pointer down, wait for the pointerup event otherwise.
         const _callback = () => {
             if(this.#pointersDownIds.length === 0) this.callback();
@@ -91,8 +92,7 @@ export class SmoothScrollBuilder {
             }
         }
 
-        //Inform other components that the this.originalContainer should be scrolled.
-        //If needed, this function scrolls the this.originalContainer.
+        //This function scrolls this.originalContainer and updates the scrollbars position accordingly.
         const _scrollContainer = (deltaX, deltaY, event) => {
             if(event) {
                 event.preventDefault();

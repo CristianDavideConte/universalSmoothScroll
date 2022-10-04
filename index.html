@@ -236,8 +236,8 @@
           {
             onYAxis: true,
             onXAxis: true,
-            easingX: EASE_OUT_CUBIC(),//EASE_LINEAR(), //TODO fix the lag of these
-            easingY: EASE_OUT_CUBIC()//EASE_LINEAR(),
+            easingX: EASE_OUT_CUBIC(), //TODO fix the lag of these
+            easingY: EASE_OUT_CUBIC()
           }
         ), 
         {
@@ -366,9 +366,9 @@
 
 
 
+    uss.hrefSetup(null, true, (anchor, el, event) => {
+      event.stopPropagation();
 
-
-    uss.hrefSetup(null, true, (anchor, el) => {
       if(anchor && lastAnchorPressed === anchor && uss.isScrolling()) return false;
       lastAnchorPressed = anchor;
 

@@ -1658,8 +1658,9 @@ window.uss = {
     //No scroll-animation on the y-axis is being performed.
     if(!_containerData[1]) { 
       const _newData = [];
-      if(!!_containerData[12]) _newData[12] = _containerData[12];
-      if(!!_containerData[13]) _newData[13] = _containerData[13];
+      if(!!_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+      if(!!_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
+      if(!!_containerData[15]) _newData[15] = _containerData[15]; //Temporary stepLengthCalculator on the y-axis
       
       //Cached values.
       if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
@@ -1688,8 +1689,9 @@ window.uss = {
     //No scroll-animation on the x-axis is being performed.
     if(!_containerData[0]) { 
       const _newData = [];
-      if(!!_containerData[12]) _newData[12] = _containerData[12];
-      if(!!_containerData[13]) _newData[13] = _containerData[13];
+      if(!!_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+      if(!!_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
+      if(!!_containerData[14]) _newData[14] = _containerData[14]; //Temporary stepLengthCalculator on the x-axis
       
       //Cached values.
       if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
@@ -1719,8 +1721,8 @@ window.uss = {
     _containerData[11] = null; //callback on y-axis
     
     const _newData = [];
-    if(!!_containerData[12]) _newData[12] = _containerData[12];
-    if(!!_containerData[13]) _newData[13] = _containerData[13];
+    if(!!_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+    if(!!_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
 
     //Cached values.  
     if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
@@ -1745,8 +1747,8 @@ window.uss = {
       _containerData[11] = null; //callback on y-axis
 
       const _newData = [];
-      if(!!_containerData[12]) _newData[12] = _containerData[12];
-      if(!!_containerData[13]) _newData[13] = _containerData[13];
+      if(!!_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+      if(!!_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
       
       //Cached values.
       if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
@@ -1763,7 +1765,7 @@ window.uss = {
     if(typeof callback === "function") callback();
   },
   hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false) => {
-    const _init = typeof init === "function" ? init : () => {};
+    const _init = typeof init === "function" ? init : (anchor, el, event) => event.stopPropagation();
     const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
     const _updateHistory = updateHistory && 
                            !!(window.history && 
@@ -1777,25 +1779,25 @@ window.uss = {
 
       //Prevents the browser to jump-to-position,
       //when a user navigates through history.
-      function _smoothHistoryNavigation() {
+      function _smoothHistoryNavigation(event) {
         const _fragment = window.location.hash.slice(1, -1);
         
         //The URL is just "URL/#" or "URL/" 
         if(!_fragment) {
-          if(_init(null, uss._pageScroller) !== false) {
+          if(_init(null, uss._pageScroller, event) !== false) {
               uss.scrollTo(0, 0, uss._pageScroller, callback);
           }
           return;
         } 
 
         const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
-        if(_elementToReach && _init(null, _elementToReach) !== false) {
+        if(_elementToReach && _init(null, _elementToReach, event) !== false) {
           uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
         }
       }
       //Checks if the page initially have a URL containing 
       //a valid fragment and scrolls to it if necessary.
-      if(document.readyState === "complete") _smoothHistoryNavigation();
+      if(document.readyState === "complete") _smoothHistoryNavigation(new Event("load"));
       else window.addEventListener("load", _smoothHistoryNavigation, {passive:true, once:true});
     }
 
@@ -1812,10 +1814,9 @@ window.uss = {
       if(_fragment === "") { 
         _pageLink.addEventListener("click", event => {
           event.preventDefault();
-          event.stopPropagation();
-
+          
           //False means the scroll-animation has been prevented by the user.
-          if(_init(_pageLink, uss._pageScroller) === false) return; 
+          if(_init(_pageLink, uss._pageScroller, event) === false) return; 
           if(_updateHistory && window.history.state !== "") {
             window.history.pushState("", "", "#");
           }
@@ -1835,12 +1836,11 @@ window.uss = {
       //href="#fragment" scrolls the element associated with the fragment into view.
       _pageLink.addEventListener("click", event => {
         event.preventDefault();
-        event.stopPropagation();
 
         //False means the scroll-animation has been prevented by the user.
         //The extra "." at the end of the fragment is used to prevent Safari from restoring 
         //the scrol position before the popstate event (it won't recognize the fragment). 
-        if(_init(_pageLink, _elementToReach) === false) return; 
+        if(_init(_pageLink, _elementToReach, event) === false) return; 
         if(_updateHistory && window.history.state !== _fragment) {
           window.history.pushState(_fragment, "", "#" + _fragment + ".");
         }

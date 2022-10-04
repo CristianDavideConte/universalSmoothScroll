@@ -34,8 +34,9 @@ function isObject(value) {
 }
 
 /**
- * This function tests if options has at least one between the onXAxis and onYAxis properties 
- * satisfing the checker conditions to be considered true.
+ * This function uses the passed checker function to test if at least one between
+ * options.onXAxis and options.onYAxis should be considered true.
+ * Used to determine whether a requested smoothscroll effect should be applied.
  * @param {Object} options An Object with the onXAxis and onYAxis properties.
  * @param {Function} checker A function that returns true if the value it gets passed satisfy its internal condition, false otherwise.
  *  
