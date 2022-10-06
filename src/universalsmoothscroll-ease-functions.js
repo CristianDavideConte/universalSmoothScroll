@@ -29,12 +29,11 @@ const _DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) 
 
 /*
  * Internally used to setup the control points' arrays for bounce-type StepLengthCalculators.
- * Do not use it directly for setting a StepLengthCalculator.
  */
 const _CUSTOM_BOUNCE = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumber) => {
   const _bounceDeltaX = 1 / endBouncesNumber;
   const _bounceDeltaXHalf = _bounceDeltaX * 0.5; 
-  const _bounceCorrectionDelta = _bounceDeltaXHalf * 0.001;
+  const _bounceCorrectionDelta = _bounceDeltaX * 0.0005;
 
   /**
    * These functions define:
@@ -71,7 +70,7 @@ const _CUSTOM_BOUNCE = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumbe
     const _nextPeakY   = _peakYCalc(_nextPeakX);
     const _nextSlopeY  = _nextPeakY * 0.65 + 0.35 * _calcBounceY;
 
-    arrInserter(xs, _calcBounceX,                                            arrIndex,    arrLen);
+    arrInserter(xs, _calcBounceX,                                            arrIndex,     arrLen);
     arrInserter(xs, _bounceXCalc(_originalBounceX + _bounceCorrectionDelta), arrIndex + 1, arrLen);
 
     arrInserter(xs, _bounceXCalc(_originalBounceX + _bounceDeltaXHalf * 0.35), arrIndex + 2, arrLen);
@@ -109,8 +108,9 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
     if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {uss._errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
     
     //Checks if the passed points are sorted.
-    if(!xsCurrMax || xsCurrMax < xs[i]) xsCurrMax = xs[i]; 
-    else {
+    if(!xsCurrMax || xsCurrMax < xs[i]) {
+      xsCurrMax = xs[i]; 
+    } else {
       uss._errorLogger(options.debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
       return;
     } 
@@ -120,7 +120,7 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
 
   //The control points must be defined at x = 0 and x = 1.
   if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
-  if(!_isXDefinedIn1) {xs.push(1); ys.push(1);}
+  if(!_isXDefinedIn1) {xs.push(1);    ys.push(1);}
 
   const c = 1 - tension;
   const n = xs.length - 1;
@@ -193,7 +193,7 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
 
   //The control points must be defined at x = 0 and x = 1.
   if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
-  if(!_isXDefinedIn1) {xs.push(1); ys.push(1);}
+  if(!_isXDefinedIn1) {xs.push(1);    ys.push(1);}
   
   const n = xs.length - 1;
   const nFact = _factorial(n);

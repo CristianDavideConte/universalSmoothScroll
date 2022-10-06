@@ -2,9 +2,90 @@ import { SmoothScrollBuilder } from "./uss-builder-smoothscroll.js";
 
 export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 
+    #_scrollbarSetup;
+    
     //Parameters already sanitized.
     constructor(container, options) {
         super(container, options);
+
+        this.#_scrollbarSetup = (scrollbar, handleContainerScrolling, handlePointerDownOnTrack) => {
+            //Disengage the scrollbar and execute any callback.
+            let __pointerIsHoveringTrack = false;
+            const __disengageScrollbar = (event) => {    
+                //Wait for the initial pointer to leave the touch-surface.
+                if(event.pointerId !== scrollbar.pointerId) return;
+
+                scrollbar.pointerId = null;
+                window.removeEventListener("pointermove", handleContainerScrolling, {passive:false});     
+                window.removeEventListener("pointerup", __disengageScrollbar, {passive:false});   
+
+                //Check if the scrollbar status should be set to idle.
+                if(!__pointerIsHoveringTrack) {
+                    scrollbar.thumb.style.transitionDuration = "";
+                    scrollbar.track.dataset.ussScrollbarIdle = true; 
+                }
+            }
+            
+            //Engage the scrollbar.
+            scrollbar.thumb.addEventListener("pointerdown", (event) => {
+                //Only one pointer at a time can control the scrollbar.
+                if(scrollbar.isEngaged()) return;
+
+                event.preventDefault();
+                event.stopPropagation();
+
+                scrollbar.pointerId = event.pointerId;
+                window.addEventListener("pointerup", __disengageScrollbar, {passive:false});
+                window.addEventListener("pointermove", handleContainerScrolling, {passive:false});   
+                
+                this.originalContainer.dispatchEvent(
+                    new PointerEvent(
+                        "pointerdown", 
+                        {
+                            pointerId: scrollbar.pointerId,
+                            pointerType: "scrollbar"
+                        }
+                    )
+                )
+            }, {passive:false});
+            
+            //If the user clicks the scrollbar track, the container should be scrolled to
+            //the corresponding position and the scrollbar thumb should be moved accordingly.
+            scrollbar.track.addEventListener("pointerdown", handlePointerDownOnTrack, {passive:false});
+
+            //The scrollbar's status is never set to idle if the pointer is on it.
+            scrollbar.track.addEventListener("pointerenter", () => {
+                __pointerIsHoveringTrack = true;
+                if(scrollbar.isEngaged()) return;
+                scrollbar.track.dataset.ussScrollbarIdle = false; 
+            }, {passive:true});
+            
+            //The scrollbar's status is set to idle if the pointer  
+            //is not hovering it and the scrollbar thumb isn't being used.
+            scrollbar.track.addEventListener("pointerleave", () => {
+                __pointerIsHoveringTrack = false;
+                if(scrollbar.isEngaged()) return;
+                scrollbar.thumb.style.transitionDuration = "";
+                scrollbar.track.dataset.ussScrollbarIdle = true; 
+            }, {passive:true});
+
+            //The scrollbar is initially in idle.
+            scrollbar.track.dataset.ussScrollbarIdle = true; 
+
+            uss.addOnResizeEndCallback(scrollbar.updateThumbLength, this.options);
+            uss.addOnResizeEndCallback(scrollbar.updatePosition, this.options);
+
+            //If new children are added/removed from the originalContainer (and its children) update the maxScrollX/Y
+            //cached values and the scrollbar position (useful for lazy loading).
+            const __mutationObserver = new MutationObserver(() => {
+                scrollbar.updateCache(); 
+                scrollbar.updateThumbLength();
+                scrollbar.updatePosition();
+            });
+            __mutationObserver.observe(this.originalContainer, {childList: true});
+
+            return __mutationObserver;
+        }
     }
 
     build() {
@@ -71,7 +152,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             }
 
             //Scroll the container on a pointermove event by the correspoing amount.
-            const _scrollContainer = (event) => { 
+            const _handleContainerScrolling = (event) => { 
                 event.preventDefault();
                 event.stopPropagation();
 
@@ -85,7 +166,25 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 const __containerClientSize = this.originalContainer.clientWidth;
                 if(__containerScrollSize === __containerClientSize) return;
 
-                const __finalDelta = __delta * __containerScrollSize / __containerClientSize;
+                //const __finalDelta = __delta * __containerScrollSize / __containerClientSize;
+
+                let __finalDelta = __delta * __containerScrollSize / __containerClientSize;
+                const __finalPos = uss.getFinalXPosition(this.originalContainer, this.options); 
+                const __maxScroll = uss.getMaxScrollX(this.originalContainer, false, this.options);
+
+                //console.log(__finalPos, __finalDelta);
+
+                if(__finalPos + __finalDelta < 0) {
+                    __finalDelta = -__finalPos;
+                } else if(__finalPos + __finalDelta > __maxScroll) {
+                    __finalDelta = __maxScroll - __finalPos;
+                }
+
+                //console.log("updated", __finalPos, __finalDelta);
+
+                if(__finalDelta === 0) return;
+
+                //console.log("passed")
 
                 //Synchronous call that will execute updatePosition after it.
                 this.originalContainer.dispatchEvent(
@@ -112,7 +211,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 
                 //The final scroll-position of container is proportional to  
                 //where the user has clicked inside the scrollbar track.
-                const __currentFinalPos = uss.getFinalXPosition(this.originalContainer);
+                const __currentFinalPos = uss.getFinalXPosition(this.originalContainer, this.options);
                 const __trackSize = _scrollbar.track.clientWidth;
                 const __finalPos = event.offsetX / __trackSize * __containerScrollSize; 
 
@@ -131,7 +230,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            this.scrollbarXObserver = _scrollbarSetup(this.originalContainer, _scrollbar, _scrollContainer, _handlePointerDownOnTrack);
+            this.scrollbarXObserver = this.#_scrollbarSetup(_scrollbar, _handleContainerScrolling, _handlePointerDownOnTrack);
 
             //Add the scrollbar to the container.
             _scrollbar.track.appendChild(_scrollbar.thumb);
@@ -195,7 +294,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             }
 
             //Scroll the container on a pointermove event by the correspoing amount.
-            const _scrollContainer = (event) => {  
+            const _handleContainerScrolling = (event) => {  
                 event.preventDefault();
                 event.stopPropagation();    
 
@@ -204,12 +303,28 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         
                 const __delta = event.movementY; 
                 if(__delta === 0) return; 
-                
+
                 const __containerScrollSize = this.originalContainer.scrollHeight;
                 const __containerClientSize = this.originalContainer.clientHeight;
                 if(__containerScrollSize === __containerClientSize) return;
 
-                const __finalDelta = __delta * __containerScrollSize / __containerClientSize;
+                let __finalDelta = __delta * __containerScrollSize / __containerClientSize;
+                const __finalPos = uss.getFinalYPosition(this.originalContainer, this.options); 
+                const __maxScroll = uss.getMaxScrollY(this.originalContainer, false, this.options);
+
+                //console.log(__finalPos, __finalDelta);
+
+                if(__finalPos + __finalDelta < 0) {
+                    __finalDelta = -__finalPos;
+                } else if(__finalPos + __finalDelta > __maxScroll) {
+                    __finalDelta = __maxScroll - __finalPos;
+                }
+
+                //console.log("updated", __finalPos, __finalDelta);
+
+                if(__finalDelta === 0) return;
+
+                //console.log("passed")
 
                 //Synchronous call that will execute updatePosition after it.
                 this.originalContainer.dispatchEvent(
@@ -236,7 +351,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 
                 //The final scroll-position of container is proportional to  
                 //where the user has clicked inside the scrollbar track.
-                const __currentFinalPos = uss.getFinalYPosition(this.originalContainer);
+                const __currentFinalPos = uss.getFinalYPosition(this.originalContainer, this.options);
                 const __trackSize = _scrollbar.track.clientHeight;
                 const __finalPos = event.offsetY / __trackSize * __containerScrollSize; 
 
@@ -255,7 +370,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            this.scrollbarYObserver = _scrollbarSetup(this.originalContainer, _scrollbar, _scrollContainer, _handlePointerDownOnTrack);
+            this.scrollbarYObserver = this.#_scrollbarSetup(_scrollbar, _handleContainerScrolling, _handlePointerDownOnTrack);
 
             //Add the scrollbar to the container.
             _scrollbar.track.appendChild(_scrollbar.thumb);
@@ -263,105 +378,14 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             
             this.originalBuilder.scrollbarY = _scrollbar;
         }
-
-        function _scrollbarSetup(originalContainer, scrollbar, scrollContainerFun, handlePointerDownOnTrack) {
-            //Set the scrollbar status to engaged/disengaged by saving the id of
-            //the pointer that is controlling it.
-            const __setScrollbarEngagement = (event, id) => {
-                event.preventDefault();
-                event.stopPropagation();
-                scrollbar.pointerId = id;
-            } 
-
-            //Disengage the scrollbar and handle any previous delayed scroll request.
-            let __pointerIsHoveringTrack = false;
-            const __disengageScrollbar = (event) => {    
-                //Wait for the initial pointer to leave the touch-surface.
-                if(event.pointerId !== scrollbar.pointerId) return;
-
-                __setScrollbarEngagement(event, null);  
-                window.removeEventListener("pointermove", scrollContainerFun, {passive:false});     
-                window.removeEventListener("pointerup", __disengageScrollbar, {passive:false});   
-
-                //Check if the scrollbar status should be set to idle.
-                if(!__pointerIsHoveringTrack) {
-                    scrollbar.thumb.style.transitionDuration = "";
-                    scrollbar.track.dataset.ussScrollbarIdle = true; 
-                }
-
-                //Synchronous call that will execute updatePosition after it.
-                originalContainer.dispatchEvent(
-                    new PointerEvent(
-                        "pointerup", 
-                        {
-                            pointerId: scrollbar.pointerId,
-                            pointerType: "mouse"
-                        }
-                    )
-                );
-            }
-            
-            //Engage the scrollbar.
-            scrollbar.thumb.addEventListener("pointerdown", (event) => {
-                //Only one pointer at a time can control the scrollbar.
-                if(scrollbar.isEngaged()) return;
-            
-                __setScrollbarEngagement(event, event.pointerId);     
-                window.addEventListener("pointerup", __disengageScrollbar, {passive:false});
-                window.addEventListener("pointermove", scrollContainerFun, {passive:false});   
-                
-                originalContainer.dispatchEvent(
-                    new PointerEvent(
-                        "pointerdown", 
-                        {
-                            pointerId: scrollbar.pointerId,
-                            pointerType: "mouse"
-                        }
-                    )
-                );
-            }, {passive:false});
-            
-            //If the user clicks the scrollbar track, the container should be scrolled to
-            //the corresponding position and the scrollbar thumb should be moved accordingly.
-            scrollbar.track.addEventListener("pointerdown", handlePointerDownOnTrack, {passive:false});
-
-            //The scrollbar's status is never set to idle if the pointer is on it.
-            scrollbar.track.addEventListener("pointerenter", (event) => {
-                __pointerIsHoveringTrack = true;
-                if(scrollbar.isEngaged()) return;
-                scrollbar.track.dataset.ussScrollbarIdle = false; 
-            }, {passive:true});
-            
-            //The scrollbar's status is set to idle if the pointer  
-            //is not hovering it and the scrollbar thumb isn't being used.
-            scrollbar.track.addEventListener("pointerleave", (event) => {
-                __pointerIsHoveringTrack = false;
-                if(scrollbar.isEngaged()) return;
-                scrollbar.thumb.style.transitionDuration = "";
-                scrollbar.track.dataset.ussScrollbarIdle = true; 
-            }, {passive:true});
-
-            //The scrollbar is initially in idle.
-            scrollbar.track.dataset.ussScrollbarIdle = true; 
-
-            uss.addOnResizeEndCallback(scrollbar.updateThumbLength);
-            uss.addOnResizeEndCallback(scrollbar.updatePosition);
-
-            //If new children are added/removed from the originalContainer (and its children) update the maxScrollX/Y
-            //cached values and the scrollbar position (useful for lazy loading).
-            const __mutationObserver = new MutationObserver((mutationList) => {
-                scrollbar.updateCache(); 
-                scrollbar.updateThumbLength();
-                scrollbar.updatePosition();
-            });
-            __mutationObserver.observe(originalContainer, { childList: true });
-
-            return __mutationObserver;
-        }
     }
 
     addCallback(callback) {
         this.originalBuilder.addCallback(callback);
+    }
+
+    executeCallback() {
+        this.originalBuilder.executeCallback();
     }
 
     get originalContainer() {

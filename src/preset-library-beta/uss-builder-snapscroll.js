@@ -161,10 +161,16 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
 
         this.addCallback(this.snapScrolling);
         this.snapScrolling();
+        //buggy on the bottom side when resizing from bug to small viewport (perhaps not this method fault)
+        //uss.addOnResizeEndCallback(this.executeCallback); 
     }
 
     addCallback(callback) {
         this.originalBuilder.addCallback(callback);
+    }
+
+    executeCallback() {
+        this.originalBuilder.executeCallback();
     }
 
     get originalContainer() {

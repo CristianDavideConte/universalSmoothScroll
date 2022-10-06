@@ -36,9 +36,9 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                 //_progress => f2 = f1 / k  //f2 in [1..0]
                 //easing    => f3 = f2^(3)  //f3 in [0..1]
                 //Since the result will be a negative number, Math.floor is used to round its |value|.
-                const __progress = finalPos / this.elasticAmount;
-                if(__progress > 1) return this.elasticAmount - finalPos;
+                let __progress = finalPos / this.elasticAmount;
                 if(__progress < 0) return 0; 
+                if(__progress > 1) __progress = __nextFinalPos / this.elasticAmount;
                 return Math.floor(delta * Math.pow(__progress, 3)); //delta * f3
             }
         
@@ -57,9 +57,9 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                 //_progress => f2 = f1 / k  //f2 in [1..0]
                 //easing    => f3 = f2^(3)  //f3 in [0..1]
                 //Since the result will be a positive number, Math.ceil is used to round its |value|.
-                const __progress = (__maxScroll - finalPos) / this.elasticAmount;
-                if(__progress > 1) return __maxScroll - this.elasticAmount - finalPos;
+                let __progress = (__maxScroll - finalPos) / this.elasticAmount;
                 if(__progress < 0) return 0; 
+                if(__progress > 1) __progress = (__maxScroll - __nextFinalPos) / this.elasticAmount;
                 return Math.ceil(delta * Math.pow(__progress, 3)); //delta * f3
             }
         
@@ -84,6 +84,10 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
 
     addCallback(callback) {
         this.originalBuilder.addCallback(callback);
+    }
+
+    executeCallback() {
+        this.originalBuilder.executeCallback();
     }
 
     get originalContainer() {
