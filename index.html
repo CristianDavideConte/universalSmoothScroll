@@ -245,9 +245,10 @@
             onXAxis:true,
             transitionDurationX: "0.6s",
             transitionDurationY: "0.6s",
+            //thumbSize: 100
         }
     )
-
+    
     const _elasticOptions = {
       onYAxis: true, 
       elasticAmount: 0.25 * window.innerHeight, //25vh in css
@@ -258,14 +259,14 @@
         {
           element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1]
         },
-      ]
+      ],
     }
-    
+
     const _easeFunctionSelectorListScrollbars = addSmoothScrollbar(
       addElasticScrolling(
         easeFunctionSelectorList,
         _elasticOptions
-      ), 
+      ),
       {
           onYAxis:true,
       }
@@ -297,7 +298,8 @@
         yScrollerSection, 
         {
           onYAxis: "mandatory", 
-          children: _yChildren
+          children: _yChildren,
+          //snapEasingY: EASE_OUT_EXPO(700),
         }
       ), 
       {
@@ -305,7 +307,7 @@
           transitionDurationY: "0.4s",
       }
     )
-    
+
     const __xChildren = Array.from(xScrollerSection.children);
     const _xChildren = [
       {
@@ -354,6 +356,7 @@
         {
           onXAxis: "mandatory", 
           children: _xChildren,
+          //snapEasingX: EASE_OUT_BOUNCE(700),
           callback: () => console.log("end of snap")
         }
       ), 

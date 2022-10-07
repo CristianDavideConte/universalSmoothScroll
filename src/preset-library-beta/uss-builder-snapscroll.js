@@ -15,6 +15,10 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
                        /proximity/.test(this.options.onYAxis) ? 1 : // 1 === "proximity"
                                                                 0;  // 0 === no snap on y-axis
 
+        //Save the original callback so that even if it's modified by other builders,
+        //we still have a reference to it.
+        this.callback = this.options.callback;
+
         this.originalBuilder.options.debugString = this.options.debugString;
 
         if(this.onXAxis && !this.onYAxis) { //Momentum-snap on the x-axis only. 
@@ -38,7 +42,7 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
 
             this.snapScroll = (deltas) => {
                 uss.setXStepLengthCalculator(this.options.snapEasingX, this.originalContainer, true, this.options);
-                uss.scrollXBy(Math.round(deltas[0]), this.originalContainer, this.options.callback, true, this.options);
+                uss.scrollXBy(Math.round(deltas[0]), this.originalContainer, this.executeCallback, true, false, this.options);
             }
 
             this.axisNumber = 0;
@@ -63,7 +67,7 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
 
             this.snapScroll = (deltas) => {
                 uss.setYStepLengthCalculator(this.options.snapEasingY, this.originalContainer, true, this.options);
-                uss.scrollYBy(Math.round(deltas[1]), this.originalContainer, this.options.callback, true, this.options);
+                uss.scrollYBy(Math.round(deltas[1]), this.originalContainer, this.executeCallback, true, false, this.options);
             }
             
             this.axisNumber = 1;
@@ -109,7 +113,7 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
                 //Note: Math.round(null) === 0
                 uss.setXStepLengthCalculator(this.options.snapEasingX, this.originalContainer, true, this.options);
                 uss.setYStepLengthCalculator(this.options.snapEasingY, this.originalContainer, true, this.options);
-                uss.scrollBy(Math.round(deltas[0]), Math.round(deltas[1]), this.originalContainer, this.options.callback, true, this.options);
+                uss.scrollBy(Math.round(deltas[0]), Math.round(deltas[1]), this.originalContainer, this.executeCallback, true, false, this.options);
             }
 
             this.axisNumber = 2;
@@ -121,7 +125,7 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
             window.clearTimeout(this.snapScrollingTimeout);
             this.snapScrollingTimeout = window.setTimeout(() => {
                 if(this.options.children.length < 1) {
-                    this.options.callback();
+                    this.executeCallback();
                     return;
                 }  
 
@@ -149,7 +153,7 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
                     }
                 }
                 if(_minDistances === Infinity) {
-                    this.options.callback();
+                    this.executeCallback();
                     return;
                 } 
 
@@ -159,18 +163,20 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
             }, this.options.snapDelay);
         }
 
-        this.addCallback(this.snapScrolling);
+        uss.addOnResizeEndCallback(this.snapScrolling); 
+        this.container.addCallback(this.snapScrolling);
         this.snapScrolling();
-        //buggy on the bottom side when resizing from bug to small viewport (perhaps not this method fault)
-        //uss.addOnResizeEndCallback(this.executeCallback); 
     }
 
+    /**
+     * Execute this.callback only at the end of the snap scroll. 
+     */
     addCallback(callback) {
-        this.originalBuilder.addCallback(callback);
+        super.addCallback(callback); 
     }
 
     executeCallback() {
-        this.originalBuilder.executeCallback();
+        this.callback();
     }
 
     get originalContainer() {

@@ -83,11 +83,11 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
     }
 
     addCallback(callback) {
-        this.originalBuilder.addCallback(callback);
+        this.container.addCallback(callback);
     }
 
     executeCallback() {
-        this.originalBuilder.executeCallback();
+        this.container.executeCallback();
     }
 
     get originalContainer() {

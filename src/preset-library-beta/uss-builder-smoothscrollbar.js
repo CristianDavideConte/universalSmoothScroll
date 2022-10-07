@@ -78,7 +78,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             //If new children are added/removed from the originalContainer (and its children) update the maxScrollX/Y
             //cached values and the scrollbar position (useful for lazy loading).
             const __mutationObserver = new MutationObserver(() => {
-                scrollbar.updateCache(); 
+                scrollbar.updateCache(); //Perhaps introduce a "flushCache" method in the uss object
                 scrollbar.updateThumbLength();
                 scrollbar.updatePosition();
             });
@@ -166,25 +166,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 const __containerClientSize = this.originalContainer.clientWidth;
                 if(__containerScrollSize === __containerClientSize) return;
 
-                //const __finalDelta = __delta * __containerScrollSize / __containerClientSize;
-
-                let __finalDelta = __delta * __containerScrollSize / __containerClientSize;
-                const __finalPos = uss.getFinalXPosition(this.originalContainer, this.options); 
-                const __maxScroll = uss.getMaxScrollX(this.originalContainer, false, this.options);
-
-                //console.log(__finalPos, __finalDelta);
-
-                if(__finalPos + __finalDelta < 0) {
-                    __finalDelta = -__finalPos;
-                } else if(__finalPos + __finalDelta > __maxScroll) {
-                    __finalDelta = __maxScroll - __finalPos;
-                }
-
-                //console.log("updated", __finalPos, __finalDelta);
-
-                if(__finalDelta === 0) return;
-
-                //console.log("passed")
+                const __finalDelta = __delta * __containerScrollSize / __containerClientSize;
 
                 //Synchronous call that will execute updatePosition after it.
                 this.originalContainer.dispatchEvent(
@@ -308,23 +290,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 const __containerClientSize = this.originalContainer.clientHeight;
                 if(__containerScrollSize === __containerClientSize) return;
 
-                let __finalDelta = __delta * __containerScrollSize / __containerClientSize;
-                const __finalPos = uss.getFinalYPosition(this.originalContainer, this.options); 
-                const __maxScroll = uss.getMaxScrollY(this.originalContainer, false, this.options);
-
-                //console.log(__finalPos, __finalDelta);
-
-                if(__finalPos + __finalDelta < 0) {
-                    __finalDelta = -__finalPos;
-                } else if(__finalPos + __finalDelta > __maxScroll) {
-                    __finalDelta = __maxScroll - __finalPos;
-                }
-
-                //console.log("updated", __finalPos, __finalDelta);
-
-                if(__finalDelta === 0) return;
-
-                //console.log("passed")
+                const __finalDelta = __delta * __containerScrollSize / __containerClientSize;
 
                 //Synchronous call that will execute updatePosition after it.
                 this.originalContainer.dispatchEvent(
@@ -381,11 +347,11 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
     }
 
     addCallback(callback) {
-        this.originalBuilder.addCallback(callback);
+        this.container.addCallback(callback);
     }
 
     executeCallback() {
-        this.originalBuilder.executeCallback();
+        this.container.executeCallback();
     }
 
     get originalContainer() {

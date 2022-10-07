@@ -18,7 +18,7 @@ export class SmoothScrollBuilder {
     build() {
         this.onXAxis = this.options.onXAxis;
         this.onYAxis = this.options.onYAxis;
-
+        
         //Save the original callback so that even if it's modified by other builders,
         //we still have a reference to it.
         this.callback = this.options.callback;
@@ -41,7 +41,7 @@ export class SmoothScrollBuilder {
 
             this.#smoothScroller = (deltaX, deltaY) => { 
                 uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
-                uss.scrollXBy(this.options.speedModifierX(deltaX, deltaY), this.originalContainer, this.executeCallback, false, this.options);
+                uss.scrollXBy(this.options.speedModifierX(deltaX, deltaY), this.originalContainer, this.executeCallback, false, true, this.options);
             }
         } else if(!this.onXAxis && this.onYAxis) {
             this.#touchScrollExtender = (event) => {
@@ -57,7 +57,7 @@ export class SmoothScrollBuilder {
 
             this.#smoothScroller = (deltaX, deltaY) => {
                 uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);
-                uss.scrollYBy(this.options.speedModifierY(deltaX, deltaY), this.originalContainer, this.executeCallback, false, this.options);                                                            
+                uss.scrollYBy(this.options.speedModifierY(deltaX, deltaY), this.originalContainer, this.executeCallback, false, true, this.options);                                                            
             } 
         } else {
             this.#touchScrollExtender = (event) => {
@@ -83,6 +83,7 @@ export class SmoothScrollBuilder {
                     this.originalContainer, 
                     this.executeCallback, 
                     false, 
+                    true,
                     this.options
                 );
             }
@@ -175,8 +176,8 @@ export class SmoothScrollBuilder {
      * @param {Function} callback A function that will be invoked after all the current callback's queue functions.
      */
     addCallback(callback) {
-        const _originalCallback = this.originalBuilder.callback;
-        this.originalBuilder.callback = () => {
+        const _originalCallback = this.callback;
+        this.callback = () => {
             _originalCallback();
             callback();
         }

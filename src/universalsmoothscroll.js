@@ -1021,9 +1021,9 @@ window.uss = {
       return; 
     }
 
-    finalXPosition = finalXPosition < 0 ? 0 : 
-                     finalXPosition > _maxScrollX ? _maxScrollX :
-                     finalXPosition;
+    //Limit the final position to the [0, maxScrollX] interval. 
+    if(finalXPosition < 0) finalXPosition = 0;
+    else if(finalXPosition > _maxScrollX) finalXPosition = _maxScrollX;
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
     let _totalScrollAmount = finalXPosition - _scrollXCalculator();
@@ -1131,9 +1131,9 @@ window.uss = {
       return;
     }
 
-    finalYPosition = finalYPosition < 0 ? 0 : 
-                     finalYPosition > _maxScrollY ? _maxScrollY :
-                     finalYPosition;
+    //Limit the final position to the [0, maxScrollY] interval. 
+    if(finalYPosition < 0) finalYPosition = 0;
+    else if(finalYPosition > _maxScrollY) finalYPosition = _maxScrollY;
 
     const _scrollYCalculator = uss.getScrollYCalculator(container);
     let _totalScrollAmount = finalYPosition - _scrollYCalculator();
@@ -1227,7 +1227,7 @@ window.uss = {
       _containerData[1] = window.requestAnimationFrame(_stepY);
     }
   },
-  scrollXBy: (deltaX, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollXBy"}) => {
+  scrollXBy: (deltaX, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollXBy"}) => {
     if(!Number.isFinite(deltaX)) {
       uss._errorLogger(options.debugString, "the deltaX to be a number", deltaX);
       return;
@@ -1242,7 +1242,15 @@ window.uss = {
 
         //An actual scroll has been requested.   
         if(deltaX !== 0) { 
-          const _finalXPosition = _containerData[2] + deltaX;
+          let _finalXPosition = _containerData[2] + deltaX;
+
+          //Limit the final position to the [0, maxScrollX] interval. 
+          if(containScroll) {
+            const _maxScrollX = uss.getMaxScrollX(container, false, options);
+            if(_finalXPosition < 0) _finalXPosition = 0;
+            else if(_finalXPosition > _maxScrollX) _finalXPosition = _maxScrollX;
+          }
+
           const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _containerData[4];
           
           //The scroll-animation has to scroll less than 1px.
@@ -1254,7 +1262,7 @@ window.uss = {
           //Thanks to the new deltaX, the current scroll-animation 
           //has already surpassed the old finalXPosition.
           if(_remaningScrollAmount < 0) {
-            uss.scrollXTo(_finalXPosition, container, callback);
+            uss.scrollXTo(_finalXPosition, container, callback, options);
             return;
           }
           
@@ -1269,9 +1277,9 @@ window.uss = {
       }
     }
 
-    uss.scrollXTo(_currentXPosition + deltaX, container, callback);
+    uss.scrollXTo(_currentXPosition + deltaX, container, callback, options);
   },
-  scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollYBy"}) => {
+  scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollYBy"}) => {
     if(!Number.isFinite(deltaY)) {
       uss._errorLogger(options.debugString, "the deltaY to be a number", deltaY);
       return;
@@ -1283,10 +1291,17 @@ window.uss = {
 
       //A scroll-animation on the y-axis is already being performed and can be repurposed.
       if(!!_containerData[1]) {     
-
         //An actual scroll has been requested.   
         if(deltaY !== 0) { 
-          const _finalYPosition = _containerData[3] + deltaY;
+          let _finalYPosition = _containerData[3] + deltaY;
+
+          //Limit the final position to the [0, maxScrollY] interval. 
+          if(containScroll) {
+            const _maxScrollY = uss.getMaxScrollY(container, false, options);
+            if(_finalYPosition < 0) _finalYPosition = 0;
+            else if(_finalYPosition > _maxScrollY) _finalYPosition = _maxScrollY;
+          }
+
           const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _containerData[5];
           
           //The scroll-animation has to scroll less than 1px. 
@@ -1298,7 +1313,7 @@ window.uss = {
           //Thanks to the new deltaY, the current scroll-animation 
           //has already surpassed the old finalYPosition. 
           if(_remaningScrollAmount < 0) {
-            uss.scrollYTo(_finalYPosition, container, callback);
+            uss.scrollYTo(_finalYPosition, container, callback, options);
             return;
           }
           
@@ -1313,7 +1328,7 @@ window.uss = {
       }
     }
 
-    uss.scrollYTo(_currentYPosition + deltaY, container, callback);
+    uss.scrollYTo(_currentYPosition + deltaY, container, callback, options);
   },
   scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback, options = {debugString: "scrollTo"}) => {
     if(typeof callback !== "function") {
@@ -1339,10 +1354,10 @@ window.uss = {
     _initPhase = false;
     uss.scrollYTo(finalYPosition, container, _scrollYCallback, options);
   },
-  scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollBy"}) => {
+  scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollBy"}) => {
     if(typeof callback !== "function") {
-      uss.scrollXBy(deltaX, container, null, stillStart, options);
-      uss.scrollYBy(deltaY, container, null, stillStart, options);
+      uss.scrollXBy(deltaX, container, null, stillStart, containScroll, options);
+      uss.scrollYBy(deltaY, container, null, stillStart, containScroll, options);
       return;
     }
     //Execute the callback only if the initialization has finished and 
@@ -1359,9 +1374,9 @@ window.uss = {
     }
 
     let _initPhase = true;
-    uss.scrollXBy(deltaX, container, _scrollXCallback, stillStart, options);
+    uss.scrollXBy(deltaX, container, _scrollXCallback, stillStart, containScroll, options);
     _initPhase = false;
-    uss.scrollYBy(deltaY, container, _scrollYCallback, stillStart, options);
+    uss.scrollYBy(deltaY, container, _scrollYCallback, stillStart, containScroll, options);
   },
   scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoView"}) => {
     let _containerIndex = -1;
@@ -1484,9 +1499,9 @@ window.uss = {
       const _scrollContainerX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
       const _scrollContainerY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
 
-      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
-      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback);
-      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback);
+      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, false, options);
+      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback, true, false, options);
+      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback, true, false, options);
       else _callback();
     }
   },
@@ -1639,9 +1654,9 @@ window.uss = {
       const _scrollContainerX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
       const _scrollContainerY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
 
-      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
-      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback);
-      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback);
+      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, false, options);
+      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback, true, false, options);
+      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback, true, false, options);
       else _callback();
     }
   },
@@ -1764,7 +1779,7 @@ window.uss = {
 
     if(typeof callback === "function") callback();
   },
-  hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false) => {
+  hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false, options = {debugString: "hrefSetup"}) => {
     const _init = typeof init === "function" ? init : (anchor, el, event) => event.stopPropagation();
     const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
     const _updateHistory = updateHistory && 
@@ -1785,14 +1800,14 @@ window.uss = {
         //The URL is just "URL/#" or "URL/" 
         if(!_fragment) {
           if(_init(null, uss._pageScroller, event) !== false) {
-              uss.scrollTo(0, 0, uss._pageScroller, callback);
+              uss.scrollTo(0, 0, uss._pageScroller, callback, options);
           }
           return;
         } 
 
         const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
         if(_elementToReach && _init(null, _elementToReach, event) !== false) {
-          uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
+          uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents, options);
         }
       }
       //Checks if the page initially have a URL containing 
@@ -1821,7 +1836,7 @@ window.uss = {
             window.history.pushState("", "", "#");
           }
 
-          uss.scrollTo(0, 0, uss._pageScroller, callback);
+          uss.scrollTo(0, 0, uss._pageScroller, callback, options);
         }, {passive:false});
         continue;
       }
@@ -1845,7 +1860,7 @@ window.uss = {
           window.history.pushState(_fragment, "", "#" + _fragment + ".");
         }
 
-        uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
+        uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents, options);
       }, {passive:false});
     }
   }
