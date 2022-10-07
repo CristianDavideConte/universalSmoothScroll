@@ -15,7 +15,11 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 //Wait for the initial pointer to leave the touch-surface.
                 if(event.pointerId !== scrollbar.pointerId) return;
 
+                //Update the ids of the pointer device that was controlling the scrollbar. 
+                scrollbar.previousPointerId = scrollbar.pointerId;
                 scrollbar.pointerId = null;
+
+                //Remove the unecessary listeners.
                 window.removeEventListener("pointermove", handleContainerScrolling, {passive:false});     
                 window.removeEventListener("pointerup", __disengageScrollbar, {passive:false});   
 
@@ -101,6 +105,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             const _scrollbar = {
                 track: document.createElement("div"),
                 thumb: document.createElement("div"),
+                previousPointerId: null,
                 pointerId: null,
                 isEngaged: () => _scrollbar.pointerId !== null,
                 updateThumbLength: () => _scrollbar.thumb.style.width = _scrollbar.track.clientWidth * _scrollbar.track.clientWidth / this.originalContainer.scrollWidth,
@@ -225,6 +230,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             const _scrollbar = {
                 track: document.createElement("div"),
                 thumb: document.createElement("div"),
+                previousPointerId: null,
                 pointerId: null,
                 isEngaged: () => _scrollbar.pointerId !== null,
                 updateThumbLength: () => _scrollbar.thumb.style.height = _scrollbar.track.clientHeight * _scrollbar.track.clientHeight / this.originalContainer.scrollHeight,

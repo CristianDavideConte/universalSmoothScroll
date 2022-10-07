@@ -24,8 +24,8 @@ export class SmoothScrollBuilder {
         this.callback = this.options.callback;
 
         //Default scrollbars objects.
-        this.scrollbarX = { updatePosition: () => {} };
-        this.scrollbarY = { updatePosition: () => {} };
+        this.scrollbarX = { previousPointerId: null, updatePosition: () => {} };
+        this.scrollbarY = { previousPointerId: null, updatePosition: () => {} };
 
         if(this.onXAxis && !this.onYAxis) {
             this.#touchScrollExtender = (event) => {
@@ -125,7 +125,8 @@ export class SmoothScrollBuilder {
         }
 
         const _handlePointerUpEvent = (event) => {
-            const __pointerIdIndex = this.#pointersDownIds.indexOf(event.pointerId);
+            const __eventId = event.pointerId;
+            const __pointerIdIndex = this.#pointersDownIds.indexOf(__eventId);
 
             //The pointerup event was triggered by a pointer not related with this this.originalContainer.
             if(__pointerIdIndex < 0) return;
@@ -136,7 +137,10 @@ export class SmoothScrollBuilder {
 
             window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:false});
             
-            if(event.pointerType === "mouse") {
+            if(event.pointerType === "mouse" || 
+               __eventId === this.scrollbarX.previousPointerId || 
+               __eventId === this.scrollbarY.previousPointerId
+            ) {
                 this.executeCallback();
             } else {
                 this.originalContainer.removeEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
