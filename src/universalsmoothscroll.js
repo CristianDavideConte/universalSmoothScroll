@@ -306,23 +306,35 @@ window.uss = {
   _errorLogger: DEFAULT_ERROR_LOGGER,
   _warningLogger: DEFAULT_WARNING_LOGGER,
   isXScrolling: (container = uss._pageScroller, options = {debugString: "isXScrolling"}) => {
+    const _containerData = uss._containersData.get(container);
+
+    if(_containerData) return !!_containerData[0];
+
     if(container === window || container instanceof Element) {
-      const _containerData = uss._containersData.get(container) || [];
-      return !!_containerData[0];
+      uss._containersData.set(container, []);
+      return false;
     }
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-  },
+  }, 
   isYScrolling: (container = uss._pageScroller, options = {debugString: "isYScrolling"}) => {
+    const _containerData = uss._containersData.get(container);
+
+    if(_containerData) return !!_containerData[1];
+
     if(container === window || container instanceof Element) {
-      const _containerData = uss._containersData.get(container) || [];
-      return !!_containerData[1];
+      uss._containersData.set(container, []);
+      return false;
     }
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-  },
+  },   
   isScrolling: (container = uss._pageScroller, options = {debugString: "isScrolling"}) => {
-    if(container === window || container instanceof Element) { 
-      const _containerData = uss._containersData.get(container) || [];
-      return !!_containerData[0] || !!_containerData[1];
+    const _containerData = uss._containersData.get(container);
+
+    if(_containerData) return !!(_containerData[0] || _containerData[1]);
+
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return false;
     }
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
@@ -337,34 +349,50 @@ window.uss = {
     return _containerData[3] === 0 ? 0 : _containerData[3] || uss.getScrollYCalculator(container, options)();
   },
   getScrollXDirection: (container = uss._pageScroller, options = {debugString: "getScrollXDirection"}) => {
-    if(container === window || container instanceof Element) { 
-      //If there's no scroll-animation on the x-axis, 0 is returned instead.
-      const _containerData = uss._containersData.get(container) || [];
-      return _containerData[4] || 0;
+    const _containerData = uss._containersData.get(container);
+    
+    //If there's no scroll-animation, 0 is returned.
+    if(_containerData) return _containerData[4] || 0;
+    
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return 0; 
     }
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getScrollYDirection: (container = uss._pageScroller, options = {debugString: "getScrollYDirection"}) => {
-    if(container === window || container instanceof Element) { 
-      //If there's no scroll-animation on the y-axis, 0 is returned instead.
-      const _containerData = uss._containersData.get(container) || [];
-      return _containerData[5] || 0;
+    const _containerData = uss._containersData.get(container);
+    
+    //If there's no scroll-animation, 0 is returned.
+    if(_containerData) return _containerData[5] || 0;
+    
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return 0; 
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);  
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getXStepLengthCalculator"}) => {
-    if(container === window || container instanceof Element) { 
-      const _containerData = uss._containersData.get(container) || [];
-      return getTemporary ? _containerData[14] : _containerData[12];
+    const _containerData = uss._containersData.get(container);
+        
+    if(_containerData) return getTemporary ? _containerData[14] : _containerData[12];
+
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return; 
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);    
   },
   getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getYStepLengthCalculator"}) => {    
-    if(container === window || container instanceof Element) { 
-      const _containerData = uss._containersData.get(container) || [];
-      return getTemporary ? _containerData[15] : _containerData[13];
+    const _containerData = uss._containersData.get(container);
+        
+    if(_containerData) return getTemporary ? _containerData[15] : _containerData[13];
+
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return; 
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);    
   },
   getXStepLength: () => uss._xStepLength,
   getYStepLength: () => uss._yStepLength,
@@ -372,9 +400,11 @@ window.uss = {
   getWindowWidth:  () => uss._windowWidth,
   getWindowHeight: () => uss._windowHeight,
   getScrollbarsMaxDimension: (forceCalculation = false) => {
-    //Calculate the maximum sizes of scrollbars on the webpage by:
-    // - creating a <div> with id = "__ussScrollBox".
-    // - giving that <div> a mini-stylesheet that forces it to show the scrollbars.
+    /**
+     * Calculate the maximum sizes of scrollbars on the webpage by:
+     * - creating a <div> with id = "__ussScrollBox"
+     * - giving that <div> a mini-stylesheet that forces it to show the scrollbars 
+     */
     if(forceCalculation || !Number.isFinite(uss._scrollbarsMaxDimension)) {
       const __scrollBoxStyle = document.createElement("style");
       const __scrollBox = document.createElement("div");
@@ -433,60 +463,78 @@ window.uss = {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
+
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(isTemporary) _containerData[14] = newCalculator;
-    else {
-      _containerData[12] = newCalculator;
-      if(!!_containerData[14]) _containerData[14] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
+
+    if(!_oldData) {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
     }
-    if(!_oldData) uss._containersData.set(container, _containerData);
+
+    if(isTemporary) {
+      _containerData[14] = newCalculator;
+    } else {
+      //Setting a non-temporary StepLengthCalculator will unset the temporary one.
+      _containerData[12] = newCalculator;
+      _containerData[14] = null; 
+    }  
   },
   setYStepLengthCalculator: (newCalculator = DEFAULT_YSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false, options = {debugString: "setYStepLengthCalculator"}) => {
     if(typeof newCalculator !== "function") {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
+
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(isTemporary) _containerData[15] = newCalculator;
-    else {
-      _containerData[13] = newCalculator;
-      if(!!_containerData[15]) _containerData[15] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
+
+    if(!_oldData) {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
     }
-    if(!_oldData) uss._containersData.set(container, _containerData);
+
+    if(isTemporary) {
+      _containerData[15] = newCalculator;
+    } else {
+      //Setting a non-temporary StepLengthCalculator will unset the temporary one.
+      _containerData[13] = newCalculator;
+      _containerData[15] = null; 
+    }  
   },
   setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setStepLengthCalculator"}) => {
     if(typeof newCalculator !== "function") {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
+
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
+
+    if(!_oldData) {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    }
+
     if(isTemporary) {
       _containerData[14] = newCalculator;
       _containerData[15] = newCalculator;
     } else {
+      //Setting a non-temporary StepLengthCalculator will unset the temporary one.
       _containerData[12] = newCalculator;
       _containerData[13] = newCalculator;
-
-      //Setting a non-temporary StepLengthCalculators will unset the temporary ones.
-      if(!!_containerData[14]) _containerData[14] = null;
-      if(!!_containerData[15]) _containerData[15] = null;
+      _containerData[14] = null; 
+      _containerData[15] = null; 
     }
-    if(!_oldData) uss._containersData.set(container, _containerData);
   },
   setXStepLength: (newXStepLength = DEFAULT_XSTEP_LENGTH, options = {debugString: "setXStepLength"}) => {
     if(!Number.isFinite(newXStepLength) || newXStepLength <= 0) {
@@ -556,15 +604,21 @@ window.uss = {
     uss._warningLogger = newWarningLogger;
   }, 
   calcXScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
-    if(container !== window && !(container instanceof HTMLElement || container instanceof SVGElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
-      return;
-    }
-
-    //Check if the scrollbarDimension on the x-axis of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(!forceCalculation && Number.isFinite(_containerData[18])) {
+
+    if(!_oldData) {
+      /**
+       * Only instances of HTMLElement and SVGElement have the style property, but
+       * they both implement Element and there are no other implementation of this interface on a website,
+       * so its fine to check for the container being instanceof Element.
+       */
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    } else if(!forceCalculation && Number.isFinite(_containerData[18])) {
       return _containerData[18]; //Vertical scrollbar's width
     }
 
@@ -574,10 +628,11 @@ window.uss = {
     if(uss.getScrollbarsMaxDimension(false) === 0) {
       _scrollbarDimension = 0;
     } else if(container === window) { 
-      options.debugString = "calcXScrollbarDimension(uss.getPageScroller())";
-      _scrollbarDimension = uss.getPageScroller(false) === window ? 0 : uss.calcXScrollbarDimension(uss.getPageScroller(false), forceCalculation, options);
+      const _pageScroller = uss.getPageScroller(false, options);
+      options.debugString = "calcXScrollbarDimension(uss.getPageScroller(false))";
+      _scrollbarDimension = _pageScroller === window ? 0 : uss.calcXScrollbarDimension(_pageScroller, forceCalculation, options);
     } else {
-      const _style = window.getComputedStyle(container);
+      const _style = window.getComputedStyle(container); //Live object
       const _originalWidth  = Number.parseInt(_style.width);
       const _clientWidth  = container.clientWidth;
       const _originalOverflowY = container.style.overflowY;
@@ -602,20 +657,25 @@ window.uss = {
 
     //Cache the value for later use.
     _containerData[18] = _scrollbarDimension;
-    if(!_oldData) uss._containersData.set(container, _containerData);
 
     return _scrollbarDimension;
   },
   calcYScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcYScrollbarDimension"}) => {
-    if(container !== window && !(container instanceof HTMLElement || container instanceof SVGElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
-      return;
-    }
-
-    //Check if the scrollbarDimension on the y-axis of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(!forceCalculation && Number.isFinite(_containerData[19])) {
+
+    if(!_oldData) {
+      /**
+       * Only instances of HTMLElement and SVGElement have the style property, but
+       * they both implement Element and there are no other implementation of this interface on a website,
+       * so its fine to check for the container being instanceof Element.
+       */
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    } else if(!forceCalculation && Number.isFinite(_containerData[19])) {
       return _containerData[19]; //Horizontal scrollbar's height
     }
 
@@ -624,9 +684,10 @@ window.uss = {
     //The scrollbars can only be 0px on this webpage.
     if(uss.getScrollbarsMaxDimension(false) === 0) {
       _scrollbarDimension = 0;
-    } else if(container === window) { 
-      options.debugString = "calcYScrollbarDimension(uss.getPageScroller())";
-      _scrollbarDimension = uss.getPageScroller(false) === window ? 0 : uss.calcYScrollbarDimension(uss.getPageScroller(false), forceCalculation, options);
+    } else if(container === window) {
+      const _pageScroller = uss.getPageScroller(false, options);
+      options.debugString = "calcYScrollbarDimension(uss.getPageScroller(false))";
+      _scrollbarDimension = _pageScroller === window ? 0 : uss.calcYScrollbarDimension(_pageScroller, forceCalculation, options);
     } else {
       const _style = window.getComputedStyle(container);
       const _originalHeight = Number.parseInt(_style.height);   
@@ -653,20 +714,28 @@ window.uss = {
 
     //Cache the value for later use.
     _containerData[19] = _scrollbarDimension;
-    if(!_oldData) uss._containersData.set(container, _containerData);
 
     return _scrollbarDimension;
   },
   calcScrollbarsDimensions: (container, forceCalculation = false, options = {debugString: "calcScrollbarsDimensions"}) => {
-    if(container !== window && !(container instanceof HTMLElement || container instanceof SVGElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
-      return;
-    }
-
-    //Check if the scrollbarsDimensions of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(!forceCalculation && Number.isFinite(_containerData[18]) && Number.isFinite(_containerData[19])) {
+
+    if(!_oldData) {
+      /**
+       * Only instances of HTMLElement and SVGElement have the style property, but
+       * they both implement Element and there are no other implementation of this interface on a website,
+       * so its fine to check for the container being instanceof Element.
+       */
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    } else if(!forceCalculation && 
+              Number.isFinite(_containerData[18]) && 
+              Number.isFinite(_containerData[19])
+    ) {
       return [
         _containerData[18], //Vertical scrollbar's width
         _containerData[19]  //Horizontal scrollbar's height
@@ -679,8 +748,9 @@ window.uss = {
     if(uss.getScrollbarsMaxDimension(false) === 0) {
       _scrollbarsDimensions = [0,0];
     } else if(container === window) { 
-      options.debugString = "calcScrollbarsDimensions(uss.getPageScroller())";
-      _scrollbarsDimensions = uss.getPageScroller(false) === window ? [0,0] : uss.calcScrollbarsDimensions(uss.getPageScroller(false), forceCalculation, options);
+      const _pageScroller = uss.getPageScroller(false, options);
+      options.debugString = "calcScrollbarsDimensions(uss.getPageScroller(false))";
+      _scrollbarsDimensions = _pageScroller === window ? [0,0] : uss.calcScrollbarsDimensions(_pageScroller, forceCalculation, options);
     } else {
       _scrollbarsDimensions = [];
       const _style = window.getComputedStyle(container);
@@ -720,24 +790,25 @@ window.uss = {
     //Cache the values for later use.
     _containerData[18] = _scrollbarsDimensions[0];
     _containerData[19] = _scrollbarsDimensions[1];
-    if(!_oldData) uss._containersData.set(container, _containerData);
     
     return _scrollbarsDimensions;
   },
   calcBordersDimensions: (container, forceCalculation = false, options = {debugString: "calcBordersDimensions"}) => {
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element the Window", container);
-      return;
-    }
-
     //Check if the bordersDimensions of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(!forceCalculation && 
+
+    if(!_oldData) {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    } else if(!forceCalculation && 
         Number.isFinite(_containerData[20]) && 
-        Number.isFinite(_containerData[21]) &&
+        Number.isFinite(_containerData[21]) && 
         Number.isFinite(_containerData[22]) && 
-        Number.isFinite(_containerData[23])
+        Number.isFinite(_containerData[23]) 
     ) {
       return [
         _containerData[20], //top
@@ -750,15 +821,16 @@ window.uss = {
     let _bordersDimensions;
 
     if(container === window) { 
+      const _pageScroller = uss.getPageScroller(false, options);
       options.debugString = "calcBordersDimensions(uss.getPageScroller())";
-      _bordersDimensions = uss.getPageScroller(false) === window ? [0,0,0,0] : uss.calcBordersDimensions(uss.getPageScroller(false), forceCalculation, options);
+      _bordersDimensions = _pageScroller === window ? [0,0,0,0] : uss.calcBordersDimensions(_pageScroller, forceCalculation, options);
     } else {
       const _style = window.getComputedStyle(container);
       _bordersDimensions = [
-                              Number.parseInt(_style.borderTopWidth),
-                              Number.parseInt(_style.borderRightWidth),
-                              Number.parseInt(_style.borderBottomWidth),
-                              Number.parseInt(_style.borderLeftWidth)
+                              Number.parseFloat(_style.borderTopWidth),
+                              Number.parseFloat(_style.borderRightWidth),
+                              Number.parseFloat(_style.borderBottomWidth),
+                              Number.parseFloat(_style.borderLeftWidth)
                             ];
     }
 
@@ -767,7 +839,6 @@ window.uss = {
     _containerData[21] = _bordersDimensions[1]; //right
     _containerData[22] = _bordersDimensions[2]; //bottom
     _containerData[23] = _bordersDimensions[3]; //left
-    if(!_oldData) uss._containersData.set(container, _containerData);
 
     return _bordersDimensions;
   },
@@ -1659,96 +1730,114 @@ window.uss = {
       else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback, true, false, options);
       else _callback();
     }
-  },
+  }, 
   stopScrollingX: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingX"}) => {
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
-    const _containerData = uss._containersData.get(container) || [];
-    window.cancelAnimationFrame(_containerData[0]); 
-    _containerData[0] = null;  //scrollID on x-axis
-    _containerData[10] = null; //callback on x-axis
+    const _containerData = uss._containersData.get(container);
+    
+    if(_containerData) {
+      window.cancelAnimationFrame(_containerData[0]); 
+      _containerData[0] = null;  //scrollID on x-axis
+      _containerData[10] = null; //callback on x-axis  
+          
+      //No scroll-animation on the y-axis is being performed.
+      if(!_containerData[1]) { 
+        const _newData = [];
+        
+        if(_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+        if(_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
+        if(_containerData[15]) _newData[15] = _containerData[15]; //Temporary stepLengthCalculator on the y-axis
 
-    //No scroll-animation on the y-axis is being performed.
-    if(!_containerData[1]) { 
-      const _newData = [];
-      if(!!_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
-      if(!!_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
-      if(!!_containerData[15]) _newData[15] = _containerData[15]; //Temporary stepLengthCalculator on the y-axis
-      
-      //Cached values.
-      if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
-      if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
-      if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
-      if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
-      if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
-      if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
-      if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
-      if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
-      uss._containersData.set(container, _newData);
+        //Cached values.
+        if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+        if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+        if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+        if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+        if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+        if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+        if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+        if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
+        uss._containersData.set(container, _newData);
+      } 
+    } else {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, []);
     }
 
     if(typeof callback === "function") callback();
-  },
+  },  
   stopScrollingY: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingY"}) => {
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
-    const _containerData = uss._containersData.get(container) || [];
-    window.cancelAnimationFrame(_containerData[1]);
-    _containerData[1] = null; //scrollID on y-axis
-    _containerData[11] = null; //callback on x-axis
-  
-    //No scroll-animation on the x-axis is being performed.
-    if(!_containerData[0]) { 
-      const _newData = [];
-      if(!!_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
-      if(!!_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
-      if(!!_containerData[14]) _newData[14] = _containerData[14]; //Temporary stepLengthCalculator on the x-axis
-      
-      //Cached values.
-      if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
-      if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
-      if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
-      if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
-      if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
-      if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
-      if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
-      if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
-      uss._containersData.set(container, _newData);
+    const _containerData = uss._containersData.get(container);
+    
+    if(_containerData) {
+      window.cancelAnimationFrame(_containerData[1]);
+      _containerData[1] = null;  //scrollID on y-axis
+      _containerData[11] = null; //callback on x-axis
+          
+      //No scroll-animation on the x-axis is being performed.
+      if(!_containerData[0]) { 
+        const _newData = [];
+        
+        if(_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+        if(_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
+        if(_containerData[14]) _newData[14] = _containerData[14]; //Temporary stepLengthCalculator on the x-axis
+        
+        //Cached values.
+        if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+        if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+        if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+        if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+        if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+        if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+        if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+        if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
+        uss._containersData.set(container, _newData);
+      } 
+    } else {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, []);
     }
 
     if(typeof callback === "function") callback();
   },
   stopScrolling: (container = uss._pageScroller, callback, options = {debugString: "stopScrolling"}) => {
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
-    const _containerData = uss._containersData.get(container) || [];
-    window.cancelAnimationFrame(_containerData[0]);
-    window.cancelAnimationFrame(_containerData[1]);
-    _containerData[0] = null;  //scrollID on x-axis
-    _containerData[1] = null;  //scrollID on y-axis
-    _containerData[10] = null; //callback on x-axis
-    _containerData[11] = null; //callback on y-axis
+    const _containerData = uss._containersData.get(container);
     
-    const _newData = [];
-    if(!!_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
-    if(!!_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
+    if(_containerData) {
+      window.cancelAnimationFrame(_containerData[0]);
+      window.cancelAnimationFrame(_containerData[1]);
+      _containerData[0] = null;  //scrollID on x-axis
+      _containerData[1] = null;  //scrollID on y-axis
+      _containerData[10] = null; //callback on x-axis
+      _containerData[11] = null; //callback on y-axis
+          
+      const _newData = [];
+          
+      if(_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+      if(_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
 
-    //Cached values.  
-    if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
-    if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
-    if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
-    if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
-    if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
-    if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
-    if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
-    if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
-    uss._containersData.set(container, _newData);
+      //Cached values.  
+      if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+      if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+      if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+      if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+      if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+      if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+      if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+      if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
+      uss._containersData.set(container, _newData);
+    } else {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, []);
+    }
 
     if(typeof callback === "function") callback();
   },
@@ -1762,8 +1851,9 @@ window.uss = {
       _containerData[11] = null; //callback on y-axis
 
       const _newData = [];
-      if(!!_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
-      if(!!_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
+
+      if(_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+      if(_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
       
       //Cached values.
       if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
@@ -1882,15 +1972,15 @@ function onResize() {
   uss._windowHeight = window.innerHeight; 
 
   //Flush the internal caches.
-  for(const dataArray of uss._containersData.values()) {
-    dataArray[16] = null;
-    dataArray[17] = null; 
-    dataArray[18] = null; //Perhaps use a mutation observer
-    dataArray[19] = null; //Perhaps use a mutation observer
-    dataArray[20] = null; //Perhaps use a resize observer 
-    dataArray[21] = null; //Perhaps use a resize observer 
-    dataArray[22] = null; //Perhaps use a resize observer 
-    dataArray[23] = null; //Perhaps use a resize observer 
+  for(const containerData of uss._containersData.values()) {
+    containerData[16] = null;
+    containerData[17] = null; 
+    containerData[18] = null; //Perhaps use a mutation observer
+    containerData[19] = null; //Perhaps use a mutation observer
+    containerData[20] = null; //Perhaps use a resize observer 
+    containerData[21] = null; //Perhaps use a resize observer 
+    containerData[22] = null; //Perhaps use a resize observer 
+    containerData[23] = null; //Perhaps use a resize observer 
   }
 
   for(const callback of uss._onResizeEndCallbacks) callback();
@@ -1907,7 +1997,6 @@ window.addEventListener("resize", () => {
   window.addEventListener("keydown", onResize, {passive:true});
   window.addEventListener("focus", onResize, {passive:true});
   _resizeHandled = true;
-
 }, {passive:true});
 
 function __ussInit() {

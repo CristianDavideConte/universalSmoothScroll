@@ -16,9 +16,12 @@ const _DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) 
 
     if(_progress >= 1) return remaning;
     if(_progress <= 0) {
-      //The elapsed time of a scroll-animation is always >= uss._frameTime / 2 
-      //because the first step length is always 0 at elapsed time = 0 and this would break
-      //scroll-animations with stillStart = true on touchpad enabled devices.
+      /**
+       * Since the timestamp === originalTimestamp at the beginning of a scroll-animation,
+       * the first step length is always 0.
+       * This breaks the scroll-animations on touchpad enabled devices, so the first 
+       * elapsed time considered is actually 0.5 * uss._framesTime.
+       */
       _startingPos = 1 - remaning / total;
       _progress = 0.5 * uss._framesTime / duration; 
     }
@@ -238,11 +241,11 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
 }
 
 export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, options = {debugString: "CUSTOM_CUBIC_BEZIER"}) => {
-  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
   if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {uss._errorLogger(options.debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
   if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {uss._errorLogger(options.debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
   if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {uss._errorLogger(options.debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
   if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {uss._errorLogger(options.debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
+  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
 
   const aX = 1 + 3 * (x1 - x2);
   const aY = 1 + 3 * (y1 - y2);
