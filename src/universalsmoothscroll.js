@@ -69,6 +69,7 @@
  * _windowHeight: number, the current Window's inner height (in px).
  * _scrollbarsMaxDimension: number, the highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
  * _framesTime: number, the time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
+ * _windowScrollers: array, an array containing the Elements that scroll the Window when they're scrolled and that (viceversa) are scrolled when the Window is scrolled.
  * _pageScroller: object, the element that scrolls the document. 
  *                        It's also the value used when an API method requires the container input parameter but nothing is passed.
  * _reducedMotion: boolean, true if the user has enabled any reduce-motion setting devicewise, false otherwise. 
@@ -116,6 +117,7 @@
  * getWindowHeight: function, returns the value of the "_windowHeight" property.
  * getWindowWidth: function, returns the value of the "_windowWidth" property.
  * getScrollbarsMaxDimension: function, returns the value of the "_scrollbarsMaxDimension" property.
+ * getWindowScrollers: function, returns the value of the "_windowScrollers" property.
  * getPageScroller: function, returns the value of the "_pageScroller" property.
  * getReducedMotionState: function, returns the value of the "_reducedMotion" property.
  * getOnResizeEndCallbacks: function, returns the value of the "_onResizeEndCallbacks" property.
@@ -299,6 +301,7 @@ window.uss = {
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _scrollbarsMaxDimension: null,
   _framesTime: DEFAULT_FRAME_TIME,
+  _windowScrollers: null,
   _pageScroller: null,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   _onResizeEndCallbacks: [],
@@ -424,33 +427,72 @@ window.uss = {
 
     return uss._scrollbarsMaxDimension;
   },
-  getPageScroller: (forceCalculation = false, options = {debugString: "getPageScroller"}) => {
-    //Check if the pageScroller has already been calculated.
-    if(!forceCalculation && uss._pageScroller) {
-      return uss._pageScroller;
-    }
- 
-    //The _pageScroller is the element that can scroll the further between document.documentElement and document.body.
-    //If there's a tie or neither of those can scroll, it's defaulted to the 
-    //the document.scrollingElement (if supported) or the Window.
-    const _htmlMaxScrollX = uss.getMaxScrollX(document.documentElement, true, options);
-    const _htmlMaxScrollY = uss.getMaxScrollY(document.documentElement, true, options);
-    const _bodyMaxScrollX = uss.getMaxScrollX(document.body, true, options);
-    const _bodyMaxScrollY = uss.getMaxScrollY(document.body, true, options);
+  getWindowScrollers: (forceCalculation = false) => {
+    //Check if the _windowScrollers has already been calculated.
+    if(forceCalculation || !uss._windowScrollers) {
+      uss._windowScrollers = [];
 
-    //Cache the _pageScroller for later use.
-    if(
-      (_htmlMaxScrollX >  _bodyMaxScrollX && _htmlMaxScrollY >= _bodyMaxScrollY) ||
-      (_htmlMaxScrollX >= _bodyMaxScrollX && _htmlMaxScrollY >  _bodyMaxScrollY)
-    ) {
-      uss._pageScroller = document.documentElement;
-    } else if(
-      (_bodyMaxScrollX >  _htmlMaxScrollX && _bodyMaxScrollY >= _htmlMaxScrollY) || 
-      (_bodyMaxScrollX >= _htmlMaxScrollX && _bodyMaxScrollY >  _htmlMaxScrollY) 
-    ) {
-      uss._pageScroller = document.body;
-    } else {
-      uss._pageScroller = document.scrollingElement || window;
+      //Tests if scrolling the Window also scrolls the passed element and
+      //if the window is actually scrollable.
+      const _testScroller = (element) => {
+        //Save the original scroll positions of the Window and the element.
+        const _originalWindowXPos = window.scrollX;
+        const _originalWindowYPos = window.scrollY; 
+        const _originalElementXPos = element.scrollLeft;
+        const _originalElementYPos = element.scrollTop; 
+
+        //Scroll the Window and the element to a known initial position.
+        window.scroll(0,0);
+        element.scroll(0,0);
+
+        //Try to scroll the element by scrolling the Window.
+        window.scroll(100, 100);
+
+        const __isWindowScrollable = window.scrollX !== 0 || window.scrollY !== 0;
+        const __windowScrollsElement = __isWindowScrollable && 
+                                      element.scrollLeft === window.scrollX && 
+                                      element.scrollTop === window.scrollY;
+                          
+        //Restore the original scroll positions of the Window and the element.
+        window.scroll(_originalWindowXPos, _originalWindowYPos);
+        element.scroll(_originalElementXPos, _originalElementYPos);
+        
+        if(!__isWindowScrollable) return false;
+        if(__windowScrollsElement) uss._windowScrollers.push(element);
+        return true;
+      }
+
+      //If the window is not scrollable there's no need to test further.
+      if(_testScroller(document.body)) _testScroller(document.documentElement);
+    }
+
+    return uss._windowScrollers;
+  },
+  getPageScroller: (forceCalculation = false, options = {debugString: "getPageScroller"}) => {
+    //Check if the _pageScroller has already been calculated.
+    if(forceCalculation || !uss._pageScroller) {
+      //The _pageScroller is the element that can scroll the further between document.documentElement and document.body.
+      //If there's a tie or neither of those can scroll, it's defaulted to the 
+      //the document.scrollingElement (if supported) or the Window.
+      const _htmlMaxScrollX = uss.getMaxScrollX(document.documentElement, true, options);
+      const _htmlMaxScrollY = uss.getMaxScrollY(document.documentElement, true, options);
+      const _bodyMaxScrollX = uss.getMaxScrollX(document.body, true, options);
+      const _bodyMaxScrollY = uss.getMaxScrollY(document.body, true, options);
+
+      //Cache the _pageScroller for later use.
+      if(
+        (_htmlMaxScrollX >  _bodyMaxScrollX && _htmlMaxScrollY >= _bodyMaxScrollY) ||
+        (_htmlMaxScrollX >= _bodyMaxScrollX && _htmlMaxScrollY >  _bodyMaxScrollY)
+      ) {
+        uss._pageScroller = document.documentElement;
+      } else if(
+        (_bodyMaxScrollX >  _htmlMaxScrollX && _bodyMaxScrollY >= _htmlMaxScrollY) || 
+        (_bodyMaxScrollX >= _htmlMaxScrollX && _bodyMaxScrollY >  _htmlMaxScrollY) 
+      ) {
+        uss._pageScroller = document.body;
+      } else {
+        uss._pageScroller = document.scrollingElement || window;
+      }
     }
 
     return uss._pageScroller;
@@ -566,9 +608,12 @@ window.uss = {
     uss._minAnimationFrame = newMinAnimationFrame;
   },
   setPageScroller: (newPageScroller, options = {debugString: "setPageScroller"}) => {
-    if(newPageScroller !== window && !(newPageScroller instanceof Element)) {
-      uss._errorLogger(options.debugString, "the newPageScroller to be an Element or the Window", newPageScroller);
-      return;
+    if(!uss._containersData.get(newPageScroller)) {
+      if(newPageScroller !== window && !(newPageScroller instanceof Element)) {
+        uss._errorLogger(options.debugString, "the newPageScroller to be an Element or the Window", newPageScroller);
+        return;
+      }
+      uss._containersData.set(newPageScroller, []);
     }
     uss._pageScroller = newPageScroller;
   },
@@ -1064,7 +1109,8 @@ window.uss = {
       _style = window.getComputedStyle(element);
       if((_relativePositioned || _style.position !== "static") && 
           _overflowRegex.test(_style.overflow) && 
-          _isScrollable(element)) {
+          _isScrollable(element)
+      ) {
         _scrollableParentFound(element);
       }
       //If this parent is fixed, no other parent can scroll the element
@@ -1152,9 +1198,9 @@ window.uss = {
       if(!_containerData[8]) _containerData[8] = timestamp;
       
       const _scrollID = _containerData[0];  
-      let _stepLength = !!_containerData[14] ? _containerData[14](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container) :
-                        !!_containerData[12] ? _containerData[12](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container) :
-                                               DEFAULT_XSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container);
+      let _stepLength = _containerData[14] ? _containerData[14](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container) :
+                        _containerData[12] ? _containerData[12](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container) :
+                                             DEFAULT_XSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container);
       
       //The current scroll-animation has been aborted by the stepLengthCalculator.
       if(_scrollID !== _containerData[0]) return; 
@@ -1262,9 +1308,9 @@ window.uss = {
       if(!_containerData[9]) _containerData[9] = timestamp;
 
       const _scrollID = _containerData[1];
-      let _stepLength = !!_containerData[15] ? _containerData[15](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container) :
-                        !!_containerData[13] ? _containerData[13](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container) :
-                                               DEFAULT_YSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container);
+      let _stepLength = _containerData[15] ? _containerData[15](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container) :
+                        _containerData[13] ? _containerData[13](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container) :
+                                             DEFAULT_YSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container);
       
       //The current scroll-animation has been aborted by the stepLengthCalculator.
       if(_scrollID !== _containerData[1]) return; 
@@ -2000,6 +2046,9 @@ window.addEventListener("resize", () => {
 }, {passive:true});
 
 function __ussInit() {
+  //Force the calculation of the _windowScrollers.
+  uss.getWindowScrollers(true);
+
   //Force the calculation of the _pageScroller.
   uss.getPageScroller(true);
 

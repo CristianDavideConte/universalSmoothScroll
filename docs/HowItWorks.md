@@ -14,7 +14,8 @@ The `uss` object's properties are the API's functionalities and they can either 
 * [`variables`](./VariablesAbout.md) _(used internally)_
 * [`functions`](./FunctionsAbout.md) _(publicly available)_ <br/>
   
-The `uss`'s [`variables`](./VariablesAbout.md) ***SHOULD NOT*** be directly manipulated: always use the provided accessors.<br/>
+The `uss`'s [`variables`](./VariablesAbout.md) are initialized ***after*** the window's [`load event`](https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event) so you should [`wait for it`](https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event#examples) in order to use the API's functionalities. <br/>
+These [`variables`](./VariablesAbout.md) ***SHOULD NOT*** be directly manipulated: always use the provided accessors.<br/>
 You will be able to recognize those internal [`variables`](./VariablesAbout.md) because their names begin with an `_` _(underscore)_. <br/>
 
 For instance:

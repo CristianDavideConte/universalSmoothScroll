@@ -317,7 +317,24 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     Returns the value of the <a href = "./VariablesAbout.md#_scrollbarsMaxDimension"><code>_scrollbarsMaxDimension</code></a> property.
    </td>
   </tr> 
-         
+                  
+  <tr id = "getWindowScrollersFun">
+   <td rowspan = "1" align = "center">
+    <code>getWindowScrollers</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <i>
+      <a href = "./FunctionsAbout.md#getWindowScrollers"><code>forceCalculation</code></a>
+    </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <a href = "./VariablesAbout.md#_windowScrollers"><code>_windowScrollers</code></a> property.
+   </td>
+  </tr> 
+
   <tr id = "getPageScrollerFun">
    <td rowspan = "1" align = "center">
     <code>getPageScroller</code>
@@ -1713,6 +1730,22 @@ The following table describes every entry of the `Input Parameters` column of th
   </td>
   </tr>
   
+  <tr id = "getWindowScrollers">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getWindowScrollersFun"><code>getWindowScrollers</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    If <code>true</code> flushes the internal cache for the <a href = "./VariablesAbout.md#_windowScrollers"><code>_windowScrollers</code></a> variable and forces its recalculation <i>(expensive operation)</i> before returning it. <br/>
+    If <code>false</code> the result is returned from cache. 
+  </td>
+  </tr>
+
   <tr id = "getPageScroller">
   <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#getPageScrollerFun"><code>getPageScroller</code></a>

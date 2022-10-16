@@ -148,6 +148,21 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
   </tr>
   
+  <tr id = "_windowScrollers">
+   <td rowspan = "1" align = "center">
+    <code>_windowScrollers</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Array</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    Depends on the webpage style
+   </td>
+   <td rowspan = "1" align = "left">
+    An array containing the Elements that scroll the Window when they're scrolled and that <i>(viceversa)</i> are scrolled when the Window is scrolled.
+   </td>
+  </tr>
+
   <tr id = "_pageScroller">
    <td rowspan = "1" align = "center">
     <code>_pageScroller</code>
