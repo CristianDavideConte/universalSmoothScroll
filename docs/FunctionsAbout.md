@@ -318,20 +318,20 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </td>
   </tr> 
                   
-  <tr id = "getWindowScrollersFun">
+  <tr id = "getWindowScrollerFun">
    <td rowspan = "1" align = "center">
-    <code>getWindowScrollers</code>
+    <code>getWindowScroller</code>
    </td>
    <td rowspan = "1" align = "center">
     <i>
-      <a href = "./FunctionsAbout.md#getWindowScrollers"><code>forceCalculation</code></a>
+      <a href = "./FunctionsAbout.md#getWindowScroller"><code>forceCalculation</code></a>
     </i>
    </td>
    <td rowspan = "1" align = "center">
     <code>false</code>
    </td>
    <td rowspan = "1" align = "left">
-    Returns the value of the <a href = "./VariablesAbout.md#_windowScrollers"><code>_windowScrollers</code></a> property.
+    Returns the value of the <a href = "./VariablesAbout.md#_windowScroller"><code>_windowScroller</code></a> property.
    </td>
   </tr> 
 
@@ -1482,7 +1482,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </td>
    <td rowspan = "6" align = "left">
     Automatically binds every valid anchor (<code>&lt;a&gt;</code> and <code>&lt;area&gt;</code> in the DOM) to the corresponding element that should be scrolled into view. <br/>
-    Whenever a valid anchor is clicked the passed <code>init</code> function is invoked and if it doesn't return <code>false</code>, a scroll-animation will bring into view the linked element and the browser's history will be updated <i>(if requested)</i>.
+    Whenever a valid anchor is clicked, or the user navigates through the history <i>(if requested)</i>, the passed <code>init</code> function is invoked and if it doesn't return <code>false</code>, a scroll-animation will bring into view the linked element and the browser's history will be updated <i>(if requested)</i>.
    </td>
   </tr> 
   <tr>
@@ -1730,9 +1730,9 @@ The following table describes every entry of the `Input Parameters` column of th
   </td>
   </tr>
   
-  <tr id = "getWindowScrollers">
+  <tr id = "getWindowScroller">
   <td rowspan = "1" align = "center">
-    <a href = "./FunctionsAbout.md#getWindowScrollersFun"><code>getWindowScrollers</code></a>
+    <a href = "./FunctionsAbout.md#getWindowScrollerFun"><code>getWindowScroller</code></a>
   </td>
   <td rowspan = "1" align = "center">
     <code>forceCalculation</code>
@@ -1741,7 +1741,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    If <code>true</code> flushes the internal cache for the <a href = "./VariablesAbout.md#_windowScrollers"><code>_windowScrollers</code></a> variable and forces its recalculation <i>(expensive operation)</i> before returning it. <br/>
+    If <code>true</code> flushes the internal cache for the <a href = "./VariablesAbout.md#_windowScroller"><code>_windowScroller</code></a> variable and forces its recalculation <i>(expensive operation)</i> before returning it. <br/>
     If <code>false</code> the result is returned from cache. 
   </td>
   </tr>
@@ -2852,10 +2852,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the left. <br/>
-    <code>false</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the right. <br/>
-    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
-    <strong><i>Any other value</i></strong>, if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the center. <br/>
+    <code>true</code> if the alignment <i>(on the x-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the left. <br/>
+    <code>false</code> if the alignment <i>(on the x-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the right. <br/>
+    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the x-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
+    <strong><i>Any other value</i></strong>, if the alignment <i>(on the x-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
   <tr>
@@ -2866,10 +2866,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the left. <br/>
-    <code>false</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the right. <br/>
-    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
-    <strong><i>Any other value</i></strong>, if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the center. <br/>
+    <code>true</code> if the alignment <i>(on the y-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the left. <br/>
+    <code>false</code> if the alignment <i>(on the y-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the right. <br/>
+    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the y-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
+    <strong><i>Any other value</i></strong>, if the alignment <i>(on the y-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
   <tr>
@@ -2880,14 +2880,17 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when any anchor is clicked. <br/>
-    If <code>init</code> returns <code>false</code>, the click is ignored. <br/>
+    A function that is invoked whenever any valid anchor is clicked. <br/>
+    If <code>updateHistory</code> is <code>true</code> this function is also called when the user navigates back/forward through the history. <br/>
     When invoked, <code>init</code> is always passed the following input parameters <i>(in this order)</i>: 
     <ul> 
-    <li>The anchor that has been clicked.</li>
-    <li>The anchor's destination element.</li>
+     <li>The anchor that has been clicked.</li>
+     <li>The anchor's destination element.</li>
+     <li>The event that triggered it.</li>
     </ul>
-    If <code>updateHistory</code> is <code>true</code> and the user navigates through its history, the passed anchor is <code>null</code>.  
+    If <code>updateHistory</code> is <code>true</code> and the user navigates through the history, the passed anchor is <code>null</code>. <br/>
+    If the <code>init</code> function is not passed to <code>hrefSetup</code> or it's not a function, the propagation of the event that would have triggered it (3<sup>rd</sup> parameter above) will be stopped. <br/>
+    If <code>init</code> returns <code>false</code>, no scroll-animation will be executed.   
   </td>
   </tr>
   <tr>
@@ -2898,7 +2901,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when any anchor's destination element is successfully scrolled into view.
+    A function which is invoked when any valid anchor's destination element is successfully scrolled into view.
   </td>
   </tr>
   <tr>
@@ -2909,7 +2912,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of any anchor's destination has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+    <code>true</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of any valid anchor's destination has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
   </td>
   </tr>
   <tr>
@@ -2920,8 +2923,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    If <code>true</code>, the browser's history is updated every time a valid anchor is clicked and navigating through history triggers a smooth scroll-animation to the corresponding fragment. <br/>
-    If <code>false</code>, the browser's history is never updated by the API and navigating through history produces the default <i>jump-to-position</i> behavior.
+    If <code>true</code>, the browser's history is updated every time a valid anchor is clicked and navigating through the history triggers a smooth scroll-animation to the corresponding fragment. <br/>
+    If <code>false</code>, the browser's history is never updated by the API and navigating through the history produces the default <i>jump-to-position</i> behavior.
   </td>
   </tr>
  </tbody>
