@@ -69,7 +69,7 @@
  * _windowHeight: number, the current Window's inner height (in px).
  * _scrollbarsMaxDimension: number, the highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
  * _framesTime: number, the time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
- * _windowScrollers: array, an array containing the Elements that scroll the Window when they're scrolled and that (viceversa) are scrolled when the Window is scrolled.
+ * _windowScroller: object, the element that scrolls the Window when it's scrolled and that (viceversa) is scrolled when the Window is scrolled.
  * _pageScroller: object, the element that scrolls the document. 
  *                        It's also the value used when an API method requires the container input parameter but nothing is passed.
  * _reducedMotion: boolean, true if the user has enabled any reduce-motion setting devicewise, false otherwise. 
@@ -117,7 +117,7 @@
  * getWindowHeight: function, returns the value of the "_windowHeight" property.
  * getWindowWidth: function, returns the value of the "_windowWidth" property.
  * getScrollbarsMaxDimension: function, returns the value of the "_scrollbarsMaxDimension" property.
- * getWindowScrollers: function, returns the value of the "_windowScrollers" property.
+ * getWindowScroller: function, returns the value of the "_windowScroller" property.
  * getPageScroller: function, returns the value of the "_pageScroller" property.
  * getReducedMotionState: function, returns the value of the "_reducedMotion" property.
  * getOnResizeEndCallbacks: function, returns the value of the "_onResizeEndCallbacks" property.
@@ -301,7 +301,7 @@ window.uss = {
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _scrollbarsMaxDimension: null,
   _framesTime: DEFAULT_FRAME_TIME,
-  _windowScrollers: null,
+  _windowScroller: null,
   _pageScroller: null,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   _onResizeEndCallbacks: [],
@@ -427,13 +427,14 @@ window.uss = {
 
     return uss._scrollbarsMaxDimension;
   },
-  getWindowScrollers: (forceCalculation = false) => {
-    //Check if the _windowScrollers has already been calculated.
-    if(forceCalculation || !uss._windowScrollers) {
-      uss._windowScrollers = [];
-
-      //Tests if scrolling the Window also scrolls the passed element and
-      //if the window is actually scrollable.
+  getWindowScroller: (forceCalculation = false) => {
+    //Check if the _windowScroller has already been calculated.
+    if(forceCalculation || !uss._windowScroller) {
+      /**
+       * Test if the window is scrollable and if scrolling it 
+       * also scrolls the passed element.
+       * Returns true if the uss._windowScroller has been set, false otherwise.
+       */
       const _testScroller = (element) => {
         //Save the original scroll positions of the Window and the element.
         const _originalWindowXPos = window.scrollX;
@@ -457,16 +458,26 @@ window.uss = {
         window.scroll(_originalWindowXPos, _originalWindowYPos);
         element.scroll(_originalElementXPos, _originalElementYPos);
         
-        if(!__isWindowScrollable) return false;
-        if(__windowScrollsElement) uss._windowScrollers.push(element);
-        return true;
+        if(!__isWindowScrollable) {
+          uss._windowScroller = window;
+          return true;
+        }
+        if(__windowScrollsElement) {
+          uss._windowScroller = element;
+          return true;
+        }
+        return false;
       }
 
-      //If the window is not scrollable there's no need to test further.
-      if(_testScroller(document.body)) _testScroller(document.documentElement);
+      //Only test the body if the html is not the element that scrolls the window.
+      if(!_testScroller(document.documentElement)) {
+        if(!_testScroller(document.body)) {
+          uss._windowScroller = window; //Fallback to window
+        }
+      }
     }
 
-    return uss._windowScrollers;
+    return uss._windowScroller;
   },
   getPageScroller: (forceCalculation = false, options = {debugString: "getPageScroller"}) => {
     //Check if the _pageScroller has already been calculated.
@@ -994,12 +1005,15 @@ window.uss = {
       element = element.parentElement;
     }
 
+    //This parent has position:absolute and it's a child of _body, no other parent can scroll the element.
+    if(element === _body && _style.position === "absolute") return null;
+    
     const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
     if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflowX) && _isScrollable(_body)) return _body; 
     if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflowX) && _isScrollable(_html)) return _html; 
     if(_isScrollable(window)) return window;
     return null; 
-  },   
+  },
   getYScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
     if(element === window) return null;
     if(!(element instanceof Element)) {
@@ -1032,6 +1046,9 @@ window.uss = {
       if(_style.position === "fixed") return null;
       element = element.parentElement;
     }
+
+    //This parent has position:absolute and it's a child of _body, no other parent can scroll the element.
+    if(element === _body && _style.position === "absolute") return null;
 
     const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
     if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflowY) && _isScrollable(_body)) return _body; 
@@ -1071,6 +1088,9 @@ window.uss = {
       if(_style.position === "fixed") return null;
       element = element.parentElement;
     }
+    
+    //This parent has position:absolute and it's a child of _body, no other parent can scroll the element.
+    if(element === _body && _style.position === "absolute") return null;
 
     const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
     if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflow) && _isScrollable(_body)) return _body; 
@@ -1117,6 +1137,9 @@ window.uss = {
       if(_style.position === "fixed") return _scrollableParents;
       element = element.parentElement;
     }
+
+    //This parent has position:absolute and it's a child of _body, no other parent can scroll the element.
+    if(element === _body && _style.position === "absolute") return _scrollableParents;
 
     const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
     if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflow) && _isScrollable(_body)) _scrollableParentFound(_body); 
@@ -1511,17 +1534,19 @@ window.uss = {
     if(_containers[_containerIndex] === window) {
       const _html = document.documentElement;
       const _body = document.body;
-      
-      if(_containers[_containerIndex - 1] === _html && _canWindowScrollElement(_html)) {
+      const _windowScroller = uss.getWindowScroller(false, options);
+
+      if(_containers[_containerIndex - 1] === _html && _windowScroller === _html) {
         _containerIndex--;
         _containers.splice(_containerIndex, 1);
-      }
-
-      if(_containers[_containerIndex - 1] === _body && _canWindowScrollElement(_body)) {
+      } else if(_containers[_containerIndex - 1] === _body && _windowScroller === _body) {
         _containerIndex--;
         _containers.splice(_containerIndex, 1);
       }
     }
+
+    const _alignToNearestLeft = /nearest/i.test(alignToLeft);
+    const _alignToNearestTop = /nearest/i.test(alignToTop);
 
     let _alignToLeft = alignToLeft;
     let _alignToTop  = alignToTop;
@@ -1540,32 +1565,6 @@ window.uss = {
     };
 
     _scrollContainer();
-
-    //Tests if scrolling the Window also scrolls the passed element.
-    function _canWindowScrollElement(element) {
-      //Save the original scroll positions of the Window and the element.
-      const _originalWindowXPosition = window.scrollX;
-      const _originalWindowYPosition = window.scrollY; 
-      const _originalElementXPosition = element.scrollLeft;
-      const _originalElementYPosition = element.scrollTop; 
-
-      //Scroll the Window and the element to a known initial position.
-      window.scroll(0,0);
-      element.scroll(0,0);
-
-      //Scroll the Window and test if the element has the same scroll positions.
-      window.scroll(100, 100);
-      const _windowScrollsElement = element.scrollLeft === window.scrollX && 
-                                    element.scrollTop === window.scrollY;
-      
-      //Restore the original scroll positions of the Window and the element.
-      if(!_windowScrollsElement) {
-        element.scroll(_originalElementXPosition, _originalElementYPosition);
-      }
-      window.scroll(_originalWindowXPosition, _originalWindowYPosition);
-      
-      return _windowScrollsElement;
-    }
 
     //Execute all the calculations needed for scrolling an element into view.
     function _scrollContainer() {   
@@ -1590,14 +1589,14 @@ window.uss = {
       const _elementInitialY = _elementRect.top  - _containerRect.top;  //_currentElement's y-coordinate relative to it's container
 
       //Align to "nearest" is an indirect way to say: Align to "top" / "bottom" / "center".
-      if(/nearest/i.test(alignToLeft)) {
+      if(_alignToNearestLeft) {
         const _leftDelta   = _elementInitialX > 0 ? _elementInitialX : -_elementInitialX;  //distance from left border    (container<-element  container)
         const _rightDelta  = Math.abs(_containerWidth - _elementInitialX - _elementWidth); //distance from right border   (container  element->container)
         const _centerDelta = Math.abs(0.5 * (_containerWidth - _elementWidth) - _elementInitialX); //distance from center (container->element<-container)
         _alignToLeft = _leftDelta < _centerDelta ? true : _rightDelta < _centerDelta ? false : null;
       }
 
-      if(/nearest/i.test(alignToTop)) {
+      if(_alignToNearestTop) {
         const _topDelta    = _elementInitialY > 0 ? _elementInitialY : -_elementInitialY;    //distance from top border     (container↑↑element  container)
         const _bottomDelta = Math.abs(_containerHeight - _elementInitialY - _elementHeight); //distance from bottom border  (container  element↓↓container)
         const _centerDelta = Math.abs(0.5 * (_containerHeight - _elementHeight) - _elementInitialY); //distance from center (container↓↓element↑↑container)
@@ -2019,14 +2018,14 @@ function onResize() {
 
   //Flush the internal caches.
   for(const containerData of uss._containersData.values()) {
-    containerData[16] = null;
-    containerData[17] = null; 
-    containerData[18] = null; //Perhaps use a mutation observer
-    containerData[19] = null; //Perhaps use a mutation observer
-    containerData[20] = null; //Perhaps use a resize observer 
-    containerData[21] = null; //Perhaps use a resize observer 
-    containerData[22] = null; //Perhaps use a resize observer 
-    containerData[23] = null; //Perhaps use a resize observer 
+    containerData[16] = undefined;
+    containerData[17] = undefined; 
+    containerData[18] = undefined; //Perhaps use a mutation observer
+    containerData[19] = undefined; //Perhaps use a mutation observer
+    containerData[20] = undefined; //Perhaps use a resize observer 
+    containerData[21] = undefined; //Perhaps use a resize observer 
+    containerData[22] = undefined; //Perhaps use a resize observer 
+    containerData[23] = undefined; //Perhaps use a resize observer 
   }
 
   for(const callback of uss._onResizeEndCallbacks) callback();
@@ -2046,8 +2045,8 @@ window.addEventListener("resize", () => {
 }, {passive:true});
 
 function __ussInit() {
-  //Force the calculation of the _windowScrollers.
-  uss.getWindowScrollers(true);
+  //Force the calculation of the _windowScroller.
+  uss.getWindowScroller(true);
 
   //Force the calculation of the _pageScroller.
   uss.getPageScroller(true);
