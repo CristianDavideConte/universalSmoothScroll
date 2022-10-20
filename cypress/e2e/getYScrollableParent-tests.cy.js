@@ -20,8 +20,8 @@ describe("getYScrollableParent", function() {
                 expect(res).to.throw(constants.defaultUssException);
               })
               .then(() => {
-                const _bodyParent = win;
                 const _htmlParent = win;
+                const _bodyParent = _htmlParent;
 
                 const _body = win.document.body;
                 

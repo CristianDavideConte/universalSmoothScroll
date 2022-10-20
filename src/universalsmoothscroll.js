@@ -206,12 +206,13 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
     if(receivedValue === null || receivedValue === undefined) receivedValue = String(receivedValue);
     else if(receivedValue === window) receivedValue = "window";
     else if(Array.isArray(receivedValue)) receivedValue = "[" + receivedValue.toString() + "]"; 
-    else if(receivedValue instanceof Element) {
+    else if(receivedValue instanceof Element || (receivedValue.tagName && (receivedValue.id || receivedValue.className))) {
       const _id = receivedValue.id ? "#" + receivedValue.id : "";
       const _className = receivedValue.className ? "." + receivedValue.className : "";
       receivedValue = receivedValue.tagName.toLowerCase() + _id + _className;
     } else {
       receivedValue = receivedValue.name || 
+                      receivedValue.outerHTML ||
                       receivedValue
                       .toString()
                       .replace(new RegExp("\n", "g"), "");
@@ -256,12 +257,13 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
     if(subject === null || subject === undefined) subject = String(subject);
     else if(subject === window) subject = "window";
     else if(Array.isArray(subject)) subject = "[" + subject.toString() + "]"; 
-    else if(subject instanceof Element) {
+    else if(subject instanceof Element || (subject.tagName && (subject.id || subject.className))) {
       const _id = subject.id ? "#" + subject.id : "";
       const _className = subject.className ? "." + subject.className : "";
       subject = subject.tagName.toLowerCase() + _id + _className;
     } else {
       subject = subject.name || 
+                subject.outerHTML ||
                 subject
                 .toString()
                 .replace(new RegExp("\n", "g"), "");
@@ -1011,7 +1013,7 @@ window.uss = {
     const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
     if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflowX) && _isScrollable(_body)) return _body; 
     if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflowX) && _isScrollable(_html)) return _html; 
-    if(_isScrollable(window)) return window;
+    //if(_isScrollable(window)) return window;
     return null; 
   },
   getYScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
