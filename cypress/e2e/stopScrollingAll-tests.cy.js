@@ -160,6 +160,10 @@ describe("stopScrollingAll containersData integrity", function() {
                     const _xScrollbarSize = uss.calcXScrollbarDimension(uss.getPageScroller());
                     const _yScrollbarSize = uss.calcYScrollbarDimension(uss.getPageScroller());
                     const _bordersSizes = uss.calcBordersDimensions(uss.getPageScroller());
+                    const _scrollableParentXNotHidden = uss.getXScrollableParent(uss.getPageScroller(), false);
+                    const _scrollableParentXHidden = uss.getXScrollableParent(uss.getPageScroller(), true);
+                    const _scrollableParentYNotHidden = uss.getYScrollableParent(uss.getPageScroller(), false);
+                    const _scrollableParentYHidden = uss.getYScrollableParent(uss.getPageScroller(), true);
 
                     uss.setXStepLengthCalculator(_testCalculatorNonTemporary, uss.getPageScroller(), false);
                     uss.setXStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
@@ -190,6 +194,10 @@ describe("stopScrollingAll containersData integrity", function() {
                     expect(_containerData[21]).to.equal(_bordersSizes[1]);
                     expect(_containerData[22]).to.equal(_bordersSizes[2]);
                     expect(_containerData[23]).to.equal(_bordersSizes[3]);
+                    expect(_containerData[24]).to.equal(_scrollableParentXNotHidden);
+                    expect(_containerData[25]).to.equal(_scrollableParentXHidden);
+                    expect(_containerData[26]).to.equal(_scrollableParentYNotHidden);
+                    expect(_containerData[27]).to.equal(_scrollableParentYHidden);
                 });
             });         
     });

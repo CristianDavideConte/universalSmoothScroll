@@ -18,10 +18,34 @@
                 overflow-x: scroll;
                 overflow-y: visible;
             }
+            .x-scroller {
+                width: 2000px;
+                height: 2000px;
+                overflow-x: scroll;
+                overflow-y: visible;
+            }
+            .y-scroller {
+                width: 2000px;
+                height: 2000px;
+                overflow-y: scroll;
+                overflow-x: visible;
+            }
             .no-scroller {
                 width: 2000px;
                 height: 2000px;
                 overflow: visible;
+            }
+            .scrollable-content {
+                width: 4000px;
+                height: 4000px;
+            }
+            .x-scrollable-content {
+                width: 4000px;
+                height: 1px;
+            }
+            .y-scrollable-content {
+                width: 1px;
+                height: 4000px;
             }
             .position-static {
                 position: static;
@@ -35,9 +59,21 @@
             .position-absolute {
                 position: absolute;
             }
-            .scrollable-content {
-                width: 4000px;
-                height: 4000px;
+            .overflow-x-hidden {
+                overflow-x: hidden;
+            }
+            .overflow-x-scroll {
+                overflow-x: scroll;
+            }
+            .overflow-y-hidden {
+                overflow-y: hidden;
+            }
+            .overflow-y-scroll {
+                overflow-y: scroll;
+            }
+            .overflow-hidden {
+                overflow-x: hidden;
+                overflow-y: hidden;
             }
         </style>
     </head>
@@ -70,5 +106,12 @@
             </div>
         </div>
 
+        <div class = "no-scroller overflow-x-scroll overflow-y-hidden" id = "generic-element-parent-4">
+            <div class = "y-scrollable-content" id = "generic-element-4"></div>
+        </div>
+
+        <div class = "no-scroller overflow-x-hidden overflow-y-scroll" id = "generic-element-parent-5">
+            <div class = "x-scrollable-content" id = "generic-element-5"></div>
+        </div>
     </body>
 </html>

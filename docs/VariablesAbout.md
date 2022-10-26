@@ -309,6 +309,10 @@ Index | Type | Description
 `21` | `Number` | Contains the cached value of the right border's width _(in px)_ of this container.
 `22` | `Number` | Contains the cached value of the bottom border's height _(in px)_ of this container.
 `23` | `Number` | Contains the cached value of the left border's width _(in px)_ of this container.
+`24` | `Object` | Contains the cached value of this container's next scrollable parent on the x-axis which does not have `overflow-x:hidden`.
+`25` | `Object` | Contains the cached value of this container's next scrollable parent on the x-axis which has `overflow-x:hidden`.
+`26` | `Object` | Contains the cached value of this container's next scrollable parent on the y-axis which does not have `overflow-y:hidden`.
+`27` | `Object` | Contains the cached value of this container's next scrollable parent on the y-axis which has `overflow-y:hidden`.
 
 `This container` refers to the `key` linked to each array.
 

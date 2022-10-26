@@ -20,8 +20,8 @@ describe("getYScrollableParent", function() {
                 expect(res).to.throw(constants.defaultUssException);
               })
               .then(() => {
-                const _htmlParent = win;
-                const _bodyParent = _htmlParent;
+                const _htmlParent = null;
+                const _bodyParent = null;
 
                 const _body = win.document.body;
                 
@@ -36,10 +36,16 @@ describe("getYScrollableParent", function() {
                 const _genericElement2 = win.document.getElementById("generic-element-2");
                 const _genericElement3 = win.document.getElementById("generic-element-3");
                 
+                const _genericElement4 = win.document.getElementById("generic-element-4");
+                const _genericElement5 = win.document.getElementById("generic-element-5");
+                
                 const _genericElementParent0 = win.document.getElementById("generic-element-parent-0-a");
                 const _genericElementParent1 = win.document.getElementById("generic-element-parent-1");
                 const _genericElementParent2 = win.document.getElementById("generic-element-parent-2");
                 const _genericElementParent3 = win.document.getElementById("generic-element-parent-3");
+
+                const _genericElementParent4 = win.document.getElementById("generic-element-parent-4");
+                const _genericElementParent5 = win.document.getElementById("generic-element-parent-5");
 
                 //test window
                 expect(uss.getYScrollableParent(win)).to.be.null;  
@@ -67,6 +73,12 @@ describe("getYScrollableParent", function() {
                 expect(uss.getYScrollableParent(_genericElement1)).to.equal(_genericElementParent1);
                 expect(uss.getYScrollableParent(_genericElement2)).to.equal(_genericElementParent2);
                 expect(uss.getYScrollableParent(_genericElement3)).to.equal(_genericElementParent3);
+                
+                //test elements that changes their scrollable parent based on the includeHiddenParents parameter
+                expect(uss.getYScrollableParent(_genericElement4, false)).to.equal(_body);
+                expect(uss.getYScrollableParent(_genericElement4, true)).to.equal(_genericElementParent4);
+                expect(uss.getYScrollableParent(_genericElement5, false)).to.equal(_body);
+                expect(uss.getYScrollableParent(_genericElement5, true)).to.equal(_body);
             });
         });     
     });
