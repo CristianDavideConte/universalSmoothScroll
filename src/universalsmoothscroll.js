@@ -1194,7 +1194,7 @@ window.uss = {
         _cachedXParent = uss.getXScrollableParent(element, includeHiddenParents, options);
       }
 
-      return _cachedXParent !== null && _cachedXParent !== window && _cachedXParent.contains(_cachedYParent) ? _cachedXParent : _cachedYParent;
+      return _cachedXParent === null || _cachedXParent === window || _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
     }
 
     const _body = document.body;
