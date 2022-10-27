@@ -165,6 +165,8 @@ describe("stopScrolling containersData integrity", function() {
                     const _scrollableParentXHidden = uss.getXScrollableParent(uss.getPageScroller(), true);
                     const _scrollableParentYNotHidden = uss.getYScrollableParent(uss.getPageScroller(), false);
                     const _scrollableParentYHidden = uss.getYScrollableParent(uss.getPageScroller(), true);
+                    const _scrollXCalculator = uss.getScrollXCalculator(uss.getPageScroller());
+                    const _scrollYCalculator = uss.getScrollYCalculator(uss.getPageScroller());
 
                     uss.setXStepLengthCalculator(_testCalculatorNonTemporary, uss.getPageScroller(), false);
                     uss.setXStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
@@ -199,6 +201,8 @@ describe("stopScrolling containersData integrity", function() {
                     expect(_containerData[25]).to.equal(_scrollableParentXHidden);
                     expect(_containerData[26]).to.equal(_scrollableParentYNotHidden);
                     expect(_containerData[27]).to.equal(_scrollableParentYHidden);
+                    expect(_containerData[28]).to.equal(_scrollXCalculator);
+                    expect(_containerData[29]).to.equal(_scrollYCalculator);
                 });
             });         
     });

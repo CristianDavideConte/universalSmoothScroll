@@ -63,6 +63,8 @@
  *                     [25] contains the cached value of this container's next scrollable parent on the x-axis which has "overflow-x:hidden".
  *                     [26] contains the cached value of this container's next scrollable parent on the y-axis which does not have "overflow-y:hidden".
  *                     [27] contains the cached value of this container's next scrollable parent on the y-axis which has "overflow-y:hidden".
+ *                     [28] contains the cached value of this container's scrollXCalculator.
+ *                     [29] contains the cached value of this container's scrollYCalculator.
  * _xStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a
  *                       single scroll-animation's step on the x-axis of that container.
  * _yStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a
@@ -905,14 +907,50 @@ window.uss = {
     return _bordersDimensions;
   },
   getScrollXCalculator: (container = uss._pageScroller, options = {debugString: "getScrollXCalculator"}) => {
-    if(container === window)         return () => window.scrollX;
-    if(container instanceof Element) return () => container.scrollLeft;
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);                                       
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+
+    if(!_containerData[28]) {
+      /**
+       * Since the functions that determine the scroll position of the container
+       * are fixed, we can cache the scrollYCalculator of container too. 
+       */
+      if(container === window) {
+        _containerData[28] = () => window.scrollX; //ScrollXCalculator
+        _containerData[29] = () => window.scrollY; //ScrollYCalculator
+      } else if(container instanceof Element) {
+        _containerData[28] = () => container.scrollLeft; //ScrollXCalculator
+        _containerData[29] = () => container.scrollTop;  //ScrollYCalculator
+      } else {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);     
+        return;                                  
+      }
+      if(!_oldData) uss._containersData.set(container, _containerData);
+    }
+    return _containerData[28];
   },
   getScrollYCalculator: (container = uss._pageScroller, options = {debugString: "getScrollYCalculator"}) => {
-    if(container === window)         return () => window.scrollY;
-    if(container instanceof Element) return () => container.scrollTop;
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+
+    if(!_containerData[29]) {
+      /**
+       * Since the functions that determine the scroll position of the container
+       * are fixed, we can cache the scrollXCalculator of container too. 
+       */
+      if(container === window) {
+        _containerData[28] = () => window.scrollX; //ScrollXCalculator
+        _containerData[29] = () => window.scrollY; //ScrollYCalculator
+      } else if(container instanceof Element) {
+        _containerData[28] = () => container.scrollLeft; //ScrollXCalculator
+        _containerData[29] = () => container.scrollTop;  //ScrollYCalculator
+      } else {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);                                       
+        return;                                  
+      }
+      uss._containersData.set(container, _containerData);
+    }
+    return _containerData[29];
   },
   getMaxScrollX: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollX"}) => {
     //Check if the maxScrollX value for the passed container has already been calculated. 
@@ -1006,13 +1044,14 @@ window.uss = {
       return null;
     }
 
-    if(!(element instanceof Element)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-      return;
+    if(!_oldData) {
+      if(!(element instanceof Element)) {
+        uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+        return;
+      }
+      uss._containersData.set(element, _containerData);
     }
     
-    if(!_oldData) uss._containersData.set(element, _containerData);
-
     //If the element has position:fixed,  
     //it has no scrollable parent.
     let _style = window.getComputedStyle(element);
@@ -1100,13 +1139,14 @@ window.uss = {
       if(!_oldData) uss._containersData.set(element, _containerData);
       return null;
     }
-
-    if(!(element instanceof Element)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-      return;
-    }
     
-    if(!_oldData) uss._containersData.set(element, _containerData);
+    if(!_oldData) {
+      if(!(element instanceof Element)) {
+        uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+        return;
+      }
+      uss._containersData.set(element, _containerData);
+    }
 
     //If the element has position:fixed,  
     //it has no scrollable parent.
@@ -1194,7 +1234,7 @@ window.uss = {
         _cachedXParent = uss.getXScrollableParent(element, includeHiddenParents, options);
       }
 
-      return _cachedXParent === null || _cachedXParent === window || _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
+      return _cachedXParent === window || _cachedXParent === null || _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
     }
 
     const _body = document.body;
@@ -1221,12 +1261,13 @@ window.uss = {
       return null;
     }
 
-    if(!(element instanceof Element)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-      return;
+    if(!_oldData) {
+      if(!(element instanceof Element)) {
+        uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+        return;
+      }
+      uss._containersData.set(element, _containerData);
     }
-    
-    if(!_oldData) uss._containersData.set(element, _containerData);
 
     //If the element has position:fixed,  
     //it has no scrollable parent.
@@ -1930,6 +1971,9 @@ window.uss = {
         if(_containerData[25] || _containerData[25] === null) _newData[25] = _containerData[25]; //Next hidden scrollable parent on the x-axis
         if(_containerData[26] || _containerData[26] === null) _newData[26] = _containerData[26]; //Next not-hidden scrollable parent on the y-axis
         if(_containerData[27] || _containerData[27] === null) _newData[27] = _containerData[27]; //Next hidden scrollable parent on the y-axis
+        if(_containerData[28]) _newData[28] = _containerData[28]; //ScrollXCalculator
+        if(_containerData[29]) _newData[29] = _containerData[29]; //ScrollYCalculator
+        
         uss._containersData.set(container, _newData);
       } 
     } else {
@@ -1971,6 +2015,9 @@ window.uss = {
         if(_containerData[25] || _containerData[25] === null) _newData[25] = _containerData[25]; //Next hidden scrollable parent on the x-axis
         if(_containerData[26] || _containerData[26] === null) _newData[26] = _containerData[26]; //Next not-hidden scrollable parent on the y-axis
         if(_containerData[27] || _containerData[27] === null) _newData[27] = _containerData[27]; //Next hidden scrollable parent on the y-axis
+        if(_containerData[28]) _newData[28] = _containerData[28]; //ScrollXCalculator
+        if(_containerData[29]) _newData[29] = _containerData[29]; //ScrollYCalculator
+        
         uss._containersData.set(container, _newData);
       } 
     } else {
@@ -2012,6 +2059,9 @@ window.uss = {
       if(_containerData[25] || _containerData[25] === null) _newData[25] = _containerData[25]; //Next hidden scrollable parent on the x-axis
       if(_containerData[26] || _containerData[26] === null) _newData[26] = _containerData[26]; //Next not-hidden scrollable parent on the y-axis
       if(_containerData[27] || _containerData[27] === null) _newData[27] = _containerData[27]; //Next hidden scrollable parent on the y-axis
+      if(_containerData[28]) _newData[28] = _containerData[28]; //ScrollXCalculator
+      if(_containerData[29]) _newData[29] = _containerData[29]; //ScrollYCalculator
+      
       uss._containersData.set(container, _newData);
     } else {
       if(container !== window && !(container instanceof Element)) {
@@ -2050,6 +2100,8 @@ window.uss = {
       if(_containerData[25] || _containerData[25] === null) _newData[25] = _containerData[25]; //Next hidden scrollable parent on the x-axis
       if(_containerData[26] || _containerData[26] === null) _newData[26] = _containerData[26]; //Next not-hidden scrollable parent on the y-axis
       if(_containerData[27] || _containerData[27] === null) _newData[27] = _containerData[27]; //Next hidden scrollable parent on the y-axis
+      if(_containerData[28]) _newData[28] = _containerData[28]; //ScrollXCalculator
+      if(_containerData[29]) _newData[29] = _containerData[29]; //ScrollYCalculator
       
       uss._containersData.set(_container, _newData)
     }
@@ -2172,6 +2224,8 @@ function onResize() {
     containerData[25] = undefined; //Perhaps use a resize observer 
     containerData[26] = undefined; //Perhaps use a resize observer 
     containerData[27] = undefined; //Perhaps use a resize observer 
+    //containerData[28] doesn't need to be reset
+    //containerData[29] doesn't need to be reset
   }
 
   for(const callback of uss._onResizeEndCallbacks) callback();
