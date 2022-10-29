@@ -318,7 +318,7 @@ Two worth mentioning special cases are:
 * the [`updateHistory`](./FunctionsAbout.md#hrefSetupFun) paremeter is `true` and the user navigates through the browser's history  
 
 In the first case only the [`_pageScroller`](./VariablesAbout.md#_pageScroller) will be scrolled _(to `(0,0)`_). <br/>
-In the second case the element that will be scrolled-into-view is the one that will be passed as the 2<sup>nd</sup> input of the [`init`](./FunctionsAbout.md#hrefSetupFun) parameter and the containers used by [`hrefSetup`](./FunctionsAbout.md#hrefSetupFun) can be retrieved as specified above.
+In the second case the element that will be scrolled-into-view is the one that is passed as the 2<sup>nd</sup> input of the [`init`](./FunctionsAbout.md#hrefSetupFun) parameter and the containers used by [`hrefSetup`](./FunctionsAbout.md#hrefSetupFun) can be retrieved as specified above.
 
 ---
 <br/>
