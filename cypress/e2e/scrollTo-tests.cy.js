@@ -38,6 +38,88 @@ describe("scrollTo", function() {
     });
 })
 
+describe("scrollTo-containScroll-below-0", function() {
+    let uss;
+    let finalXPosition;
+    let finalYPosition;
+    it("Scrolls the test element to (n1,n2) pixels where n1 and n2 are lower than 0", function() {
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                const _testElement = win.document.getElementById("scroller");
+                
+                cy.testFailingValues(uss.scrollTo, {
+                    0: [constants.failingValuesNoFiniteNumber,
+                        constants.failingValuesNoUndefined
+                        ]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.throw(constants.defaultUssException);
+                    expect(uss.isScrolling()).to.be.false;
+                })
+                .then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollTo(-100, -100, _testElement, resolve, true);
+                            finalXPosition = uss.getFinalXPosition(_testElement);
+                            finalYPosition = uss.getFinalYPosition(_testElement);
+                        }
+                    ).then(
+                        () => {
+                            cy.elementScrollLeftShouldBe(_testElement, 0);
+                            cy.elementScrollTopShouldBe(_testElement, 0);
+                            expect(finalXPosition).to.equal(0);
+                            expect(finalYPosition).to.equal(0);
+                        }
+                    );
+                });
+            });        
+    });
+})
+
+describe("scrollTo-containScroll-beyond-maxScrollX-and-maxScrollY", function() {
+    let uss;
+    let maxScrollX;
+    let maxScrollY;
+    let finalXPosition;
+    let finalYPosition;
+    it("Scrolls the test element to (n1,n2) pixels where n1 and n2 are higher than its maxScrollX and maxScrollY", function() {
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                const _testElement = win.document.getElementById("scroller");
+                
+                cy.testFailingValues(uss.scrollTo, {
+                    0: [constants.failingValuesNoFiniteNumber,
+                        constants.failingValuesNoUndefined
+                        ]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.throw(constants.defaultUssException);
+                    expect(uss.isScrolling()).to.be.false;
+                })
+                .then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            maxScrollX = uss.getMaxScrollX(_testElement);
+                            maxScrollY = uss.getMaxScrollY(_testElement);
+                            uss.scrollTo(maxScrollX + 100, maxScrollY + 100, _testElement, resolve, true);
+                            finalXPosition = uss.getFinalXPosition(_testElement);
+                            finalYPosition = uss.getFinalYPosition(_testElement);
+                        }
+                    ).then(
+                        () => {
+                            cy.elementScrollLeftShouldBe(_testElement, maxScrollX);
+                            cy.elementScrollTopShouldBe(_testElement, maxScrollY);
+                            expect(finalXPosition).to.equal(maxScrollX);
+                            expect(finalYPosition).to.equal(maxScrollY);
+                        }
+                    );
+                });
+            });        
+    });
+})
+
 describe("scrollTo-immediatelyStoppedScrolling", function() {
     let uss;
     it("Tests the scrollTo method whenever a scroll-animation is immediately stopped", function() {

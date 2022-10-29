@@ -995,7 +995,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
   </tr>
                         
   <tr id = "scrollXToFun">
-   <td rowspan = "3" align = "center">
+   <td rowspan = "4" align = "center">
     <code>scrollXTo</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1006,7 +1006,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Scrolls the x-axis of the passed container to the specified position <i>(in px)</i> if possible.
    </td>
   </tr> 
@@ -1030,9 +1030,20 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>undefined</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollXTo"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
+          
                         
   <tr id = "scrollYToFun">
-   <td rowspan = "3" align = "center">
+   <td rowspan = "4" align = "center">
     <code>scrollYTo</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1043,7 +1054,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Scrolls the y-axis of the passed container to the specified position <i>(in px)</i> if possible.
    </td>
   </tr> 
@@ -1067,9 +1078,19 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>undefined</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollYTo"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                         
   <tr id = "scrollXByFun">
-   <td rowspan = "4" align = "center">
+   <td rowspan = "5" align = "center">
     <code>scrollXBy</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1080,7 +1101,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "4" align = "left">
+   <td rowspan = "5" align = "left">
     Scrolls the x-axis the passed container by the specified amount of pixels if possible.
    </td>
   </tr> 
@@ -1114,9 +1135,19 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>true</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollXBy"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                        
   <tr id = "scrollYByFun">
-   <td rowspan = "4" align = "center">
+   <td rowspan = "5" align = "center">
     <code>scrollYBy</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1127,7 +1158,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "4" align = "left">
+   <td rowspan = "5" align = "left">
     Scrolls the y-axis the passed container by the specified amount of pixels if possible.
    </td>
   </tr> 
@@ -1161,9 +1192,19 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>true</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollYBy"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                        
   <tr id = "scrollToFun">
-   <td rowspan = "4" align = "center">
+   <td rowspan = "5" align = "center">
     <code>scrollTo</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1174,7 +1215,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "4" align = "left">
+   <td rowspan = "5" align = "left">
     Scrolls both the x and y axes of the passed container to the specified positions <i>(in px)</i> if possible.
    </td>
   </tr> 
@@ -1208,9 +1249,19 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>undefined</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollTo"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                          
   <tr id = "scrollByFun">
-   <td rowspan = "5" align = "center">
+   <td rowspan = "6" align = "center">
     <code>scrollBy</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1221,7 +1272,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "5" align = "left">
+   <td rowspan = "6" align = "left">
     Scrolls both the x and y axes of the passed container by the specified amounts of pixels if possible.
    </td>
   </tr> 
@@ -1263,6 +1314,16 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollBy"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
    </td>
   </tr>
                          
@@ -2352,7 +2413,7 @@ The following table describes every entry of the `Input Parameters` column of th
   </tr>
           
   <tr id = "scrollXTo">
-  <td rowspan = "3" align = "center">
+  <td rowspan = "4" align = "center">
     <a href = "./FunctionsAbout.md#scrollXToFun"><code>scrollXTo</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2387,10 +2448,22 @@ The following table describes every entry of the `Input Parameters` column of th
     A function which is invoked when this scroll-animation is completed.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the passed <code>finalXPosition</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollXFun">maxScrollX</a>]</code> interval before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
   
             
   <tr id = "scrollYTo">
-  <td rowspan = "3" align = "center">
+  <td rowspan = "4" align = "center">
     <a href = "./FunctionsAbout.md#scrollYToFun"><code>scrollYTo</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2425,9 +2498,21 @@ The following table describes every entry of the `Input Parameters` column of th
     A function which is invoked when this scroll-animation is completed.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the passed <code>finalYPosition</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollYFun">maxScrollY</a>]</code> interval before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
               
   <tr id = "scrollXBy">
-  <td rowspan = "4" align = "center">
+  <td rowspan = "5" align = "center">
     <a href = "./FunctionsAbout.md#scrollXByFun"><code>scrollXBy</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2474,9 +2559,21 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>false</code> if any on-going scroll-animation on the x-axis of <code>container</code> should extended by <code>deltaX</code> if possible.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the <a href = "./FunctionsAbout.md#scrollXToFun"><code>finalXPosition</code></a> obtained by the passed <code>deltaX</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollXFun">maxScrollX</a>]</code> interval before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
               
   <tr id = "scrollYBy">
-  <td rowspan = "4" align = "center">
+  <td rowspan = "5" align = "center">
     <a href = "./FunctionsAbout.md#scrollYByFun"><code>scrollYBy</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2523,9 +2620,21 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>false</code> if any on-going scroll-animation on the y-axis of <code>container</code> should extended by <code>deltaY</code> if possible.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the <a href = "./FunctionsAbout.md#scrollYToFun"><code>finalYPosition</code></a> obtained by the passed <code>deltaY</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollYFun">maxScrollY</a>]</code> interval before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
                 
   <tr id = "scrollTo">
-  <td rowspan = "4" align = "center">
+  <td rowspan = "5" align = "center">
     <a href = "./FunctionsAbout.md#scrollToFun"><code>scrollTo</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2572,9 +2681,21 @@ The following table describes every entry of the `Input Parameters` column of th
     If one of the two scroll-animations triggered by <a href = "./FunctionsAbout.md#scrollToFun"><code>scrollTo</code></a> (one for each axis) is <strong><i>interrupted/altered</i></strong>, the <code>callback</code> is executed whenever the remaning/unaltered one is completed.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the passed <code>finalXPosition</code> and <code>finalYPosition</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollXFun">maxScrollX</a>]</code> and <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollYFun">maxScrollY</a>]</code> intervals respectively before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
               
   <tr id = "scrollBy">
-  <td rowspan = "5" align = "center">
+  <td rowspan = "6" align = "center">
     <a href = "./FunctionsAbout.md#scrollByFun"><code>scrollBy</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2633,6 +2754,18 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>false</code> if any on-going scroll-animation on either the x and y axes of <code>container</code> should extended by respectively <code>deltaX</code> and <code>deltaY</code> if possible.
   </td>
   </tr> 
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the <a href = "./FunctionsAbout.md#scrollXToFun"><code>finalXPosition</code></a> and <a href = "./FunctionsAbout.md#scrollYToFun"><code>finalYPosition</code></a> obtained by the passed <code>deltaX</code> and <code>deltaY</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollXFun">maxScrollX</a>]</code> and <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollYFun">maxScrollY</a>]</code> intervals respectively before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
                 
   <tr id = "scrollIntoView">
   <td rowspan = "5" align = "center">

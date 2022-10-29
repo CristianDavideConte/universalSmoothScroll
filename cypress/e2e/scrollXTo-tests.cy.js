@@ -36,6 +36,78 @@ describe("scrollXTo", function() {
     });
 })
 
+describe("scrollXTo-containScroll-below-0", function() {
+    let uss;
+    let finalXPosition;
+    it("Horizontally scrolls the test element to n pixels where n is lower than 0", function() {
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                const _testElement = win.document.getElementById("scroller");
+                
+                cy.testFailingValues(uss.scrollXTo, {
+                    0: [constants.failingValuesNoFiniteNumber,
+                        constants.failingValuesNoUndefined
+                        ]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.throw(constants.defaultUssException);
+                    expect(uss.isXScrolling()).to.be.false;
+                })
+                .then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollXTo(-100, _testElement, resolve, true);
+                            finalXPosition = uss.getFinalXPosition(_testElement);
+                        }
+                    ).then(
+                        () => {
+                            cy.elementScrollLeftShouldBe(_testElement, 0);
+                            expect(finalXPosition).to.equal(0);
+                        }
+                    );
+                });
+            });        
+    });
+})
+
+describe("scrollXTo-containScroll-beyond-maxScrollX", function() {
+    let uss;
+    let maxScrollX;
+    let finalXPosition;
+    it("Horizontally scrolls the test element to n pixels where n is higher than its maxScrollX", function() {
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                const _testElement = win.document.getElementById("scroller");
+                
+                cy.testFailingValues(uss.scrollXTo, {
+                    0: [constants.failingValuesNoFiniteNumber,
+                        constants.failingValuesNoUndefined
+                        ]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.throw(constants.defaultUssException);
+                    expect(uss.isXScrolling()).to.be.false;
+                })
+                .then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            maxScrollX = uss.getMaxScrollX(_testElement);
+                            uss.scrollXTo(maxScrollX + 100, _testElement, resolve, true);
+                            finalXPosition = uss.getFinalXPosition(_testElement);
+                        }
+                    ).then(
+                        () => {
+                            cy.elementScrollLeftShouldBe(_testElement, maxScrollX);
+                            expect(finalXPosition).to.equal(maxScrollX);
+                        }
+                    );
+                });
+            });        
+    });
+})
+
 describe("scrollXTo-immediatelyStoppedScrolling", function() {
     let uss;
     let count = 0;

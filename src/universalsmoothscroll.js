@@ -1374,7 +1374,7 @@ window.uss = {
 
     return _scrollableParents;
   },
-  scrollXTo: (finalXPosition, container = uss._pageScroller, callback, options = {debugString: "scrollXTo"}) => {
+  scrollXTo: (finalXPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollXTo"}) => {
     if(!Number.isFinite(finalXPosition)) {
       uss._errorLogger(options.debugString, "the finalXPosition to be a number", finalXPosition);
       return;
@@ -1389,8 +1389,10 @@ window.uss = {
     }
 
     //Limit the final position to the [0, maxScrollX] interval. 
-    if(finalXPosition < 0) finalXPosition = 0;
-    else if(finalXPosition > _maxScrollX) finalXPosition = _maxScrollX;
+    if(containScroll) {
+      if(finalXPosition < 0) finalXPosition = 0;
+      else if(finalXPosition > _maxScrollX) finalXPosition = _maxScrollX;
+    }
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
     let _totalScrollAmount = finalXPosition - _scrollXCalculator();
@@ -1484,7 +1486,7 @@ window.uss = {
       _containerData[0] = window.requestAnimationFrame(_stepX);
     }
   },
-  scrollYTo: (finalYPosition, container = uss._pageScroller, callback, options = {debugString: "scrollYTo"}) => {
+  scrollYTo: (finalYPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollYTo"}) => {
     if(!Number.isFinite(finalYPosition)) {
       uss._errorLogger(options.debugString, "the finalYPosition to be a number", finalYPosition);
       return;
@@ -1499,8 +1501,10 @@ window.uss = {
     }
 
     //Limit the final position to the [0, maxScrollY] interval. 
-    if(finalYPosition < 0) finalYPosition = 0;
-    else if(finalYPosition > _maxScrollY) finalYPosition = _maxScrollY;
+    if(containScroll) {
+      if(finalYPosition < 0) finalYPosition = 0;
+      else if(finalYPosition > _maxScrollY) finalYPosition = _maxScrollY;
+    }
 
     const _scrollYCalculator = uss.getScrollYCalculator(container);
     let _totalScrollAmount = finalYPosition - _scrollYCalculator();
@@ -1629,7 +1633,7 @@ window.uss = {
           //Thanks to the new deltaX, the current scroll-animation 
           //has already surpassed the old finalXPosition.
           if(_remaningScrollAmount < 0) {
-            uss.scrollXTo(_finalXPosition, container, callback, options);
+            uss.scrollXTo(_finalXPosition, container, callback, containScroll, options);
             return;
           }
           
@@ -1644,7 +1648,7 @@ window.uss = {
       }
     }
 
-    uss.scrollXTo(_currentXPosition + deltaX, container, callback, options);
+    uss.scrollXTo(_currentXPosition + deltaX, container, callback, containScroll, options);
   },
   scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollYBy"}) => {
     if(!Number.isFinite(deltaY)) {
@@ -1680,7 +1684,7 @@ window.uss = {
           //Thanks to the new deltaY, the current scroll-animation 
           //has already surpassed the old finalYPosition. 
           if(_remaningScrollAmount < 0) {
-            uss.scrollYTo(_finalYPosition, container, callback, options);
+            uss.scrollYTo(_finalYPosition, container, callback, containScroll, options);
             return;
           }
           
@@ -1695,12 +1699,12 @@ window.uss = {
       }
     }
 
-    uss.scrollYTo(_currentYPosition + deltaY, container, callback, options);
+    uss.scrollYTo(_currentYPosition + deltaY, container, callback, containScroll, options);
   },
-  scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback, options = {debugString: "scrollTo"}) => {
+  scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollTo"}) => {
     if(typeof callback !== "function") {
-      uss.scrollXTo(finalXPosition, container, null, options);
-      uss.scrollYTo(finalYPosition, container, null, options);
+      uss.scrollXTo(finalXPosition, container, null, containScroll, options);
+      uss.scrollYTo(finalYPosition, container, null, containScroll, options);
       return;
     }
     //Execute the callback only if the initialization has finished and 
@@ -1717,9 +1721,9 @@ window.uss = {
     }
 
     let _initPhase = true;
-    uss.scrollXTo(finalXPosition, container, _scrollXCallback, options);
+    uss.scrollXTo(finalXPosition, container, _scrollXCallback, containScroll, options);
     _initPhase = false;
-    uss.scrollYTo(finalYPosition, container, _scrollYCallback, options);
+    uss.scrollYTo(finalYPosition, container, _scrollYCallback, containScroll, options);
   },
   scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollBy"}) => {
     if(typeof callback !== "function") {
@@ -1825,9 +1829,9 @@ window.uss = {
       const _scrollContainerX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
       const _scrollContainerY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
 
-      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, false, options);
-      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback, true, false, options);
-      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback, true, false, options);
+      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, true, options);
+      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback, true, true, options);
+      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback, true, true, options);
       else _callback();
     }
   },
@@ -1936,9 +1940,9 @@ window.uss = {
       const _scrollContainerX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
       const _scrollContainerY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
 
-      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, false, options);
-      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback, true, false, options);
-      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback, true, false, options);
+      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, true, options);
+      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback, true, true, options);
+      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback, true, true, options);
       else _callback();
     }
   }, 
@@ -2129,7 +2133,7 @@ window.uss = {
         //The URL is just "URL/#" or "URL/" 
         if(!_fragment) {
           if(_init(null, uss._pageScroller, event) !== false) {
-              uss.scrollTo(0, 0, uss._pageScroller, callback, options);
+              uss.scrollTo(0, 0, uss._pageScroller, callback, false, options);
           }
           return;
         } 
@@ -2165,7 +2169,7 @@ window.uss = {
             window.history.pushState("", "", "#");
           }
 
-          uss.scrollTo(0, 0, uss._pageScroller, callback, options);
+          uss.scrollTo(0, 0, uss._pageScroller, callback, false, options);
         }, {passive:false});
         continue;
       }

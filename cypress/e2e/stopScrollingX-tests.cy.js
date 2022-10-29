@@ -124,7 +124,7 @@ describe("stopScrollingX-immediatelyStopped", function() {
     });
 })
 
-describe("stopScrollingX containersData integrity", function() {
+describe("stopScrollingX-containersData-integrity", function() {
     let uss;
     it("Checks if the stopScrollingY function cleans the uss._containersData's arrays correctly", function() {
         cy.window()

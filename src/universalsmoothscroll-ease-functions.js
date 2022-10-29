@@ -398,7 +398,7 @@ export const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalcul
         } else {
           //The backward easing is used only if the new scroll-animations goes backward.
           if(_elasticAmount > 0) _scrollCalculator = backwardEasing; 
-          uss.scrollXTo(_currentPos - _elasticAmount * _oldDirection, container, _originalCallback);
+          uss.scrollXTo(_currentPos - _elasticAmount * _oldDirection, container, _originalCallback, false);
           _finalXPositionBackwardPhase = uss._containersData.get(container)[2]
         }
       }, debounceTime);
@@ -455,7 +455,7 @@ export const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalcul
         } else {
           //The backward easing is used only if the new scroll-animations goes backward.
           if(_elasticAmount > 0) _scrollCalculator = backwardEasing; 
-          uss.scrollYTo(_currentPos - _elasticAmount * _oldDirection, container, _originalCallback);
+          uss.scrollYTo(_currentPos - _elasticAmount * _oldDirection, container, _originalCallback, false);
           _finalYPositionBackwardPhase = uss._containersData.get(container)[3]
         }
       }, debounceTime);
