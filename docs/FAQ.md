@@ -310,8 +310,8 @@ uss.hrefSetup(
 
 ## Q: Which containers does the `hrefSetup` method use ?
 A: The [`hrefSetup`](./FunctionsAbout.md#hrefSetupFun) internally uses the [`scrollIntoView`](./FunctionsAbout.md#scrollIntoViewFun) function to bring the containers related to the detected anchors into the viewport with the specified alignment. <br/>
-In order to scroll-into-view a container the [`scrollIntoView`](./FunctionsAbout.md#scrollIntoViewFun) method retrieves all its scrollable parents by using the [`getAllScrollableParents`](./FunctionsAbout#getAllScrollableParentsFun) function. <br/>
-This means that when an anchor is clicked all the containers returned by [`getAllScrollableParents`](./FunctionsAbout#getAllScrollableParentsFun) _(invoked on the element linked to the anchor)_ ***can*** be scrolled _(they won't if they're already correctly aligned)_. 
+In order to scroll-into-view a container the [`scrollIntoView`](./FunctionsAbout.md#scrollIntoViewFun) method retrieves all its scrollable parents by using the [`getAllScrollableParents`](./FunctionsAbout.md#getAllScrollableParentsFun) function. <br/>
+This means that when an anchor is clicked all the containers returned by [`getAllScrollableParents`](./FunctionsAbout.md#getAllScrollableParentsFun) _(invoked on the element linked to the anchor)_ ***can*** be scrolled _(they won't if they're already correctly aligned)_. 
 
 Two worth mentioning special cases are:
 * an anchor with `href="#"`
