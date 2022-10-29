@@ -275,7 +275,8 @@ A: Unlike any other callback parameter of the USS API, this is a function that g
 
 This `init` function is always passed the following input parameters _(in this order)_:
 * the anchor that has been clicked
-* the element that has to be reached 
+* the element that has to be scrolled-into-view
+* the event that caused this method to be fired 
 
 If the `init` function returns `false` no scroll-animation takes place. 
 
@@ -305,6 +306,24 @@ uss.hrefSetup(
 
 ---
 <br/>
+
+
+## Q: Which containers does the `hrefSetup` method use ?
+A: The [`hrefSetup`](./FunctionsAbout.md#hrefSetupFun) internally uses the [`scrollIntoView`](./FunctionsAbout.md#scrollIntoViewFun) function to bring the containers related to the detected anchors into the viewport with the specified alignment. <br/>
+In order to scroll-into-view a container the [`scrollIntoView`](./FunctionsAbout.md#scrollIntoViewFun) method retrieves all its scrollable parents by using the [`getAllScrollableParents`](./FunctionsAbout#getAllScrollableParentsFun) function. <br/>
+This means that when an anchor is clicked all the containers returned by [`getAllScrollableParents`](./FunctionsAbout#getAllScrollableParentsFun) _(invoked on the element linked to the anchor)_ ***can*** be scrolled _(they won't if they're already correctly aligned)_. 
+
+Two worth mentioning special cases are:
+* an anchor with `href="#"`
+* the [`updateHistory`](./FunctionsAbout.md#hrefSetupFun) paremeter is `true` and the user navigates through the browser's history  
+
+In the first case only the [`_pageScroller`](./VariablesAbout.md#_pageScroller) will be scrolled _(to `(0,0)`_). <br/>
+In the second case the element that will be scrolled-into-view is the one that will be passed as the 2<sup>nd</sup> input of the [`init`](./FunctionsAbout.md#hrefSetupFun) parameter and the containers used by [`hrefSetup`](./FunctionsAbout.md#hrefSetupFun) can be retrieved as specified above.
+
+---
+<br/>
+
+
 
 ## Q: Can I obtain the ***momentum-scrolling*** effect with this API ?
 A: Yes, it can be achieved by setting a custom ease-out [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) for the container you want to be _"momentum-scrolled"_. <br/>
