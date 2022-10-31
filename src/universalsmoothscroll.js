@@ -467,6 +467,13 @@ window.uss = {
         element.scroll(_originalElementXPos, _originalElementYPos);
         
         if(!__isWindowScrollable) {
+          const _oldData = uss._containersData.get(window);
+          const _containerData = _oldData || [];
+          _containerData[16] = 0; //maxScrollX
+          _containerData[17] = 0; //maxScrollY
+
+          if(!_oldData) uss._containersData.set(window, _containerData);
+
           uss._windowScroller = window;
           return true;
         }
@@ -959,30 +966,30 @@ window.uss = {
     if(!forceCalculation && Number.isFinite(_containerData[16])) return _containerData[16];
 
     if(container === window) {
-      const _originalXPosition = window.scrollX;
-      container.scroll(1073741824, window.scrollY); //highest safe scroll value: 2^30 = 1073741824
-      const _maxScroll = window.scrollX;
-      container.scroll(_originalXPosition, window.scrollY);
-
-      //Cache the value for later use.
-      _containerData[16] = _maxScroll;
       if(!_oldData) uss._containersData.set(container, _containerData);
 
-      return _maxScroll;
-    }
-    if(container instanceof Element) {
-      const _originalXPosition = container.scrollLeft;
-      container.scrollLeft = 1073741824; //highest safe scroll value: 2^30 = 1073741824
-      const _maxScroll = container.scrollLeft;
-      container.scrollLeft = _originalXPosition;
-
-      //Cache the value for later use.
+      container = uss.getWindowScroller(false, options);
+      const _maxScroll = container === window ? 0 : uss.getMaxScrollX(container, forceCalculation, options);
       _containerData[16] = _maxScroll;
-      if(!_oldData) uss._containersData.set(container, _containerData);
-      
       return _maxScroll;
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+
+    if(!_oldData) {
+      if(!(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    }
+
+    const _originalXPosition = container.scrollLeft;
+    container.scrollLeft = 1073741824; //highest safe scroll value: 2^30 = 1073741824
+    const _maxScroll = container.scrollLeft;
+    container.scrollLeft = _originalXPosition;
+
+    //Cache the value for later use.
+    _containerData[16] = _maxScroll;
+    return _maxScroll;
   },
   getMaxScrollY: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollY"}) => {
     //Check if the maxScrollY value for the passed container has already been calculated. 
@@ -991,30 +998,30 @@ window.uss = {
     if(!forceCalculation && Number.isFinite(_containerData[17])) return _containerData[17];
 
     if(container === window) {
-      const _originalYPosition = window.scrollY;
-      container.scroll(window.scrollX, 1073741824); //highest safe scroll value: 2^30 = 1073741824
-      const _maxScroll = window.scrollY;
-      container.scroll(window.scrollX, _originalYPosition);
-      
-      //Cache the value for later use.
-      _containerData[17] = _maxScroll;
       if(!_oldData) uss._containersData.set(container, _containerData);
 
-      return _maxScroll;
-    }
-    if(container instanceof Element) {
-      const _originalYPosition = container.scrollTop;
-      container.scrollTop = 1073741824; //highest safe scroll value: 2^30 = 1073741824
-      const _maxScroll = container.scrollTop;
-      container.scrollTop = _originalYPosition;
-      
-      //Cache the value for later use.
+      container = uss.getWindowScroller(false, options);
+      const _maxScroll = container === window ? 0 : uss.getMaxScrollY(container, forceCalculation, options);
       _containerData[17] = _maxScroll;
-      if(!_oldData) uss._containersData.set(container, _containerData);
-
       return _maxScroll;
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+
+    if(!_oldData) {
+      if(!(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    }
+
+    const _originalYPosition = container.scrollTop;
+    container.scrollTop = 1073741824; //highest safe scroll value: 2^30 = 1073741824
+    const _maxScroll = container.scrollTop;
+    container.scrollTop = _originalYPosition;
+
+    //Cache the value for later use.
+    _containerData[17] = _maxScroll;
+    return _maxScroll;
   },
   getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
