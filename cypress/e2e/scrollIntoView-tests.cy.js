@@ -787,7 +787,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-top.
                                                 const _nextEl = _testElement121;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX() / 2, uss.getMaxScrollY());
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, 0, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container) / 8, 0, _container);
@@ -855,7 +855,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be right-top.
                                                 const _nextEl = _testElement112;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY());
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
@@ -914,7 +914,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be left-center.
                                                 const _nextEl = _testElement111;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(0, uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_parent) / 8, _parent);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_container) / 2, _container);
@@ -981,7 +981,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-center.
                                                 const _nextEl = _testElement111;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX() / 2, uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, uss.getMaxScrollY(_parent) / 8, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container) / 8, uss.getMaxScrollY(_container) / 2, _container);
@@ -1055,7 +1055,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be right-center.
                                                 const _nextEl = _testElement112;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent) / 8, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container) / 2, _container);
@@ -1125,7 +1125,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be left-bottom.
                                                 const _nextEl = _testElement121;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(0, 0);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
@@ -1184,7 +1184,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-bottom.
                                                 const _nextEl = _testElement122;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX() / 2, 0);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, uss.getMaxScrollY(_parent), _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container) * 3 / 4, uss.getMaxScrollY(_container), _container);
@@ -1255,7 +1255,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-bottom.
                                                 const _nextEl = _testElement122;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX(), 0);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
