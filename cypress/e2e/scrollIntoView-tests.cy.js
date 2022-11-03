@@ -95,13 +95,13 @@ beforeEach(() => {
     //the number pixels scrolled is inconsistent/may vary.
     //Cypress doesn't correctly report the window.innerWidth/window.innerHeight whenever the page is scaled, 
     //so there's no way to adjust the tests.
-    //This is a quick fix: shrink the viewport down so that is unlikely that the page ever get scaled.
+    //This is a quick fix: shrink the viewport down so that is unlikely that the page is ever scaled.
     //This trick doens't affect the test results.
     cy.viewport(100, 200); 
     cy.visit("scrollIntoView-tests.html"); 
 })
 
-describe("scrollIntoView-corners-alignements", function() {
+describe("scrollIntoView-corners-alignments", function() {
     let uss;
     it.only("Tests the scrollIntoView method with the 4 corners alignments", function() {
         cy.window()
@@ -347,7 +347,7 @@ describe("scrollIntoView-corners-alignements", function() {
 })
 
 
-describe("scrollIntoView-center-alignements", function() {
+describe("scrollIntoView-center-alignments", function() {
     let uss;
     it.only("Tests the scrollIntoView method with the 5 center alignments", function() {
         cy.window()
@@ -701,7 +701,7 @@ describe("scrollIntoView-center-alignements", function() {
 })
 
 
-describe("scrollIntoView-nearest-alignements", function() {
+describe("scrollIntoView-nearest-alignments", function() {
     let uss;
     it.only("Tests the scrollIntoView method with all the nearest alignments", function() {
         cy.window()

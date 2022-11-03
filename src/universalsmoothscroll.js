@@ -1812,15 +1812,15 @@ window.uss = {
       //Align to "nearest" is an indirect way to say: Align to "top" / "bottom" / "center".
       if(_alignToNearestLeft) {
         const _leftDelta   = _elementInitialX > 0 ? _elementInitialX : -_elementInitialX;  //distance from left border    (container<-element  container)
-        const _rightDelta  = Math.abs(_containerWidth - _elementInitialX - _elementWidth); //distance from right border   (container  element->container)
-        const _centerDelta = Math.abs(0.5 * (_containerWidth - _elementWidth) - _elementInitialX); //distance from center (container->element<-container)
+        const _rightDelta  = Math.abs(_containerWidth - _elementWidth - _elementInitialX); //distance from right border   (container  element->container)
+        const _centerDelta = Math.abs((_containerWidth - _elementWidth) * 0.5 - _elementInitialX); //distance from center (container->element<-container)
         _alignToLeft = _leftDelta < _centerDelta ? true : _rightDelta < _centerDelta ? false : null;
       }
 
       if(_alignToNearestTop) {
         const _topDelta    = _elementInitialY > 0 ? _elementInitialY : -_elementInitialY;    //distance from top border     (container↑↑element  container)
-        const _bottomDelta = Math.abs(_containerHeight - _elementInitialY - _elementHeight); //distance from bottom border  (container  element↓↓container)
-        const _centerDelta = Math.abs(0.5 * (_containerHeight - _elementHeight) - _elementInitialY); //distance from center (container↓↓element↑↑container)
+        const _bottomDelta = Math.abs(_containerHeight - _elementHeight - _elementInitialY); //distance from bottom border  (container  element↓↓container)
+        const _centerDelta = Math.abs((_containerHeight - _elementHeight) * 0.5 - _elementInitialY); //distance from center (container↓↓element↑↑container)
         _alignToTop = _topDelta < _centerDelta ? true : _bottomDelta < _centerDelta ? false : null;
       }
     
@@ -1851,6 +1851,8 @@ window.uss = {
       if(typeof callback === "function") callback();
       return;
     }
+
+    const _alignElementToCenter = alignToCenter === true;
 
     let _alignToLeft = null;
     let _alignToTop  = null;
@@ -1892,8 +1894,8 @@ window.uss = {
       const _elementInitialX = _elementRect.left - _containerRect.left; //_currentElement's x-coordinate relative to it's container
       const _elementInitialY = _elementRect.top  - _containerRect.top;  //_currentElement's y-coordinate relative to it's container
       
-      const _elementIntoViewX = _elementInitialX > -1 && _elementInitialX + _elementWidth  - _containerWidth  + _scrollbarsDimensions[0] < 1;  //Checks if the element is already in the viewport on the x-axis
-      const _elementIntoViewY = _elementInitialY > -1 && _elementInitialY + _elementHeight - _containerHeight + _scrollbarsDimensions[1] < 1;  //Checks if the element is already in the viewport on the y-axis    
+      const _elementIntoViewX = _elementInitialX > -1 && _elementInitialX + _elementWidth  - _containerWidth  + _scrollbarsDimensions[0] < 1;  //Checks if the element is already visible inside its container on the x-axis
+      const _elementIntoViewY = _elementInitialY > -1 && _elementInitialY + _elementHeight - _containerHeight + _scrollbarsDimensions[1] < 1;  //Checks if the element is already visible inside its container on the y-axis    
       const _elementOverflowX = _elementInitialX <= 0 && _elementInitialX + _elementWidth  - _containerWidth  + _scrollbarsDimensions[0] >= 0; //Checks if the element's width is bigger than its container's width
       const _elementOverflowY = _elementInitialY <= 0 && _elementInitialY + _elementHeight - _containerHeight + _scrollbarsDimensions[1] >= 0; //Checks if the element's height is bigger than its container's height
       const _isOriginalElement = _currentElement === element;
@@ -1914,21 +1916,23 @@ window.uss = {
         
       //Possible alignments for the original element: center or nearest.
       //Possible alignments for its containers: nearest.
-      if(_isOriginalElement && alignToCenter === true) { 
+      if(_isOriginalElement && _alignElementToCenter) { 
           _scrollNotNeededX = false;
           _scrollNotNeededY = false;
+          _alignToLeft = null;
+          _alignToTop = null;
       } else {
         if(!_scrollNotNeededX) { //Scroll needed on x-axis
           const _leftDelta   = _elementInitialX > 0 ? _elementInitialX : -_elementInitialX;  //distance from left border    (container<-element  container)
-          const _rightDelta  = Math.abs(_containerWidth - _elementInitialX - _elementWidth); //distance from right border   (container  element->container)
-          const _centerDelta = Math.abs(0.5 * (_containerWidth - _elementWidth) - _elementInitialX); //distance from center (container->element<-container)
+          const _rightDelta  = Math.abs(_containerWidth - _elementWidth - _elementInitialX); //distance from right border   (container  element->container)
+          const _centerDelta = Math.abs((_containerWidth - _elementWidth) * 0.5 - _elementInitialX); //distance from center (container->element<-container)
           _alignToLeft = _leftDelta < _centerDelta ? true : _rightDelta < _centerDelta ? false : null;
         }
 
         if(!_scrollNotNeededY) { //Scroll needed on y-axis
           const _topDelta    = _elementInitialY > 0 ? _elementInitialY : -_elementInitialY;    //distance from top border     (container↑↑element  container)
-          const _bottomDelta = Math.abs(_containerHeight - _elementInitialY - _elementHeight); //distance from bottom border  (container  element↓↓container)
-          const _centerDelta = Math.abs(0.5 * (_containerHeight - _elementHeight) - _elementInitialY); //distance from center (container↓↓element↑↑container)
+          const _bottomDelta = Math.abs(_containerHeight - _elementHeight - _elementInitialY); //distance from bottom border  (container  element↓↓container)
+          const _centerDelta = Math.abs((_containerHeight - _elementHeight) * 0.5 - _elementInitialY); //distance from center (container↓↓element↑↑container)
           _alignToTop = _topDelta < _centerDelta ? true : _bottomDelta < _centerDelta ? false : null;
         }
       } 
