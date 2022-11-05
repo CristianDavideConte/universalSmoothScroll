@@ -1,5 +1,11 @@
 const { constants } = require("../support/constants");
 
+/*
+ * sizeNum = 0 -> returns the total top-borders' size
+ * sizeNum = 1 -> returns the total right-borders' size
+ * sizeNum = 2 -> returns the total bottom-borders' size
+ * sizeNum = 3 -> returns the total left-borders' size
+ */
 function _getTotalBorderSize(uss, elements, sizeNum) {
     const _totalBorderSize = elements.reduce(
         (prev, curr) => {
@@ -14,6 +20,10 @@ function _getTotalBorderSize(uss, elements, sizeNum) {
     return _totalBorderSize[sizeNum];
 }
 
+/*
+ * sizeNum = 0 -> returns the total vertical scrollbar's size (the ones on the right of the passed elements) 
+ * sizeNum = 1 -> returns the total vertical scrollbar's size (the ones on the bottom of the passed elements) 
+ */
 function _getTotalScrollbarsSize(uss, elements, sizeNum) {
     const _totalScrollbarsSize = elements.reduce(
         (prev, curr) => {
@@ -109,13 +119,15 @@ describe("scrollIntoView-corners-alignments", function() {
                 uss = win.uss;
                 uss._reducedMotion = true;
 
+                const _testElement1 = win.document.getElementById("scroller-container-1");
+
                 const _testElement111 = win.document.getElementById("scroller-content-111");
                 const _testElement112 = win.document.getElementById("scroller-content-112");
                 const _testElement121 = win.document.getElementById("scroller-content-121");
                 const _testElement122 = win.document.getElementById("scroller-content-122");
 
-                const _initialScrollLeft = _testElement111.scrollLeft; 
-                const _initialScrollTop = _testElement111.scrollTop; 
+                const _initialScrollLeft = _testElement1.scrollLeft; 
+                const _initialScrollTop = _testElement1.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
                     0: [
@@ -128,8 +140,8 @@ describe("scrollIntoView-corners-alignments", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);          
-                    expect(_testElement111.scrollLeft).to.equal(_initialScrollLeft);
-                    expect(_testElement111.scrollTop).to.equal(_initialScrollTop);
+                    expect(_testElement1.scrollLeft).to.equal(_initialScrollLeft);
+                    expect(_testElement1.scrollTop).to.equal(_initialScrollTop);
                 })
                 .then(() => {
                     cy.waitForUssCallback(
@@ -355,13 +367,15 @@ describe("scrollIntoView-center-alignments", function() {
                 uss = win.uss;
                 uss._reducedMotion = true;
 
+                const _testElement1 = win.document.getElementById("scroller-container-1");
+
                 const _testElement111 = win.document.getElementById("scroller-content-111");
                 const _testElement112 = win.document.getElementById("scroller-content-112");
                 const _testElement121 = win.document.getElementById("scroller-content-121");
                 const _testElement122 = win.document.getElementById("scroller-content-122");
 
-                const _initialScrollLeft = _testElement111.scrollLeft; 
-                const _initialScrollTop = _testElement111.scrollTop; 
+                const _initialScrollLeft = _testElement1.scrollLeft; 
+                const _initialScrollTop = _testElement1.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
                     0: [
@@ -374,8 +388,8 @@ describe("scrollIntoView-center-alignments", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);          
-                    expect(_testElement111.scrollLeft).to.equal(_initialScrollLeft);
-                    expect(_testElement111.scrollTop).to.equal(_initialScrollTop);
+                    expect(_testElement1.scrollLeft).to.equal(_initialScrollLeft);
+                    expect(_testElement1.scrollTop).to.equal(_initialScrollTop);
                 })
                 .then(() => {
                     cy.waitForUssCallback(
@@ -709,13 +723,15 @@ describe("scrollIntoView-nearest-alignments", function() {
                 uss = win.uss;
                 uss._reducedMotion = true;
 
+                const _testElement1 = win.document.getElementById("scroller-container-1");
+
                 const _testElement111 = win.document.getElementById("scroller-content-111");
                 const _testElement112 = win.document.getElementById("scroller-content-112");
                 const _testElement121 = win.document.getElementById("scroller-content-121");
                 const _testElement122 = win.document.getElementById("scroller-content-122");
 
-                const _initialScrollLeft = _testElement111.scrollLeft; 
-                const _initialScrollTop = _testElement111.scrollTop; 
+                const _initialScrollLeft = _testElement1.scrollLeft; 
+                const _initialScrollTop = _testElement1.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
                     0: [
@@ -728,8 +744,8 @@ describe("scrollIntoView-nearest-alignments", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);          
-                    expect(_testElement111.scrollLeft).to.equal(_initialScrollLeft);
-                    expect(_testElement111.scrollTop).to.equal(_initialScrollTop);
+                    expect(_testElement1.scrollLeft).to.equal(_initialScrollLeft);
+                    expect(_testElement1.scrollTop).to.equal(_initialScrollTop);
                 })
                 .then(() => {
                     cy.waitForUssCallback(

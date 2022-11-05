@@ -16,6 +16,7 @@
                 padding: 1000px;
             }
             .scroller {
+                display: block; /* To avoid collapsing borders */
                 overflow: scroll;
                 width: 70px; /* Slightly less than 100 - 17px */
                 height: 170px; /* Slightly less than 200 - 17px */
@@ -23,21 +24,19 @@
                 background-color: blue;    
             }
             .scroller-container {
+                display: inline-block; /* To avoid collapsing borders */
                 overflow: scroll;
-                display: flex;
-                flex-direction: row;
                 width: 40px;
                 height: 80px;
                 margin: 1000px;
                 border: 5px dotted white;
             }
             .scroller-content {
+                display: inline-block; /* To avoid collapsing borders */
                 overflow: hidden;
                 width: 20px;
                 height: 20px;
                 margin: 1000px;
-                flex-shrink: 0;
-                flex-grow: 0;
             }
             #scroller-content-111 {
                 background-color: red;
@@ -51,6 +50,18 @@
             #scroller-content-122 {
                 background-color: violet;
             }
+            #scroller-content-131 {
+                width: 100px;
+                margin-left: 0px;
+                margin-right: 0px;
+                background-color: aqua;
+            }
+            #scroller-content-141 {
+                height: 100px;
+                margin-top: 0px;
+                margin-bottom: 0px;
+                background-color: burlywood;
+            }
         </style>
     </head>
     <body>
@@ -62,6 +73,12 @@
             <div id = "scroller-container-2" class = "scroller-container">
                 <div id = "scroller-content-121" class = "scroller-content"></div>
                 <div id = "scroller-content-122" class = "scroller-content"></div>
+            </div>
+            <div id = "scroller-container-3" class = "scroller-container">
+                <div id = "scroller-content-131" class = "scroller-content"></div>
+            </div>
+            <div id = "scroller-container-4" class = "scroller-container">
+                <div id = "scroller-content-141" class = "scroller-content"></div>
             </div>
         </div>
     </body>
