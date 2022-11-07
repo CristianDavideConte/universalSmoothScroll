@@ -1,6 +1,5 @@
 /**
  * TODO: 
- * - remove the hard-coded transitionDuration from the SmoothScrollbars implementations
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * - smooth scrolling with animation allowed
  * - fix mobile multitasking freezing scrollbars
@@ -325,29 +324,14 @@ export function addElasticScrolling(
  * @param {Boolean} [options.onYAxis=true] True if a smooth scrollbar should be added on the y-axis of container, false otherwise.
  * @param {Number} [options.thumbSize=17] The default width of the scrollbar on the y-axis of container and 
  *                                        the default height of the scrollbar on the x-axis of container. 
- * @param {String} [options.transitionDurationX="0.2s"] This is the value of "transition-duration" css property of the scrollbar-thumb on the x-axis of container
- *                                                      whenever the scrollbar is not engaged, otherwise it's "0s". 
- * @param {String} [options.transitionDurationY="0.2s"] This is the value of "transition-duration" css property of the scrollbar-thumb on the y-axis of container
- *                                                      whenever the scrollbar is not engaged, otherwise it's "0s". 
- * 
- * //TODO Change
- * @returns {Array} An array containing one Object for each scrollbar requested.
- *                  Each scrollbar Object has this properties:
- *                  - track {HTMLElement} (public)
- *                  - thumb {HTMLElement} (public)
- *                  - pointerId {Number} (private)
- *                  - delayedScroller {Function} (private)
- *                  - updatePosition {Function} (public)
+ * @returns {SmoothScrollbarBuilder} The underling SmoothScrollbarBuilder used for this effect.  
  */
 export function addSmoothScrollbar(
     container,
     options = {
         onXAxis: false,
         onYAxis: true,
-        callback: () => {},
         thumbSize: 17,
-        transitionDurationX: "0.2s",     
-        transitionDurationY: "0.2s",      
     } 
 ) {
     //Check if the options parameter is a valid Object.
@@ -381,9 +365,6 @@ export function addSmoothScrollbar(
         uss._warningLogger(container.originalContainer.parentNode, "has position:static which may affect the scrollbars positioning")
     }
     
-    if(typeof options.transitionDurationX !== "string") options.transitionDurationX = "0.2s";
-    if(typeof options.transitionDurationY !== "string") options.transitionDurationY = "0.2s";
-
     const _builder = new SmoothScrollbarBuilder(container, options);
     _builder.build();
 

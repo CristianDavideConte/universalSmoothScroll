@@ -58,12 +58,12 @@ input {
   background-color: transparent;
 }
 
-[data-uss="scrollbar-track-x"] {
+[data-uss="scrollbar-container-x"] {
   background-color: rgba(51, 51, 51, 0.9);
   transition-duration: 0.3s;
 }
 
-[data-uss="scrollbar-track-y"] {
+[data-uss="scrollbar-container-y"] {
   background-color: rgba(51, 51, 51, 0.9);
   transition-duration: 0.3s;
 }
@@ -84,7 +84,7 @@ input {
   opacity: 0.5;
 }
 
-[data-uss-scrollbar-idle="true"] > div {
+[data-uss-scrollbar-idle="true"] > div > div {
   border-radius: 0;
 }
 
