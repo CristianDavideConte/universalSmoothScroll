@@ -1,8 +1,6 @@
 import { SmoothScrollBuilder } from "./uss-builder-smoothscroll.js";
 
 //TEST TEST TEST ------------------------------------------------------------------------------------------>
-import {EASE_OUT_CUBIC} from "../universalsmoothscroll-ease-functions-min.js";
-
 export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 
     #scrollbarSetup;
@@ -21,9 +19,6 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 //Update the ids of the pointer device that was controlling the scrollbar. 
                 scrollbar.previousPointerId = scrollbar.pointerId;
                 scrollbar.pointerId = null;
-
-                //TEST TEST TEST ------------------------------------------------------------------------------------------>
-                setCalculatorFun(EASE_OUT_CUBIC(), scrollbar.container, false, this.options);
 
                 //Remove the unecessary listeners.
                 window.removeEventListener("pointermove", handleContainerScrolling, {passive:false});     
@@ -172,7 +167,15 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 __scrolledPercentage = __scrolledPercentage > 1 ? 1 :
                                        __scrolledPercentage < 0 || !__scrolledPercentage ? 0 : 
                                        __scrolledPercentage;
-
+                                       
+                //The scrollbar.container has the same easing pattern as the originalContainer.
+                //TODO: if the deltaX is small EASE_OUT_BOUNCE (perhaps other slc too) only works if deltaX is < 0 
+                if(!_scrollbar.isEngaged()) {
+                    const __easing = uss.getXStepLengthCalculator(this.originalContainer, true)  || 
+                                     uss.getXStepLengthCalculator(this.originalContainer, false) || 
+                                     (r => r / 25 + 1);
+                    uss.setXStepLengthCalculator(__easing, _scrollbar.container, false, this.options);
+                }
                 uss.scrollXTo(__scrolledPercentage * (__containerSize - __thumbSize), _scrollbar.container);
             }
 
@@ -312,7 +315,15 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 __scrolledPercentage = __scrolledPercentage > 1 ? 1 :
                                        __scrolledPercentage < 0 || !__scrolledPercentage ? 0 : 
                                        __scrolledPercentage;
-
+                
+                //The scrollbar.container has the same easing pattern as the originalContainer.
+                //TODO: if the deltaY is small EASE_OUT_BOUNCE (perhaps other slc too) only works if deltaY is < 0 
+                if(!_scrollbar.isEngaged()) {
+                    const __easing = uss.getYStepLengthCalculator(this.originalContainer, true)  || 
+                                     uss.getYStepLengthCalculator(this.originalContainer, false) || 
+                                     (r => r / 25 + 1);
+                    uss.setYStepLengthCalculator(__easing, _scrollbar.container, false, this.options);
+                }
                 uss.scrollYTo(__scrolledPercentage * (__containerSize - __thumbSize), _scrollbar.container);
             }
 

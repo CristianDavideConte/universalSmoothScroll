@@ -243,9 +243,6 @@
         {
             onYAxis:true,
             onXAxis:true,
-            transitionDurationX: "0.6s",
-            transitionDurationY: "0.6s",
-            //thumbSize: 100
         }
     )
     
@@ -299,12 +296,11 @@
         {
           onYAxis: "mandatory", 
           children: _yChildren,
-          //snapEasingY: EASE_OUT_EXPO(700),
+          snapEasingY: EASE_OUT_BOUNCE(700),
         }
       ), 
       {
           onYAxis:true,
-          transitionDurationY: "0.4s",
       }
     )
 
@@ -356,13 +352,12 @@
         {
           onXAxis: "mandatory", 
           children: _xChildren,
-          //snapEasingX: EASE_OUT_BOUNCE(700),
+          snapEasingX: EASE_OUT_QUAD(400),
           callback: () => console.log("end of snap")
         }
       ), 
       {
           onXAxis:true,
-          transitionDurationX: "0.4s",
       }
     )
 

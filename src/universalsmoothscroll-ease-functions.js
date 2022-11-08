@@ -6,9 +6,16 @@
  * The duration is the total amount in ms the scroll-animation should last.
  * The callback is a function that is executed every time the stepLengthCalculator is invoked.  
  */
-const _DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) => {
+ const _DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) => {
+  /**
+   * The returned stepLengthCalculator can be used by different containers having
+   * different starting positions, _startingPosMap is used to keep track of all of them.
+   * A starting position can be >0 if a scroll-animation has been extended but 
+   * part of it has already been done.
+   */
+  const _startingPosMap = new Map(); 
   const _callback = typeof callback === "function" ? callback : () => {};
-  let _startingPos = 0;
+
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
@@ -22,9 +29,11 @@ const _DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) 
        * This breaks the scroll-animations on touchpad enabled devices, so the first 
        * elapsed time considered is actually 0.5 * uss._framesTime.
        */
-      _startingPos = 1 - remaning / total;
+       _startingPosMap.set(container, 1 - remaning / total);
       _progress = 0.5 * uss._framesTime / duration; 
     }
+    
+    const _startingPos = _startingPosMap.get(container);
     const _nextPos = (progressEvaluator(_progress) * (1 - _startingPos) + _startingPos) * (total - 1);
     return Math.ceil(remaning - total + _nextPos);
   }
