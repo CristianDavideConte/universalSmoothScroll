@@ -110,7 +110,7 @@ beforeEach(() => {
 
 describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function() {
     let uss;
-    it.only("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments", function() {
+    it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -386,7 +386,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function() {
 
 describe("scrollIntoViewIfNeeded-center-alignments", function() {
     let uss;
-    it.only("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments and alignToCenter = true", function() {
+    it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments and alignToCenter = true", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -705,7 +705,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function() {
 
 describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", function() {
     let uss;
-    it.only("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments but with an element's width that is bigger than the one of its parent", function() {
+    it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments but with an element's width that is bigger than the one of its parent", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -966,7 +966,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
 
 describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", function() {
     let uss;
-    it.only("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments but with an element's height that is bigger than the one of its parent", function() {
+    it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments but with an element's height that is bigger than the one of its parent", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;

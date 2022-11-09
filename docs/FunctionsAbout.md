@@ -407,10 +407,10 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </i>
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "./ConstantsAbout.md#DEFAULT_XSTEP_LENGTH_CALCULATOR"><code>DEFAULT_XSTEP_LENGTH_CALCULATOR</code></a>
+    <code>undefined</code>
    </td>
    <td rowspan = "3" align = "left">
-    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible.
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible or eventually unsets it.
    </td>
   </tr>
   <tr>
@@ -444,10 +444,10 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </i>
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "./ConstantsAbout.md#DEFAULT_YSTEP_LENGTH_CALCULATOR"><code>DEFAULT_YSTEP_LENGTH_CALCULATOR</code></a>
+    <code>undefined</code>
    </td>
    <td rowspan = "3" align = "left">
-    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible.
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible or eventually unsets it.
    </td>
   </tr>
   <tr>
@@ -481,10 +481,10 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <strong>✗</strong>
+    <code>undefined</code>
    </td>
    <td rowspan = "3" align = "left">
-    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible.
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculators</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible or eventually unsets them.
    </td>
   </tr>
   <tr>
@@ -1834,7 +1834,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
+    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>. <br/>
+    If it's <code>undefined</code> the corresponding <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is unset instead.
   </td>
   </tr>
   <tr>
@@ -1875,7 +1876,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
+    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>. <br/>
+    If it's <code>undefined</code> the corresponding <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is unset instead.
   </td>
   </tr>
   <tr>
@@ -1916,7 +1918,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
+    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>. <br/>
+    If it's <code>undefined</code> the corresponding <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculators</code></a> are unset instead.
   </td>
   </tr>
   <tr>

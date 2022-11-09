@@ -13,6 +13,7 @@ describe("setYStepLengthCalculator", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                const _noStepLengthCalculator = undefined;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.testFailingValues(uss.setYStepLengthCalculator, {
@@ -49,6 +50,16 @@ describe("setYStepLengthCalculator", function() {
                     uss.stopScrollingY();
                     expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
                     
+                    uss.setYStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setYStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
+                    expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    uss.setYStepLengthCalculator(undefined, _testElement, false);
+                    uss.setYStepLengthCalculator(undefined, _testElement, true);
+                    expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
+
+                    uss.setYStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
                     uss.setYStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
                     expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
                     
@@ -58,8 +69,8 @@ describe("setYStepLengthCalculator", function() {
                         }
                     ).then(
                         () => {
-                            cy.elementScrollTopShouldBe(_testElement, 100);
                             expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                            expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
                         }
                     );
                 });

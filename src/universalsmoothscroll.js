@@ -10,6 +10,13 @@
  * DEFAULT_MIN_ANIMATION_FRAMES: number, the initial value of the "_minAnimationFrame" property: 
  *                               it represents the default lowest number of frames any scroll-animation on a container should last if no StepLengthCalculator is set for it.
  * DEFAULT_FRAME_TIME: number, the initial value of the "_framesTime" property: it's 16.6 and it initially assumes that the user's browser/screen is refreshing at 60fps. 
+ * DEFAULT_REGEX_LOGGER_DISABLED: regexp, the regular expression used by the default loggers to test if they're disabled.
+ * DEFAULT_REGEX_LOGGER_LEGACY: regexp, the regular expression used by the default loggers to test if they should operate in legacy mode.
+ * DEFAULT_REGEX_ALIGNMENT_NEAREST: regexp, the regular expression used by scrollIntoView to test if the passed alignments correspond to "nearest".
+ * DEFAULT_REGEX_OVERFLOW: regexp, the regular expression used to test if any container has any of the "overflow" properties set to "auto" or "scroll".
+ * DEFAULT_REGEX_OVERFLOW_HIDDEN: regexp, the regular expression used to test if any container has any of the "overflow" properties set to "auto", "scroll" or "hidden".
+ * DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE: regexp, the regular expression used to test if any container has any of the "overflow" properties set to "auto", "scroll" or "visible".
+ * DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE: regexp, the regular expression used to test if any container has any of the "overflow" properties set to "auto", "scroll", "hidden" or "visible".
  * DEFAULT_XSTEP_LENGTH_CALCULATOR: function, the default stepLengthCalculator for scroll-animations on the x-axis of every container that doesn't have a custom stepLengthCalculator set.
  *                                  Controls how long each animation-step on the x-axis must be (in px) in order to target the "_minAnimationFrame" property value. 
  * DEFAULT_YSTEP_LENGTH_CALCULATOR: function, the default stepLengthCalculator for scroll-animations on the y-axis of every container that doesn't have a custom stepLengthCalculator set.
@@ -22,7 +29,7 @@
 /*
  * VARIABLES (INTERNAL USE):
  *
- * _containersData: Map(Container, Array[]), a map in which:
+ * _containersData: Map(Container, Array), a map in which:
  *                  1) The keys are an instances of Element or the Window and they're internally called "containers".
  *                  2) The values are arrays:
  *                     [0] contains the ID of a requested scroll-animation on the x-axis of this container provided by the requestAnimationFrame method.
@@ -189,6 +196,15 @@ const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);      
 const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789))); //38px at 789px of height && 22px at 1920px of height
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_FRAME_TIME = 16.6; //in ms
+
+const DEFAULT_REGEX_LOGGER_DISABLED = /disabled/i;
+const DEFAULT_REGEX_LOGGER_LEGACY = /legacy/i;
+const DEFAULT_REGEX_ALIGNMENT_NEAREST = /nearest/i;
+const DEFAULT_REGEX_OVERFLOW = /(auto|scroll)/;
+const DEFAULT_REGEX_OVERFLOW_HIDDEN = /(auto|scroll|hidden)/;
+const DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
+const DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
+
 const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
   const _stepLength = total / uss._minAnimationFrame;
   if(_stepLength < 1) return 1;
@@ -204,7 +220,7 @@ const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
 }
 
 const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
-  if(/disabled/i.test(uss._debugMode)) return;
+  if(DEFAULT_REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
   
   //Convert to a string and eventually trim the receivedValue.
   const _receivedValueIsString = typeof receivedValue === "string";
@@ -228,7 +244,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(receivedValue.length > 40) receivedValue = receivedValue.slice(0, 40) + " ...";
   if(_receivedValueIsString) receivedValue = "\"" + receivedValue + "\"";
 
-  if(/legacy/i.test(uss._debugMode)) {
+  if(DEFAULT_REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
     console.error("USS ERROR\n", functionName, "was expecting", expectedValue + ", but received", receivedValue + ".");
     throw "USS fatal error (execution stopped)";
@@ -255,7 +271,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
 }
 
 const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) => {
-  if(/disabled/i.test(uss._debugMode)) return;
+  if(DEFAULT_REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
 
   //Convert to a string and eventually trim the subject.
   const _subjectIsString = typeof subject === "string";
@@ -279,7 +295,7 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   if(subject.length > 40) subject = subject.slice(0, 40) + " ...";
   if(_subjectIsString && keepQuotesForString) subject = "\"" + subject + "\"";
 
-  if(/legacy/i.test(uss._debugMode)) {
+  if(DEFAULT_REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
     console.warn("USS WARNING\n", subject, message + ".");
     return;
@@ -526,8 +542,8 @@ window.uss = {
   getReducedMotionState: () => uss._reducedMotion,
   getOnResizeEndCallbacks: () => uss._onResizeEndCallbacks,
   getDebugMode: () => uss._debugMode, 
-  setXStepLengthCalculator: (newCalculator = DEFAULT_XSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false, options = {debugString: "setXStepLengthCalculator"}) => {
-    if(typeof newCalculator !== "function") {
+  setXStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setXStepLengthCalculator"}) => {
+    if(typeof newCalculator !== "function" && newCalculator !== undefined) {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
@@ -548,11 +564,11 @@ window.uss = {
     } else {
       //Setting a non-temporary StepLengthCalculator will unset the temporary one.
       _containerData[12] = newCalculator;
-      _containerData[14] = null; 
+      _containerData[14] = undefined; 
     }  
   },
-  setYStepLengthCalculator: (newCalculator = DEFAULT_YSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false, options = {debugString: "setYStepLengthCalculator"}) => {
-    if(typeof newCalculator !== "function") {
+  setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setYStepLengthCalculator"}) => {
+    if(typeof newCalculator !== "function" && newCalculator !== undefined) {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
@@ -573,11 +589,11 @@ window.uss = {
     } else {
       //Setting a non-temporary StepLengthCalculator will unset the temporary one.
       _containerData[13] = newCalculator;
-      _containerData[15] = null; 
+      _containerData[15] = undefined; 
     }  
   },
   setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setStepLengthCalculator"}) => {
-    if(typeof newCalculator !== "function") {
+    if(typeof newCalculator !== "function" && newCalculator !== undefined) {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
@@ -600,8 +616,8 @@ window.uss = {
       //Setting a non-temporary StepLengthCalculator will unset the temporary one.
       _containerData[12] = newCalculator;
       _containerData[13] = newCalculator;
-      _containerData[14] = null; 
-      _containerData[15] = null; 
+      _containerData[14] = undefined; 
+      _containerData[15] = undefined; 
     }
   },
   setXStepLength: (newXStepLength = DEFAULT_XSTEP_LENGTH, options = {debugString: "setXStepLength"}) => {
@@ -1037,12 +1053,12 @@ window.uss = {
 
     if(includeHiddenParents) {
       _cacheResult = (el) => _containerData[25] = el;
-      _overflowRegex = /(auto|scroll|hidden)/;
-      _overflowRegexWithVisible = /(visible|auto|scroll|hidden)/;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
     } else {
       _cacheResult = (el) => _containerData[24] = el;
-      _overflowRegex = /(auto|scroll)/
-      _overflowRegexWithVisible = /(visible|auto|scroll)/;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
     }
     
     if(element === window || element === _html) {
@@ -1133,12 +1149,12 @@ window.uss = {
 
     if(includeHiddenParents) {
       _cacheResult = (el) => _containerData[27] = el;
-      _overflowRegex = /(auto|scroll|hidden)/;
-      _overflowRegexWithVisible = /(visible|auto|scroll|hidden)/;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
     } else {
       _cacheResult = (el) => _containerData[26] = el;
-      _overflowRegex = /(auto|scroll)/
-      _overflowRegexWithVisible = /(visible|auto|scroll)/;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
     }
     
     if(element === window || element === _html) {
@@ -1252,13 +1268,13 @@ window.uss = {
     if(includeHiddenParents) {
       _cacheXResult = (el) => _containerData[25] = el;
       _cacheYResult = (el) => _containerData[27] = el;
-      _overflowRegex = /(auto|scroll|hidden)/;
-      _overflowRegexWithVisible = /(visible|auto|scroll|hidden)/;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
     } else {
       _cacheXResult = (el) => _containerData[24] = el;
       _cacheYResult = (el) => _containerData[26] = el;
-      _overflowRegex = /(auto|scroll)/
-      _overflowRegexWithVisible = /(visible|auto|scroll)/;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
     }
     
     if(element === window || element === _html) {
@@ -1766,8 +1782,8 @@ window.uss = {
       return;
     }
 
-    const _alignToNearestLeft = /nearest/i.test(alignToLeft);
-    const _alignToNearestTop = /nearest/i.test(alignToTop);
+    const _alignToNearestLeft = DEFAULT_REGEX_ALIGNMENT_NEAREST.test(alignToLeft);
+    const _alignToNearestTop  = DEFAULT_REGEX_ALIGNMENT_NEAREST.test(alignToTop);
 
     let _alignToLeft = alignToLeft;
     let _alignToTop  = alignToTop;
@@ -1964,6 +1980,7 @@ window.uss = {
       window.cancelAnimationFrame(_containerData[0]); 
       _containerData[0] = null;  //scrollID on x-axis
       _containerData[10] = null; //callback on x-axis  
+      _containerData[14] = null; //Temporary stepLengthCalculator on the x-axis
           
       //No scroll-animation on the y-axis is being performed.
       if(!_containerData[1]) { 
@@ -2008,6 +2025,7 @@ window.uss = {
       window.cancelAnimationFrame(_containerData[1]);
       _containerData[1] = null;  //scrollID on y-axis
       _containerData[11] = null; //callback on x-axis
+      _containerData[15] = null; //Temporary stepLengthCalculator on the y-axis
           
       //No scroll-animation on the x-axis is being performed.
       if(!_containerData[0]) { 
