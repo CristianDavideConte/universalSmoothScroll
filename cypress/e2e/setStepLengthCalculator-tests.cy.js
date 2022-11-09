@@ -79,6 +79,7 @@ describe("setStepLengthCalculator", function() {
                     
                     cy.waitForUssCallback(
                         (resolve) => {
+                            uss._reducedMotion = true;
                             uss.scrollTo(100, 100, _testElement, resolve);
                         }
                     ).then(
