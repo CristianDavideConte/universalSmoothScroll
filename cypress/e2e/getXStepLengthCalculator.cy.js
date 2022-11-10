@@ -31,6 +31,7 @@ describe("getXStepLengthCalculator", function() {
             
               cy.waitForUssCallback(
                 (resolve) => {
+                  uss._reducedMotion = true;
                   uss.scrollXTo(100, _testElement, resolve);
                 }
               ).then(

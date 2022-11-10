@@ -12,7 +12,8 @@ describe("getFinalYPosition", function() {
         .then((win) => {
           uss = win.uss;
           const _testElement = win.document.getElementById("scroller");
-                      
+          const _expectedFinalPos = 10;                       
+
           cy.testFailingValues(uss.getFinalYPosition, {
             0: [constants.failingValuesNoUndefined]
           }, 
@@ -22,13 +23,13 @@ describe("getFinalYPosition", function() {
           .then(() => {
             cy.waitForUssCallback(
               (resolve) => {
-                uss.scrollYTo(100, _testElement, resolve);
+                uss.scrollYTo(_expectedFinalPos, _testElement, resolve);
                 finalYPosition = uss.getFinalYPosition(_testElement);
               }
             ).then(
               () => {
-                cy.elementScrollTopShouldBe(_testElement, 100);
-                expect(finalYPosition).to.equal(100);
+                cy.elementScrollTopShouldBe(_testElement, _expectedFinalPos);
+                expect(finalYPosition).to.equal(_expectedFinalPos);
                 expect(finalYPosition).to.equal(uss.getFinalYPosition(_testElement));
                 expect(finalYPosition).to.equal(uss.getScrollYCalculator(_testElement)());
               }
