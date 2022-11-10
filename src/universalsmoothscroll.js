@@ -1910,13 +1910,17 @@ window.uss = {
       const _elementInitialX = _elementRect.left - _containerRect.left; //_currentElement's x-coordinate relative to it's container
       const _elementInitialY = _elementRect.top  - _containerRect.top;  //_currentElement's y-coordinate relative to it's container
       
+      const _isOriginalElement = _currentElement === element;
       const _elementIntoViewX = _elementInitialX > -1 && _elementInitialX + _elementWidth  - _containerWidth  + _scrollbarsDimensions[0] < 1;  //Checks if the element is already visible inside its container on the x-axis
       const _elementIntoViewY = _elementInitialY > -1 && _elementInitialY + _elementHeight - _containerHeight + _scrollbarsDimensions[1] < 1;  //Checks if the element is already visible inside its container on the y-axis    
       const _elementOverflowX = _elementInitialX <= 0 && _elementInitialX + _elementWidth  - _containerWidth  + _scrollbarsDimensions[0] >= 0; //Checks if the element's width is bigger than its container's width
       const _elementOverflowY = _elementInitialY <= 0 && _elementInitialY + _elementHeight - _containerHeight + _scrollbarsDimensions[1] >= 0; //Checks if the element's height is bigger than its container's height
-      const _isOriginalElement = _currentElement === element;
-      let _scrollNotNeededX = _elementIntoViewX || (_isOriginalElement && _elementOverflowX);
-      let _scrollNotNeededY = _elementIntoViewY || (_isOriginalElement && _elementOverflowY);
+      
+      const _scrollNotNeededX = (_isOriginalElement && !_alignElementToCenter && (_elementIntoViewX || _elementOverflowX)) || 
+                                (!_isOriginalElement && _elementIntoViewX);
+                                
+      const _scrollNotNeededY = (_isOriginalElement && !_alignElementToCenter && (_elementIntoViewY || _elementOverflowY)) || 
+                                (!_isOriginalElement && _elementIntoViewY);
 
       if(_scrollNotNeededX && _scrollNotNeededY) { 
         if(_isOriginalElement) {
@@ -1933,8 +1937,6 @@ window.uss = {
       //Possible alignments for the original element: center or nearest.
       //Possible alignments for its containers: nearest.
       if(_isOriginalElement && _alignElementToCenter) { 
-          _scrollNotNeededX = false;
-          _scrollNotNeededY = false;
           _alignToLeft = null;
           _alignToTop = null;
       } else {
