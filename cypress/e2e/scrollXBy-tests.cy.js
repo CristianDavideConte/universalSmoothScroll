@@ -48,8 +48,8 @@ describe("scrollXToBy-StillStart-True", function() {
                 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollXTo(500, _testElement); 
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(500);
+                        uss.scrollXTo(20, _testElement); 
+                        expect(uss.getFinalXPosition(_testElement)).to.equal(20);
                         uss.scrollXBy(10, _testElement, resolve, true);
                         expect(uss.getFinalXPosition(_testElement)).to.equal(10);
                     }

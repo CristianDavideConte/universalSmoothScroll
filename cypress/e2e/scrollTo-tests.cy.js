@@ -26,12 +26,12 @@ describe("scrollTo", function() {
                     cy.waitForUssCallback(
                         (resolve) => {
                             uss._reducedMotion = true;
-                            uss.scrollTo(500, 200, _testElement, resolve);
+                            uss.scrollTo(10, 20, _testElement, resolve);
                         }
                     ).then(
                         () => {
-                            cy.elementScrollLeftShouldBe(_testElement, 500);
-                            cy.elementScrollTopShouldBe(_testElement, 200);
+                            cy.elementScrollLeftShouldBe(_testElement, 10);
+                            cy.elementScrollTopShouldBe(_testElement, 20);
                         }
                     );
                 });

@@ -50,9 +50,9 @@ describe("scrollToBy-StillStart-True", function() {
 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollTo(500, 200, _testElement); 
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(500);
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(200);
+                        uss.scrollTo(50, 20, _testElement); 
+                        expect(uss.getFinalXPosition(_testElement)).to.equal(50);
+                        expect(uss.getFinalYPosition(_testElement)).to.equal(20);
                         uss.scrollBy(10, 40, _testElement, resolve, true);
                         expect(uss.getFinalXPosition(_testElement)).to.equal(10);
                         expect(uss.getFinalYPosition(_testElement)).to.equal(40);

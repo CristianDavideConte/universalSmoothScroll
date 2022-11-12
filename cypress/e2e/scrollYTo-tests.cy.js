@@ -25,11 +25,11 @@ describe("scrollYTo", function() {
                     cy.waitForUssCallback(
                         (resolve) => {
                             uss._reducedMotion = true;
-                            uss.scrollYTo(500, _testElement, resolve);
+                            uss.scrollYTo(10, _testElement, resolve);
                         }
                     ).then(
                         () => {
-                            cy.elementScrollTopShouldBe(_testElement, 500);
+                            cy.elementScrollTopShouldBe(_testElement, 10);
                         }
                     );
                 });
