@@ -53,8 +53,10 @@ describe("scrollYToBy-StillStart-True", function() {
                         uss.scrollYTo(20, _testElement); 
                         oldFinalYPosition = uss.getFinalYPosition(_testElement);
 
-                        uss.scrollYBy(10, _testElement, resolve, true);
+                        uss.scrollYBy(10, _testElement, null, true);
                         finalYPosition = uss.getFinalYPosition(_testElement);
+
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
@@ -69,6 +71,8 @@ describe("scrollYToBy-StillStart-True", function() {
 
 describe("scrollYToBy-StillStart-False", function() {
     let uss;
+    let oldFinalYPosition;
+    let finalYPosition;
 
     it("Vertically scrolls the test element to n1 pixels and then extends that animation by n2 pixels", function() {
         cy.window()
@@ -78,14 +82,19 @@ describe("scrollYToBy-StillStart-False", function() {
                 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollYTo(10, _testElement); 
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(10);
-                        uss.scrollYBy(10, _testElement, resolve, false); 
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(20);
+                        uss.scrollYTo(20, _testElement); 
+                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
+
+                        uss.scrollYBy(10, _testElement, null, false);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
+
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
-                        cy.elementScrollTopShouldBe(_testElement, 20);
+                        expect(oldFinalYPosition).to.equal(20);
+                        expect(finalYPosition).to.equal(30);
+                        cy.elementScrollTopShouldBe(_testElement, 30);
                     }
                 );
             });        

@@ -56,9 +56,11 @@ describe("scrollToBy-StillStart-True", function() {
                         oldFinalXPosition = uss.getFinalXPosition(_testElement);
                         oldFinalYPosition = uss.getFinalYPosition(_testElement);
 
-                        uss.scrollBy(10, 20, _testElement, resolve, true);
+                        uss.scrollBy(10, 20, _testElement, null, true);
                         finalXPosition = uss.getFinalXPosition(_testElement);
                         finalYPosition = uss.getFinalYPosition(_testElement);
+
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
@@ -76,6 +78,8 @@ describe("scrollToBy-StillStart-True", function() {
 
 describe("scrollToBy-StillStart-False", function() {
     let uss;
+    let oldFinalXPosition, oldFinalYPosition;
+    let finalXPosition, finalYPosition;
     
     it("Horizontally and vertically scrolls the test element to (n1a,n1b) pixels and then extends that animation by (n2a,n2b) pixels", function() {
         cy.window()
@@ -85,17 +89,21 @@ describe("scrollToBy-StillStart-False", function() {
 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollTo(10, 40, _testElement); 
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(10);
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(40);
-                        uss.scrollBy(10, 40, _testElement, resolve, false);
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(20);
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(80);
+                        
+                        uss.scrollTo(20, 40, _testElement); 
+                        oldFinalXPosition = uss.getFinalXPosition(_testElement);
+                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
+
+                        uss.scrollBy(10, 20, _testElement, null, false);
+                        finalXPosition = uss.getFinalXPosition(_testElement);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
+
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
-                        cy.elementScrollLeftShouldBe(_testElement, 20);
-                        cy.elementScrollTopShouldBe(_testElement, 80);
+                        cy.elementScrollLeftShouldBe(_testElement, 30);
+                        cy.elementScrollTopShouldBe(_testElement, 60);
                     }
                 );
             });        
