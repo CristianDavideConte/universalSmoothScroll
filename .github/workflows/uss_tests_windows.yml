@@ -35,6 +35,7 @@ jobs:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: chrome
+          spec: "cypress/e2e/scrollBy-tests.cy.js"
           
   firefox-test:
     # The type of runner that the job will run on
@@ -60,6 +61,7 @@ jobs:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: firefox
+          spec: "cypress/e2e/scrollBy-tests.cy.js"
 
   edge-test:
     # The type of runner that the job will run on
@@ -88,3 +90,4 @@ jobs:
           wait-on: "http://localhost:8080"
           build: npm i -D cypress
           browser: edge
+          spec: "cypress/e2e/scrollBy-tests.cy.js"
