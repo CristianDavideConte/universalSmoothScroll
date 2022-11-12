@@ -24,6 +24,7 @@ describe("scrollXTo", function() {
                 .then(() => {
                     cy.waitForUssCallback(
                         (resolve) => {
+                            uss._reducedMotion = true;
                             uss.scrollXTo(500, _testElement, resolve);
                         }
                     ).then(
@@ -110,114 +111,82 @@ describe("scrollXTo-containScroll-beyond-maxScrollX", function() {
 
 describe("scrollXTo-immediatelyStoppedScrolling", function() {
     let uss;
-    let count = 0;
     it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.waitForUssCallback(
-                    (resolve) => {
-                        uss.scrollXTo(500, _testElement, () => count++);
-                        uss.stopScrollingX(_testElement);
-                        resolve();
-                    }
-                ).then(
-                    () => {
-                        cy.elementScrollLeftShouldBe(_testElement, 0);
-                        expect(count).to.equal(0);
-                    }
-                );
+                uss.scrollXTo(10, _testElement);
+                uss.stopScrollingX(_testElement);
+                cy.elementScrollLeftShouldBe(_testElement, 0);
             });         
     });
 })
 
 describe("scrollXToBy-immediatelyStoppedScrolling", function() {
     let uss;
-    let count = 0;
     it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped and restarted with the scrollXBy method", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.waitForUssCallback(
-                    (resolve) => {
-                        uss.scrollXTo(500, _testElement, () => count++);
-                        uss.stopScrollingX(_testElement);
-                        uss.scrollXBy(250, _testElement, () => {
-                            count++;
-                            resolve();
-                        });
-                    }
-                ).then(
-                    () => {
-                        cy.elementScrollLeftShouldBe(_testElement, 250);
-                        expect(count).to.equal(1);
-                    }
-                );
+                uss.scrollXTo(10, _testElement);
+                uss.stopScrollingX(_testElement);
+                uss.scrollXBy(20, _testElement);
+                cy.elementScrollLeftShouldBe(_testElement, 20);
             });         
     });
 })
 
 describe("scrollXToTo-immediatelyStoppedScrolling", function() {
     let uss;
-    let count = 0;
     it("Tests the scrollXTo method whenever a scroll-animation is immediately stopped and restarted with the scrollXTo method", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.waitForUssCallback(
-                    (resolve) => {
-                        uss.scrollXTo(500, _testElement, () => count++);
-                        uss.stopScrollingX(_testElement);
-                        uss.scrollXTo(250, _testElement, () => {
-                            count++;
-                            resolve();
-                        });
-                    }
-                ).then(
-                    () => {
-                        cy.elementScrollLeftShouldBe(_testElement, 250);
-                        expect(count).to.equal(1);
-                    }
-                );
+                uss.scrollXTo(10, _testElement);
+                uss.stopScrollingX(_testElement);
+                uss.scrollXTo(20, _testElement);
+                cy.elementScrollLeftShouldBe(_testElement, 20);
             });         
     });
 })
 
 describe("scrollXTo-StoppedScrollingWhileAnimating", function() {
     let uss;
-    let _resolve;
-    const _testCalculator = (i = 0) => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
-            if(!uss.isXScrolling(container)) return total; //testing phase of the setXStepLengthCalculator
-            
-            i++;
-            if(i < 2) return total / 10;
+    let init = 0;
 
-            uss.stopScrollingX(container, _resolve);
+    const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
+        if(init > 1) {
+            uss.stopScrollingX(container);
+            return 1;
         }
+
+        init++;
+        return remaning / 3 + 1;
     }
+   
     it("Tests the scrollXTo method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
-                uss.setXStepLengthCalculator(_testCalculator(), _testElement, false); 
+                uss.setXStepLengthCalculator(_testCalculator, _testElement, false);
 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        _resolve = resolve;
-                        uss.scrollXTo(100, _testElement, resolve);
+                        uss.scrollXTo(200, _testElement, resolve);
+                        
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
-                        cy.elementScrollLeftShouldBe(_testElement, 10);
+                        expect(uss.getScrollXCalculator(_testElement)()).to.be.lessThan(200);
                     }
                 );
             });         
@@ -226,33 +195,35 @@ describe("scrollXTo-StoppedScrollingWhileAnimating", function() {
 
 describe("scrollXTo-scrollXTo-ReplaceScrollingWhileAnimating", function() {
     let uss;
-    let _resolve;
-    const _testCalculator = (i = 0) => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            i++;
-            if(i === 2) {
-                uss.scrollXTo(50, container, _resolve);
-                return remaning;
-            }
-            return total / 10;
+    let init = 0;
+
+    const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
+        if(init === 1) {
+            uss.scrollXTo(10, container);
+            return 1;
         }
+
+        init++;
+        return remaning / 3 + 1;
     }
+
     it("Tests if the scrollXTo method can replace the current scroll-animation from inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
-                uss.setXStepLengthCalculator(_testCalculator(), _testElement, false);
-
+                uss.setXStepLengthCalculator(_testCalculator, _testElement, false);
+                    
                 cy.waitForUssCallback(
                     (resolve) => {
-                        _resolve = resolve;
-                        uss.scrollXTo(100, _testElement);
+                        uss.scrollXTo(100, _testElement, resolve);
+                        
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
-                        cy.elementScrollLeftShouldBe(_testElement, 50);
+                        cy.elementScrollLeftShouldBe(_testElement, 10);
                     }
                 );
             });         
