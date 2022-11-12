@@ -41,26 +41,33 @@ describe("scrollBy", function() {
 
 describe("scrollToBy-StillStart-True", function() {
     let uss;
+    let oldFinalXPosition, oldFinalYPosition;
+    let finalXPosition, finalYPosition;
 
-    it("Horizontally and vertically scrolls the test element to (n1a,n1b) pixels and then replace that animation with a (n2a,n2b) pixels scroll", function() {
+    it("Horizontally and vertically scrolls the test element to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
-
+                
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollTo(50, 20, _testElement); 
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(50);
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(20);
-                        uss.scrollBy(10, 40, _testElement, resolve, true);
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(10);
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(40);
+                        uss.scrollTo(20, 40, _testElement); 
+                        oldFinalXPosition = uss.getFinalXPosition(_testElement);
+                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
+
+                        uss.scrollBy(10, 20, _testElement, resolve, true);
+                        finalXPosition = uss.getFinalXPosition(_testElement);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
                     }
                 ).then(
                     () => {
-                        //cy.elementScrollLeftShouldBe(_testElement, 10);
-                        //cy.elementScrollTopShouldBe(_testElement, 40);
+                        expect(oldFinalXPosition).to.equal(20);
+                        expect(oldFinalYPosition).to.equal(40);
+                        expect(finalXPosition).to.equal(10);
+                        expect(finalYPosition).to.equal(20);
+                        cy.elementScrollLeftShouldBe(_testElement, 10);
+                        cy.elementScrollTopShouldBe(_testElement, 20);
                     }
                 );
             });        
@@ -97,16 +104,17 @@ describe("scrollToBy-StillStart-False", function() {
 
 describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
     let uss;
+    let oldFinalXPosition;
+    let oldFinalYPosition;
     let init = false;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentPosition, finalPosition, container) => {
         if(!init) {
-            uss.scrollBy(10, 20, container, null, false);
-            expect(uss.getFinalXPosition(container)).to.equal(20);
-            expect(uss.getFinalYPosition(container)).to.equal(40);
             init = true;
+            uss.scrollBy(10, 20, container, null, false);
+            return 1;
         }
-        return remaning;
+        return total;
     }
 
     it("Tests if the scrollBy method with stillStart=false can extend a scroll-animation from inside a stepLengthCalculator", function() {
@@ -122,13 +130,15 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollTo(10, 20, _testElement);
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(10);
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(20);
+                        oldFinalXPosition = uss.getFinalXPosition(_testElement);
+                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
 
                         win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
+                        expect(oldFinalXPosition).to.equal(10);
+                        expect(oldFinalYPosition).to.equal(20);
                         cy.elementScrollLeftShouldBe(_testElement, 20);
                         cy.elementScrollTopShouldBe(_testElement, 40);
                     }

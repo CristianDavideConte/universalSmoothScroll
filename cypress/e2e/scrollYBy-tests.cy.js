@@ -39,6 +39,8 @@ describe("scrollYBy", function() {
 
 describe("scrollYToBy-StillStart-True", function() {
     let uss;
+    let oldFinalYPosition;
+    let finalYPosition;
 
     it("Vertically scrolls the test element to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.window()
@@ -49,12 +51,15 @@ describe("scrollYToBy-StillStart-True", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollYTo(20, _testElement); 
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(20);
+                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
+
                         uss.scrollYBy(10, _testElement, resolve, true);
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(10);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
                     }
                 ).then(
                     () => {
+                        expect(oldFinalYPosition).to.equal(20);
+                        expect(finalYPosition).to.equal(10);
                         cy.elementScrollTopShouldBe(_testElement, 10);
                     }
                 );
@@ -89,18 +94,19 @@ describe("scrollYToBy-StillStart-False", function() {
 
 describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
     let uss;
+    let oldFinalYPosition;
     let init = false;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
         if(!init) {
-            uss.scrollYBy(10, container, null, false);
-            expect(uss.getFinalYPosition(container)).to.equal(20);
             init = true;
+            uss.scrollYBy(10, container, null, false);
+            return 1;
         }
         return remaning;
     }
 
-    it("Tests if the scrollYBy method with stillStart=false can extend a scroll-animation from inside a stepLengthCalculator", function() {
+    it("Tests if the scrollXBy method with stillStart=false can extend a scroll-animation from inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
@@ -112,12 +118,13 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating", functio
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollYTo(10, _testElement);
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(10);
+                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
                         
                         win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
+                        expect(oldFinalYPosition).to.equal(10);
                         cy.elementScrollTopShouldBe(_testElement, 20);
                     }
                 );

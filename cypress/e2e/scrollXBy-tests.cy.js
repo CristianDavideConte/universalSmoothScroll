@@ -39,6 +39,8 @@ describe("scrollXBy", function() {
 
 describe("scrollXToBy-StillStart-True", function() {
     let uss;
+    let oldFinalXPosition;
+    let finalXPosition;
 
     it("Horizontally scrolls the test element to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.window()
@@ -49,12 +51,15 @@ describe("scrollXToBy-StillStart-True", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollXTo(20, _testElement); 
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(20);
+                        oldFinalXPosition = uss.getFinalXPosition(_testElement);
+
                         uss.scrollXBy(10, _testElement, resolve, true);
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(10);
+                        finalXPosition = uss.getFinalXPosition(_testElement);
                     }
                 ).then(
                     () => {
+                        expect(oldFinalXPosition).to.equal(20);
+                        expect(finalXPosition).to.equal(10);
                         cy.elementScrollLeftShouldBe(_testElement, 10);
                     }
                 );
@@ -89,13 +94,14 @@ describe("scrollXToBy-StillStart-False", function() {
 
 describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
     let uss;
+    let oldFinalXPosition;
     let init = false;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
         if(!init) {
-            uss.scrollXBy(10, container, null, false);
-            expect(uss.getFinalXPosition(container)).to.equal(20);
             init = true;
+            uss.scrollXBy(10, container, null, false);
+            return 1;
         }
         return remaning;
     }
@@ -112,12 +118,13 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating", functio
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollXTo(10, _testElement);
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(10);
+                        oldFinalXPosition = uss.getFinalXPosition(_testElement);
                         
                         win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
+                        expect(oldFinalXPosition).to.equal(10);
                         cy.elementScrollLeftShouldBe(_testElement, 20);
                     }
                 );
