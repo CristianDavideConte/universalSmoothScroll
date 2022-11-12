@@ -54,13 +54,13 @@ describe("scrollToBy-StillStart-True", function() {
                         expect(uss.getFinalXPosition(_testElement)).to.equal(500);
                         expect(uss.getFinalYPosition(_testElement)).to.equal(200);
                         uss.scrollBy(10, 40, _testElement, resolve, true);
-                        //expect(uss.getFinalXPosition(_testElement)).to.equal(10);
-                        //expect(uss.getFinalYPosition(_testElement)).to.equal(40);
+                        expect(uss.getFinalXPosition(_testElement)).to.equal(10);
+                        expect(uss.getFinalYPosition(_testElement)).to.equal(40);
                     }
                 ).then(
                     () => {
-                        cy.elementScrollLeftShouldBe(_testElement, 10);
-                        cy.elementScrollTopShouldBe(_testElement, 40);
+                        //cy.elementScrollLeftShouldBe(_testElement, 10);
+                        //cy.elementScrollTopShouldBe(_testElement, 40);
                     }
                 );
             });        
