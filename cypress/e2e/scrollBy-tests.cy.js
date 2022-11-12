@@ -41,7 +41,6 @@ describe("scrollBy", function() {
 
 describe("scrollToBy-StillStart-True", function() {
     let uss;
-    let initialFinalXPos, initialFinalYPos;
 
     it("Horizontally and vertically scrolls the test element to (n1a,n1b) pixels and then replace that animation with a (n2a,n2b) pixels scroll", function() {
         cy.window()
@@ -52,14 +51,11 @@ describe("scrollToBy-StillStart-True", function() {
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollTo(500, 200, _testElement); 
-                        initialFinalXPos = uss.getFinalXPosition(_testElement); 
-                        initialFinalYPos = uss.getFinalYPosition(_testElement); 
+                        expect(uss.getFinalXPosition(_testElement)).to.equal(500);
+                        expect(uss.getFinalYPosition(_testElement)).to.equal(200);
                         uss.scrollBy(10, 40, _testElement, resolve, true);
-                        
-                        expect(initialFinalXPos).to.equal(500);
-                        expect(initialFinalYPos).to.equal(200);
-                        expect(uss.getFinalXPosition(_testElement)).to.equal(10);
-                        expect(uss.getFinalYPosition(_testElement)).to.equal(40);
+                        //expect(uss.getFinalXPosition(_testElement)).to.equal(10);
+                        //expect(uss.getFinalYPosition(_testElement)).to.equal(40);
                     }
                 ).then(
                     () => {
