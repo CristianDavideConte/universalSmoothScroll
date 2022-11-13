@@ -48,20 +48,21 @@ describe("scrollYToBy-StillStart-True", function() {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
+                uss.scrollYTo(20, _testElement); 
+                oldFinalYPosition = uss.getFinalYPosition(_testElement);
+
+                uss.scrollYBy(10, _testElement, null, true);
+                finalYPosition = uss.getFinalYPosition(_testElement);
+
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollYTo(20, _testElement); 
-                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
-
-                        uss.scrollYBy(10, _testElement, null, true);
-                        finalYPosition = uss.getFinalYPosition(_testElement);
-
+                        expect(oldFinalYPosition).to.equal(20);
+                        expect(finalYPosition).to.equal(10);
+                        
                         win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
-                        expect(oldFinalYPosition).to.equal(20);
-                        expect(finalYPosition).to.equal(10);
                         cy.elementScrollTopShouldBe(_testElement, 10);
                     }
                 );

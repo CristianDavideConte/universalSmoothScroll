@@ -1,6 +1,13 @@
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
+    //Whenever the page is scaled (perhaps there isn't enough space to respect the default 1000x660 viewport),
+    //the number pixels scrolled is inconsistent/may vary.
+    //Cypress doesn't correctly report the window.innerWidth/window.innerHeight whenever the page is scaled, 
+    //so there's no way to adjust the tests.
+    //This is a quick fix: shrink the viewport down so that is unlikely that the page is ever scaled.
+    //This trick doens't affect the test results.
+    cy.viewport(100, 200); 
     cy.visit("scrollBy-tests.html"); 
 })
 
@@ -50,24 +57,25 @@ describe("scrollToBy-StillStart-True", function() {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
+                uss.scrollTo(20, 40, _testElement); 
+                oldFinalXPosition = uss.getFinalXPosition(_testElement);
+                oldFinalYPosition = uss.getFinalYPosition(_testElement);
+
+                uss.scrollBy(10, 20, _testElement, null, true);
+                finalXPosition = uss.getFinalXPosition(_testElement);
+                finalYPosition = uss.getFinalYPosition(_testElement);
+
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollTo(20, 40, _testElement); 
-                        oldFinalXPosition = uss.getFinalXPosition(_testElement);
-                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
-
-                        uss.scrollBy(10, 20, _testElement, null, true);
-                        finalXPosition = uss.getFinalXPosition(_testElement);
-                        finalYPosition = uss.getFinalYPosition(_testElement);
+                        expect(oldFinalXPosition).to.equal(20);
+                        expect(oldFinalYPosition).to.equal(40);
+                        expect(finalXPosition).to.equal(10);
+                        expect(finalYPosition).to.equal(20);
 
                         win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
-                        expect(oldFinalXPosition).to.equal(20);
-                        expect(oldFinalYPosition).to.equal(40);
-                        expect(finalXPosition).to.equal(10);
-                        expect(finalYPosition).to.equal(20);
                         cy.elementScrollLeftShouldBe(_testElement, 10);
                         cy.elementScrollTopShouldBe(_testElement, 20);
                     }
@@ -89,7 +97,6 @@ describe("scrollToBy-StillStart-False", function() {
 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        
                         uss.scrollTo(20, 40, _testElement); 
                         oldFinalXPosition = uss.getFinalXPosition(_testElement);
                         oldFinalYPosition = uss.getFinalYPosition(_testElement);

@@ -48,20 +48,21 @@ describe("scrollXToBy-StillStart-True", function() {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
+                uss.scrollXTo(20, _testElement); 
+                oldFinalXPosition = uss.getFinalXPosition(_testElement);
+
+                uss.scrollXBy(10, _testElement, null, true);
+                finalXPosition = uss.getFinalXPosition(_testElement);
+
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollXTo(20, _testElement); 
-                        oldFinalXPosition = uss.getFinalXPosition(_testElement);
-
-                        uss.scrollXBy(10, _testElement, null, true);
-                        finalXPosition = uss.getFinalXPosition(_testElement);
+                        expect(oldFinalXPosition).to.equal(20);
+                        expect(finalXPosition).to.equal(10);
 
                         win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
-                        expect(oldFinalXPosition).to.equal(20);
-                        expect(finalXPosition).to.equal(10);
                         cy.elementScrollLeftShouldBe(_testElement, 10);
                     }
                 );
