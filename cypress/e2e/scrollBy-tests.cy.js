@@ -55,6 +55,7 @@ describe("scrollToBy-StillStart-True", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                uss._reduceMotion = false;
                 const _testElement = win.document.getElementById("scroller");
                 
                 uss.scrollTo(20, 40, _testElement); 
