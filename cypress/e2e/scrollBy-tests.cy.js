@@ -50,7 +50,6 @@ describe("scrollToBy-StillStart-True", function() {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
-
                 cy.waitForUssCallback(
                     (resolve) => {
                         uss.scrollTo(20, 40, _testElement, null); 

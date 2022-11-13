@@ -196,6 +196,7 @@ const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);      
 const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789))); //38px at 789px of height && 22px at 1920px of height
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_FRAME_TIME = 16.6; //in ms
+//const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame; //TODO
 
 const DEFAULT_REGEX_LOGGER_DISABLED = /disabled/i;
 const DEFAULT_REGEX_LOGGER_LEGACY = /legacy/i;
@@ -325,6 +326,7 @@ window.uss = {
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _scrollbarsMaxDimension: null,
   _framesTime: DEFAULT_FRAME_TIME,
+  //_framesTimeRequested: false, //TODO
   _windowScroller: null,
   _pageScroller: null,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
@@ -543,7 +545,8 @@ window.uss = {
   getOnResizeEndCallbacks: () => uss._onResizeEndCallbacks,
   getDebugMode: () => uss._debugMode, 
   setXStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setXStepLengthCalculator"}) => {
-    if(typeof newCalculator !== "function" && newCalculator !== undefined) {
+    const _isSettingOp = newCalculator !== undefined;
+    if(typeof newCalculator !== "function" && _isSettingOp) {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
@@ -564,11 +567,12 @@ window.uss = {
     } else {
       //Setting a non-temporary StepLengthCalculator will unset the temporary one.
       _containerData[12] = newCalculator;
-      _containerData[14] = undefined; 
+      if(_isSettingOp) _containerData[14] = undefined; 
     }  
   },
   setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setYStepLengthCalculator"}) => {
-    if(typeof newCalculator !== "function" && newCalculator !== undefined) {
+    const _isSettingOp = newCalculator !== undefined;
+    if(typeof newCalculator !== "function" && _isSettingOp) {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
@@ -589,11 +593,12 @@ window.uss = {
     } else {
       //Setting a non-temporary StepLengthCalculator will unset the temporary one.
       _containerData[13] = newCalculator;
-      _containerData[15] = undefined; 
+      if(_isSettingOp) _containerData[15] = undefined; 
     }  
   },
   setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setStepLengthCalculator"}) => {
-    if(typeof newCalculator !== "function" && newCalculator !== undefined) {
+    const _isSettingOp = newCalculator !== undefined;
+    if(typeof newCalculator !== "function" && _isSettingOp) {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
@@ -616,8 +621,11 @@ window.uss = {
       //Setting a non-temporary StepLengthCalculator will unset the temporary one.
       _containerData[12] = newCalculator;
       _containerData[13] = newCalculator;
-      _containerData[14] = undefined; 
-      _containerData[15] = undefined; 
+
+      if(_isSettingOp) {
+        _containerData[14] = undefined; 
+        _containerData[15] = undefined;
+      } 
     }
   },
   setXStepLength: (newXStepLength = DEFAULT_XSTEP_LENGTH, options = {debugString: "setXStepLength"}) => {

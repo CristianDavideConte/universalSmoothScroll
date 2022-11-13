@@ -50,6 +50,23 @@ describe("setXStepLengthCalculator", function() {
                     uss.stopScrollingY();
                     expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
                     
+                    //try to unset one or more stepLengthCalculators
+                    uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    uss.setXStepLengthCalculator(undefined, _testElement, false);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    
+                    uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    uss.setXStepLengthCalculator(undefined, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
+                    
                     uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
                     uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
                     expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
@@ -58,7 +75,7 @@ describe("setXStepLengthCalculator", function() {
                     uss.setXStepLengthCalculator(undefined, _testElement, true);
                     expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_noStepLengthCalculator);
                     expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
-                    
+
                     uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
                     uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
                     expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
