@@ -61,22 +61,22 @@ export async function isValidStepLengthCalculator(
 
     const _tester = (resolve, reject) => {
         _currentTimestamp = performance.now();
-        const _testResult = fun(
-                                _remaningScrollAmount,                      //remaningScrollAmount
-                                _originalTimestamp,                         //originalTimestamp
-                                _currentTimestamp,                          //currentTimestamp
-                                _totalScrollAmount,                         //totalScrollAmount
-                                _totalScrollAmount - _remaningScrollAmount, //currentXPosition
-                                _totalScrollAmount,                         //finalXPosition
-                                options.container                           //container
-                            );
+        const __testResult = fun(
+                                 _remaningScrollAmount,                      //remaningScrollAmount
+                                 _originalTimestamp,                         //originalTimestamp
+                                 _currentTimestamp,                          //currentTimestamp
+                                 _totalScrollAmount,                         //totalScrollAmount
+                                 _totalScrollAmount - _remaningScrollAmount, //currentXPosition
+                                 _totalScrollAmount,                         //finalXPosition
+                                 options.container                           //container
+                             );
                             
-        if(!Number.isFinite(_testResult)) {
-            reject(_testResult);
+        if(!Number.isFinite(__testResult)) {
+            reject(__testResult);
             return;
         }
 
-        _remaningScrollAmount -= _testResult;  
+        _remaningScrollAmount -= __testResult;  
         _exeededTimeLimit = _currentTimestamp - _originalTimestamp > _timeout;
 
         if(_remaningScrollAmount <= 0 || _exeededTimeLimit) {
