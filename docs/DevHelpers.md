@@ -86,7 +86,6 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     Returns <code>false</code> otherwise.
    </td>
   </tr>
-
   <tr>
    <td rowspan = "3" align = "center">
    <i>
@@ -102,7 +101,6 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a>
    </td>
   </tr>
-
   <tr>
     <td rowspan = "1" align = "center">
     <strong>
@@ -113,7 +111,6 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
      <code>100</code>
     </td>
   </tr>
-
   <tr>
    <td rowspan = "1" align = "center">
    <strong>
@@ -124,6 +121,28 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
      <code>5000</code>
    </td>
   </tr>
+
+  <tr id = "getBrowserRefreshRate">
+   <td rowspan = "1" align = "center">
+    <code>getBrowserRefreshRate</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>async</code>
+   </td>
+   <td colspan = "2" rowspan = "1" align = "center">
+    <strong>✗</strong>
+   </td>
+   </td>
+   <td rowspan = "1" align = "center">
+    <strong>✗</strong>
+   </td>
+   <td rowspan = "4" align = "left">
+    Tests if both the <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> and the <a href = "./VariablesAbout.md#_framesTimes"><code>_framesTimes</code></a> variable 
+    have not been altered and if so calculates the browser's refresh rate. <br/>
+    More specifically, it returns the highest number of times that the <a href = "https://developer.mozilla.org/en-US/docs/Web/API/window/requestAnimationFrame"><code>requestAnimationFrame</code></a> can be called per second.
+   </td>
+  </tr>
+
   </tbody>
 </table>
 
@@ -159,7 +178,6 @@ The following table describes every entry of the `Input Parameters` column of th
      A function you want to use as a <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
    </td>
   </tr>
-
   <tr>
    <td rowspan = "3" align = "center">
     <code>options</code>
@@ -174,7 +192,6 @@ The following table describes every entry of the `Input Parameters` column of th
      An Element or the Window.
    </td>
   </tr>
-  
   <tr>
    <td rowspan = "1" align = "center">
     <code>totalScrollAmount</code>
@@ -186,7 +203,6 @@ The following table describes every entry of the `Input Parameters` column of th
     The total amount of pixel to scroll you want the dummy scroll-animation to test your <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> againist. 
    </td>
   </tr>
-
   <tr>
    <td rowspan = "1" align = "center">
      <code>timeout</code>
@@ -198,6 +214,8 @@ The following table describes every entry of the `Input Parameters` column of th
     The number of milliseconds after which the test forcefully returns a result.
   </td>
   </tr>
+
+  
  </tbody>
 <table>
 

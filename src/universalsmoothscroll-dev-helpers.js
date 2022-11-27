@@ -109,3 +109,67 @@ export async function isValidStepLengthCalculator(
     
     return true;
 }
+
+/**
+ * This functions tests if both the uss._framesTime and the uss._framesTimes variable 
+ * have not been altered and if so calculates the browser's refresh rate.
+ * More specifically, it returns the highest number of times that the window.requestAnimationFrame can be called per second.
+ * @param {Object} options An object which contains the testing preferences listed below.
+ * @param {String} [options.debugString="getBrowserRefreshRate"] A string internally used to log the name of the most upper level function that caused an error/warning.
+ * @returns The number of frames per seconds that the browser is refreshing at.
+ */
+export async function getBrowserRefreshRate(
+    options = {
+        debugString:"getBrowserRefreshRate"
+    }
+) {
+    //Check if the uss._framesTimes variable has been altered.
+    if(!Array.isArray(uss._framesTimes)) {
+        uss._errorLogger(options.debugString, "uss._framesTimes to be an array of numbers", uss._framesTimes);
+        return NaN;
+    }
+    
+    options.requestPhase = 0;
+
+    //Check if the uss._framesTime variable has already been calculated.
+    if(uss._framesTimes.length > 0) {
+        return 1000 / uss.getFramesTime(false, null, options);
+    }
+
+    let _currentMeasurementsLeft = 60; //Do 60 measurements to establish the initial value
+
+    try {
+        uss._warningLogger("uss._framesTime", "hasn't been calculated yet at the time of invocation");
+
+        await new Promise((resolve, reject) => {
+            const _startMeasuring = () => {
+                //Other API components have requested the frames time calculation,
+                //the callback will be ignored so it's better to postpone the measurements.
+                if(uss._framesTimes[-1]) {
+                    setTimeout(_startMeasuring, 1000);
+                    return;
+                }
+
+                //Calculate the average frames' time of the user's screen. 
+                const _measureFramesTime = () => {
+                    if(_currentMeasurementsLeft > 0) {
+                        _currentMeasurementsLeft--;
+                        uss.calcFramesTimes(undefined, undefined, _measureFramesTime);
+                    } else {
+                        resolve();
+                    }
+                }
+                _measureFramesTime();
+            }
+            _startMeasuring();
+        });
+    } catch(result) {
+        try {
+            uss._errorLogger(options.debugString, "to not throw any exception", result);
+        } catch(e){} 
+        
+        return NaN;
+    }
+
+    return 1000 / uss.getFramesTime(false, null, options);
+}

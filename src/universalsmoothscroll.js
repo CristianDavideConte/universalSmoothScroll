@@ -2349,15 +2349,15 @@ function ussInit() {
 
   //Calculate the average frames' time of the user's screen. 
   let _currentMeasurementsLeft = 60; //Do 60 measurements to establish the initial value
-  const _measureFramesTimes = () => {
+  const _measureFramesTime = () => {
     if(_currentMeasurementsLeft > 0) {
       _currentMeasurementsLeft--;
-      uss.calcFramesTimes(undefined, undefined, _measureFramesTimes);
+      uss.calcFramesTimes(undefined, undefined, _measureFramesTime);
     }
     
     //uss._minAnimationFrame = 1000 / uss._framesTime; //<---------------------------------------------------------------------TO LOOK MORE INTO
   }
-  _measureFramesTimes();
+  _measureFramesTime();
 }
 
 if(document.readyState === "complete") ussInit();
