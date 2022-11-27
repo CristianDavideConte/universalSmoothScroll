@@ -10,6 +10,13 @@
  * DEFAULT_MIN_ANIMATION_FRAMES: number, the initial value of the "_minAnimationFrame" property: 
  *                               it represents the default lowest number of frames any scroll-animation on a container should last if no StepLengthCalculator is set for it.
  * DEFAULT_FRAME_TIME: number, the initial value of the "_framesTime" property: it's 16.6 and it initially assumes that the user's browser/screen is refreshing at 60fps. 
+ * DEFAULT_REGEX_LOGGER_DISABLED: regexp, the regular expression used by the default loggers to test if they're disabled.
+ * DEFAULT_REGEX_LOGGER_LEGACY: regexp, the regular expression used by the default loggers to test if they should operate in legacy mode.
+ * DEFAULT_REGEX_ALIGNMENT_NEAREST: regexp, the regular expression used by scrollIntoView to test if the passed alignments correspond to "nearest".
+ * DEFAULT_REGEX_OVERFLOW: regexp, the regular expression used to test if any container has any of the "overflow" properties set to "auto" or "scroll".
+ * DEFAULT_REGEX_OVERFLOW_HIDDEN: regexp, the regular expression used to test if any container has any of the "overflow" properties set to "auto", "scroll" or "hidden".
+ * DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE: regexp, the regular expression used to test if any container has any of the "overflow" properties set to "auto", "scroll" or "visible".
+ * DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE: regexp, the regular expression used to test if any container has any of the "overflow" properties set to "auto", "scroll", "hidden" or "visible".
  * DEFAULT_XSTEP_LENGTH_CALCULATOR: function, the default stepLengthCalculator for scroll-animations on the x-axis of every container that doesn't have a custom stepLengthCalculator set.
  *                                  Controls how long each animation-step on the x-axis must be (in px) in order to target the "_minAnimationFrame" property value. 
  * DEFAULT_YSTEP_LENGTH_CALCULATOR: function, the default stepLengthCalculator for scroll-animations on the y-axis of every container that doesn't have a custom stepLengthCalculator set.
@@ -22,7 +29,7 @@
 /*
  * VARIABLES (INTERNAL USE):
  *
- * _containersData: Map(Container, Array[]), a map in which:
+ * _containersData: Map(Container, Array), a map in which:
  *                  1) The keys are an instances of Element or the Window and they're internally called "containers".
  *                  2) The values are arrays:
  *                     [0] contains the ID of a requested scroll-animation on the x-axis of this container provided by the requestAnimationFrame method.
@@ -59,6 +66,12 @@
  *                     [21] contains the cached value of the right border's width (in px) of this container.
  *                     [22] contains the cached value of the bottom border's height (in px) of this container.
  *                     [23] contains the cached value of the left border's width (in px) of this container.
+ *                     [24] contains the cached value of this container's next scrollable parent on the x-axis which does not have "overflow-x:hidden".
+ *                     [25] contains the cached value of this container's next scrollable parent on the x-axis which has "overflow-x:hidden".
+ *                     [26] contains the cached value of this container's next scrollable parent on the y-axis which does not have "overflow-y:hidden".
+ *                     [27] contains the cached value of this container's next scrollable parent on the y-axis which has "overflow-y:hidden".
+ *                     [28] contains the cached value of this container's scrollXCalculator.
+ *                     [29] contains the cached value of this container's scrollYCalculator.
  * _xStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a
  *                       single scroll-animation's step on the x-axis of that container.
  * _yStepLength: number, if there's no StepLengthCalculator set for a container, this represent the number of pixels scrolled during a
@@ -69,6 +82,9 @@
  * _windowHeight: number, the current Window's inner height (in px).
  * _scrollbarsMaxDimension: number, the highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
  * _framesTime: number, the time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
+ *              It's the average of the uss._framesTimes's values.
+ * _framesTimes: array, contains at most the last 10 calculated frames' times.
+ * _windowScroller: object, the element that scrolls the Window when it's scrolled and that (viceversa) is scrolled when the Window is scrolled.
  * _pageScroller: object, the element that scrolls the document. 
  *                        It's also the value used when an API method requires the container input parameter but nothing is passed.
  * _reducedMotion: boolean, true if the user has enabled any reduce-motion setting devicewise, false otherwise. 
@@ -116,6 +132,8 @@
  * getWindowHeight: function, returns the value of the "_windowHeight" property.
  * getWindowWidth: function, returns the value of the "_windowWidth" property.
  * getScrollbarsMaxDimension: function, returns the value of the "_scrollbarsMaxDimension" property.
+ * getFramesTime: function, returns the value of the "_framesTime" property. 
+ * getWindowScroller: function, returns the value of the "_windowScroller" property.
  * getPageScroller: function, returns the value of the "_pageScroller" property.
  * getReducedMotionState: function, returns the value of the "_reducedMotion" property.
  * getOnResizeEndCallbacks: function, returns the value of the "_onResizeEndCallbacks" property.
@@ -132,6 +150,8 @@
  * setDebugMode: function, sets the "_debugMode" property to the passed value if compatible.
  * setErrorLogger: function, sets the "_errorLogger" property to the passed value if compatible.
  * setWarningLogger: function, sets the "_warningLogger" property to the passed value if compatible.
+ * calcFramesTimes: function, requests a new frames' time measurement and asynchronously inserts the result into _framesTimes. 
+ *                  When the calculation is finished, uss._framesTime will be updated accordingly.
  * calcXScrollbarDimension: function, returns the vertical scrollbar's width (in px) of the passed container.
  * calcYScrollbarDimension: function, returns the horizontal scrollbar's height (in px) of the passed container.
  * calcScrollbarsDimensions: function, returns an array containing 2 numbers:
@@ -181,6 +201,16 @@ const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);      
 const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789))); //38px at 789px of height && 22px at 1920px of height
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_FRAME_TIME = 16.6; //in ms
+//const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame; //To look more into
+
+const DEFAULT_REGEX_LOGGER_DISABLED = /disabled/i;
+const DEFAULT_REGEX_LOGGER_LEGACY = /legacy/i;
+const DEFAULT_REGEX_ALIGNMENT_NEAREST = /nearest/i;
+const DEFAULT_REGEX_OVERFLOW = /(auto|scroll)/;
+const DEFAULT_REGEX_OVERFLOW_HIDDEN = /(auto|scroll|hidden)/;
+const DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
+const DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
+
 const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
   const _stepLength = total / uss._minAnimationFrame;
   if(_stepLength < 1) return 1;
@@ -196,7 +226,7 @@ const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
 }
 
 const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
-  if(/disabled/i.test(uss._debugMode)) return;
+  if(DEFAULT_REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
   
   //Convert to a string and eventually trim the receivedValue.
   const _receivedValueIsString = typeof receivedValue === "string";
@@ -204,12 +234,13 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
     if(receivedValue === null || receivedValue === undefined) receivedValue = String(receivedValue);
     else if(receivedValue === window) receivedValue = "window";
     else if(Array.isArray(receivedValue)) receivedValue = "[" + receivedValue.toString() + "]"; 
-    else if(receivedValue instanceof Element) {
+    else if(receivedValue instanceof Element || (receivedValue.tagName && (receivedValue.id || receivedValue.className))) {
       const _id = receivedValue.id ? "#" + receivedValue.id : "";
       const _className = receivedValue.className ? "." + receivedValue.className : "";
       receivedValue = receivedValue.tagName.toLowerCase() + _id + _className;
     } else {
       receivedValue = receivedValue.name || 
+                      receivedValue.outerHTML ||
                       receivedValue
                       .toString()
                       .replace(new RegExp("\n", "g"), "");
@@ -219,7 +250,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(receivedValue.length > 40) receivedValue = receivedValue.slice(0, 40) + " ...";
   if(_receivedValueIsString) receivedValue = "\"" + receivedValue + "\"";
 
-  if(/legacy/i.test(uss._debugMode)) {
+  if(DEFAULT_REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
     console.error("USS ERROR\n", functionName, "was expecting", expectedValue + ", but received", receivedValue + ".");
     throw "USS fatal error (execution stopped)";
@@ -246,7 +277,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
 }
 
 const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) => {
-  if(/disabled/i.test(uss._debugMode)) return;
+  if(DEFAULT_REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
 
   //Convert to a string and eventually trim the subject.
   const _subjectIsString = typeof subject === "string";
@@ -254,12 +285,13 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
     if(subject === null || subject === undefined) subject = String(subject);
     else if(subject === window) subject = "window";
     else if(Array.isArray(subject)) subject = "[" + subject.toString() + "]"; 
-    else if(subject instanceof Element) {
+    else if(subject instanceof Element || (subject.tagName && (subject.id || subject.className))) {
       const _id = subject.id ? "#" + subject.id : "";
       const _className = subject.className ? "." + subject.className : "";
       subject = subject.tagName.toLowerCase() + _id + _className;
     } else {
       subject = subject.name || 
+                subject.outerHTML ||
                 subject
                 .toString()
                 .replace(new RegExp("\n", "g"), "");
@@ -269,7 +301,7 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   if(subject.length > 40) subject = subject.slice(0, 40) + " ...";
   if(_subjectIsString && keepQuotesForString) subject = "\"" + subject + "\"";
 
-  if(/legacy/i.test(uss._debugMode)) {
+  if(DEFAULT_REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
     console.warn("USS WARNING\n", subject, message + ".");
     return;
@@ -299,6 +331,8 @@ window.uss = {
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _scrollbarsMaxDimension: null,
   _framesTime: DEFAULT_FRAME_TIME,
+  _framesTimes: [],
+  _windowScroller: null,
   _pageScroller: null,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
   _onResizeEndCallbacks: [],
@@ -306,23 +340,35 @@ window.uss = {
   _errorLogger: DEFAULT_ERROR_LOGGER,
   _warningLogger: DEFAULT_WARNING_LOGGER,
   isXScrolling: (container = uss._pageScroller, options = {debugString: "isXScrolling"}) => {
+    const _containerData = uss._containersData.get(container);
+
+    if(_containerData) return !!_containerData[0];
+
     if(container === window || container instanceof Element) {
-      const _containerData = uss._containersData.get(container) || [];
-      return !!_containerData[0];
+      uss._containersData.set(container, []);
+      return false;
     }
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-  },
+  }, 
   isYScrolling: (container = uss._pageScroller, options = {debugString: "isYScrolling"}) => {
+    const _containerData = uss._containersData.get(container);
+
+    if(_containerData) return !!_containerData[1];
+
     if(container === window || container instanceof Element) {
-      const _containerData = uss._containersData.get(container) || [];
-      return !!_containerData[1];
+      uss._containersData.set(container, []);
+      return false;
     }
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-  },
+  },   
   isScrolling: (container = uss._pageScroller, options = {debugString: "isScrolling"}) => {
-    if(container === window || container instanceof Element) { 
-      const _containerData = uss._containersData.get(container) || [];
-      return !!_containerData[0] || !!_containerData[1];
+    const _containerData = uss._containersData.get(container);
+
+    if(_containerData) return !!(_containerData[0] || _containerData[1]);
+
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return false;
     }
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
@@ -337,34 +383,50 @@ window.uss = {
     return _containerData[3] === 0 ? 0 : _containerData[3] || uss.getScrollYCalculator(container, options)();
   },
   getScrollXDirection: (container = uss._pageScroller, options = {debugString: "getScrollXDirection"}) => {
-    if(container === window || container instanceof Element) { 
-      //If there's no scroll-animation on the x-axis, 0 is returned instead.
-      const _containerData = uss._containersData.get(container) || [];
-      return _containerData[4] || 0;
+    const _containerData = uss._containersData.get(container);
+    
+    //If there's no scroll-animation, 0 is returned.
+    if(_containerData) return _containerData[4] || 0;
+    
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return 0; 
     }
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getScrollYDirection: (container = uss._pageScroller, options = {debugString: "getScrollYDirection"}) => {
-    if(container === window || container instanceof Element) { 
-      //If there's no scroll-animation on the y-axis, 0 is returned instead.
-      const _containerData = uss._containersData.get(container) || [];
-      return _containerData[5] || 0;
+    const _containerData = uss._containersData.get(container);
+    
+    //If there's no scroll-animation, 0 is returned.
+    if(_containerData) return _containerData[5] || 0;
+    
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return 0; 
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);  
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getXStepLengthCalculator"}) => {
-    if(container === window || container instanceof Element) { 
-      const _containerData = uss._containersData.get(container) || [];
-      return getTemporary ? _containerData[14] : _containerData[12];
+    const _containerData = uss._containersData.get(container);
+        
+    if(_containerData) return getTemporary ? _containerData[14] : _containerData[12];
+
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return; 
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);    
   },
   getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getYStepLengthCalculator"}) => {    
-    if(container === window || container instanceof Element) { 
-      const _containerData = uss._containersData.get(container) || [];
-      return getTemporary ? _containerData[15] : _containerData[13];
+    const _containerData = uss._containersData.get(container);
+        
+    if(_containerData) return getTemporary ? _containerData[15] : _containerData[13];
+
+    if(container === window || container instanceof Element) {
+      uss._containersData.set(container, []);
+      return; 
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);    
   },
   getXStepLength: () => uss._xStepLength,
   getYStepLength: () => uss._yStepLength,
@@ -372,55 +434,118 @@ window.uss = {
   getWindowWidth:  () => uss._windowWidth,
   getWindowHeight: () => uss._windowHeight,
   getScrollbarsMaxDimension: (forceCalculation = false) => {
-    //Calculate the maximum sizes of scrollbars on the webpage by:
-    // - creating a <div> with id = "__ussScrollBox".
-    // - giving that <div> a mini-stylesheet that forces it to show the scrollbars.
+    /**
+     * Calculate the maximum sizes of scrollbars on the webpage by:
+     * - creating a <div> with id = "_uss-scrollbox"
+     * - giving that <div> a mini-stylesheet that forces it to show the scrollbars 
+     */
     if(forceCalculation || !Number.isFinite(uss._scrollbarsMaxDimension)) {
-      const __scrollBoxStyle = document.createElement("style");
-      const __scrollBox = document.createElement("div");
-      __scrollBox.id = "__uss-ScrollBox";
-      __scrollBoxStyle.appendChild(
+      const _scrollBoxStyle = document.createElement("style");
+      const _scrollBox = document.createElement("div");
+      _scrollBox.id = "_uss-scrollbox";
+      _scrollBoxStyle.appendChild(
         document.createTextNode(
-          "#__uss-ScrollBox { display:block; width:100px; height:100px; overflow-x:scroll; border:none; padding:0px; }"  + 
-          "#__uss-ScrollBox::-webkit-scrollbar { display:block; width:initial; height:initial; }"
+          "#_uss-scrollbox { display:block; width:100px; height:100px; overflow-x:scroll; border:none; padding:0px; }"  + 
+          "#_uss-scrollbox::-webkit-scrollbar { display:block; width:initial; height:initial; }"
         )
       );
-      document.head.appendChild(__scrollBoxStyle);
-      document.body.appendChild(__scrollBox);
-      uss._scrollbarsMaxDimension = __scrollBox.offsetHeight - __scrollBox.clientHeight;
-      document.body.removeChild(__scrollBox);
-      document.head.removeChild(__scrollBoxStyle);
+      document.head.appendChild(_scrollBoxStyle);
+      document.body.appendChild(_scrollBox);
+      uss._scrollbarsMaxDimension = _scrollBox.offsetHeight - _scrollBox.clientHeight;
+      document.body.removeChild(_scrollBox);
+      document.head.removeChild(_scrollBoxStyle);
     }
 
     return uss._scrollbarsMaxDimension;
   },
-  getPageScroller: (forceCalculation = false, options = {debugString: "getPageScroller"}) => {
-    //Check if the pageScroller has already been calculated.
-    if(!forceCalculation && uss._pageScroller) {
-      return uss._pageScroller;
-    }
- 
-    //The _pageScroller is the element that can scroll the further between document.documentElement and document.body.
-    //If there's a tie or neither of those can scroll, it's defaulted to the 
-    //the document.scrollingElement (if supported) or the Window.
-    const _htmlMaxScrollX = uss.getMaxScrollX(document.documentElement, true, options);
-    const _htmlMaxScrollY = uss.getMaxScrollY(document.documentElement, true, options);
-    const _bodyMaxScrollX = uss.getMaxScrollX(document.body, true, options);
-    const _bodyMaxScrollY = uss.getMaxScrollY(document.body, true, options);
+  getWindowScroller: (forceCalculation = false) => {
+    //Check if the _windowScroller has already been calculated.
+    if(forceCalculation || !uss._windowScroller) {
+      /**
+       * Test if the window is scrollable and if scrolling it 
+       * also scrolls the passed element.
+       * Returns true if the uss._windowScroller has been set, false otherwise.
+       */
+      const _testScroller = (element) => {
+        //Save the original scroll positions of the Window and the element.
+        const __originalWindowXPos = window.scrollX;
+        const __originalWindowYPos = window.scrollY; 
+        const __originalElementXPos = element.scrollLeft;
+        const __originalElementYPos = element.scrollTop; 
 
-    //Cache the _pageScroller for later use.
-    if(
-      (_htmlMaxScrollX >  _bodyMaxScrollX && _htmlMaxScrollY >= _bodyMaxScrollY) ||
-      (_htmlMaxScrollX >= _bodyMaxScrollX && _htmlMaxScrollY >  _bodyMaxScrollY)
-    ) {
-      uss._pageScroller = document.documentElement;
-    } else if(
-      (_bodyMaxScrollX >  _htmlMaxScrollX && _bodyMaxScrollY >= _htmlMaxScrollY) || 
-      (_bodyMaxScrollX >= _htmlMaxScrollX && _bodyMaxScrollY >  _htmlMaxScrollY) 
-    ) {
-      uss._pageScroller = document.body;
-    } else {
-      uss._pageScroller = document.scrollingElement || window;
+        //Scroll the Window and the element to a known initial position.
+        window.scroll(0,0);
+        element.scroll(0,0);
+
+        //Try to scroll the element by scrolling the Window.
+        window.scroll(100, 100);
+
+        const __isWindowScrollable = window.scrollX !== 0 || window.scrollY !== 0;
+        const __windowScrollsElement = __isWindowScrollable && 
+                                      element.scrollLeft === window.scrollX && 
+                                      element.scrollTop === window.scrollY;
+                          
+        //Restore the original scroll positions of the Window and the element.
+        window.scroll(__originalWindowXPos, __originalWindowYPos);
+        element.scroll(__originalElementXPos, __originalElementYPos);
+        
+        if(!__isWindowScrollable) {
+          const __oldData = uss._containersData.get(window);
+          const __containerData = __oldData || [];
+          __containerData[16] = 0; //maxScrollX
+          __containerData[17] = 0; //maxScrollY
+
+          if(!__oldData) uss._containersData.set(window, __containerData);
+
+          uss._windowScroller = window;
+          return true;
+        }
+        if(__windowScrollsElement) {
+          uss._windowScroller = element;
+          return true;
+        }
+        return false;
+      }
+
+      //Only test the body if the html is not the element that scrolls the window.
+      if(!_testScroller(document.documentElement)) {
+        if(!_testScroller(document.body)) {
+          uss._windowScroller = window; //Fallback to window
+        }
+      }
+    }
+
+    return uss._windowScroller;
+  },
+  getFramesTime: (forceCalculation = false, callback, options = {debugString: "getFramesTime", requestPhase: 0}) => {
+    if(forceCalculation) uss.calcFramesTimes(undefined, undefined, callback, options);
+    return uss._framesTime;
+  },
+  getPageScroller: (forceCalculation = false, options = {debugString: "getPageScroller"}) => {
+    //Check if the _pageScroller has already been calculated.
+    if(forceCalculation || !uss._pageScroller) {
+      //The _pageScroller is the element that can scroll the further between document.documentElement and document.body.
+      //If there's a tie or neither of those can scroll, it's defaulted to the 
+      //the document.scrollingElement (if supported) or the Window.
+      const _htmlMaxScrollX = uss.getMaxScrollX(document.documentElement, true, options);
+      const _htmlMaxScrollY = uss.getMaxScrollY(document.documentElement, true, options);
+      const _bodyMaxScrollX = uss.getMaxScrollX(document.body, true, options);
+      const _bodyMaxScrollY = uss.getMaxScrollY(document.body, true, options);
+
+      //Cache the _pageScroller for later use.
+      if(
+        (_htmlMaxScrollX >  _bodyMaxScrollX && _htmlMaxScrollY >= _bodyMaxScrollY) ||
+        (_htmlMaxScrollX >= _bodyMaxScrollX && _htmlMaxScrollY >  _bodyMaxScrollY)
+      ) {
+        uss._pageScroller = document.documentElement;
+      } else if(
+        (_bodyMaxScrollX >  _htmlMaxScrollX && _bodyMaxScrollY >= _htmlMaxScrollY) || 
+        (_bodyMaxScrollX >= _htmlMaxScrollX && _bodyMaxScrollY >  _htmlMaxScrollY) 
+      ) {
+        uss._pageScroller = document.body;
+      } else {
+        uss._pageScroller = document.scrollingElement || window;
+      }
     }
 
     return uss._pageScroller;
@@ -428,65 +553,89 @@ window.uss = {
   getReducedMotionState: () => uss._reducedMotion,
   getOnResizeEndCallbacks: () => uss._onResizeEndCallbacks,
   getDebugMode: () => uss._debugMode, 
-  setXStepLengthCalculator: (newCalculator = DEFAULT_XSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false, options = {debugString: "setXStepLengthCalculator"}) => {
-    if(typeof newCalculator !== "function") {
+  setXStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setXStepLengthCalculator"}) => {
+    const _isSettingOp = newCalculator !== undefined;
+    if(typeof newCalculator !== "function" && _isSettingOp) {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
+
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(isTemporary) _containerData[14] = newCalculator;
-    else {
+
+    if(!_oldData) {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    }
+
+    if(isTemporary) {
+      _containerData[14] = newCalculator;
+    } else {
+      //Setting a non-temporary StepLengthCalculator will unset the temporary one.
       _containerData[12] = newCalculator;
-      if(!!_containerData[14]) _containerData[14] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
-    }
-    if(!_oldData) uss._containersData.set(container, _containerData);
+      if(_isSettingOp) _containerData[14] = undefined; 
+    }  
   },
-  setYStepLengthCalculator: (newCalculator = DEFAULT_YSTEP_LENGTH_CALCULATOR, container = uss._pageScroller, isTemporary = false, options = {debugString: "setYStepLengthCalculator"}) => {
-    if(typeof newCalculator !== "function") {
+  setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setYStepLengthCalculator"}) => {
+    const _isSettingOp = newCalculator !== undefined;
+    if(typeof newCalculator !== "function" && _isSettingOp) {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
+
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(isTemporary) _containerData[15] = newCalculator;
-    else {
-      _containerData[13] = newCalculator;
-      if(!!_containerData[15]) _containerData[15] = null; //Setting a non-temporary StepLengthCalculator will unset the temporary one
+
+    if(!_oldData) {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
     }
-    if(!_oldData) uss._containersData.set(container, _containerData);
+
+    if(isTemporary) {
+      _containerData[15] = newCalculator;
+    } else {
+      //Setting a non-temporary StepLengthCalculator will unset the temporary one.
+      _containerData[13] = newCalculator;
+      if(_isSettingOp) _containerData[15] = undefined; 
+    }  
   },
   setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setStepLengthCalculator"}) => {
-    if(typeof newCalculator !== "function") {
+    const _isSettingOp = newCalculator !== undefined;
+    if(typeof newCalculator !== "function" && _isSettingOp) {
       uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
       return;
     }
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
+
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
+
+    if(!_oldData) {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    }
+
     if(isTemporary) {
       _containerData[14] = newCalculator;
       _containerData[15] = newCalculator;
     } else {
+      //Setting a non-temporary StepLengthCalculator will unset the temporary one.
       _containerData[12] = newCalculator;
       _containerData[13] = newCalculator;
 
-      //Setting a non-temporary StepLengthCalculators will unset the temporary ones.
-      if(!!_containerData[14]) _containerData[14] = null;
-      if(!!_containerData[15]) _containerData[15] = null;
+      if(_isSettingOp) {
+        _containerData[14] = undefined; 
+        _containerData[15] = undefined;
+      } 
     }
-    if(!_oldData) uss._containersData.set(container, _containerData);
   },
   setXStepLength: (newXStepLength = DEFAULT_XSTEP_LENGTH, options = {debugString: "setXStepLength"}) => {
     if(!Number.isFinite(newXStepLength) || newXStepLength <= 0) {
@@ -518,9 +667,12 @@ window.uss = {
     uss._minAnimationFrame = newMinAnimationFrame;
   },
   setPageScroller: (newPageScroller, options = {debugString: "setPageScroller"}) => {
-    if(newPageScroller !== window && !(newPageScroller instanceof Element)) {
-      uss._errorLogger(options.debugString, "the newPageScroller to be an Element or the Window", newPageScroller);
-      return;
+    if(!uss._containersData.get(newPageScroller)) {
+      if(newPageScroller !== window && !(newPageScroller instanceof Element)) {
+        uss._errorLogger(options.debugString, "the newPageScroller to be an Element or the Window", newPageScroller);
+        return;
+      }
+      uss._containersData.set(newPageScroller, []);
     }
     uss._pageScroller = newPageScroller;
   },
@@ -555,16 +707,63 @@ window.uss = {
     }
     uss._warningLogger = newWarningLogger;
   }, 
-  calcXScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
-    if(container !== window && !(container instanceof HTMLElement || container instanceof SVGElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
+  calcFramesTimes: (previousTimestamp, currentTimestamp, callback, options = {debugString: "calcFramesTimes", requestPhase: 0}) => {
+    /**
+     * uss._framesTime[-1] contains the status of the previous requested frames' time recalculation.
+     * options.requestPhase contains the status of the current requested frames' time recalculation.
+     * If they don't match, a frames's time recalculation has already been requested but the previous
+     * one hasn't been completed yet.
+     */
+    if(uss._framesTimes[-1] && uss._framesTimes[-1] !== options.requestPhase) return;
+    
+    if(!Number.isFinite(previousTimestamp) || previousTimestamp < 0) {
+      options.requestPhase = 1;
+      uss._framesTimes[-1] = 1;
+      window.requestAnimationFrame((timestamp) => uss.calcFramesTimes(timestamp, currentTimestamp, callback, options));
       return;
     }
 
-    //Check if the scrollbarDimension on the x-axis of the passed container have already been calculated. 
+    if(!Number.isFinite(currentTimestamp) || currentTimestamp < 0) {
+      options.requestPhase = 2;
+      uss._framesTimes[-1] = 2;
+      window.requestAnimationFrame((timestamp) => uss.calcFramesTimes(previousTimestamp, timestamp, callback, options));
+      return;
+    }
+
+    /**
+     * New frame time measurement.
+     * Note that elements at negative indexes will not be taken into account by:
+     * - for loops
+     * - array.length
+     * - array.unshift
+     */
+    uss._framesTimes[-1] = 0;
+    uss._framesTimes.unshift(currentTimestamp - previousTimestamp);
+    if(uss._framesTimes.length > 10) uss._framesTimes.pop();
+    
+    let _framesTimesSum = 0;
+    for(const framesTime of uss._framesTimes) _framesTimesSum += framesTime;
+    
+    uss._framesTime = _framesTimesSum / uss._framesTimes.length;
+    
+    if(typeof callback === "function") callback();
+  },
+  calcXScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(!forceCalculation && Number.isFinite(_containerData[18])) {
+
+    if(!_oldData) {
+      /**
+       * Only instances of HTMLElement and SVGElement have the style property, but
+       * they both implement Element and there are no other implementation of this interface on a website,
+       * so its fine to check for the container being instanceof Element.
+       */
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    } else if(!forceCalculation && Number.isFinite(_containerData[18])) {
       return _containerData[18]; //Vertical scrollbar's width
     }
 
@@ -574,10 +773,11 @@ window.uss = {
     if(uss.getScrollbarsMaxDimension(false) === 0) {
       _scrollbarDimension = 0;
     } else if(container === window) { 
-      options.debugString = "calcXScrollbarDimension(uss.getPageScroller())";
-      _scrollbarDimension = uss.getPageScroller(false) === window ? 0 : uss.calcXScrollbarDimension(uss.getPageScroller(false), forceCalculation, options);
+      const _pageScroller = uss.getPageScroller(false, options);
+      options.debugString = "calcXScrollbarDimension(uss.getPageScroller(false))";
+      _scrollbarDimension = _pageScroller === window ? 0 : uss.calcXScrollbarDimension(_pageScroller, forceCalculation, options);
     } else {
-      const _style = window.getComputedStyle(container);
+      const _style = window.getComputedStyle(container); //Live object
       const _originalWidth  = Number.parseInt(_style.width);
       const _clientWidth  = container.clientWidth;
       const _originalOverflowY = container.style.overflowY;
@@ -602,20 +802,25 @@ window.uss = {
 
     //Cache the value for later use.
     _containerData[18] = _scrollbarDimension;
-    if(!_oldData) uss._containersData.set(container, _containerData);
 
     return _scrollbarDimension;
   },
   calcYScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcYScrollbarDimension"}) => {
-    if(container !== window && !(container instanceof HTMLElement || container instanceof SVGElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
-      return;
-    }
-
-    //Check if the scrollbarDimension on the y-axis of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(!forceCalculation && Number.isFinite(_containerData[19])) {
+
+    if(!_oldData) {
+      /**
+       * Only instances of HTMLElement and SVGElement have the style property, but
+       * they both implement Element and there are no other implementation of this interface on a website,
+       * so its fine to check for the container being instanceof Element.
+       */
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    } else if(!forceCalculation && Number.isFinite(_containerData[19])) {
       return _containerData[19]; //Horizontal scrollbar's height
     }
 
@@ -624,9 +829,10 @@ window.uss = {
     //The scrollbars can only be 0px on this webpage.
     if(uss.getScrollbarsMaxDimension(false) === 0) {
       _scrollbarDimension = 0;
-    } else if(container === window) { 
-      options.debugString = "calcYScrollbarDimension(uss.getPageScroller())";
-      _scrollbarDimension = uss.getPageScroller(false) === window ? 0 : uss.calcYScrollbarDimension(uss.getPageScroller(false), forceCalculation, options);
+    } else if(container === window) {
+      const _pageScroller = uss.getPageScroller(false, options);
+      options.debugString = "calcYScrollbarDimension(uss.getPageScroller(false))";
+      _scrollbarDimension = _pageScroller === window ? 0 : uss.calcYScrollbarDimension(_pageScroller, forceCalculation, options);
     } else {
       const _style = window.getComputedStyle(container);
       const _originalHeight = Number.parseInt(_style.height);   
@@ -653,20 +859,28 @@ window.uss = {
 
     //Cache the value for later use.
     _containerData[19] = _scrollbarDimension;
-    if(!_oldData) uss._containersData.set(container, _containerData);
 
     return _scrollbarDimension;
   },
   calcScrollbarsDimensions: (container, forceCalculation = false, options = {debugString: "calcScrollbarsDimensions"}) => {
-    if(container !== window && !(container instanceof HTMLElement || container instanceof SVGElement)) {
-      uss._errorLogger(options.debugString, "the container to be an HTMLElement, an SVGElement or the Window", container);
-      return;
-    }
-
-    //Check if the scrollbarsDimensions of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(!forceCalculation && Number.isFinite(_containerData[18]) && Number.isFinite(_containerData[19])) {
+
+    if(!_oldData) {
+      /**
+       * Only instances of HTMLElement and SVGElement have the style property, but
+       * they both implement Element and there are no other implementation of this interface on a website,
+       * so its fine to check for the container being instanceof Element.
+       */
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    } else if(!forceCalculation && 
+              Number.isFinite(_containerData[18]) && 
+              Number.isFinite(_containerData[19])
+    ) {
       return [
         _containerData[18], //Vertical scrollbar's width
         _containerData[19]  //Horizontal scrollbar's height
@@ -679,8 +893,9 @@ window.uss = {
     if(uss.getScrollbarsMaxDimension(false) === 0) {
       _scrollbarsDimensions = [0,0];
     } else if(container === window) { 
-      options.debugString = "calcScrollbarsDimensions(uss.getPageScroller())";
-      _scrollbarsDimensions = uss.getPageScroller(false) === window ? [0,0] : uss.calcScrollbarsDimensions(uss.getPageScroller(false), forceCalculation, options);
+      const _pageScroller = uss.getPageScroller(false, options);
+      options.debugString = "calcScrollbarsDimensions(uss.getPageScroller(false))";
+      _scrollbarsDimensions = _pageScroller === window ? [0,0] : uss.calcScrollbarsDimensions(_pageScroller, forceCalculation, options);
     } else {
       _scrollbarsDimensions = [];
       const _style = window.getComputedStyle(container);
@@ -720,24 +935,25 @@ window.uss = {
     //Cache the values for later use.
     _containerData[18] = _scrollbarsDimensions[0];
     _containerData[19] = _scrollbarsDimensions[1];
-    if(!_oldData) uss._containersData.set(container, _containerData);
     
     return _scrollbarsDimensions;
   },
   calcBordersDimensions: (container, forceCalculation = false, options = {debugString: "calcBordersDimensions"}) => {
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element the Window", container);
-      return;
-    }
-
     //Check if the bordersDimensions of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-    if(!forceCalculation && 
+
+    if(!_oldData) {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    } else if(!forceCalculation && 
         Number.isFinite(_containerData[20]) && 
-        Number.isFinite(_containerData[21]) &&
+        Number.isFinite(_containerData[21]) && 
         Number.isFinite(_containerData[22]) && 
-        Number.isFinite(_containerData[23])
+        Number.isFinite(_containerData[23]) 
     ) {
       return [
         _containerData[20], //top
@@ -750,15 +966,16 @@ window.uss = {
     let _bordersDimensions;
 
     if(container === window) { 
+      const _pageScroller = uss.getPageScroller(false, options);
       options.debugString = "calcBordersDimensions(uss.getPageScroller())";
-      _bordersDimensions = uss.getPageScroller(false) === window ? [0,0,0,0] : uss.calcBordersDimensions(uss.getPageScroller(false), forceCalculation, options);
+      _bordersDimensions = _pageScroller === window ? [0,0,0,0] : uss.calcBordersDimensions(_pageScroller, forceCalculation, options);
     } else {
       const _style = window.getComputedStyle(container);
       _bordersDimensions = [
-                              Number.parseInt(_style.borderTopWidth),
-                              Number.parseInt(_style.borderRightWidth),
-                              Number.parseInt(_style.borderBottomWidth),
-                              Number.parseInt(_style.borderLeftWidth)
+                              Number.parseFloat(_style.borderTopWidth),
+                              Number.parseFloat(_style.borderRightWidth),
+                              Number.parseFloat(_style.borderBottomWidth),
+                              Number.parseFloat(_style.borderLeftWidth)
                             ];
     }
 
@@ -767,19 +984,54 @@ window.uss = {
     _containerData[21] = _bordersDimensions[1]; //right
     _containerData[22] = _bordersDimensions[2]; //bottom
     _containerData[23] = _bordersDimensions[3]; //left
-    if(!_oldData) uss._containersData.set(container, _containerData);
 
     return _bordersDimensions;
   },
   getScrollXCalculator: (container = uss._pageScroller, options = {debugString: "getScrollXCalculator"}) => {
-    if(container === window)         return () => window.scrollX;
-    if(container instanceof Element) return () => container.scrollLeft;
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);                                       
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+
+    if(!_containerData[28]) {
+      /**
+       * Since the functions that determine the scroll position of the container
+       * are fixed, we can cache the scrollYCalculator of container too. 
+       */
+      if(container === window) {
+        _containerData[28] = () => window.scrollX; //ScrollXCalculator
+        _containerData[29] = () => window.scrollY; //ScrollYCalculator
+      } else if(container instanceof Element) {
+        _containerData[28] = () => container.scrollLeft; //ScrollXCalculator
+        _containerData[29] = () => container.scrollTop;  //ScrollYCalculator
+      } else {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);     
+        return;                                  
+      }
+      if(!_oldData) uss._containersData.set(container, _containerData);
+    }
+    return _containerData[28];
   },
   getScrollYCalculator: (container = uss._pageScroller, options = {debugString: "getScrollYCalculator"}) => {
-    if(container === window)         return () => window.scrollY;
-    if(container instanceof Element) return () => container.scrollTop;
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+
+    if(!_containerData[29]) {
+      /**
+       * Since the functions that determine the scroll position of the container
+       * are fixed, we can cache the scrollXCalculator of container too. 
+       */
+      if(container === window) {
+        _containerData[28] = () => window.scrollX; //ScrollXCalculator
+        _containerData[29] = () => window.scrollY; //ScrollYCalculator
+      } else if(container instanceof Element) {
+        _containerData[28] = () => container.scrollLeft; //ScrollXCalculator
+        _containerData[29] = () => container.scrollTop;  //ScrollYCalculator
+      } else {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);                                       
+        return;                                  
+      }
+      uss._containersData.set(container, _containerData);
+    }
+    return _containerData[29];
   },
   getMaxScrollX: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollX"}) => {
     //Check if the maxScrollX value for the passed container has already been calculated. 
@@ -788,30 +1040,30 @@ window.uss = {
     if(!forceCalculation && Number.isFinite(_containerData[16])) return _containerData[16];
 
     if(container === window) {
-      const _originalXPosition = window.scrollX;
-      container.scroll(1073741824, window.scrollY); //highest safe scroll value: 2^30 = 1073741824
-      const _maxScroll = window.scrollX;
-      container.scroll(_originalXPosition, window.scrollY);
-
-      //Cache the value for later use.
-      _containerData[16] = _maxScroll;
       if(!_oldData) uss._containersData.set(container, _containerData);
 
-      return _maxScroll;
-    }
-    if(container instanceof Element) {
-      const _originalXPosition = container.scrollLeft;
-      container.scrollLeft = 1073741824; //highest safe scroll value: 2^30 = 1073741824
-      const _maxScroll = container.scrollLeft;
-      container.scrollLeft = _originalXPosition;
-
-      //Cache the value for later use.
+      container = uss.getWindowScroller(false, options);
+      const _maxScroll = container === window ? 0 : uss.getMaxScrollX(container, forceCalculation, options);
       _containerData[16] = _maxScroll;
-      if(!_oldData) uss._containersData.set(container, _containerData);
-      
       return _maxScroll;
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+
+    if(!_oldData) {
+      if(!(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    }
+
+    const _originalXPosition = container.scrollLeft;
+    container.scrollLeft = 1073741824; //highest safe scroll value: 2^30 = 1073741824
+    const _maxScroll = container.scrollLeft;
+    container.scrollLeft = _originalXPosition;
+
+    //Cache the value for later use.
+    _containerData[16] = _maxScroll;
+    return _maxScroll;
   },
   getMaxScrollY: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollY"}) => {
     //Check if the maxScrollY value for the passed container has already been calculated. 
@@ -820,204 +1072,407 @@ window.uss = {
     if(!forceCalculation && Number.isFinite(_containerData[17])) return _containerData[17];
 
     if(container === window) {
-      const _originalYPosition = window.scrollY;
-      container.scroll(window.scrollX, 1073741824); //highest safe scroll value: 2^30 = 1073741824
-      const _maxScroll = window.scrollY;
-      container.scroll(window.scrollX, _originalYPosition);
-      
-      //Cache the value for later use.
-      _containerData[17] = _maxScroll;
       if(!_oldData) uss._containersData.set(container, _containerData);
 
-      return _maxScroll;
-    }
-    if(container instanceof Element) {
-      const _originalYPosition = container.scrollTop;
-      container.scrollTop = 1073741824; //highest safe scroll value: 2^30 = 1073741824
-      const _maxScroll = container.scrollTop;
-      container.scrollTop = _originalYPosition;
-      
-      //Cache the value for later use.
+      container = uss.getWindowScroller(false, options);
+      const _maxScroll = container === window ? 0 : uss.getMaxScrollY(container, forceCalculation, options);
       _containerData[17] = _maxScroll;
-      if(!_oldData) uss._containersData.set(container, _containerData);
-
       return _maxScroll;
     }
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+
+    if(!_oldData) {
+      if(!(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, _containerData);
+    }
+
+    const _originalYPosition = container.scrollTop;
+    container.scrollTop = 1073741824; //highest safe scroll value: 2^30 = 1073741824
+    const _maxScroll = container.scrollTop;
+    container.scrollTop = _originalYPosition;
+
+    //Cache the value for later use.
+    _containerData[17] = _maxScroll;
+    return _maxScroll;
   },
   getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
-    if(element === window) return null;
-    if(!(element instanceof Element)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-      return;
+    const _oldData = uss._containersData.get(element);
+    const _containerData = _oldData || [];
+    const _cachedParent = includeHiddenParents ? _containerData[25] : _containerData[24];
+    
+    if(_cachedParent || _cachedParent === null) return _cachedParent;
+
+    const _body = document.body;
+    const _html = document.documentElement;
+    let _cacheResult;
+    let _overflowRegex, _overflowRegexWithVisible;
+
+    if(includeHiddenParents) {
+      _cacheResult = (el) => _containerData[25] = el;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
+    } else {
+      _cacheResult = (el) => _containerData[24] = el;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
+    }
+    
+    if(element === window || element === _html) {
+      _cacheResult(null);
+      if(!_oldData) uss._containersData.set(element, _containerData);
+      return null;
+    }
+
+    if(!_oldData) {
+      if(!(element instanceof Element)) {
+        uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+        return;
+      }
+      uss._containersData.set(element, _containerData);
     }
     
     //If the element has position:fixed,  
-    //it has no scrollable parent
+    //it has no scrollable parent.
     let _style = window.getComputedStyle(element);
-    if(_style.position === "fixed") return null;
+    if(_style.position === "fixed") {
+      _cacheResult(null);
+      return null;
+    }
 
-    const _body = document.body;
-    const _html = document.documentElement; 
-    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
     const _relativePositioned = _style.position !== "absolute";
-    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1; 
+    const _testIfScrollable = (el) => uss.getMaxScrollX(el) >= 1; 
     element = element.parentElement;
 
-    //Test if the any parent (up to the body) of the passed element 
-    //is scrollable on the x-axis
+    //Test if the any parent of the passed element (up to the _body) 
+    //is scrollable on either the x or y axes.
     while(element && element !== _body && element !== _html) {
       _style = window.getComputedStyle(element);
-      if((_relativePositioned || _style.position !== "static") && 
+
+      if((_relativePositioned || _style.position !== "static") &&
           _overflowRegex.test(_style.overflowX) && 
-          _isScrollable(element)) {
+          _testIfScrollable(element)
+      ) {
+        _cacheResult(element);
         return element;
       }
-      //If this parent is fixed, no other parent can scroll the element
-      if(_style.position === "fixed") return null;
+
+      //This parent has position:fixed, no other parent can scroll the element.
+      if(_style.position === "fixed") {
+        _cacheResult(null);
+        return null;
+      }
+
       element = element.parentElement;
     }
 
-    const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
-    if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflowX) && _isScrollable(_body)) return _body; 
-    if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflowX) && _isScrollable(_html)) return _html; 
-    if(_isScrollable(window)) return window;
-    return null; 
-  },   
+    //This parent has position:absolute and it's a child of _body, 
+    //no other parent can scroll the element.
+    if(element === _body && _style.position === "absolute") {
+      _cacheResult(null);
+      return null;
+    }
+
+    const _windowScroller = uss.getWindowScroller(false, options);
+
+    while(element) {
+      _style = window.getComputedStyle(element);
+      
+      if(_overflowRegexWithVisible.test(_style.overflowX) && 
+         _testIfScrollable(element)
+      ) {
+        if(_windowScroller === element) element = window;
+        _cacheResult(element);
+        return element;
+      }
+
+      element = element.parentElement;
+    }
+    
+    _cacheResult(null);
+    return null;
+  },
   getYScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
-    if(element === window) return null;
-    if(!(element instanceof Element)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-      return;
-    }
+    const _oldData = uss._containersData.get(element);
+    const _containerData = _oldData || [];
+    const _cachedParent = includeHiddenParents ? _containerData[27] : _containerData[26];
     
-    //If the element has position:fixed,  
-    //it has no scrollable parent
-    let _style = window.getComputedStyle(element);
-    if(_style.position === "fixed") return null;
+    if(_cachedParent || _cachedParent === null) return _cachedParent;
 
     const _body = document.body;
-    const _html = document.documentElement; 
-    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _html = document.documentElement;
+    let _cacheResult;
+    let _overflowRegex, _overflowRegexWithVisible;
+
+    if(includeHiddenParents) {
+      _cacheResult = (el) => _containerData[27] = el;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
+    } else {
+      _cacheResult = (el) => _containerData[26] = el;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
+    }
+    
+    if(element === window || element === _html) {
+      _cacheResult(null);
+      if(!_oldData) uss._containersData.set(element, _containerData);
+      return null;
+    }
+    
+    if(!_oldData) {
+      if(!(element instanceof Element)) {
+        uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+        return;
+      }
+      uss._containersData.set(element, _containerData);
+    }
+
+    //If the element has position:fixed,  
+    //it has no scrollable parent.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") {
+      _cacheResult(null);
+      return null;
+    }
+
     const _relativePositioned = _style.position !== "absolute";
-    const _isScrollable = (el) => uss.getMaxScrollY(el) >= 1; 
+    const _testIfScrollable = (el) => uss.getMaxScrollY(el) >= 1; 
     element = element.parentElement;
 
-    //Test if the any parent (up to the body) of the passed element 
-    //is scrollable on the y-axis
+    //Test if the any parent of the passed element (up to the _body) 
+    //is scrollable on either the x or y axes.
     while(element && element !== _body && element !== _html) {
       _style = window.getComputedStyle(element);
-      if((_relativePositioned || _style.position !== "static") && 
+
+      if((_relativePositioned || _style.position !== "static") &&
           _overflowRegex.test(_style.overflowY) && 
-          _isScrollable(element)) {
+          _testIfScrollable(element)
+      ) {
+        _cacheResult(element);
         return element;
       }
-      //If this parent is fixed, no other parent can scroll the element
-      if(_style.position === "fixed") return null;
+
+      //This parent has position:fixed, no other parent can scroll the element.
+      if(_style.position === "fixed") {
+        _cacheResult(null);
+        return null;
+      }
+
       element = element.parentElement;
     }
 
-    const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
-    if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflowY) && _isScrollable(_body)) return _body; 
-    if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflowY) && _isScrollable(_html)) return _html; 
-    if(_isScrollable(window)) return window;
-    return null; 
-  },     
-  getScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getScrollableParent"}) => {
-    if(element === window) return null;
-    if(!(element instanceof Element)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-      return;
+    //This parent has position:absolute and it's a child of _body, 
+    //no other parent can scroll the element.
+    if(element === _body && _style.position === "absolute") {
+      _cacheResult(null);
+      return null;
+    }
+
+    const _windowScroller = uss.getWindowScroller(false, options);
+
+    while(element) {
+      _style = window.getComputedStyle(element);
+      
+      if(_overflowRegexWithVisible.test(_style.overflowY) && 
+         _testIfScrollable(element)
+      ) {
+        if(_windowScroller === element) element = window;
+        _cacheResult(element);
+        return element;
+      }
+
+      element = element.parentElement;
     }
     
-    //If the element has position:fixed,  
-    //it has no scrollable parent
-    let _style = window.getComputedStyle(element);
-    if(_style.position === "fixed") return null;
+    _cacheResult(null);
+    return null;
+  },
+  getScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
+    const _oldData = uss._containersData.get(element);
+    const _containerData = _oldData || [];
+    let _cachedXParent, _cachedYParent;
+
+    if(includeHiddenParents) {
+      _cachedXParent = _containerData[25];
+      _cachedYParent = _containerData[27];
+    } else {
+      _cachedXParent = _containerData[24];
+      _cachedYParent = _containerData[26];
+    }
+
+    /**
+     * If at least one parent is cached, get the other and return the one
+     * that is met first during the parents' exploration.
+     */
+    const _xParentIsCached = _cachedXParent || _cachedXParent === null;
+    const _yParentIsCached = _cachedYParent || _cachedYParent === null;
+    if(_xParentIsCached || _yParentIsCached) {
+      if(_xParentIsCached && !_yParentIsCached) {
+        _cachedYParent = uss.getYScrollableParent(element, includeHiddenParents, options);
+      } else if(!_xParentIsCached && _yParentIsCached) {
+        _cachedXParent = uss.getXScrollableParent(element, includeHiddenParents, options);
+      }
+
+      return _cachedXParent === window || _cachedXParent === null || _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
+    }
 
     const _body = document.body;
-    const _html = document.documentElement; 
-    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
+    const _html = document.documentElement;
+    let _cacheXResult, _cacheYResult;
+    let _overflowRegex, _overflowRegexWithVisible;
+
+    if(includeHiddenParents) {
+      _cacheXResult = (el) => _containerData[25] = el;
+      _cacheYResult = (el) => _containerData[27] = el;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
+    } else {
+      _cacheXResult = (el) => _containerData[24] = el;
+      _cacheYResult = (el) => _containerData[26] = el;
+      _overflowRegex = DEFAULT_REGEX_OVERFLOW;
+      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
+    }
+    
+    if(element === window || element === _html) {
+      _cacheXResult(null);
+      _cacheYResult(null);
+      if(!_oldData) uss._containersData.set(element, _containerData);
+      return null;
+    }
+
+    if(!_oldData) {
+      if(!(element instanceof Element)) {
+        uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+        return;
+      }
+      uss._containersData.set(element, _containerData);
+    }
+
+    //If the element has position:fixed,  
+    //it has no scrollable parent.
+    let _style = window.getComputedStyle(element);
+    if(_style.position === "fixed") {
+      _cacheXResult(null);
+      _cacheYResult(null);
+      return null;
+    }
+
     const _relativePositioned = _style.position !== "absolute";
-    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1 || uss.getMaxScrollY(el) >= 1; 
+    const _testIfScrollableX = (el) => uss.getMaxScrollX(el) >= 1; 
+    const _testIfScrollableY = (el) => uss.getMaxScrollY(el) >= 1; 
     element = element.parentElement;
 
-    //Test if the any parent (up to the body) of the passed element 
-    //is scrollable on both the x and y axes
+    //Test if the any parent of the passed element (up to the _body) 
+    //is scrollable on either the x or y axes.
     while(element && element !== _body && element !== _html) {
       _style = window.getComputedStyle(element);
-      if((_relativePositioned || _style.position !== "static") && 
-          _overflowRegex.test(_style.overflow) && 
-          _isScrollable(element)) {
-        return element;
+
+      if((_relativePositioned || _style.position !== "static")) {
+        const _isXScrollable = _overflowRegex.test(_style.overflowX) && _testIfScrollableX(element);
+        const _isYScrollable = _overflowRegex.test(_style.overflowY) && _testIfScrollableY(element);
+
+        if(_isXScrollable && !_isYScrollable) {
+          _cacheXResult(element);
+          return element;
+        }
+
+        if(!_isXScrollable && _isYScrollable) {
+          _cacheYResult(element);
+          return element;
+        }
+        
+        if(_isXScrollable && _isYScrollable) {
+          _cacheXResult(element);
+          _cacheYResult(element);
+          return element;
+        }
       }
-      //If this parent is fixed, no other parent can scroll the element
-      if(_style.position === "fixed") return null;
+
+      //This parent has position:fixed, no other parent can scroll the element.
+      if(_style.position === "fixed") {
+        _cacheXResult(null);
+        _cacheYResult(null);
+        return null;
+      }
+
       element = element.parentElement;
     }
 
-    const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
-    if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflow) && _isScrollable(_body)) return _body; 
-    if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) return _html; 
-    if(_isScrollable(window)) return window;
-    return null; 
-  },    
-  getAllScrollableParents: (element, includeHiddenParents = false, callback, options = {debugString: "getAllScrollableParents"}) => {
-    if(element === window) return [];
-    if(!(element instanceof Element)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-      return;
+    //This parent has position:absolute and it's a child of _body, 
+    //no other parent can scroll the element.
+    if(element === _body && _style.position === "absolute") {
+      _cacheXResult(null);
+      return null;
+    }
+
+    const _windowScroller = uss.getWindowScroller(false, options);
+
+    while(element) {
+      _style = window.getComputedStyle(element);
+
+      const _isXScrollable = _overflowRegexWithVisible.test(_style.overflowX) && _testIfScrollableX(element);
+      const _isYScrollable = _overflowRegexWithVisible.test(_style.overflowY) && _testIfScrollableY(element);
+
+      if(_windowScroller === element) element = window;
+
+      if(_isXScrollable && !_isYScrollable) {
+        _cacheXResult(element);
+        return element;
+      }
+
+      if(!_isXScrollable && _isYScrollable) {
+        _cacheYResult(element);
+        return element;
+      }
+      
+      if(_isXScrollable && _isYScrollable) {
+        _cacheXResult(element);
+        _cacheYResult(element);
+        return element;
+      }
+
+      element = element.parentElement;
     }
     
-    //If the element has position:fixed,  
-    //it has no scrollable parent
-    let _style = window.getComputedStyle(element);
-    if(_style.position === "fixed") return [];
-
-    const _body = document.body;
-    const _html = document.documentElement; 
+    _cacheXResult(null);
+    _cacheYResult(null);
+    return null;
+  },
+  getAllScrollableParents: (element, includeHiddenParents = false, callback, options = {debugString: "getAllScrollableParents"}) => {
     const _scrollableParents = [];
-    const _overflowRegex = includeHiddenParents ? /(auto|scroll|hidden)/ : /(auto|scroll)/;
-    const _relativePositioned = _style.position !== "absolute";
     const _callback = typeof callback === "function" ? callback : () => {};
-    const _isScrollable = (el) => uss.getMaxScrollX(el) >= 1 || uss.getMaxScrollY(el) >= 1;
     const _scrollableParentFound = (el) => {
       _scrollableParents.push(el);
       _callback(el);
     }
-    element = element.parentElement;
 
-    //Test if the any parent (up to the body) of the passed element 
-    //is scrollable on both the x and y axes
-    while(element && element !== _body && element !== _html) {
-      _style = window.getComputedStyle(element);
-      if((_relativePositioned || _style.position !== "static") && 
-          _overflowRegex.test(_style.overflow) && 
-          _isScrollable(element)) {
-        _scrollableParentFound(element);
-      }
-      //If this parent is fixed, no other parent can scroll the element
-      if(_style.position === "fixed") return _scrollableParents;
-      element = element.parentElement;
-    }
+    do {
+      element = uss.getScrollableParent(element, includeHiddenParents, options);
+      if(element) _scrollableParentFound(element);
+    } while(element);
 
-    const _overflowRegexWithVisible = includeHiddenParents ? /(visible|auto|scroll|hidden)/ : /(visible|auto|scroll)/;
-    if(element === _body && _overflowRegexWithVisible.test(window.getComputedStyle(_body).overflow) && _isScrollable(_body)) _scrollableParentFound(_body); 
-    if(element           && _overflowRegexWithVisible.test(window.getComputedStyle(_html).overflow) && _isScrollable(_html)) _scrollableParentFound(_html); 
-    if(_isScrollable(window)) _scrollableParentFound(window);
-    return _scrollableParents; 
+    return _scrollableParents;
   },
-  scrollXTo: (finalXPosition, container = uss._pageScroller, callback, options = {debugString: "scrollXTo"}) => {
+  scrollXTo: (finalXPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollXTo"}) => {
     if(!Number.isFinite(finalXPosition)) {
       uss._errorLogger(options.debugString, "the finalXPosition to be a number", finalXPosition);
       return;
     }
 
     //The container cannot be scrolled on the x-axis.
-    if(uss.getMaxScrollX(container, false, options) < 1) {
+    const _maxScrollX = uss.getMaxScrollX(container, false, options);
+    if(_maxScrollX < 1) {
       uss._warningLogger(container, "is not scrollable on the x-axis", false);
       uss.stopScrollingX(container, callback);
       return; 
+    }
+
+    //Limit the final position to the [0, maxScrollX] interval. 
+    if(containScroll) {
+      if(finalXPosition < 0) finalXPosition = 0;
+      else if(finalXPosition > _maxScrollX) finalXPosition = _maxScrollX;
     }
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
@@ -1062,12 +1517,12 @@ window.uss = {
     if(!_oldData) uss._containersData.set(container, _containerData);
 
     function _stepX(timestamp) {
-      const _finalXPosition = _containerData[2];
-      const _direction = _containerData[4];
-      const _currentXPosition = _scrollXCalculator();
-      const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _direction;
+      const __finalXPosition = _containerData[2];
+      const __direction = _containerData[4];
+      const __currentXPosition = _scrollXCalculator();
+      const __remaningScrollAmount = (__finalXPosition - __currentXPosition) * __direction;
       
-      if(_remaningScrollAmount < 1) {
+      if(__remaningScrollAmount < 1) {
         uss.stopScrollingX(container, _containerData[10]);
         return;
       }
@@ -1075,36 +1530,36 @@ window.uss = {
       //The originalTimeStamp is null at the beginning of a scroll-animation.
       if(!_containerData[8]) _containerData[8] = timestamp;
       
-      const _scrollID = _containerData[0];  
-      let _stepLength = !!_containerData[14] ? _containerData[14](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container) :
-                        !!_containerData[12] ? _containerData[12](_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container) :
-                                               DEFAULT_XSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container);
+      const __scrollID = _containerData[0];  
+      let __stepLength = _containerData[14] ? _containerData[14](__remaningScrollAmount, _containerData[8], timestamp, _containerData[6], __currentXPosition, __finalXPosition, container) :
+                         _containerData[12] ? _containerData[12](__remaningScrollAmount, _containerData[8], timestamp, _containerData[6], __currentXPosition, __finalXPosition, container) :
+                                              DEFAULT_XSTEP_LENGTH_CALCULATOR(__remaningScrollAmount, _containerData[8], timestamp, _containerData[6], __currentXPosition, __finalXPosition, container);
       
       //The current scroll-animation has been aborted by the stepLengthCalculator.
-      if(_scrollID !== _containerData[0]) return; 
+      if(__scrollID !== _containerData[0]) return; 
 
       //The current scroll-animation has been altered by the stepLengthCalculator.
-      if(_finalXPosition !== _containerData[2]) {  
+      if(__finalXPosition !== _containerData[2]) {  
         _containerData[0] = window.requestAnimationFrame(_stepX); 
         return;
       } 
 
       //The stepLengthCalculator returned an invalid stepLength.
-      if(!Number.isFinite(_stepLength)) {
-        uss._warningLogger(_stepLength, "is not a valid step length", true);
-        _stepLength = DEFAULT_XSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[8], timestamp, _containerData[6], _currentXPosition, _finalXPosition, container);
+      if(!Number.isFinite(__stepLength)) {
+        uss._warningLogger(__stepLength, "is not a valid step length", true);
+        __stepLength = DEFAULT_XSTEP_LENGTH_CALCULATOR(__remaningScrollAmount, _containerData[8], timestamp, _containerData[6], __currentXPosition, __finalXPosition, container);
       }
 
-      if(_remaningScrollAmount <= _stepLength) {
-        _scroll(_finalXPosition);
+      if(__remaningScrollAmount <= __stepLength) {
+        _scroll(__finalXPosition);
         uss.stopScrollingX(container, _containerData[10]);
         return;
       }
 
-      _scroll(_currentXPosition + _stepLength * _direction);
+      _scroll(__currentXPosition + __stepLength * __direction);
 
       //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container.
-      if(_stepLength !== 0 && _currentXPosition === _scrollXCalculator()) {
+      if(__stepLength !== 0 && __currentXPosition === _scrollXCalculator()) {
         uss.stopScrollingX(container, _containerData[10]);
         return;
       }
@@ -1112,17 +1567,24 @@ window.uss = {
       _containerData[0] = window.requestAnimationFrame(_stepX);
     }
   },
-  scrollYTo: (finalYPosition, container = uss._pageScroller, callback, options = {debugString: "scrollYTo"}) => {
+  scrollYTo: (finalYPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollYTo"}) => {
     if(!Number.isFinite(finalYPosition)) {
       uss._errorLogger(options.debugString, "the finalYPosition to be a number", finalYPosition);
       return;
     }
 
     //The container cannot be scrolled on the y-axis.
-    if(uss.getMaxScrollY(container, false, options) < 1) {
+    const _maxScrollY = uss.getMaxScrollY(container, false, options);
+    if(_maxScrollY < 1) {
       uss._warningLogger(container, "is not scrollable on the y-axis", false);
       uss.stopScrollingY(container, callback);
       return;
+    }
+
+    //Limit the final position to the [0, maxScrollY] interval. 
+    if(containScroll) {
+      if(finalYPosition < 0) finalYPosition = 0;
+      else if(finalYPosition > _maxScrollY) finalYPosition = _maxScrollY;
     }
 
     const _scrollYCalculator = uss.getScrollYCalculator(container);
@@ -1167,12 +1629,12 @@ window.uss = {
     if(!_oldData) uss._containersData.set(container, _containerData);
      
     function _stepY(timestamp) {
-      const _finalYPosition = _containerData[3];
-      const _direction = _containerData[5];
-      const _currentYPosition = _scrollYCalculator();
-      const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _direction;
+      const __finalYPosition = _containerData[3];
+      const __direction = _containerData[5];
+      const __currentYPosition = _scrollYCalculator();
+      const __remaningScrollAmount = (__finalYPosition - __currentYPosition) * __direction;
 
-      if(_remaningScrollAmount < 1) {
+      if(__remaningScrollAmount < 1) {
         uss.stopScrollingY(container, _containerData[11]);
         return;
       }
@@ -1180,36 +1642,36 @@ window.uss = {
       //The originalTimeStamp is null at the beginning of a scroll-animation.
       if(!_containerData[9]) _containerData[9] = timestamp;
 
-      const _scrollID = _containerData[1];
-      let _stepLength = !!_containerData[15] ? _containerData[15](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container) :
-                        !!_containerData[13] ? _containerData[13](_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container) :
-                                               DEFAULT_YSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container);
+      const __scrollID = _containerData[1];
+      let __stepLength = _containerData[15] ? _containerData[15](__remaningScrollAmount, _containerData[9], timestamp, _containerData[7], __currentYPosition, __finalYPosition, container) :
+                         _containerData[13] ? _containerData[13](__remaningScrollAmount, _containerData[9], timestamp, _containerData[7], __currentYPosition, __finalYPosition, container) :
+                                              DEFAULT_YSTEP_LENGTH_CALCULATOR(__remaningScrollAmount, _containerData[9], timestamp, _containerData[7], __currentYPosition, __finalYPosition, container);
       
       //The current scroll-animation has been aborted by the stepLengthCalculator.
-      if(_scrollID !== _containerData[1]) return; 
+      if(__scrollID !== _containerData[1]) return; 
 
       //The current scroll-animation has been altered by the stepLengthCalculator.
-      if(_finalYPosition !== _containerData[3]) {  
+      if(__finalYPosition !== _containerData[3]) {  
         _containerData[1] = window.requestAnimationFrame(_stepY); 
         return;
       } 
       
       //The stepLengthCalculator returned an invalid stepLength.
-      if(!Number.isFinite(_stepLength)) {
-        uss._warningLogger(_stepLength, "is not a valid step length", true);
-        _stepLength = DEFAULT_YSTEP_LENGTH_CALCULATOR(_remaningScrollAmount, _containerData[9], timestamp, _containerData[7], _currentYPosition, _finalYPosition, container);
+      if(!Number.isFinite(__stepLength)) {
+        uss._warningLogger(__stepLength, "is not a valid step length", true);
+        __stepLength = DEFAULT_YSTEP_LENGTH_CALCULATOR(__remaningScrollAmount, _containerData[9], timestamp, _containerData[7], __currentYPosition, __finalYPosition, container);
       }
 
-      if(_remaningScrollAmount <= _stepLength) {
-        _scroll(_finalYPosition);
+      if(__remaningScrollAmount <= __stepLength) {
+        _scroll(__finalYPosition);
         uss.stopScrollingY(container, _containerData[11]);
         return;
       }
 
-      _scroll(_currentYPosition + _stepLength * _direction);
+      _scroll(__currentYPosition + __stepLength * __direction);
 
       //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container.
-      if(_stepLength !== 0 && _currentYPosition === _scrollYCalculator()) {
+      if(__stepLength !== 0 && __currentYPosition === _scrollYCalculator()) {
         uss.stopScrollingY(container, _containerData[11]);
         return;
       }
@@ -1217,7 +1679,7 @@ window.uss = {
       _containerData[1] = window.requestAnimationFrame(_stepY);
     }
   },
-  scrollXBy: (deltaX, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollXBy"}) => {
+  scrollXBy: (deltaX, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollXBy"}) => {
     if(!Number.isFinite(deltaX)) {
       uss._errorLogger(options.debugString, "the deltaX to be a number", deltaX);
       return;
@@ -1232,7 +1694,15 @@ window.uss = {
 
         //An actual scroll has been requested.   
         if(deltaX !== 0) { 
-          const _finalXPosition = _containerData[2] + deltaX;
+          let _finalXPosition = _containerData[2] + deltaX;
+
+          //Limit the final position to the [0, maxScrollX] interval. 
+          if(containScroll) {
+            const _maxScrollX = uss.getMaxScrollX(container, false, options);
+            if(_finalXPosition < 0) _finalXPosition = 0;
+            else if(_finalXPosition > _maxScrollX) _finalXPosition = _maxScrollX;
+          }
+
           const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _containerData[4];
           
           //The scroll-animation has to scroll less than 1px.
@@ -1244,7 +1714,7 @@ window.uss = {
           //Thanks to the new deltaX, the current scroll-animation 
           //has already surpassed the old finalXPosition.
           if(_remaningScrollAmount < 0) {
-            uss.scrollXTo(_finalXPosition, container, callback);
+            uss.scrollXTo(_finalXPosition, container, callback, containScroll, options);
             return;
           }
           
@@ -1259,9 +1729,9 @@ window.uss = {
       }
     }
 
-    uss.scrollXTo(_currentXPosition + deltaX, container, callback);
+    uss.scrollXTo(_currentXPosition + deltaX, container, callback, containScroll, options);
   },
-  scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollYBy"}) => {
+  scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollYBy"}) => {
     if(!Number.isFinite(deltaY)) {
       uss._errorLogger(options.debugString, "the deltaY to be a number", deltaY);
       return;
@@ -1273,10 +1743,17 @@ window.uss = {
 
       //A scroll-animation on the y-axis is already being performed and can be repurposed.
       if(!!_containerData[1]) {     
-
         //An actual scroll has been requested.   
         if(deltaY !== 0) { 
-          const _finalYPosition = _containerData[3] + deltaY;
+          let _finalYPosition = _containerData[3] + deltaY;
+
+          //Limit the final position to the [0, maxScrollY] interval. 
+          if(containScroll) {
+            const _maxScrollY = uss.getMaxScrollY(container, false, options);
+            if(_finalYPosition < 0) _finalYPosition = 0;
+            else if(_finalYPosition > _maxScrollY) _finalYPosition = _maxScrollY;
+          }
+
           const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _containerData[5];
           
           //The scroll-animation has to scroll less than 1px. 
@@ -1288,7 +1765,7 @@ window.uss = {
           //Thanks to the new deltaY, the current scroll-animation 
           //has already surpassed the old finalYPosition. 
           if(_remaningScrollAmount < 0) {
-            uss.scrollYTo(_finalYPosition, container, callback);
+            uss.scrollYTo(_finalYPosition, container, callback, containScroll, options);
             return;
           }
           
@@ -1303,55 +1780,55 @@ window.uss = {
       }
     }
 
-    uss.scrollYTo(_currentYPosition + deltaY, container, callback);
+    uss.scrollYTo(_currentYPosition + deltaY, container, callback, containScroll, options);
   },
-  scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback, options = {debugString: "scrollTo"}) => {
+  scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollTo"}) => {
     if(typeof callback !== "function") {
-      uss.scrollXTo(finalXPosition, container, null, options);
-      uss.scrollYTo(finalYPosition, container, null, options);
+      uss.scrollXTo(finalXPosition, container, null, containScroll, options);
+      uss.scrollYTo(finalYPosition, container, null, containScroll, options);
       return;
     }
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the y-axis has finished too or it has been altered.
     const _scrollXCallback = () => {
-      const _containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && _containerData[11] !== _scrollYCallback) callback();
+      const __containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && __containerData[11] !== _scrollYCallback) callback();
     }
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the x-axis has finished too or it has been altered.
     const _scrollYCallback = () => {
-      const _containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && _containerData[10] !== _scrollXCallback) callback();
+      const __containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && __containerData[10] !== _scrollXCallback) callback();
     }
 
     let _initPhase = true;
-    uss.scrollXTo(finalXPosition, container, _scrollXCallback, options);
+    uss.scrollXTo(finalXPosition, container, _scrollXCallback, containScroll, options);
     _initPhase = false;
-    uss.scrollYTo(finalYPosition, container, _scrollYCallback, options);
+    uss.scrollYTo(finalYPosition, container, _scrollYCallback, containScroll, options);
   },
-  scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true, options = {debugString: "scrollBy"}) => {
+  scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollBy"}) => {
     if(typeof callback !== "function") {
-      uss.scrollXBy(deltaX, container, null, stillStart, options);
-      uss.scrollYBy(deltaY, container, null, stillStart, options);
+      uss.scrollXBy(deltaX, container, null, stillStart, containScroll, options);
+      uss.scrollYBy(deltaY, container, null, stillStart, containScroll, options);
       return;
     }
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the y-axis has finished too or it has been altered.
     const _scrollXCallback = () => {
-      const _containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && _containerData[11] !== _scrollYCallback) callback();
+      const __containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && __containerData[11] !== _scrollYCallback) callback();
     }
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the x-axis has finished too or it has been altered.
     const _scrollYCallback = () => {
-      const _containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && _containerData[10] !== _scrollXCallback) callback();
+      const __containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && __containerData[10] !== _scrollXCallback) callback();
     }
 
     let _initPhase = true;
-    uss.scrollXBy(deltaX, container, _scrollXCallback, stillStart, options);
+    uss.scrollXBy(deltaX, container, _scrollXCallback, stillStart, containScroll, options);
     _initPhase = false;
-    uss.scrollYBy(deltaY, container, _scrollYCallback, stillStart, options);
+    uss.scrollYBy(deltaY, container, _scrollYCallback, stillStart, containScroll, options);
   },
   scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoView"}) => {
     let _containerIndex = -1;
@@ -1362,24 +1839,9 @@ window.uss = {
       if(typeof callback === "function") callback();
       return;
     }
-    
-    //If the Window and the html/body elements are scrollable parents of the passed element, 
-    //scrolling the Window can actually scroll the other two.
-    //If this is the case remove the redundant html/body element.
-    if(_containers[_containerIndex] === window) {
-      const _html = document.documentElement;
-      const _body = document.body;
-      
-      if(_containers[_containerIndex - 1] === _html && _canWindowScrollElement(_html)) {
-        _containerIndex--;
-        _containers.splice(_containerIndex, 1);
-      }
 
-      if(_containers[_containerIndex - 1] === _body && _canWindowScrollElement(_body)) {
-        _containerIndex--;
-        _containers.splice(_containerIndex, 1);
-      }
-    }
+    const _alignToNearestLeft = DEFAULT_REGEX_ALIGNMENT_NEAREST.test(alignToLeft);
+    const _alignToNearestTop  = DEFAULT_REGEX_ALIGNMENT_NEAREST.test(alignToTop);
 
     let _alignToLeft = alignToLeft;
     let _alignToTop  = alignToTop;
@@ -1399,84 +1861,58 @@ window.uss = {
 
     _scrollContainer();
 
-    //Tests if scrolling the Window also scrolls the passed element.
-    function _canWindowScrollElement(element) {
-      //Save the original scroll positions of the Window and the element.
-      const _originalWindowXPosition = window.scrollX;
-      const _originalWindowYPosition = window.scrollY; 
-      const _originalElementXPosition = element.scrollLeft;
-      const _originalElementYPosition = element.scrollTop; 
-
-      //Scroll the Window and the element to a known initial position.
-      window.scroll(0,0);
-      element.scroll(0,0);
-
-      //Scroll the Window and test if the element has the same scroll positions.
-      window.scroll(100, 100);
-      const _windowScrollsElement = element.scrollLeft === window.scrollX && 
-                                    element.scrollTop === window.scrollY;
-      
-      //Restore the original scroll positions of the Window and the element.
-      if(!_windowScrollsElement) {
-        element.scroll(_originalElementXPosition, _originalElementYPosition);
-      }
-      window.scroll(_originalWindowXPosition, _originalWindowYPosition);
-      
-      return _windowScrollsElement;
-    }
-
     //Execute all the calculations needed for scrolling an element into view.
     function _scrollContainer() {   
-      //_scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
-      //_scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
-      const _scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false);
+      //__scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
+      //__scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
+      const __scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false);
 
-      //_bordersDimensions[0] = _currentContainer's top border size
-      //_bordersDimensions[1] = _currentContainer's right border size
-      //_bordersDimensions[2] = _currentContainer's bottom border size
-      //_bordersDimensions[3] = _currentContainer's left border size
-      const _bordersDimensions = uss.calcBordersDimensions(_currentContainer, false);   
+      //__bordersDimensions[0] = _currentContainer's top border size
+      //__bordersDimensions[1] = _currentContainer's right border size
+      //__bordersDimensions[2] = _currentContainer's bottom border size
+      //__bordersDimensions[3] = _currentContainer's left border size
+      const __bordersDimensions = uss.calcBordersDimensions(_currentContainer, false);   
 
-      const _containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
-      const _containerWidth  = _containerRect.width;
-      const _containerHeight = _containerRect.height;
+      const __containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
+      const __containerWidth  = __containerRect.width;
+      const __containerHeight = __containerRect.height;
 
-      const _elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the Window
-      const _elementWidth  = _elementRect.width;
-      const _elementHeight = _elementRect.height;
-      const _elementInitialX = _elementRect.left - _containerRect.left; //_currentElement's x-coordinate relative to it's container
-      const _elementInitialY = _elementRect.top  - _containerRect.top;  //_currentElement's y-coordinate relative to it's container
+      const __elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the Window
+      const __elementWidth  = __elementRect.width;
+      const __elementHeight = __elementRect.height;
+      const __elementInitialX = __elementRect.left - __containerRect.left; //_currentElement's x-coordinate relative to it's container
+      const __elementInitialY = __elementRect.top  - __containerRect.top;  //_currentElement's y-coordinate relative to it's container
 
       //Align to "nearest" is an indirect way to say: Align to "top" / "bottom" / "center".
-      if(/nearest/i.test(alignToLeft)) {
-        const _leftDelta   = _elementInitialX > 0 ? _elementInitialX : -_elementInitialX;  //distance from left border    (container<-element  container)
-        const _rightDelta  = Math.abs(_containerWidth - _elementInitialX - _elementWidth); //distance from right border   (container  element->container)
-        const _centerDelta = Math.abs(0.5 * (_containerWidth - _elementWidth) - _elementInitialX); //distance from center (container->element<-container)
-        _alignToLeft = _leftDelta < _centerDelta ? true : _rightDelta < _centerDelta ? false : null;
+      if(_alignToNearestLeft) {
+        const __leftDelta   = __elementInitialX > 0 ? __elementInitialX : -__elementInitialX;  //distance from left border    (container<-element  container)
+        const __rightDelta  = Math.abs(__containerWidth - __elementWidth - __elementInitialX); //distance from right border   (container  element->container)
+        const __centerDelta = Math.abs((__containerWidth - __elementWidth) * 0.5 - __elementInitialX); //distance from center (container->element<-container)
+        _alignToLeft = __leftDelta < __centerDelta ? true : __rightDelta < __centerDelta ? false : null;
       }
 
-      if(/nearest/i.test(alignToTop)) {
-        const _topDelta    = _elementInitialY > 0 ? _elementInitialY : -_elementInitialY;    //distance from top border     (container↑↑element  container)
-        const _bottomDelta = Math.abs(_containerHeight - _elementInitialY - _elementHeight); //distance from bottom border  (container  element↓↓container)
-        const _centerDelta = Math.abs(0.5 * (_containerHeight - _elementHeight) - _elementInitialY); //distance from center (container↓↓element↑↑container)
-        _alignToTop = _topDelta < _centerDelta ? true : _bottomDelta < _centerDelta ? false : null;
+      if(_alignToNearestTop) {
+        const __topDelta    = __elementInitialY > 0 ? __elementInitialY : -__elementInitialY;    //distance from top border     (container↑↑element  container)
+        const __bottomDelta = Math.abs(__containerHeight - __elementHeight - __elementInitialY); //distance from bottom border  (container  element↓↓container)
+        const __centerDelta = Math.abs((__containerHeight - __elementHeight) * 0.5 - __elementInitialY); //distance from center (container↓↓element↑↑container)
+        _alignToTop = __topDelta < __centerDelta ? true : __bottomDelta < __centerDelta ? false : null;
       }
     
-      const _elementFinalX = _alignToLeft === true  ? _bordersDimensions[3] : 
-                             _alignToLeft === false ? _containerWidth  - _elementWidth  - _scrollbarsDimensions[0] - _bordersDimensions[1] : 
-                                                     (_containerWidth  - _elementWidth  - _scrollbarsDimensions[0] - _bordersDimensions[1] + _bordersDimensions[3]) * 0.5;
-      const _elementFinalY = _alignToTop  === true  ? _bordersDimensions[0] : 
-                             _alignToTop  === false ? _containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] : 
-                                                     (_containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] + _bordersDimensions[0]) * 0.5;
+      const __elementFinalX = _alignToLeft === true  ? __bordersDimensions[3] : 
+                              _alignToLeft === false ? __containerWidth  - __elementWidth  - __scrollbarsDimensions[0] - __bordersDimensions[1] : 
+                                                      (__containerWidth  - __elementWidth  - __scrollbarsDimensions[0] - __bordersDimensions[1] + __bordersDimensions[3]) * 0.5;
+      const __elementFinalY = _alignToTop  === true  ? __bordersDimensions[0] : 
+                              _alignToTop  === false ? __containerHeight - __elementHeight - __scrollbarsDimensions[1] - __bordersDimensions[2] : 
+                                                      (__containerHeight - __elementHeight - __scrollbarsDimensions[1] - __bordersDimensions[2] + __bordersDimensions[0]) * 0.5;
       
-      const _deltaX = Math.round(_elementInitialX - _elementFinalX);
-      const _deltaY = Math.round(_elementInitialY - _elementFinalY);
-      const _scrollContainerX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
-      const _scrollContainerY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
+      const __deltaX = Math.round(__elementInitialX - __elementFinalX);
+      const __deltaY = Math.round(__elementInitialY - __elementFinalY);
+      const __scrollContainerX = __deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
+      const __scrollContainerY = __deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
 
-      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
-      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback);
-      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback);
+      if(__scrollContainerX && __scrollContainerY) uss.scrollBy(__deltaX, __deltaY, _currentContainer, _callback, true, true, options);
+      else if(__scrollContainerX) uss.scrollXBy(__deltaX, _currentContainer, _callback, true, true, options);
+      else if(__scrollContainerY) uss.scrollYBy(__deltaY, _currentContainer, _callback, true, true, options);
       else _callback();
     }
   },
@@ -1489,24 +1925,8 @@ window.uss = {
       if(typeof callback === "function") callback();
       return;
     }
-    
-    //If the Window and the html/body elements are scrollable parents of the passed element, 
-    //scrolling the Window can actually scroll the other two.
-    //If this is the case remove the redundant html/body element.
-    if(_containers[_containerIndex] === window) {
-      const _html = document.documentElement;
-      const _body = document.body;
-      
-      if(_containers[_containerIndex - 1] === _html && _canWindowScrollElement(_html)) {
-        _containerIndex--;
-        _containers.splice(_containerIndex, 1);
-      }
 
-      if(_containers[_containerIndex - 1] === _body && _canWindowScrollElement(_body)) {
-        _containerIndex--;
-        _containers.splice(_containerIndex, 1);
-      }
-    }
+    const _alignElementToCenter = alignToCenter === true;
 
     let _alignToLeft = null;
     let _alignToTop  = null;
@@ -1526,64 +1946,42 @@ window.uss = {
 
     _scrollContainer();
 
-    //Tests if scrolling the Window also scrolls the passed element.
-    function _canWindowScrollElement(element) {
-      //Save the original scroll positions of the Window and the element.
-      const _originalWindowXPosition = window.scrollX;
-      const _originalWindowYPosition = window.scrollY; 
-      const _originalElementXPosition = element.scrollLeft;
-      const _originalElementYPosition = element.scrollTop; 
-
-      //Scroll the Window and the element to a known initial position.
-      window.scroll(0,0);
-      element.scroll(0,0);
-
-      //Scroll the Window and test if the element has the same scroll positions.
-      window.scroll(100, 100);
-      const _windowScrollsElement = element.scrollLeft === window.scrollX && 
-                                    element.scrollTop === window.scrollY;
-      
-      //Restore the original scroll positions of the Window and the element.
-      if(!_windowScrollsElement) {
-        element.scroll(_originalElementXPosition, _originalElementYPosition);
-      }
-      window.scroll(_originalWindowXPosition, _originalWindowYPosition);
-      
-      return _windowScrollsElement;
-    }
-
     //Execute all the calculations needed for scrolling an element into view.
     function _scrollContainer() {   
-      //_scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
-      //_scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
-      const _scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false);
+      //__scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
+      //__scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
+      const __scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false);
 
-      //_bordersDimensions[0] = _currentContainer's top border size
-      //_bordersDimensions[1] = _currentContainer's right border size
-      //_bordersDimensions[2] = _currentContainer's bottom border size
-      //_bordersDimensions[3] = _currentContainer's left border size
-      const _bordersDimensions = uss.calcBordersDimensions(_currentContainer, false);   
+      //__bordersDimensions[0] = _currentContainer's top border size
+      //__bordersDimensions[1] = _currentContainer's right border size
+      //__bordersDimensions[2] = _currentContainer's bottom border size
+      //__bordersDimensions[3] = _currentContainer's left border size
+      const __bordersDimensions = uss.calcBordersDimensions(_currentContainer, false);   
 
-      const _containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
-      const _containerWidth  = _containerRect.width;
-      const _containerHeight = _containerRect.height;
+      const __containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
+      const __containerWidth  = __containerRect.width;
+      const __containerHeight = __containerRect.height;
 
-      const _elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the Window
-      const _elementWidth  = _elementRect.width;
-      const _elementHeight = _elementRect.height;
-      const _elementInitialX = _elementRect.left - _containerRect.left; //_currentElement's x-coordinate relative to it's container
-      const _elementInitialY = _elementRect.top  - _containerRect.top;  //_currentElement's y-coordinate relative to it's container
+      const __elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the Window
+      const __elementWidth  = __elementRect.width;
+      const __elementHeight = __elementRect.height;
+      const __elementInitialX = __elementRect.left - __containerRect.left; //_currentElement's x-coordinate relative to it's container
+      const __elementInitialY = __elementRect.top  - __containerRect.top;  //_currentElement's y-coordinate relative to it's container
       
-      const _elementIntoViewX = _elementInitialX > -1 && _elementInitialX + _elementWidth  - _containerWidth  + _scrollbarsDimensions[0] < 1;  //Checks if the element is already in the viewport on the x-axis
-      const _elementIntoViewY = _elementInitialY > -1 && _elementInitialY + _elementHeight - _containerHeight + _scrollbarsDimensions[1] < 1;  //Checks if the element is already in the viewport on the y-axis    
-      const _elementOverflowX = _elementInitialX <= 0 && _elementInitialX + _elementWidth  - _containerWidth  + _scrollbarsDimensions[0] >= 0; //Checks if the element's width is bigger than its container's width
-      const _elementOverflowY = _elementInitialY <= 0 && _elementInitialY + _elementHeight - _containerHeight + _scrollbarsDimensions[1] >= 0; //Checks if the element's height is bigger than its container's height
-      const _isOriginalElement = _currentElement === element;
-      let _scrollNotNeededX = _elementIntoViewX || (_isOriginalElement && _elementOverflowX);
-      let _scrollNotNeededY = _elementIntoViewY || (_isOriginalElement && _elementOverflowY);
+      const __isOriginalElement = _currentElement === element;
+      const __elementIntoViewX = __elementInitialX > -1 && __elementInitialX + __elementWidth  - __containerWidth  + __scrollbarsDimensions[0] < 1;  //Checks if the element is already visible inside its container on the x-axis
+      const __elementIntoViewY = __elementInitialY > -1 && __elementInitialY + __elementHeight - __containerHeight + __scrollbarsDimensions[1] < 1;  //Checks if the element is already visible inside its container on the y-axis    
+      const __elementOverflowX = __elementInitialX <= 0 && __elementInitialX + __elementWidth  - __containerWidth  + __scrollbarsDimensions[0] >= 0; //Checks if the element's width is bigger than its container's width
+      const __elementOverflowY = __elementInitialY <= 0 && __elementInitialY + __elementHeight - __containerHeight + __scrollbarsDimensions[1] >= 0; //Checks if the element's height is bigger than its container's height
+      
+      const __scrollNotNeededX = (__isOriginalElement && !_alignElementToCenter && (__elementIntoViewX || __elementOverflowX)) || 
+                                 (!__isOriginalElement && __elementIntoViewX);
+                                
+      const __scrollNotNeededY = (__isOriginalElement && !_alignElementToCenter && (__elementIntoViewY || __elementOverflowY)) || 
+                                 (!__isOriginalElement && __elementIntoViewY);
 
-      if(_scrollNotNeededX && _scrollNotNeededY) { 
-        if(_isOriginalElement) {
+      if(__scrollNotNeededX && __scrollNotNeededY) { 
+        if(__isOriginalElement) {
           if(typeof callback === "function") callback();
         } else {
           _containerIndex--;
@@ -1596,132 +1994,175 @@ window.uss = {
         
       //Possible alignments for the original element: center or nearest.
       //Possible alignments for its containers: nearest.
-      if(_isOriginalElement && alignToCenter === true) { 
-          _scrollNotNeededX = false;
-          _scrollNotNeededY = false;
+      if(__isOriginalElement && _alignElementToCenter) { 
+          _alignToLeft = null;
+          _alignToTop = null;
       } else {
-        if(!_scrollNotNeededX) { //Scroll needed on x-axis
-          const _leftDelta   = _elementInitialX > 0 ? _elementInitialX : -_elementInitialX;  //distance from left border    (container<-element  container)
-          const _rightDelta  = Math.abs(_containerWidth - _elementInitialX - _elementWidth); //distance from right border   (container  element->container)
-          const _centerDelta = Math.abs(0.5 * (_containerWidth - _elementWidth) - _elementInitialX); //distance from center (container->element<-container)
-          _alignToLeft = _leftDelta < _centerDelta ? true : _rightDelta < _centerDelta ? false : null;
+        if(!__scrollNotNeededX) { //Scroll needed on x-axis
+          const __leftDelta   = __elementInitialX > 0 ? __elementInitialX : -__elementInitialX;  //distance from left border    (container<-element  container)
+          const __rightDelta  = Math.abs(__containerWidth - __elementWidth - __elementInitialX); //distance from right border   (container  element->container)
+          const __centerDelta = Math.abs((__containerWidth - __elementWidth) * 0.5 - __elementInitialX); //distance from center (container->element<-container)
+          _alignToLeft = __leftDelta < __centerDelta ? true : __rightDelta < __centerDelta ? false : null;
         }
 
-        if(!_scrollNotNeededY) { //Scroll needed on y-axis
-          const _topDelta    = _elementInitialY > 0 ? _elementInitialY : -_elementInitialY;    //distance from top border     (container↑↑element  container)
-          const _bottomDelta = Math.abs(_containerHeight - _elementInitialY - _elementHeight); //distance from bottom border  (container  element↓↓container)
-          const _centerDelta = Math.abs(0.5 * (_containerHeight - _elementHeight) - _elementInitialY); //distance from center (container↓↓element↑↑container)
-          _alignToTop = _topDelta < _centerDelta ? true : _bottomDelta < _centerDelta ? false : null;
+        if(!__scrollNotNeededY) { //Scroll needed on y-axis
+          const __topDelta    = __elementInitialY > 0 ? __elementInitialY : -__elementInitialY;    //distance from top border     (container↑↑element  container)
+          const __bottomDelta = Math.abs(__containerHeight - __elementHeight - __elementInitialY); //distance from bottom border  (container  element↓↓container)
+          const __centerDelta = Math.abs((__containerHeight - __elementHeight) * 0.5 - __elementInitialY); //distance from center (container↓↓element↑↑container)
+          _alignToTop = __topDelta < __centerDelta ? true : __bottomDelta < __centerDelta ? false : null;
         }
       } 
 
-      const _elementFinalX = _scrollNotNeededX ? _elementInitialX : 
-                             _alignToLeft === true  ? _bordersDimensions[3] : 
-                             _alignToLeft === false ? _containerWidth  - _elementWidth  - _scrollbarsDimensions[0] - _bordersDimensions[1] : 
-                                                     (_containerWidth  - _elementWidth  - _scrollbarsDimensions[0] - _bordersDimensions[1] + _bordersDimensions[3]) * 0.5;
-      const _elementFinalY = _scrollNotNeededY ? _elementInitialY : 
-                             _alignToTop  === true  ? _bordersDimensions[0] :
-                             _alignToTop  === false ? _containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] : 
-                                                     (_containerHeight - _elementHeight - _scrollbarsDimensions[1] - _bordersDimensions[2] + _bordersDimensions[0]) * 0.5;
+      const __elementFinalX = __scrollNotNeededX ? __elementInitialX : 
+                              _alignToLeft === true  ? __bordersDimensions[3] : 
+                              _alignToLeft === false ? __containerWidth  - __elementWidth  - __scrollbarsDimensions[0] - __bordersDimensions[1] : 
+                                                      (__containerWidth  - __elementWidth  - __scrollbarsDimensions[0] - __bordersDimensions[1] + __bordersDimensions[3]) * 0.5;
+      const __elementFinalY = __scrollNotNeededY ? __elementInitialY : 
+                              _alignToTop  === true  ? __bordersDimensions[0] :
+                              _alignToTop  === false ? __containerHeight - __elementHeight - __scrollbarsDimensions[1] - __bordersDimensions[2] : 
+                                                      (__containerHeight - __elementHeight - __scrollbarsDimensions[1] - __bordersDimensions[2] + __bordersDimensions[0]) * 0.5;
       
-      const _deltaX = Math.round(_elementInitialX - _elementFinalX);
-      const _deltaY = Math.round(_elementInitialY - _elementFinalY);
-      const _scrollContainerX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
-      const _scrollContainerY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
+      const __deltaX = Math.round(__elementInitialX - __elementFinalX);
+      const __deltaY = Math.round(__elementInitialY - __elementFinalY);
+      const __scrollContainerX = __deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
+      const __scrollContainerY = __deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
 
-      if(_scrollContainerX && _scrollContainerY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback);
-      else if(_scrollContainerX) uss.scrollXBy(_deltaX, _currentContainer, _callback);
-      else if(_scrollContainerY) uss.scrollYBy(_deltaY, _currentContainer, _callback);
+      if(__scrollContainerX && __scrollContainerY) uss.scrollBy(__deltaX, __deltaY, _currentContainer, _callback, true, true, options);
+      else if(__scrollContainerX) uss.scrollXBy(__deltaX, _currentContainer, _callback, true, true, options);
+      else if(__scrollContainerY) uss.scrollYBy(__deltaY, _currentContainer, _callback, true, true, options);
       else _callback();
     }
-  },
+  }, 
   stopScrollingX: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingX"}) => {
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
-    const _containerData = uss._containersData.get(container) || [];
-    window.cancelAnimationFrame(_containerData[0]); 
-    _containerData[0] = null;  //scrollID on x-axis
-    _containerData[10] = null; //callback on x-axis
+    const _containerData = uss._containersData.get(container);
+    
+    if(_containerData) {
+      window.cancelAnimationFrame(_containerData[0]); 
+      _containerData[0] = null;  //scrollID on x-axis
+      _containerData[10] = null; //callback on x-axis  
+      _containerData[14] = null; //Temporary stepLengthCalculator on the x-axis
+          
+      //No scroll-animation on the y-axis is being performed.
+      if(!_containerData[1]) { 
+        const _newData = [];
+        
+        if(_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+        if(_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
+        if(_containerData[15]) _newData[15] = _containerData[15]; //Temporary stepLengthCalculator on the y-axis
 
-    //No scroll-animation on the y-axis is being performed.
-    if(!_containerData[1]) { 
-      const _newData = [];
-      if(!!_containerData[12]) _newData[12] = _containerData[12];
-      if(!!_containerData[13]) _newData[13] = _containerData[13];
-      
-      //Cached values.
-      if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
-      if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
-      if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
-      if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
-      if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
-      if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
-      if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
-      if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
-      uss._containersData.set(container, _newData);
+        //Cached values.
+        if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+        if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+        if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+        if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+        if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+        if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+        if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+        if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
+        if(_containerData[24] || _containerData[24] === null) _newData[24] = _containerData[24]; //Next not-hidden scrollable parent on the x-axis
+        if(_containerData[25] || _containerData[25] === null) _newData[25] = _containerData[25]; //Next hidden scrollable parent on the x-axis
+        if(_containerData[26] || _containerData[26] === null) _newData[26] = _containerData[26]; //Next not-hidden scrollable parent on the y-axis
+        if(_containerData[27] || _containerData[27] === null) _newData[27] = _containerData[27]; //Next hidden scrollable parent on the y-axis
+        if(_containerData[28]) _newData[28] = _containerData[28]; //ScrollXCalculator
+        if(_containerData[29]) _newData[29] = _containerData[29]; //ScrollYCalculator
+        
+        uss._containersData.set(container, _newData);
+      } 
+    } else {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, []);
     }
 
     if(typeof callback === "function") callback();
-  },
+  },  
   stopScrollingY: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingY"}) => {
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
-    const _containerData = uss._containersData.get(container) || [];
-    window.cancelAnimationFrame(_containerData[1]);
-    _containerData[1] = null; //scrollID on y-axis
-    _containerData[11] = null; //callback on x-axis
-  
-    //No scroll-animation on the x-axis is being performed.
-    if(!_containerData[0]) { 
-      const _newData = [];
-      if(!!_containerData[12]) _newData[12] = _containerData[12];
-      if(!!_containerData[13]) _newData[13] = _containerData[13];
-      
-      //Cached values.
-      if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
-      if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
-      if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
-      if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
-      if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
-      if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
-      if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
-      if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
-      uss._containersData.set(container, _newData);
+    const _containerData = uss._containersData.get(container);
+    
+    if(_containerData) {
+      window.cancelAnimationFrame(_containerData[1]);
+      _containerData[1] = null;  //scrollID on y-axis
+      _containerData[11] = null; //callback on x-axis
+      _containerData[15] = null; //Temporary stepLengthCalculator on the y-axis
+          
+      //No scroll-animation on the x-axis is being performed.
+      if(!_containerData[0]) { 
+        const _newData = [];
+        
+        if(_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+        if(_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
+        if(_containerData[14]) _newData[14] = _containerData[14]; //Temporary stepLengthCalculator on the x-axis
+        
+        //Cached values.
+        if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+        if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+        if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+        if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+        if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+        if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+        if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+        if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
+        if(_containerData[24] || _containerData[24] === null) _newData[24] = _containerData[24]; //Next not-hidden scrollable parent on the x-axis
+        if(_containerData[25] || _containerData[25] === null) _newData[25] = _containerData[25]; //Next hidden scrollable parent on the x-axis
+        if(_containerData[26] || _containerData[26] === null) _newData[26] = _containerData[26]; //Next not-hidden scrollable parent on the y-axis
+        if(_containerData[27] || _containerData[27] === null) _newData[27] = _containerData[27]; //Next hidden scrollable parent on the y-axis
+        if(_containerData[28]) _newData[28] = _containerData[28]; //ScrollXCalculator
+        if(_containerData[29]) _newData[29] = _containerData[29]; //ScrollYCalculator
+        
+        uss._containersData.set(container, _newData);
+      } 
+    } else {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, []);
     }
 
     if(typeof callback === "function") callback();
   },
   stopScrolling: (container = uss._pageScroller, callback, options = {debugString: "stopScrolling"}) => {
-    if(container !== window && !(container instanceof Element)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-      return;
-    }
-    const _containerData = uss._containersData.get(container) || [];
-    window.cancelAnimationFrame(_containerData[0]);
-    window.cancelAnimationFrame(_containerData[1]);
-    _containerData[0] = null;  //scrollID on x-axis
-    _containerData[1] = null;  //scrollID on y-axis
-    _containerData[10] = null; //callback on x-axis
-    _containerData[11] = null; //callback on y-axis
+    const _containerData = uss._containersData.get(container);
     
-    const _newData = [];
-    if(!!_containerData[12]) _newData[12] = _containerData[12];
-    if(!!_containerData[13]) _newData[13] = _containerData[13];
+    if(_containerData) {
+      window.cancelAnimationFrame(_containerData[0]);
+      window.cancelAnimationFrame(_containerData[1]);
+      _containerData[0] = null;  //scrollID on x-axis
+      _containerData[1] = null;  //scrollID on y-axis
+      _containerData[10] = null; //callback on x-axis
+      _containerData[11] = null; //callback on y-axis
+          
+      const _newData = [];
+          
+      if(_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+      if(_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
 
-    //Cached values.  
-    if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
-    if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
-    if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
-    if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
-    if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
-    if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
-    if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
-    if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
-    uss._containersData.set(container, _newData);
+      //Cached values.  
+      if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
+      if(Number.isFinite(_containerData[17])) _newData[17] = _containerData[17]; //maxScrollY
+      if(Number.isFinite(_containerData[18])) _newData[18] = _containerData[18]; //vertical scrollbar's width
+      if(Number.isFinite(_containerData[19])) _newData[19] = _containerData[19]; //horizontal scrollbar's height
+      if(Number.isFinite(_containerData[20])) _newData[20] = _containerData[20]; //top border's height
+      if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
+      if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
+      if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
+      if(_containerData[24] || _containerData[24] === null) _newData[24] = _containerData[24]; //Next not-hidden scrollable parent on the x-axis
+      if(_containerData[25] || _containerData[25] === null) _newData[25] = _containerData[25]; //Next hidden scrollable parent on the x-axis
+      if(_containerData[26] || _containerData[26] === null) _newData[26] = _containerData[26]; //Next not-hidden scrollable parent on the y-axis
+      if(_containerData[27] || _containerData[27] === null) _newData[27] = _containerData[27]; //Next hidden scrollable parent on the y-axis
+      if(_containerData[28]) _newData[28] = _containerData[28]; //ScrollXCalculator
+      if(_containerData[29]) _newData[29] = _containerData[29]; //ScrollYCalculator
+      
+      uss._containersData.set(container, _newData);
+    } else {
+      if(container !== window && !(container instanceof Element)) {
+        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+        return;
+      }
+      uss._containersData.set(container, []);
+    }
 
     if(typeof callback === "function") callback();
   },
@@ -1735,8 +2176,9 @@ window.uss = {
       _containerData[11] = null; //callback on y-axis
 
       const _newData = [];
-      if(!!_containerData[12]) _newData[12] = _containerData[12];
-      if(!!_containerData[13]) _newData[13] = _containerData[13];
+
+      if(_containerData[12]) _newData[12] = _containerData[12]; //Non-temporary stepLengthCalculator on the x-axis
+      if(_containerData[13]) _newData[13] = _containerData[13]; //Non-temporary stepLengthCalculator on the y-axis
       
       //Cached values.
       if(Number.isFinite(_containerData[16])) _newData[16] = _containerData[16]; //maxScrollX
@@ -1747,13 +2189,20 @@ window.uss = {
       if(Number.isFinite(_containerData[21])) _newData[21] = _containerData[21]; //right border's width
       if(Number.isFinite(_containerData[22])) _newData[22] = _containerData[22]; //bottom border's height
       if(Number.isFinite(_containerData[23])) _newData[23] = _containerData[23]; //left border's width
+      if(_containerData[24] || _containerData[24] === null) _newData[24] = _containerData[24]; //Next not-hidden scrollable parent on the x-axis
+      if(_containerData[25] || _containerData[25] === null) _newData[25] = _containerData[25]; //Next hidden scrollable parent on the x-axis
+      if(_containerData[26] || _containerData[26] === null) _newData[26] = _containerData[26]; //Next not-hidden scrollable parent on the y-axis
+      if(_containerData[27] || _containerData[27] === null) _newData[27] = _containerData[27]; //Next hidden scrollable parent on the y-axis
+      if(_containerData[28]) _newData[28] = _containerData[28]; //ScrollXCalculator
+      if(_containerData[29]) _newData[29] = _containerData[29]; //ScrollYCalculator
+      
       uss._containersData.set(_container, _newData)
     }
 
     if(typeof callback === "function") callback();
   },
-  hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false) => {
-    const _init = typeof init === "function" ? init : () => {};
+  hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false, options = {debugString: "hrefSetup"}) => {
+    const _init = typeof init === "function" ? init : (anchor, el, event) => event.stopPropagation();
     const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
     const _updateHistory = updateHistory && 
                            !!(window.history && 
@@ -1767,25 +2216,25 @@ window.uss = {
 
       //Prevents the browser to jump-to-position,
       //when a user navigates through history.
-      function _smoothHistoryNavigation() {
-        const _fragment = window.location.hash.slice(1, -1);
+      function _smoothHistoryNavigation(event) {
+        const __fragment = window.location.hash.slice(1, -1);
         
         //The URL is just "URL/#" or "URL/" 
-        if(!_fragment) {
-          if(_init(null, uss._pageScroller) !== false) {
-              uss.scrollTo(0, 0, uss._pageScroller, callback);
+        if(!__fragment) {
+          if(_init(null, uss._pageScroller, event) !== false) {
+              uss.scrollTo(0, 0, uss._pageScroller, callback, false, options);
           }
           return;
         } 
 
-        const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
-        if(_elementToReach && _init(null, _elementToReach) !== false) {
-          uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
+        const __elementToReach = document.getElementById(__fragment) || document.querySelector("a[name='" + __fragment + "']");
+        if(__elementToReach && _init(null, __elementToReach, event) !== false) {
+          uss.scrollIntoView(__elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents, options);
         }
       }
       //Checks if the page initially have a URL containing 
       //a valid fragment and scrolls to it if necessary.
-      if(document.readyState === "complete") _smoothHistoryNavigation();
+      if(document.readyState === "complete") _smoothHistoryNavigation(new Event("load"));
       else window.addEventListener("load", _smoothHistoryNavigation, {passive:true, once:true});
     }
 
@@ -1802,15 +2251,14 @@ window.uss = {
       if(_fragment === "") { 
         _pageLink.addEventListener("click", event => {
           event.preventDefault();
-          event.stopPropagation();
-
+          
           //False means the scroll-animation has been prevented by the user.
-          if(_init(_pageLink, uss._pageScroller) === false) return; 
+          if(_init(_pageLink, uss._pageScroller, event) === false) return; 
           if(_updateHistory && window.history.state !== "") {
             window.history.pushState("", "", "#");
           }
 
-          uss.scrollTo(0, 0, uss._pageScroller, callback);
+          uss.scrollTo(0, 0, uss._pageScroller, callback, false, options);
         }, {passive:false});
         continue;
       }
@@ -1825,17 +2273,16 @@ window.uss = {
       //href="#fragment" scrolls the element associated with the fragment into view.
       _pageLink.addEventListener("click", event => {
         event.preventDefault();
-        event.stopPropagation();
 
         //False means the scroll-animation has been prevented by the user.
         //The extra "." at the end of the fragment is used to prevent Safari from restoring 
         //the scrol position before the popstate event (it won't recognize the fragment). 
-        if(_init(_pageLink, _elementToReach) === false) return; 
+        if(_init(_pageLink, _elementToReach, event) === false) return; 
         if(_updateHistory && window.history.state !== _fragment) {
           window.history.pushState(_fragment, "", "#" + _fragment + ".");
         }
 
-        uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents);
+        uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents, options);
       }, {passive:false});
     }
   }
@@ -1850,30 +2297,36 @@ function onResize() {
   window.removeEventListener("mousemove", onResize, {passive:true});
   window.removeEventListener("keydown", onResize, {passive:true});
   window.removeEventListener("focus", onResize, {passive:true});
-  _resizeHandled = false;
+  resizeHandled = false;
   
   //Update the internal Window sizes.
   uss._windowWidth = window.innerWidth;
   uss._windowHeight = window.innerHeight; 
 
   //Flush the internal caches.
-  for(const dataArray of uss._containersData.values()) {
-    dataArray[16] = null;
-    dataArray[17] = null; 
-    dataArray[18] = null; //Perhaps use a mutation observer
-    dataArray[19] = null; //Perhaps use a mutation observer
-    dataArray[20] = null; //Perhaps use a resize observer 
-    dataArray[21] = null; //Perhaps use a resize observer 
-    dataArray[22] = null; //Perhaps use a resize observer 
-    dataArray[23] = null; //Perhaps use a resize observer 
+  for(const containerData of uss._containersData.values()) {
+    containerData[16] = undefined;
+    containerData[17] = undefined; 
+    containerData[18] = undefined; //Perhaps use a mutation observer
+    containerData[19] = undefined; //Perhaps use a mutation observer
+    containerData[20] = undefined; //Perhaps use a resize observer 
+    containerData[21] = undefined; //Perhaps use a resize observer 
+    containerData[22] = undefined; //Perhaps use a resize observer 
+    containerData[23] = undefined; //Perhaps use a resize observer 
+    containerData[24] = undefined; //Perhaps use a resize observer 
+    containerData[25] = undefined; //Perhaps use a resize observer 
+    containerData[26] = undefined; //Perhaps use a resize observer 
+    containerData[27] = undefined; //Perhaps use a resize observer 
+    //containerData[28] doesn't need to be reset
+    //containerData[29] doesn't need to be reset
   }
 
   for(const callback of uss._onResizeEndCallbacks) callback();
 }
 
-let _resizeHandled = false;  
+let resizeHandled = false;  
 window.addEventListener("resize", () => {
-  if(_resizeHandled) return;
+  if(resizeHandled) return;
   
   window.addEventListener("pointerover", onResize, {passive:true});
   window.addEventListener("pointerdown", onResize, {passive:true});
@@ -1881,11 +2334,13 @@ window.addEventListener("resize", () => {
   window.addEventListener("mousemove", onResize, {passive:true});
   window.addEventListener("keydown", onResize, {passive:true});
   window.addEventListener("focus", onResize, {passive:true});
-  _resizeHandled = true;
-
+  resizeHandled = true;
 }, {passive:true});
 
-function __ussInit() {
+function ussInit() {
+  //Force the calculation of the _windowScroller.
+  uss.getWindowScroller(true);
+
   //Force the calculation of the _pageScroller.
   uss.getPageScroller(true);
 
@@ -1893,39 +2348,20 @@ function __ussInit() {
   uss.getScrollbarsMaxDimension(true);
 
   //Calculate the average frames' time of the user's screen. 
-  //(and the corresponding minAnimationFrame.) //<---------------------------------------------------------------------TO LOOK MORE INTO
-  const __totalMeasurementsNumber = 3;
-  const __totalFramesInMeasurement = 60; //How many frames are considered in a single measurement 
-  let __totalFramesTime = 0;
-  let __currentMeasurementsLeft = __totalMeasurementsNumber; 
-  let __currentFrameCount = __totalFramesInMeasurement;
-  let __originalTimestamp = performance.now();
-  window.requestAnimationFrame(function __calcFrameTime(_currentTimestamp) {
-    __currentFrameCount--;
-    if(__currentFrameCount > 0) {
-      window.requestAnimationFrame(__calcFrameTime);
-      return;
+  let _currentMeasurementsLeft = 60; //Do 60 measurements to establish the initial value
+  const _measureFramesTime = () => {
+    if(_currentMeasurementsLeft > 0) {
+      _currentMeasurementsLeft--;
+      uss.calcFramesTimes(undefined, undefined, _measureFramesTime);
     }
-
-    __currentMeasurementsLeft--;
-    __totalFramesTime += (_currentTimestamp - __originalTimestamp) / __totalFramesInMeasurement;
-
-    //Start a new measurement.
-    if(__currentMeasurementsLeft > 0) {
-      __currentFrameCount = __totalFramesInMeasurement;
-      __originalTimestamp = performance.now();
-      window.requestAnimationFrame(__calcFrameTime);
-      return;
-    }
-
-    //All the measurements have been completed.
-    uss._framesTime = Math.min(DEFAULT_FRAME_TIME, __totalFramesTime / __totalMeasurementsNumber); //At least 60fps.
+    
     //uss._minAnimationFrame = 1000 / uss._framesTime; //<---------------------------------------------------------------------TO LOOK MORE INTO
-  });
+  }
+  _measureFramesTime();
 }
 
-if(document.readyState === "complete") __ussInit();
-else window.addEventListener("load", __ussInit, {passive:true, once:true});
+if(document.readyState === "complete") ussInit();
+else window.addEventListener("load", ussInit, {passive:true, once:true});
 
 try { //Chrome, Firefox & Safari >= 14
   window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {

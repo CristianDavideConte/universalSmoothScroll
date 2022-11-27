@@ -85,6 +85,83 @@ They are used by the [`uss`](./HowItWorks.md) object for initialization and rese
     The initial value of the <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> property: it's <code>16.6</code><sub>ms</sub> and it initially assumes that the user's browser/screen is refreshing at <code>60</code><sub>fps</sub>.
    </td>
   </tr>
+  <tr id = "DEFAULT_REGEX_LOGGER_DISABLED">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_REGEX_LOGGER_DISABLED</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>RegExp</code>
+   </td>
+   <td rowspan = "1">
+    The regular expression used by the default loggers to test if they're disabled.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_REGEX_LOGGER_LEGACY">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_REGEX_LOGGER_LEGACY</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>RegExp</code>
+   </td>
+   <td rowspan = "1">
+    The regular expression used by the default loggers to test if they should operate in legacy mode.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_REGEX_ALIGNMENT_NEAREST">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_REGEX_ALIGNMENT_NEAREST</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>RegExp</code>
+   </td>
+   <td rowspan = "1">
+    The regular expression used by <a href = "./FunctionsAbout.md#scrollIntoViewFun"><code>scrollIntoView</code></a> to test if the passed alignments correspond to <code>nearest</code>.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_REGEX_OVERFLOW">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_REGEX_OVERFLOW</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>RegExp</code>
+   </td>
+   <td rowspan = "1">
+    The regular expression used to test if any container has any of the <code>overflow</code> properties set to <code>auto</code> or <code>scroll</code>.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_REGEX_OVERFLOW_HIDDEN">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_REGEX_OVERFLOW_HIDDEN</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>RegExp</code>
+   </td>
+   <td rowspan = "1">
+    The regular expression used to test if any container has any of the <code>overflow</code> properties set to <code>auto</code>, <code>scroll</code> or <code>hidden</code>.
+   </td>
+  </tr>
+  <tr id = "DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>RegExp</code>
+   </td>
+   <td rowspan = "1">
+    The regular expression used to test if any container has any of the <code>overflow</code> properties set to <code>auto</code>, <code>scroll</code> or <code>visible</code>.
+   </td>
+  </tr>
+    <tr id = "DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE">
+   <td rowspan = "1" align = "center">
+    <code>DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>RegExp</code>
+   </td>
+   <td rowspan = "1">
+    The regular expression used to test if any container has any of the <code>overflow</code> properties set to <code>auto</code>, <code>scroll</code>, <code>hidden</code> or <code>visible</code>.
+   </td>
+  </tr>
   <tr id = "DEFAULT_XSTEP_LENGTH_CALCULATOR">
    <td rowspan = "1" align = "center">
     <code>DEFAULT_XSTEP_LENGTH_CALCULATOR</code>

@@ -11,6 +11,7 @@ describe("getXStepLength", function() {
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
+                const _expectedFinalPos = 10;
                 
                 expect(Number.isFinite(uss.getXStepLength())).to.be.true;
                 expect(uss.getXStepLength() > 0).to.be.true;    
@@ -19,7 +20,7 @@ describe("getXStepLength", function() {
 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollXTo(100, _testElement, resolve);
+                        uss.scrollXTo(_expectedFinalPos, _testElement, resolve);
                     }
                 ).then(
                     () => {

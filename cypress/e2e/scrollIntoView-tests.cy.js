@@ -1,5 +1,11 @@
 const { constants } = require("../support/constants");
 
+/*
+ * sizeNum = 0 -> returns the total top-borders' size
+ * sizeNum = 1 -> returns the total right-borders' size
+ * sizeNum = 2 -> returns the total bottom-borders' size
+ * sizeNum = 3 -> returns the total left-borders' size
+ */
 function _getTotalBorderSize(uss, elements, sizeNum) {
     const _totalBorderSize = elements.reduce(
         (prev, curr) => {
@@ -14,6 +20,10 @@ function _getTotalBorderSize(uss, elements, sizeNum) {
     return _totalBorderSize[sizeNum];
 }
 
+/*
+ * sizeNum = 0 -> returns the total vertical scrollbar's size (the ones on the right of the passed elements) 
+ * sizeNum = 1 -> returns the total vertical scrollbar's size (the ones on the bottom of the passed elements) 
+ */
 function _getTotalScrollbarsSize(uss, elements, sizeNum) {
     const _totalScrollbarsSize = elements.reduce(
         (prev, curr) => {
@@ -95,27 +105,29 @@ beforeEach(() => {
     //the number pixels scrolled is inconsistent/may vary.
     //Cypress doesn't correctly report the window.innerWidth/window.innerHeight whenever the page is scaled, 
     //so there's no way to adjust the tests.
-    //This is a quick fix: shrink the viewport down so that is unlikely that the page ever get scaled.
+    //This is a quick fix: shrink the viewport down so that is unlikely that the page is ever scaled.
     //This trick doens't affect the test results.
     cy.viewport(100, 200); 
     cy.visit("scrollIntoView-tests.html"); 
 })
 
-describe("scrollIntoView-corners-alignements", function() {
+describe("scrollIntoView-corners-alignments", function() {
     let uss;
-    it.only("Tests the scrollIntoView method with the 4 corners alignments", function() {
+    it("Tests the scrollIntoView method with the 4 corners alignments", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 uss._reducedMotion = true;
+
+                const _testElement1 = win.document.getElementById("scroller-container-1");
 
                 const _testElement111 = win.document.getElementById("scroller-content-111");
                 const _testElement112 = win.document.getElementById("scroller-content-112");
                 const _testElement121 = win.document.getElementById("scroller-content-121");
                 const _testElement122 = win.document.getElementById("scroller-content-122");
 
-                const _initialScrollLeft = _testElement111.scrollLeft; 
-                const _initialScrollTop = _testElement111.scrollTop; 
+                const _initialScrollLeft = _testElement1.scrollLeft; 
+                const _initialScrollTop = _testElement1.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
                     0: [
@@ -128,8 +140,8 @@ describe("scrollIntoView-corners-alignements", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);          
-                    expect(_testElement111.scrollLeft).to.equal(_initialScrollLeft);
-                    expect(_testElement111.scrollTop).to.equal(_initialScrollTop);
+                    expect(_testElement1.scrollLeft).to.equal(_initialScrollLeft);
+                    expect(_testElement1.scrollTop).to.equal(_initialScrollTop);
                 })
                 .then(() => {
                     cy.waitForUssCallback(
@@ -347,21 +359,23 @@ describe("scrollIntoView-corners-alignements", function() {
 })
 
 
-describe("scrollIntoView-center-alignements", function() {
+describe("scrollIntoView-center-alignments", function() {
     let uss;
-    it.only("Tests the scrollIntoView method with the 5 center alignments", function() {
+    it("Tests the scrollIntoView method with the 5 center alignments", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 uss._reducedMotion = true;
+
+                const _testElement1 = win.document.getElementById("scroller-container-1");
 
                 const _testElement111 = win.document.getElementById("scroller-content-111");
                 const _testElement112 = win.document.getElementById("scroller-content-112");
                 const _testElement121 = win.document.getElementById("scroller-content-121");
                 const _testElement122 = win.document.getElementById("scroller-content-122");
 
-                const _initialScrollLeft = _testElement111.scrollLeft; 
-                const _initialScrollTop = _testElement111.scrollTop; 
+                const _initialScrollLeft = _testElement1.scrollLeft; 
+                const _initialScrollTop = _testElement1.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
                     0: [
@@ -374,8 +388,8 @@ describe("scrollIntoView-center-alignements", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);          
-                    expect(_testElement111.scrollLeft).to.equal(_initialScrollLeft);
-                    expect(_testElement111.scrollTop).to.equal(_initialScrollTop);
+                    expect(_testElement1.scrollLeft).to.equal(_initialScrollLeft);
+                    expect(_testElement1.scrollTop).to.equal(_initialScrollTop);
                 })
                 .then(() => {
                     cy.waitForUssCallback(
@@ -701,21 +715,23 @@ describe("scrollIntoView-center-alignements", function() {
 })
 
 
-describe("scrollIntoView-nearest-alignements", function() {
+describe("scrollIntoView-nearest-alignments", function() {
     let uss;
-    it.only("Tests the scrollIntoView method with all the nearest alignments", function() {
+    it("Tests the scrollIntoView method with all the nearest alignments", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 uss._reducedMotion = true;
+
+                const _testElement1 = win.document.getElementById("scroller-container-1");
 
                 const _testElement111 = win.document.getElementById("scroller-content-111");
                 const _testElement112 = win.document.getElementById("scroller-content-112");
                 const _testElement121 = win.document.getElementById("scroller-content-121");
                 const _testElement122 = win.document.getElementById("scroller-content-122");
 
-                const _initialScrollLeft = _testElement111.scrollLeft; 
-                const _initialScrollTop = _testElement111.scrollTop; 
+                const _initialScrollLeft = _testElement1.scrollLeft; 
+                const _initialScrollTop = _testElement1.scrollTop; 
  
                 cy.testFailingValues(uss.scrollIntoView, {
                     0: [
@@ -728,8 +744,8 @@ describe("scrollIntoView-nearest-alignements", function() {
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);          
-                    expect(_testElement111.scrollLeft).to.equal(_initialScrollLeft);
-                    expect(_testElement111.scrollTop).to.equal(_initialScrollTop);
+                    expect(_testElement1.scrollLeft).to.equal(_initialScrollLeft);
+                    expect(_testElement1.scrollTop).to.equal(_initialScrollTop);
                 })
                 .then(() => {
                     cy.waitForUssCallback(
@@ -787,7 +803,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-top.
                                                 const _nextEl = _testElement121;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX() / 2, uss.getMaxScrollY());
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, 0, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container) / 8, 0, _container);
@@ -855,7 +871,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be right-top.
                                                 const _nextEl = _testElement112;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY());
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
@@ -914,7 +930,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be left-center.
                                                 const _nextEl = _testElement111;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(0, uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_parent) / 8, _parent);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_container) / 2, _container);
@@ -981,7 +997,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-center.
                                                 const _nextEl = _testElement111;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX() / 2, uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, uss.getMaxScrollY(_parent) / 8, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container) / 8, uss.getMaxScrollY(_container) / 2, _container);
@@ -1055,7 +1071,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be right-center.
                                                 const _nextEl = _testElement112;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY() / 2);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent) / 8, _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container) / 2, _container);
@@ -1125,7 +1141,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be left-bottom.
                                                 const _nextEl = _testElement121;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(0, 0);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
@@ -1184,7 +1200,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-bottom.
                                                 const _nextEl = _testElement122;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX() / 2, 0);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, uss.getMaxScrollY(_parent), _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container) * 3 / 4, uss.getMaxScrollY(_container), _container);
@@ -1255,7 +1271,7 @@ describe("scrollIntoView-nearest-alignements", function() {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-bottom.
                                                 const _nextEl = _testElement122;
                                                 const _container = _nextEl.parentElement;
-                                                const _parent = _nextEl.parentElement.parentElement;
+                                                const _parent = _container.parentElement;
                                                 uss.scrollTo(uss.getMaxScrollX(), 0);
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
                                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);

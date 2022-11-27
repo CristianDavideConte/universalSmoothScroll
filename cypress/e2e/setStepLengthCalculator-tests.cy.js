@@ -13,10 +13,11 @@ describe("setStepLengthCalculator", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                const _noStepLengthCalculator = undefined;
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.setStepLengthCalculator, {
-                    0: [constants.failingValuesAll,
+                    0: [constants.failingValuesAllNoUndefined,
                         [_testElement],
                         [true, false],
                         ],
@@ -58,20 +59,60 @@ describe("setStepLengthCalculator", function() {
                     expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
                     expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
                     
+                    //try to unset one or more stepLengthCalculators
+                    uss.setStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    uss.setStepLengthCalculator(undefined, _testElement, false);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+
+                    uss.setStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    uss.setStepLengthCalculator(undefined, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
+                    
+                    uss.setStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    uss.setStepLengthCalculator(undefined, _testElement, true);
+                    uss.setStepLengthCalculator(undefined, _testElement, false);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
+
+                    uss.setStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
                     uss.setStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
                     expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
                     expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
                     
                     cy.waitForUssCallback(
                         (resolve) => {
-                            uss.scrollTo(200, 100, _testElement, resolve);
+                            uss._reducedMotion = true;
+                            uss.scrollTo(100, 100, _testElement, resolve);
                         }
                     ).then(
                         () => {
-                            cy.elementScrollLeftShouldBe(_testElement, 200);
-                            cy.elementScrollTopShouldBe(_testElement, 100);
                             expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
                             expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                            expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
+                            expect(uss.getYStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
                         }
                     );
             });

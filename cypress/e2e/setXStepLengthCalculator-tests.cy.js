@@ -9,10 +9,11 @@ describe("setXStepLengthCalculator", function() {
     let _testCalculatorValidType1 = () => 10;
     let _testCalculatorValidType2 = () => 5;
     let _testCalculatorValidType3 = () => 0.000001; //Valid but takes more than the default testing timeout
-    it.only("Tests the setXStepLengthCalculator method", function() {
+    it("Tests the setXStepLengthCalculator method", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
+                const _noStepLengthCalculator = undefined;
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.setXStepLengthCalculator, {
@@ -34,32 +35,60 @@ describe("setXStepLengthCalculator", function() {
                 })
                 .then(() => {
                     //test valid stepLengthCalculators
-                    uss.setXStepLengthCalculator(_testCalculatorValidType1, _testElement, false, true);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType1, _testElement, false);
                     expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType1);  
 
-                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, false, true);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, false);
                     expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType2);  
 
-                    uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false, true);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
                     expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
                     
-                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true, true);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
                     expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2); 
 
                     uss.stopScrollingY();
                     expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
                     
-                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true, true);
+                    //try to unset one or more stepLengthCalculators
+                    uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    uss.setXStepLengthCalculator(undefined, _testElement, false);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    
+                    uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    uss.setXStepLengthCalculator(undefined, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
+                    
+                    uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
+                    uss.setXStepLengthCalculator(undefined, _testElement, false);
+                    uss.setXStepLengthCalculator(undefined, _testElement, true);
+                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_noStepLengthCalculator);
+                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
+
+                    uss.setXStepLengthCalculator(_testCalculatorValidType3, _testElement, false);
+                    uss.setXStepLengthCalculator(_testCalculatorValidType2, _testElement, true);
                     expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_testCalculatorValidType2);
                     
                     cy.waitForUssCallback(
                         (resolve) => {
+                            uss._reducedMotion = true;
                             uss.scrollXTo(100, _testElement, resolve);
                         }
                     ).then(
                         () => {
-                            cy.elementScrollLeftShouldBe(_testElement, 100);
                             expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(_testCalculatorValidType3);
+                            expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(_noStepLengthCalculator);
                         }
                     );
                 });

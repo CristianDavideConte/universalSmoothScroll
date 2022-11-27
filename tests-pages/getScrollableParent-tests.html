@@ -33,19 +33,62 @@
                 height: 2000px;
                 overflow: visible;
             }
-            .position-fixed {
-                position: fixed;
-            }
             .scrollable-content {
                 width: 4000px;
                 height: 4000px;
             }
+            .x-scrollable-content {
+                width: 4000px;
+                height: 1px;
+            }
+            .y-scrollable-content {
+                width: 1px;
+                height: 4000px;
+            }
+            .position-static {
+                position: static;
+            }
+            .position-relative {
+                position: relative;
+            }
+            .position-fixed {
+                position: fixed;
+            }
+            .position-absolute {
+                position: absolute;
+            }
+            .overflow-x-hidden {
+                overflow-x: hidden;
+            }
+            .overflow-x-scroll {
+                overflow-x: scroll;
+            }
+            .overflow-y-hidden {
+                overflow-y: hidden;
+            }
+            .overflow-y-scroll {
+                overflow-y: scroll;
+            }
+            .overflow-hidden {
+                overflow-x: hidden;
+                overflow-y: hidden;
+            }
         </style>
     </head>
     <body>
-        <div class = "position-fixed" id = "position-fixed-element"></div>
+        <div class = "position-fixed" id = "position-fixed-element-direct-body-child"></div>
+        <div class = "position-absolute" id = "position-absolute-element-direct-body-child"></div>
 
-        <div class = "scroller"  id = "generic-element-parent-1">
+        <div class = "position-relative scroller" id = "generic-element-parent-0-a"> 
+            <div class = "position-fixed scrollable-content" id = "position-fixed-element"></div>
+            <div class = "position-absolute scrollable-content" id = "position-absolute-element-a"></div>
+        </div>
+
+        <div class = "position-static scroller" id = "generic-element-parent-0-b"> 
+            <div class = "position-absolute scrollable-content" id = "position-absolute-element-b"></div>
+        </div>
+
+        <div class = "scroller" id = "generic-element-parent-1">
             <div class = "scrollable-content" id = "generic-element-1"></div>
         </div>
 
@@ -73,5 +116,12 @@
             </div>
         </div>
 
+        <div class = "no-scroller overflow-x-scroll overflow-y-hidden" id = "generic-element-parent-6">
+            <div class = "y-scrollable-content" id = "generic-element-6"></div>
+        </div>
+
+        <div class = "no-scroller overflow-x-hidden overflow-y-scroll" id = "generic-element-parent-7">
+            <div class = "x-scrollable-content" id = "generic-element-7"></div>
+        </div>
     </body>
 </html>

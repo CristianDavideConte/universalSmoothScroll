@@ -24,11 +24,12 @@ describe("scrollYBy", function() {
                 .then(() => {
                     cy.waitForUssCallback(
                         (resolve) => {
-                            uss.scrollYBy(100, _testElement, resolve);
+                            uss._reduceMotion = true;
+                            uss.scrollYBy(10, _testElement, resolve);
                         }
                     ).then(
                         () => {
-                            cy.elementScrollTopShouldBe(_testElement, 100);
+                            cy.elementScrollTopShouldBe(_testElement, 10);
                         }
                     );
                 });
@@ -38,38 +39,28 @@ describe("scrollYBy", function() {
 
 describe("scrollYToBy-StillStart-True", function() {
     let uss;
-    let _originalTimestampEqualsTimeStamp, _remaning, _total;
-    
-    const _testCalculator = () => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(!uss.isYScrolling(container)) return total; //testing phase of the setYStepLengthCalculator
-            
-            if(!_remaning) _remaning = remaning;
-            if(!_originalTimestampEqualsTimeStamp) _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
-            if(!_total) _total = total;
-            
-            return total / 10;
-        }
-    }
+    let oldFinalYPosition;
+    let finalYPosition;
+
     it("Vertically scrolls the test element to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
-                uss.setYStepLengthCalculator(_testCalculator(), _testElement, false); 
-                
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollYTo(500, _testElement); 
-                        uss.scrollYBy(200, _testElement, resolve, true);
+                        uss.scrollYTo(20, _testElement); 
+                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
+
+                        uss.scrollYBy(10, _testElement, resolve, true);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
                     }
                 ).then(
                     () => {
-                        expect(_originalTimestampEqualsTimeStamp).to.be.true;
-                        expect(_remaning).to.equal(200);
-                        expect(_total).to.equal(200);
-                        cy.elementScrollTopShouldBe(_testElement, 200);
+                        expect(oldFinalYPosition).to.equal(20);
+                        expect(finalYPosition).to.equal(10);
+                        cy.elementScrollTopShouldBe(_testElement, 10);
                     }
                 );
             });        
@@ -78,49 +69,28 @@ describe("scrollYToBy-StillStart-True", function() {
 
 describe("scrollYToBy-StillStart-False", function() {
     let uss;
-    let _secondPhase = false;
-    let _originalTimestampEqualsTimeStamp, _remaning, _total;
-    
-    const _testCalculator = () => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            if(!uss.isYScrolling(container)) return total; //testing phase of the setYStepLengthCalculator
-            
-            if(_secondPhase) {
-                _remaning = remaning;
-                _originalTimestampEqualsTimeStamp = originalTimestamp === currentTimestamp;
-                _total = total;
-                _secondPhase = false;
-            }
-            
-            return total / 10;
-        }
-    }
+    let oldFinalYPosition;
+    let finalYPosition;
+
     it("Vertically scrolls the test element to n1 pixels and then extends that animation by n2 pixels", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
-                uss.setYStepLengthCalculator(_testCalculator(), _testElement, false); 
-                
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollYTo(100, _testElement); 
-                        win.requestAnimationFrame(function activateSecondPhase(i = 0) {
-                            if(i < 2) win.requestAnimationFrame(() => activateSecondPhase(i + 1));
-                            else {
-                                _secondPhase = true;
-                                uss.scrollYBy(200, _testElement, resolve, false);
-                            }
-                        });
+                        uss.scrollYTo(20, _testElement); 
+                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
+
+                        uss.scrollYBy(10, _testElement, resolve, false);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
                     }
                 ).then(
                     () => {
-                        expect(_originalTimestampEqualsTimeStamp).to.be.true;
-                        expect(_remaning).to.be.greaterThan(100);
-                        expect(_remaning).to.be.lessThan(300);
-                        expect(_total).to.equal(300);
-                        cy.elementScrollTopShouldBe(_testElement, 300);
+                        expect(oldFinalYPosition).to.equal(20);
+                        expect(finalYPosition).to.equal(30);
+                        cy.elementScrollTopShouldBe(_testElement, 30);
                     }
                 );
             });        
@@ -129,33 +99,112 @@ describe("scrollYToBy-StillStart-False", function() {
 
 describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
     let uss;
-    let _resolve;
-    const _testCalculator = (i = 0) => {
-        return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
-            i++;
-            if(i === 2) uss.scrollYBy(90, container, _resolve, false);
-            
-            return total / 10;
+    let oldFinalYPosition;
+    let init = false;
+
+    const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
+        if(!init) {
+            init = true;
+            uss.scrollYBy(10, container, null, false);
+            return 1;
         }
+        return remaning;
     }
-    it("Tests if the scrollYBy method with stillStart = \"false\" can extend a scroll-animation from inside a stepLengthCalculator", function() {
+
+    it("Tests if the scrollXBy method with stillStart=false can extend a scroll-animation from inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
                 uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
-                uss.setYStepLengthCalculator(_testCalculator(), _testElement, false);
+                uss.setYStepLengthCalculator(_testCalculator, _testElement, false);
+                expect(uss.getYStepLengthCalculator(_testElement, false)).to.equal(_testCalculator);
 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        _resolve = resolve;
-                        uss.scrollYTo(100, _testElement);
+                        uss.scrollYTo(10, _testElement);
+                        oldFinalYPosition = uss.getFinalYPosition(_testElement);
+                        
+                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
-                        cy.elementScrollTopShouldBe(_testElement, 190);
+                        expect(oldFinalYPosition).to.equal(10);
+                        cy.elementScrollTopShouldBe(_testElement, 20);
                     }
                 );
             });         
+    });
+})
+
+describe("scrollYBy-containScroll-below-0", function() {
+    let uss;
+    let finalYPosition;
+    it("Vertically scrolls the test element by n pixels obtaining a finalYPosition lower than 0", function() {
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                const _testElement = win.document.getElementById("scroller");
+                
+                cy.testFailingValues(uss.scrollYBy, {
+                    0: [constants.failingValuesNoFiniteNumber,
+                        constants.failingValuesNoUndefined
+                        ]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.throw(constants.defaultUssException);
+                    expect(uss.isYScrolling()).to.be.false;
+                })
+                .then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            uss.scrollYBy(-10000, _testElement, resolve, true, true);
+                            finalYPosition = uss.getFinalYPosition(_testElement);
+                        }
+                    ).then(
+                        () => {
+                            cy.elementScrollTopShouldBe(_testElement, 0);
+                            expect(finalYPosition).to.equal(0);
+                        }
+                    );
+                });
+            });        
+    });
+})
+
+describe("scrollYBy-containScroll-beyond-maxScrollY", function() {
+    let uss;
+    let maxScrollY;
+    let finalYPosition;
+    it("Vertically scrolls the test element by n pixels obtaining a finalYPosition higher than its maxScrollY", function() {
+        cy.window()
+            .then((win) => {
+                uss = win.uss;
+                const _testElement = win.document.getElementById("scroller");
+                
+                cy.testFailingValues(uss.scrollYBy, {
+                    0: [constants.failingValuesNoFiniteNumber,
+                        constants.failingValuesNoUndefined
+                        ]
+                }, 
+                (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    expect(res).to.throw(constants.defaultUssException);
+                    expect(uss.isYScrolling()).to.be.false;
+                })
+                .then(() => {
+                    cy.waitForUssCallback(
+                        (resolve) => {
+                            maxScrollY = uss.getMaxScrollY(_testElement);
+                            uss.scrollYBy(maxScrollY + 100, _testElement, resolve, true, true);
+                            finalYPosition = uss.getFinalYPosition(_testElement);
+                        }
+                    ).then(
+                        () => {
+                            cy.elementScrollTopShouldBe(_testElement, maxScrollY);
+                            expect(finalYPosition).to.equal(maxScrollY);
+                        }
+                    );
+                });
+            });        
     });
 })

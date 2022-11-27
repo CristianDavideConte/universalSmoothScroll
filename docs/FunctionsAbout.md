@@ -316,8 +316,52 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_scrollbarsMaxDimension"><code>_scrollbarsMaxDimension</code></a> property.
    </td>
+
   </tr> 
-         
+    <tr id = "getFramesTimeFun">
+   <td rowspan = "2" align = "center">
+    <code>getFramesTime</code>
+   </td>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#getFramesTime"><code>forceCalculation</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+   <td rowspan = "2" align = "left">
+    Returns the value of the <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> property. <br/>
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#getFramesTime"><code>callback</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+  </tr>
+                  
+  <tr id = "getWindowScrollerFun">
+   <td rowspan = "1" align = "center">
+    <code>getWindowScroller</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <i>
+      <a href = "./FunctionsAbout.md#getWindowScroller"><code>forceCalculation</code></a>
+    </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Returns the value of the <a href = "./VariablesAbout.md#_windowScroller"><code>_windowScroller</code></a> property.
+   </td>
+  </tr> 
+
   <tr id = "getPageScrollerFun">
    <td rowspan = "1" align = "center">
     <code>getPageScroller</code>
@@ -390,10 +434,10 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </i>
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "./ConstantsAbout.md#DEFAULT_XSTEP_LENGTH_CALCULATOR"><code>DEFAULT_XSTEP_LENGTH_CALCULATOR</code></a>
+    <code>undefined</code>
    </td>
    <td rowspan = "3" align = "left">
-    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible.
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the x-axis of)</i> the passed container if compatible or eventually unsets it.
    </td>
   </tr>
   <tr>
@@ -427,10 +471,10 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </i>
    </td>
    <td rowspan = "1" align = "center">
-    <a href = "./ConstantsAbout.md#DEFAULT_YSTEP_LENGTH_CALCULATOR"><code>DEFAULT_YSTEP_LENGTH_CALCULATOR</code></a>
+    <code>undefined</code>
    </td>
    <td rowspan = "3" align = "left">
-    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible.
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(the y-axis of)</i> the passed container if compatible or eventually unsets it.
    </td>
   </tr>
   <tr>
@@ -464,10 +508,10 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </strong>
    </td>
    <td rowspan = "1" align = "center">
-    <strong>✗</strong>
+    <code>undefined</code>
    </td>
    <td rowspan = "3" align = "left">
-    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible.
+    Sets the <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculators</code></a> for <i>(both the y and x axes of)</i> the passed container if compatible or eventually unsets them.
    </td>
   </tr>
   <tr>
@@ -643,7 +687,47 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     Sets the <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger</code></a> property to the passed value if compatible.
    </td>
   </tr> 
-               
+           
+  </tr> 
+    <tr id = "calcFramesTimesFun">
+   <td rowspan = "3" align = "center">
+    <code>calcFramesTimes</code>
+   </td>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#calcFramesTimes"><code>currentTimestamp</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+   <td rowspan = "3" align = "left">
+    Requests a new frames' time measurement and asynchronously inserts the result into <a href = "./VariablesAbout.md#_framesTimes"><code>_framesTimes</code></a>. <br/> 
+    When the calculation is finished, <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> will be updated accordingly. <br/>
+    Only one frames' time calculation at a time can be performed, the other requests will be ignored.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#calcFramesTimes"><code>previousTimestamp</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+  </tr>
+    <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#calcFramesTimes"><code>callback</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+  </tr>
+
   <tr id = "calcXScrollbarDimensionFun">
    <td rowspan = "2" align = "center">
     <code>calcXScrollbarDimension</code>
@@ -978,7 +1062,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
   </tr>
                         
   <tr id = "scrollXToFun">
-   <td rowspan = "3" align = "center">
+   <td rowspan = "4" align = "center">
     <code>scrollXTo</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -989,7 +1073,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Scrolls the x-axis of the passed container to the specified position <i>(in px)</i> if possible.
    </td>
   </tr> 
@@ -1013,9 +1097,20 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>undefined</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollXTo"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
+          
                         
   <tr id = "scrollYToFun">
-   <td rowspan = "3" align = "center">
+   <td rowspan = "4" align = "center">
     <code>scrollYTo</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1026,7 +1121,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "3" align = "left">
+   <td rowspan = "4" align = "left">
     Scrolls the y-axis of the passed container to the specified position <i>(in px)</i> if possible.
    </td>
   </tr> 
@@ -1050,9 +1145,19 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>undefined</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollYTo"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                         
   <tr id = "scrollXByFun">
-   <td rowspan = "4" align = "center">
+   <td rowspan = "5" align = "center">
     <code>scrollXBy</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1063,7 +1168,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "4" align = "left">
+   <td rowspan = "5" align = "left">
     Scrolls the x-axis the passed container by the specified amount of pixels if possible.
    </td>
   </tr> 
@@ -1097,9 +1202,19 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>true</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollXBy"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                        
   <tr id = "scrollYByFun">
-   <td rowspan = "4" align = "center">
+   <td rowspan = "5" align = "center">
     <code>scrollYBy</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1110,7 +1225,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "4" align = "left">
+   <td rowspan = "5" align = "left">
     Scrolls the y-axis the passed container by the specified amount of pixels if possible.
    </td>
   </tr> 
@@ -1144,9 +1259,19 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>true</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollYBy"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                        
   <tr id = "scrollToFun">
-   <td rowspan = "4" align = "center">
+   <td rowspan = "5" align = "center">
     <code>scrollTo</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1157,7 +1282,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "4" align = "left">
+   <td rowspan = "5" align = "left">
     Scrolls both the x and y axes of the passed container to the specified positions <i>(in px)</i> if possible.
    </td>
   </tr> 
@@ -1191,9 +1316,19 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     <code>undefined</code>
    </td>
   </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollTo"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+  </tr>
                          
   <tr id = "scrollByFun">
-   <td rowspan = "5" align = "center">
+   <td rowspan = "6" align = "center">
     <code>scrollBy</code>
    </td>
    <td rowspan = "1" align = "center">
@@ -1204,7 +1339,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "center">
     <strong>✗</strong>
    </td>
-   <td rowspan = "5" align = "left">
+   <td rowspan = "6" align = "left">
     Scrolls both the x and y axes of the passed container by the specified amounts of pixels if possible.
    </td>
   </tr> 
@@ -1246,6 +1381,16 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </td>
    <td rowspan = "1" align = "center">
     <code>true</code>
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#scrollBy"><code>containScroll</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
    </td>
   </tr>
                          
@@ -1465,7 +1610,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    </td>
    <td rowspan = "6" align = "left">
     Automatically binds every valid anchor (<code>&lt;a&gt;</code> and <code>&lt;area&gt;</code> in the DOM) to the corresponding element that should be scrolled into view. <br/>
-    Whenever a valid anchor is clicked the passed <code>init</code> function is invoked and if it doesn't return <code>false</code>, a scroll-animation will bring into view the linked element and the browser's history will be updated <i>(if requested)</i>.
+    Whenever a valid anchor is clicked, or the user navigates through the history <i>(if requested)</i>, the passed <code>init</code> function is invoked and if it doesn't return <code>false</code>, a scroll-animation will bring into view the linked element and the browser's history will be updated <i>(if requested)</i>.
    </td>
   </tr> 
   <tr>
@@ -1713,6 +1858,50 @@ The following table describes every entry of the `Input Parameters` column of th
   </td>
   </tr>
   
+  </tr> 
+    <tr id = "getFramesTime">
+   <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#getFramesTimeFun"><code>getFramesTime</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> calls <a href = "./FunctionsAbout.md#calcFramesTimesFun"><code>calcFramesTimes</code></a> in order to initialize a new frames' time calculation. <br/>
+    If <code>false</code> no new frames' time calculation is performed.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    The <code>callback</code> parameter that is passed to <a href = "./FunctionsAbout.md#calcFramesTimesFun"><code>calcFramesTimes</code></a> if <code>forceCalculation</code> is <code>true</code>.
+   </td>
+  </tr>
+
+  <tr id = "getWindowScroller">
+  <td rowspan = "1" align = "center">
+    <a href = "./FunctionsAbout.md#getWindowScrollerFun"><code>getWindowScroller</code></a>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    If <code>true</code> flushes the internal cache for the <a href = "./VariablesAbout.md#_windowScroller"><code>_windowScroller</code></a> variable and forces its recalculation <i>(expensive operation)</i> before returning it. <br/>
+    If <code>false</code> the result is returned from cache. 
+  </td>
+  </tr>
+
   <tr id = "getPageScroller">
   <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#getPageScrollerFun"><code>getPageScroller</code></a>
@@ -1740,7 +1929,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
+    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>. <br/>
+    If it's <code>undefined</code> the corresponding <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is unset instead.
   </td>
   </tr>
   <tr>
@@ -1781,7 +1971,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
+    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>. <br/>
+    If it's <code>undefined</code> the corresponding <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> is unset instead.
   </td>
   </tr>
   <tr>
@@ -1822,7 +2013,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>.
+    A valid <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a>. <br/>
+    If it's <code>undefined</code> the corresponding <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculators</code></a> are unset instead.
   </td>
   </tr>
   <tr>
@@ -2000,6 +2192,45 @@ The following table describes every entry of the `Input Parameters` column of th
     </ul>
     The instructions given by the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property value should be followed.
   </td>
+  </tr>
+
+  </tr> 
+    <tr id = "calcFramesTimes">
+   <td rowspan = "3" align = "center">
+    <a href = "./FunctionsAbout.md#calcFramesTimesFun"><code>calcFramesTimes</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>previousTimestamp</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    The timestamp relative to the previous browser repaint.
+   </td>
+  </tr> 
+  <tr>
+  </td>
+   <td rowspan = "1" align = "center">
+    <code>currentTimestamp</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">    
+    The timestamp relative to the current browser repaint.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when the requested frames' time measurement has been performed.
+   </td>
   </tr>
   
   </tr>
@@ -2319,7 +2550,7 @@ The following table describes every entry of the `Input Parameters` column of th
   </tr>
           
   <tr id = "scrollXTo">
-  <td rowspan = "3" align = "center">
+  <td rowspan = "4" align = "center">
     <a href = "./FunctionsAbout.md#scrollXToFun"><code>scrollXTo</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2354,10 +2585,22 @@ The following table describes every entry of the `Input Parameters` column of th
     A function which is invoked when this scroll-animation is completed.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the passed <code>finalXPosition</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollXFun">maxScrollX</a>]</code> interval before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
   
             
   <tr id = "scrollYTo">
-  <td rowspan = "3" align = "center">
+  <td rowspan = "4" align = "center">
     <a href = "./FunctionsAbout.md#scrollYToFun"><code>scrollYTo</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2392,9 +2635,21 @@ The following table describes every entry of the `Input Parameters` column of th
     A function which is invoked when this scroll-animation is completed.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the passed <code>finalYPosition</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollYFun">maxScrollY</a>]</code> interval before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
               
   <tr id = "scrollXBy">
-  <td rowspan = "4" align = "center">
+  <td rowspan = "5" align = "center">
     <a href = "./FunctionsAbout.md#scrollXByFun"><code>scrollXBy</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2441,9 +2696,21 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>false</code> if any on-going scroll-animation on the x-axis of <code>container</code> should extended by <code>deltaX</code> if possible.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the <a href = "./FunctionsAbout.md#scrollXToFun"><code>finalXPosition</code></a> obtained by the passed <code>deltaX</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollXFun">maxScrollX</a>]</code> interval before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
               
   <tr id = "scrollYBy">
-  <td rowspan = "4" align = "center">
+  <td rowspan = "5" align = "center">
     <a href = "./FunctionsAbout.md#scrollYByFun"><code>scrollYBy</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2490,9 +2757,21 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>false</code> if any on-going scroll-animation on the y-axis of <code>container</code> should extended by <code>deltaY</code> if possible.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the <a href = "./FunctionsAbout.md#scrollYToFun"><code>finalYPosition</code></a> obtained by the passed <code>deltaY</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollYFun">maxScrollY</a>]</code> interval before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
                 
   <tr id = "scrollTo">
-  <td rowspan = "4" align = "center">
+  <td rowspan = "5" align = "center">
     <a href = "./FunctionsAbout.md#scrollToFun"><code>scrollTo</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2539,9 +2818,21 @@ The following table describes every entry of the `Input Parameters` column of th
     If one of the two scroll-animations triggered by <a href = "./FunctionsAbout.md#scrollToFun"><code>scrollTo</code></a> (one for each axis) is <strong><i>interrupted/altered</i></strong>, the <code>callback</code> is executed whenever the remaning/unaltered one is completed.
   </td>
   </tr>
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the passed <code>finalXPosition</code> and <code>finalYPosition</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollXFun">maxScrollX</a>]</code> and <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollYFun">maxScrollY</a>]</code> intervals respectively before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
               
   <tr id = "scrollBy">
-  <td rowspan = "5" align = "center">
+  <td rowspan = "6" align = "center">
     <a href = "./FunctionsAbout.md#scrollByFun"><code>scrollBy</code></a>
   </td>
   <td rowspan = "1" align = "center">
@@ -2600,6 +2891,18 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>false</code> if any on-going scroll-animation on either the x and y axes of <code>container</code> should extended by respectively <code>deltaX</code> and <code>deltaY</code> if possible.
   </td>
   </tr> 
+  <tr>
+  <td rowspan = "1" align = "center">
+    <code>containScroll</code>
+  </td>
+  <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+  </td>
+  <td rowspan = "1" align = "left">
+    <code>true</code> if the <a href = "./FunctionsAbout.md#scrollXToFun"><code>finalXPosition</code></a> and <a href = "./FunctionsAbout.md#scrollYToFun"><code>finalYPosition</code></a> obtained by the passed <code>deltaX</code> and <code>deltaY</code> should be limited to the <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollXFun">maxScrollX</a>]</code> and <code>[0, <a  href = "./FunctionsAbout.md#getMaxScrollYFun">maxScrollY</a>]</code> intervals respectively before the scroll-animation. <br/>
+    <code>false</code> otherwise. <br/>
+  </td>
+  </tr>
                 
   <tr id = "scrollIntoView">
   <td rowspan = "5" align = "center">
@@ -2819,10 +3122,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the left. <br/>
-    <code>false</code> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the right. <br/>
-    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
-    <strong><i>Any other value</i></strong>, if the alignment <i>(on the x-axis)</i> of every anchor's destination and all its scrollable parents should be to the center. <br/>
+    <code>true</code> if the alignment <i>(on the x-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the left. <br/>
+    <code>false</code> if the alignment <i>(on the x-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the right. <br/>
+    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the x-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the x-axis)</i> relative to its closest scrollable parent. <br/>
+    <strong><i>Any other value</i></strong>, if the alignment <i>(on the x-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
   <tr>
@@ -2833,10 +3136,10 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Object</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the left. <br/>
-    <code>false</code> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the right. <br/>
-    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
-    <strong><i>Any other value</i></strong>, if the alignment <i>(on the y-axis)</i> of every anchor's destination and all its scrollable parents should be to the center. <br/>
+    <code>true</code> if the alignment <i>(on the y-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the left. <br/>
+    <code>false</code> if the alignment <i>(on the y-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the right. <br/>
+    <code>"nearest"</code> <strong><i>(case insensitive)</strong></i> if the alignment <i>(on the y-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the closest side: the alignment of each container is decided by measuring its position <i>(on the y-axis)</i> relative to its closest scrollable parent. <br/>
+    <strong><i>Any other value</i></strong>, if the alignment <i>(on the y-axis)</i> of every valid anchor's destination and all its scrollable parents should be to the center. <br/>
   </td>
   </tr>
   <tr>
@@ -2847,14 +3150,17 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when any anchor is clicked. <br/>
-    If <code>init</code> returns <code>false</code>, the click is ignored. <br/>
+    A function that is invoked whenever any valid anchor is clicked. <br/>
+    If <code>updateHistory</code> is <code>true</code> this function is also called when the user navigates back/forward through the history. <br/>
     When invoked, <code>init</code> is always passed the following input parameters <i>(in this order)</i>: 
     <ul> 
-    <li>The anchor that has been clicked.</li>
-    <li>The anchor's destination element.</li>
+     <li>The anchor that has been clicked.</li>
+     <li>The anchor's destination element.</li>
+     <li>The event that triggered it.</li>
     </ul>
-    If <code>updateHistory</code> is <code>true</code> and the user navigates through its history, the passed anchor is <code>null</code>.  
+    If <code>updateHistory</code> is <code>true</code> and the user navigates through the history, the passed anchor is <code>null</code>. <br/>
+    If the <code>init</code> function is not passed to <code>hrefSetup</code> or it's not a function, the propagation of the event that would have triggered it (3<sup>rd</sup> parameter above) will be stopped. <br/>
+    If <code>init</code> returns <code>false</code>, no scroll-animation will be executed.   
   </td>
   </tr>
   <tr>
@@ -2865,7 +3171,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Function</code>
   </td>
   <td rowspan = "1" align = "left">
-    A function which is invoked when any anchor's destination element is successfully scrolled into view.
+    A function which is invoked when any valid anchor's destination element is successfully scrolled into view.
   </td>
   </tr>
   <tr>
@@ -2876,7 +3182,7 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    <code>true</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of any anchor's destination has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
+    <code>true</code> if any of the scrollable parents <i>(on either the x or y axis)</i> of any valid anchor's destination has the css properties <code>overflow:hidden</code> or <code>overflow-x:hidden</code> or <code>overflow-y:hidden</code>, <code>false</code> otherwise.
   </td>
   </tr>
   <tr>
@@ -2887,8 +3193,8 @@ The following table describes every entry of the `Input Parameters` column of th
     <code>Boolean</code>
   </td>
   <td rowspan = "1" align = "left">
-    If <code>true</code>, the browser's history is updated every time a valid anchor is clicked and navigating through history triggers a smooth scroll-animation to the corresponding fragment. <br/>
-    If <code>false</code>, the browser's history is never updated by the API and navigating through history produces the default <i>jump-to-position</i> behavior.
+    If <code>true</code>, the browser's history is updated every time a valid anchor is clicked and navigating through the history triggers a smooth scroll-animation to the corresponding fragment. <br/>
+    If <code>false</code>, the browser's history is never updated by the API and navigating through the history produces the default <i>jump-to-position</i> behavior.
   </td>
   </tr>
  </tbody>

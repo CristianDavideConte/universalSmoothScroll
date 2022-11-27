@@ -23,6 +23,10 @@ describe("getMaxScrollY", function() {
               .then(() => {
                 const _expectedMaxScrollY = 0.5 * _testElement.scrollHeight + uss.getScrollbarsMaxDimension(); 
 
+                //test the Window
+                expect(uss.getMaxScrollY(win, false)).to.equal(uss.getMaxScrollY(uss.getWindowScroller(), false));
+                expect(uss.getMaxScrollY(win, true)).to.equal(uss.getMaxScrollY(uss.getWindowScroller(), true));
+
                 expect(Number.isFinite(uss.getMaxScrollY(_testElement), true)).to.be.true;
                 expect(Number.isFinite(uss.getMaxScrollY(_testElement), false)).to.be.true;
                 expect(uss.getMaxScrollY(_testElement, true) > 0).to.be.true;
@@ -43,6 +47,8 @@ describe("getMaxScrollY", function() {
                 uss.stopScrolling(_testElement);
                 uss.stopScrollingAll(); 
                 expect(uss.getMaxScrollY(_testElement, false)).to.be.closeTo(_expectedMaxScrollY, 1);  
+                expect(uss.getMaxScrollY(win, false)).to.equal(uss.getMaxScrollY(uss.getWindowScroller(), false));
+                expect(uss.getMaxScrollY(win, true)).to.equal(uss.getMaxScrollY(uss.getWindowScroller(), true));
               });
           });     
     });

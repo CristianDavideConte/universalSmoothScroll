@@ -145,9 +145,40 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "left">
     The time in milliseconds between two consecutive browser's frame repaints <i>(e.g. at <code>60</code><sub>fps</sub> this is <code>16.6</code><sub>ms</sub>)</i>.
+    It's the average of the values of <a href = "./VariablesAbout.md#_framesTimes"><code>_framesTimes</code></a>.
    </td>
   </tr>
   
+  <tr id = "_framesTimes">
+   <td rowspan = "1" align = "center">
+    <code>_framesTimes</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Array</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>[]</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Contains at most the last 10 calculated frames' times.
+   </td>
+  </tr>
+  
+  <tr id = "_windowScroller">
+   <td rowspan = "1" align = "center">
+    <code>_windowScroller</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Object</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    Depends on the webpage style
+   </td>
+   <td rowspan = "1" align = "left">
+    The element that scrolls the Window when it's scrolled and that <i>(viceversa)</i> is scrolled when the Window is scrolled.
+   </td>
+  </tr>
+
   <tr id = "_pageScroller">
    <td rowspan = "1" align = "center">
     <code>_pageScroller</code>
@@ -286,14 +317,20 @@ Index | Type | Description
 `13` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the y-axis of this container.
 `14` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the x-axis of this container. <br/> If valid, replaces `12` for the current scroll-animation on the x-axis of this container and it's automatically invalidated at the end.
 `15` | `Function` | Contains the [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator-) that controls the scroll-animations on the y-axis of this container. <br/> If valid, replaces `13` for the current scroll-animation on the y-axis of this container and it's automatically invalidated at the end.
-`16` | `Number` | Contains the cached value of the highest reacheable scrollLeft/scrollX value of this container (its <a href = "./FunctionsAbount.md#getMaxScrollXFun"><code>maxScrollX</code></a>).
-`17` | `Number` | Contains the cached value of the highest reacheable scrollTop/scrollY value of this container (its <a href = "./FunctionsAbount.md#getMaxScrollYFun"><code>maxScrollY</code></a>).
+`16` | `Number` | Contains the cached value of the highest reacheable scrollLeft/scrollX value of this container (its <a href = "./FunctionsAbout.md#getMaxScrollXFun"><code>maxScrollX</code></a>).
+`17` | `Number` | Contains the cached value of the highest reacheable scrollTop/scrollY value of this container (its <a href = "./FunctionsAbout.md#getMaxScrollYFun"><code>maxScrollY</code></a>).
 `18` | `Number` | Contains the cached value of the vertical scrollbar's width of this container.
 `19` | `Number` | Contains the cached value of the horizontal scrollbar's height of this container.
 `20` | `Number` | Contains the cached value of the top border's height _(in px)_ of this container.
 `21` | `Number` | Contains the cached value of the right border's width _(in px)_ of this container.
 `22` | `Number` | Contains the cached value of the bottom border's height _(in px)_ of this container.
 `23` | `Number` | Contains the cached value of the left border's width _(in px)_ of this container.
+`24` | `Object` | Contains the cached value of this container's next scrollable parent on the x-axis which does not have `overflow-x:hidden`.
+`25` | `Object` | Contains the cached value of this container's next scrollable parent on the x-axis which has `overflow-x:hidden`.
+`26` | `Object` | Contains the cached value of this container's next scrollable parent on the y-axis which does not have `overflow-y:hidden`.
+`27` | `Object` | Contains the cached value of this container's next scrollable parent on the y-axis which has `overflow-y:hidden`.
+`28` | `Function` | Contains the cached value of this container's <a href = "./FunctionsAbout.md#getScrollXCalculatorFun"><code>scrollXCalculator</code></a>.
+`29` | `Function` | Contains the cached value of this container's <a href = "./FunctionsAbout.md#getScrollYCalculatorFun"><code>scrollYCalculator</code></a>.
 
 `This container` refers to the `key` linked to each array.
 

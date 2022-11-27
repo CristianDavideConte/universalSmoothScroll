@@ -11,6 +11,8 @@ describe("getScrollYDirection", function() {
         .then((win) => {
           uss = win.uss;
           const _testElement = win.document.getElementById("scroller");
+          const _initialPos = 10;
+          const _expectedFinalPos = 5;
 
           cy.testFailingValues(uss.getScrollYDirection, {
             0: [constants.failingValuesNoUndefined]
@@ -22,15 +24,15 @@ describe("getScrollYDirection", function() {
             cy.waitForUssCallback(
               (resolve) => {
                 expect(uss.getScrollYDirection(_testElement)).to.equal(0);
-                uss.scrollYTo(100, _testElement, () => {
-                    uss.scrollYTo(50, _testElement, resolve);
+                uss.scrollYTo(_initialPos, _testElement, () => {
+                    uss.scrollYTo(_expectedFinalPos, _testElement, resolve);
                     expect(uss.getScrollYDirection(_testElement)).to.equal(-1);
                 });
                 expect(uss.getScrollYDirection(_testElement)).to.equal(1);
               }
             ).then(
               () => {
-                expect(uss.getScrollYCalculator(_testElement)()).to.equal(50);
+                expect(uss.getScrollYCalculator(_testElement)()).to.equal(_expectedFinalPos);
                 expect(uss.getScrollYDirection(_testElement)).to.equal(0);
               }
             );
