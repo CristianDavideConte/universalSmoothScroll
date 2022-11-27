@@ -258,8 +258,8 @@ export function addElasticScrolling(
         callback: () => {},
         children: [],
         elasticAmount: 100,
-        elasticEasingX: (remaning) => Math.ceil(uss._framesTime * remaning / 110), 
-        elasticEasingY: (remaning) => Math.ceil(uss._framesTime * remaning / 110), 
+        elasticEasingX: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
+        elasticEasingY: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
     }, 
 ) {
     //Check if the options parameter is a valid Object.
@@ -286,8 +286,8 @@ export function addElasticScrolling(
     if(options.onYAxis) options.onYAxis = "mandatory";
 
     //Default easing behaviors: ease-out-like.
-    options.snapEasingX = typeof options.elasticEasingX === "function" ? options.elasticEasingX : (remaning) => Math.ceil(uss._framesTime * remaning / 110);
-    options.snapEasingY = typeof options.elasticEasingY === "function" ? options.elasticEasingY : (remaning) => Math.ceil(uss._framesTime * remaning / 110);
+    options.snapEasingX = typeof options.elasticEasingX === "function" ? options.elasticEasingX : (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110);
+    options.snapEasingY = typeof options.elasticEasingY === "function" ? options.elasticEasingY : (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110);
     options.snapDelay = 60; //Debounce time
     
     container = addSnapScrolling(container, options);

@@ -30,7 +30,7 @@
        * elapsed time considered is actually 0.5 * uss._framesTime.
        */
        _startingPosMap.set(container, 1 - remaning / total);
-      __progress = 0.5 * uss._framesTime / duration; 
+      __progress = 0.5 * uss.getFramesTime(true) / duration; 
     }
     
     const __startingPos = _startingPosMap.get(container);

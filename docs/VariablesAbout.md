@@ -145,6 +145,22 @@ Moreover any one of them can be renamed, deleted and/or repurposed at any time b
    </td>
    <td rowspan = "1" align = "left">
     The time in milliseconds between two consecutive browser's frame repaints <i>(e.g. at <code>60</code><sub>fps</sub> this is <code>16.6</code><sub>ms</sub>)</i>.
+    It's the average of the values of <a href = "./VariablesAbout.md#_framesTimes"><code>_framesTimes</code></a>.
+   </td>
+  </tr>
+  
+  <tr id = "_framesTimes">
+   <td rowspan = "1" align = "center">
+    <code>_framesTimes</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Array</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>[]</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    Contains at most the last 10 calculated frames' times.
    </td>
   </tr>
   

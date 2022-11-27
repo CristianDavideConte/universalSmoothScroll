@@ -82,6 +82,8 @@
  * _windowHeight: number, the current Window's inner height (in px).
  * _scrollbarsMaxDimension: number, the highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
  * _framesTime: number, the time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms).
+ *              It's the average of the uss._framesTimes's values.
+ * _framesTimes: array, contains at most the last 10 calculated frames' times.
  * _windowScroller: object, the element that scrolls the Window when it's scrolled and that (viceversa) is scrolled when the Window is scrolled.
  * _pageScroller: object, the element that scrolls the document. 
  *                        It's also the value used when an API method requires the container input parameter but nothing is passed.
@@ -130,6 +132,7 @@
  * getWindowHeight: function, returns the value of the "_windowHeight" property.
  * getWindowWidth: function, returns the value of the "_windowWidth" property.
  * getScrollbarsMaxDimension: function, returns the value of the "_scrollbarsMaxDimension" property.
+ * getFramesTime: function, returns the value of the "_framesTime" property. 
  * getWindowScroller: function, returns the value of the "_windowScroller" property.
  * getPageScroller: function, returns the value of the "_pageScroller" property.
  * getReducedMotionState: function, returns the value of the "_reducedMotion" property.
@@ -147,6 +150,8 @@
  * setDebugMode: function, sets the "_debugMode" property to the passed value if compatible.
  * setErrorLogger: function, sets the "_errorLogger" property to the passed value if compatible.
  * setWarningLogger: function, sets the "_warningLogger" property to the passed value if compatible.
+ * calcFramesTimes: function, requests a new frames' time measurement and asynchronously inserts the result into _framesTimes. 
+ *                  When the calculation is finished, uss._framesTime will be updated accordingly.
  * calcXScrollbarDimension: function, returns the vertical scrollbar's width (in px) of the passed container.
  * calcYScrollbarDimension: function, returns the horizontal scrollbar's height (in px) of the passed container.
  * calcScrollbarsDimensions: function, returns an array containing 2 numbers:
@@ -196,7 +201,7 @@ const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);      
 const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789))); //38px at 789px of height && 22px at 1920px of height
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_FRAME_TIME = 16.6; //in ms
-//const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame; //TODO
+//const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame; //To look more into
 
 const DEFAULT_REGEX_LOGGER_DISABLED = /disabled/i;
 const DEFAULT_REGEX_LOGGER_LEGACY = /legacy/i;
@@ -326,7 +331,7 @@ window.uss = {
   _windowHeight: INITIAL_WINDOW_HEIGHT,
   _scrollbarsMaxDimension: null,
   _framesTime: DEFAULT_FRAME_TIME,
-  //_framesTimeRequested: false, //TODO
+  _framesTimes: [],
   _windowScroller: null,
   _pageScroller: null,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
@@ -511,6 +516,10 @@ window.uss = {
     }
 
     return uss._windowScroller;
+  },
+  getFramesTime: (forceCalculation = false, callback, options = {debugString: "getFramesTime", requestPhase: 0}) => {
+    if(forceCalculation) uss.calcFramesTimes(undefined, undefined, callback, options);
+    return uss._framesTime;
   },
   getPageScroller: (forceCalculation = false, options = {debugString: "getPageScroller"}) => {
     //Check if the _pageScroller has already been calculated.
@@ -698,6 +707,47 @@ window.uss = {
     }
     uss._warningLogger = newWarningLogger;
   }, 
+  calcFramesTimes: (previousTimestamp, currentTimestamp, callback, options = {debugString: "calcFramesTimes", requestPhase: 0}) => {
+    /**
+     * uss._framesTime[-1] contains the status of the previous requested frames' time recalculation.
+     * options.requestPhase contains the status of the current requested frames' time recalculation.
+     * If they don't match, a frames's time recalculation has already been requested but the previous
+     * one hasn't been completed yet.
+     */
+    if(uss._framesTimes[-1] && uss._framesTimes[-1] !== options.requestPhase) return;
+    
+    if(!Number.isFinite(previousTimestamp) || previousTimestamp < 0) {
+      options.requestPhase = 1;
+      uss._framesTimes[-1] = 1;
+      window.requestAnimationFrame((timestamp) => uss.calcFramesTimes(timestamp, currentTimestamp, callback, options));
+      return;
+    }
+
+    if(!Number.isFinite(currentTimestamp) || currentTimestamp < 0) {
+      options.requestPhase = 2;
+      uss._framesTimes[-1] = 2;
+      window.requestAnimationFrame((timestamp) => uss.calcFramesTimes(previousTimestamp, timestamp, callback, options));
+      return;
+    }
+
+    /**
+     * New frame time measurement.
+     * Note that elements at negative indexes will not be taken into account by:
+     * - for loops
+     * - array.length
+     * - array.unshift
+     */
+    uss._framesTimes[-1] = 0;
+    uss._framesTimes.unshift(currentTimestamp - previousTimestamp);
+    if(uss._framesTimes.length > 10) uss._framesTimes.pop();
+    
+    let _framesTimesSum = 0;
+    for(const framesTime of uss._framesTimes) _framesTimesSum += framesTime;
+    
+    uss._framesTime = _framesTimesSum / uss._framesTimes.length;
+    
+    if(typeof callback === "function") callback();
+  },
   calcXScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
@@ -2298,35 +2348,16 @@ function ussInit() {
   uss.getScrollbarsMaxDimension(true);
 
   //Calculate the average frames' time of the user's screen. 
-  //(and the corresponding minAnimationFrame.) //<---------------------------------------------------------------------TO LOOK MORE INTO
-  const _totalMeasurementsNumber = 3;
-  const _totalFramesInMeasurement = 60; //How many frames are considered in a single measurement 
-  let _totalFramesTime = 0;
-  let _currentMeasurementsLeft = _totalMeasurementsNumber; 
-  let _currentFrameCount = _totalFramesInMeasurement;
-  let _originalTimestamp = performance.now();
-  window.requestAnimationFrame(function _calcFrameTime(_currentTimestamp) {
-    _currentFrameCount--;
-    if(_currentFrameCount > 0) {
-      window.requestAnimationFrame(_calcFrameTime);
-      return;
-    }
-
-    _currentMeasurementsLeft--;
-    _totalFramesTime += (_currentTimestamp - _originalTimestamp) / _totalFramesInMeasurement;
-
-    //Start a new measurement.
+  let _currentMeasurementsLeft = 60; //Do 60 measurements to establish the initial value
+  const _measureFramesTimes = () => {
     if(_currentMeasurementsLeft > 0) {
-      _currentFrameCount = _totalFramesInMeasurement;
-      _originalTimestamp = performance.now();
-      window.requestAnimationFrame(_calcFrameTime);
-      return;
+      _currentMeasurementsLeft--;
+      uss.calcFramesTimes(undefined, undefined, _measureFramesTimes);
     }
-
-    //All the measurements have been completed.
-    uss._framesTime = Math.min(DEFAULT_FRAME_TIME, _totalFramesTime / _totalMeasurementsNumber); //At least 60fps.
+    
     //uss._minAnimationFrame = 1000 / uss._framesTime; //<---------------------------------------------------------------------TO LOOK MORE INTO
-  });
+  }
+  _measureFramesTimes();
 }
 
 if(document.readyState === "complete") ussInit();

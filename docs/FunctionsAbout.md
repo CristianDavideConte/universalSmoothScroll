@@ -316,7 +316,34 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_scrollbarsMaxDimension"><code>_scrollbarsMaxDimension</code></a> property.
    </td>
+
   </tr> 
+    <tr id = "getFramesTimeFun">
+   <td rowspan = "2" align = "center">
+    <code>getFramesTime</code>
+   </td>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#getFramesTime"><code>forceCalculation</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>false</code>
+   </td>
+   <td rowspan = "2" align = "left">
+    Returns the value of the <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> property. <br/>
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#getFramesTime"><code>callback</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+  </tr>
                   
   <tr id = "getWindowScrollerFun">
    <td rowspan = "1" align = "center">
@@ -660,7 +687,47 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
     Sets the <a href = "./VariablesAbout.md#_warningLogger"><code>_warningLogger</code></a> property to the passed value if compatible.
    </td>
   </tr> 
-               
+           
+  </tr> 
+    <tr id = "calcFramesTimesFun">
+   <td rowspan = "3" align = "center">
+    <code>calcFramesTimes</code>
+   </td>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#calcFramesTimes"><code>currentTimestamp</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+   <td rowspan = "3" align = "left">
+    Requests a new frames' time measurement and asynchronously inserts the result into <a href = "./VariablesAbout.md#_framesTimes"><code>_framesTimes</code></a>. <br/> 
+    When the calculation is finished, <a href = "./VariablesAbout.md#_framesTime"><code>_framesTime</code></a> will be updated accordingly. <br/>
+    Only one frames' time calculation at a time can be performed, the other requests will be ignored.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#calcFramesTimes"><code>previousTimestamp</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+  </tr>
+    <tr>
+   <td rowspan = "1" align = "center">
+   <i>
+    <a href = "./FunctionsAbout.md#calcFramesTimes"><code>callback</code></a>
+   </i>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>undefined</code>
+   </td>
+  </tr>
+
   <tr id = "calcXScrollbarDimensionFun">
    <td rowspan = "2" align = "center">
     <code>calcXScrollbarDimension</code>
@@ -1791,6 +1858,34 @@ The following table describes every entry of the `Input Parameters` column of th
   </td>
   </tr>
   
+  </tr> 
+    <tr id = "getFramesTime">
+   <td rowspan = "2" align = "center">
+    <a href = "./FunctionsAbout.md#getFramesTimeFun"><code>getFramesTime</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>forceCalculation</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Boolean</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    If <code>true</code> calls <a href = "./FunctionsAbout.md#calcFramesTimesFun"><code>calcFramesTimes</code></a> in order to initialize a new frames' time calculation. <br/>
+    If <code>false</code> no new frames' time calculation is performed.
+   </td>
+  </tr> 
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    The <code>callback</code> parameter that is passed to <a href = "./FunctionsAbout.md#calcFramesTimesFun"><code>calcFramesTimes</code></a> if <code>forceCalculation</code> is <code>true</code>.
+   </td>
+  </tr>
+
   <tr id = "getWindowScroller">
   <td rowspan = "1" align = "center">
     <a href = "./FunctionsAbout.md#getWindowScrollerFun"><code>getWindowScroller</code></a>
@@ -2097,6 +2192,45 @@ The following table describes every entry of the `Input Parameters` column of th
     </ul>
     The instructions given by the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property value should be followed.
   </td>
+  </tr>
+
+  </tr> 
+    <tr id = "calcFramesTimes">
+   <td rowspan = "3" align = "center">
+    <a href = "./FunctionsAbout.md#calcFramesTimesFun"><code>calcFramesTimes</code></a>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>previousTimestamp</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    The timestamp relative to the previous browser repaint.
+   </td>
+  </tr> 
+  <tr>
+  </td>
+   <td rowspan = "1" align = "center">
+    <code>currentTimestamp</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Number</code>
+   </td>
+   <td rowspan = "1" align = "left">    
+    The timestamp relative to the current browser repaint.
+   </td>
+  </tr>
+  <tr>
+   <td rowspan = "1" align = "center">
+    <code>callback</code>
+   </td>
+   <td rowspan = "1" align = "center">
+    <code>Function</code>
+   </td>
+   <td rowspan = "1" align = "left">
+    A function which is invoked when the requested frames' time measurement has been performed.
+   </td>
   </tr>
   
   </tr>
