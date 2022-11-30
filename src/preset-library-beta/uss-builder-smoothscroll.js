@@ -3,6 +3,8 @@ export class SmoothScrollBuilder {
     #pointersDownIds = [];
     
     #touchScrollExtender;
+    #overscrollConditionsX;
+    #overscrollConditionsY;
     #smoothScroller;
 
     //Parameters already sanitized.
@@ -39,6 +41,14 @@ export class SmoothScrollBuilder {
                 _handleContainerScrolling(__delta, 0, event);
             }
 
+            this.#overscrollConditionsX = this.options.overscroll ? (deltaX) => {
+                const __currentPos = uss.getScrollXCalculator(this.originalContainer, this.options)();
+                const __maxScroll = uss.getMaxScrollX(this.originalContainer, this.options) - 1;
+                return (__currentPos <= 1 && deltaX < 0) || (__currentPos >= __maxScroll && deltaX > 0);
+            } : () => false;
+
+            this.#overscrollConditionsY = () => false;
+
             this.#smoothScroller = (deltaX, deltaY) => { 
                 uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
                 uss.scrollXBy(this.options.speedModifierX(deltaX, deltaY), this.originalContainer, this.executeCallback, false, true, this.options);
@@ -55,6 +65,14 @@ export class SmoothScrollBuilder {
                 _handleContainerScrolling(0, __delta, event);
             }
 
+            this.#overscrollConditionsX = () => false;
+
+            this.#overscrollConditionsY = this.options.overscroll ? (deltaY) => {
+                const __currentPos = uss.getScrollYCalculator(this.originalContainer, this.options)();
+                const __maxScroll = uss.getMaxScrollY(this.originalContainer, this.options) - 1;
+                return (__currentPos <= 1 && deltaY < 0) || (__currentPos >= __maxScroll && deltaY > 0);
+            } : () => false;
+            
             this.#smoothScroller = (deltaX, deltaY) => {
                 uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);
                 uss.scrollYBy(this.options.speedModifierY(deltaX, deltaY), this.originalContainer, this.executeCallback, false, true, this.options);                                                            
@@ -73,6 +91,18 @@ export class SmoothScrollBuilder {
 
                 _handleContainerScrolling(__deltaX, __deltaY, event);
             }
+
+            this.#overscrollConditionsX = this.options.overscroll ? (deltaX) => {
+                const __currentPos = uss.getScrollXCalculator(this.originalContainer, this.options)();
+                const __maxScroll = uss.getMaxScrollX(this.originalContainer, this.options) - 1;
+                return (__currentPos <= 1 && deltaX < 0) || (__currentPos >= __maxScroll && deltaX > 0);
+            } : () => false;
+            
+            this.#overscrollConditionsY = this.options.overscroll ? (deltaY) => {
+                const __currentPos = uss.getScrollYCalculator(this.originalContainer, this.options)();
+                const __maxScroll = uss.getMaxScrollY(this.originalContainer, this.options) - 1;
+                return (__currentPos <= 1 && deltaY < 0) || (__currentPos >= __maxScroll && deltaY > 0);
+            } : () => false;
 
             this.#smoothScroller = (deltaX, deltaY) => {
                 uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
@@ -97,6 +127,39 @@ export class SmoothScrollBuilder {
             if(deltaX === 0 && deltaY === 0) {
                 this.executeCallback();
                 return;
+            }
+
+            //Manage the overscroll behavior.
+            //The scrollbars never cause overscroll.
+            if(event.pointerType !== "scrollbar" && 
+              (this.#overscrollConditionsX(deltaX) || this.#overscrollConditionsY(deltaY))
+            ) {
+                const __scrollableParent = uss.getScrollableParent(this.originalContainer, true, this.options);
+                
+                //If there's no scrollable parent, the overscrol cannot be applied.
+                if(__scrollableParent) {
+                    if(event.type === "pointermove") {
+                        //Remove the pointer from the list of ones that are 
+                        //controlling the scroll of this.originalContainer.
+                        _handlePointerUpEvent(event);
+
+                        //Add the pointer from the list of ones that are 
+                        //controlling the scroll of the scrollable parent of this.originalContainer.
+                        __scrollableParent.dispatchEvent(
+                            new PointerEvent(
+                                "pointerdown", 
+                                {
+                                    pointerId: event.pointerId,
+                                    pointerType: "touch",
+                                }
+                            )
+                        );
+                    }
+
+                    //Re-dispatch the original scrolling event to the scrollable parent.
+                    __scrollableParent.dispatchEvent(new event.constructor(event.type, event));
+                    return;
+                }
             }
 
             this.#smoothScroller(deltaX, deltaY);
@@ -156,7 +219,7 @@ export class SmoothScrollBuilder {
             if(event.pointerType === "mouse") return;
 
             event.preventDefault();
-            event.stopPropagation();        
+            event.stopPropagation();
 
             this.#pointersDownIds.push(event.pointerId);
 

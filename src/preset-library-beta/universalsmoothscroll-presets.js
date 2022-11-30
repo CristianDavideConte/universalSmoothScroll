@@ -3,8 +3,6 @@
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * - smooth scrolling with animation allowed
  * - fix mobile multitasking freezing scrollbars
- * - allow scroll to be propagated to the containers underneath if the current one is at its maxScrollX/Y or 0 and 
- *    it's requested to scroll (overscroll effect)
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
  */
 
@@ -71,6 +69,7 @@ export function addSmoothScrolling(
     options = {
         onXAxis: false,
         onYAxis: true,
+        overscroll: false,
         callback: () => {},
         speedModifierX: (deltaX, deltaY) => deltaX,
         speedModifierY: (deltaX, deltaY) => deltaY,
@@ -159,6 +158,7 @@ export function addSnapScrolling(
     options = {
         onXAxis: false,
         onYAxis: "mandatory",
+        overscroll: false,
         callback: () => {},
         children: [],
         snapDelay: 0,
@@ -255,6 +255,7 @@ export function addElasticScrolling(
     options = {
         onXAxis: false,
         onYAxis: true,
+        overscroll: false,
         callback: () => {},
         children: [],
         elasticAmount: 100,
@@ -331,6 +332,7 @@ export function addSmoothScrollbar(
     options = {
         onXAxis: false,
         onYAxis: true,
+        overscroll: false,
         thumbSize: 17,
     } 
 ) {
