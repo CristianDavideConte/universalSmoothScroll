@@ -1,6 +1,5 @@
 import { SmoothScrollBuilder } from "./uss-builder-smoothscroll.js";
 
-//TEST TEST TEST ------------------------------------------------------------------------------------------>
 export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 
     #scrollbarSetup;
@@ -9,7 +8,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
     constructor(container, options) {
         super(container, options);
 
-        this.#scrollbarSetup = (scrollbar, setCalculatorFun, handleContainerScrolling, handlePointerDownOnContainer) => {
+        this.#scrollbarSetup = (scrollbar, setCalculatorFun, handleOriginalContainerScrolling, handlePointerDownOnScrollbarContainer) => {
             //Disengage the scrollbar and execute any callback.
             let __pointerIsHoveringTrack = false;
             const __disengageScrollbar = (event) => {    
@@ -17,11 +16,13 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 if(event.pointerId !== scrollbar.pointerId) return;
 
                 //Update the ids of the pointer device that was controlling the scrollbar. 
+                //Since the pointerId must be null on pointer up, the only way to retrieve its value
+                //from outside is to save it into a another variable (i.e. previousPointerId). 
                 scrollbar.previousPointerId = scrollbar.pointerId;
                 scrollbar.pointerId = null;
 
                 //Remove the unecessary listeners.
-                window.removeEventListener("pointermove", handleContainerScrolling, {passive:false});     
+                window.removeEventListener("pointermove", handleOriginalContainerScrolling, {passive:false});     
                 window.removeEventListener("pointerup", __disengageScrollbar, {passive:false});   
 
                 //Check if the scrollbar status should be set to idle.
@@ -42,7 +43,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 
                 setCalculatorFun(remaning => remaning, scrollbar.container, false, this.options); //Makes the scrollbar's movement instantaneous
                 window.addEventListener("pointerup", __disengageScrollbar, {passive:false});
-                window.addEventListener("pointermove", handleContainerScrolling, {passive:false});   
+                window.addEventListener("pointermove", handleOriginalContainerScrolling, {passive:false});   
                 
                 this.originalContainer.dispatchEvent(
                     new PointerEvent(
@@ -57,7 +58,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             
             //If the user clicks the scrollbar track, the container should be scrolled to
             //the corresponding position and the scrollbar thumb should be moved accordingly.
-            scrollbar.container.addEventListener("pointerdown", handlePointerDownOnContainer, {passive:false});
+            scrollbar.container.addEventListener("pointerdown", handlePointerDownOnScrollbarContainer, {passive:false});
 
             //The scrollbar's status is never set to idle if the pointer is on it.
             scrollbar.container.addEventListener("pointerenter", () => {
@@ -180,7 +181,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             }
 
             //Scroll the container on a pointermove event by the correspoing amount.
-            const _handleContainerScrolling = (event) => { 
+            const _handleOriginalContainerScrolling = (event) => { 
                 event.preventDefault();
                 event.stopPropagation();
 
@@ -208,7 +209,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            const _handlePointerDownOnContainer = (event) => {
+            const _handlePointerDownOnScrollbarContainer = (event) => {
                 event.preventDefault();
                 event.stopPropagation();
 
@@ -240,7 +241,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            this.scrollbarXObserver = this.#scrollbarSetup(_scrollbar, uss.setXStepLengthCalculator, _handleContainerScrolling, _handlePointerDownOnContainer);
+            this.scrollbarXObserver = this.#scrollbarSetup(_scrollbar, uss.setXStepLengthCalculator, _handleOriginalContainerScrolling, _handlePointerDownOnScrollbarContainer);
 
             //Add the scrollbar to the container.
             _scrollbar.track.appendChild(_scrollbar.thumb);
@@ -328,7 +329,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             }
 
             //Scroll the container on a pointermove event by the correspoing amount.
-            const _handleContainerScrolling = (event) => {  
+            const _handleOriginalContainerScrolling = (event) => {  
                 event.preventDefault();
                 event.stopPropagation();    
 
@@ -356,7 +357,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            const _handlePointerDownOnContainer = (event) => {
+            const _handlePointerDownOnScrollbarContainer = (event) => {
                 event.preventDefault();
                 event.stopPropagation();
 
@@ -388,7 +389,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            this.scrollbarYObserver = this.#scrollbarSetup(_scrollbar, uss.setYStepLengthCalculator, _handleContainerScrolling, _handlePointerDownOnContainer);
+            this.scrollbarYObserver = this.#scrollbarSetup(_scrollbar, uss.setYStepLengthCalculator, _handleOriginalContainerScrolling, _handlePointerDownOnScrollbarContainer);
 
             //Add the scrollbar to the container.
             _scrollbar.track.appendChild(_scrollbar.thumb);

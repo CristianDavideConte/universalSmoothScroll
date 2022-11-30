@@ -26,8 +26,8 @@ export class SmoothScrollBuilder {
         this.callback = this.options.callback;
 
         //Default scrollbars objects.
-        this.scrollbarX = { previousPointerId: null, updatePosition: () => {} };
-        this.scrollbarY = { previousPointerId: null, updatePosition: () => {} };
+        this.scrollbarX = { previousPointerId: null, isEngaged: () => false, updatePosition: () => {} };
+        this.scrollbarY = { previousPointerId: null, isEngaged: () => false, updatePosition: () => {} };
 
         if(this.onXAxis && !this.onYAxis) {
             this.#touchScrollExtender = (event) => {
@@ -41,7 +41,7 @@ export class SmoothScrollBuilder {
                 _handleContainerScrolling(__delta, 0, event);
             }
 
-            this.#overscrollConditionsX = this.options.overscroll ? (deltaX) => {
+            this.#overscrollConditionsX = this.options.overscrollX ? (deltaX) => {
                 const __currentPos = uss.getScrollXCalculator(this.originalContainer, this.options)();
                 const __maxScroll = uss.getMaxScrollX(this.originalContainer, this.options) - 1;
                 return (__currentPos <= 1 && deltaX < 0) || (__currentPos >= __maxScroll && deltaX > 0);
@@ -67,7 +67,7 @@ export class SmoothScrollBuilder {
 
             this.#overscrollConditionsX = () => false;
 
-            this.#overscrollConditionsY = this.options.overscroll ? (deltaY) => {
+            this.#overscrollConditionsY = this.options.overscrollY ? (deltaY) => {
                 const __currentPos = uss.getScrollYCalculator(this.originalContainer, this.options)();
                 const __maxScroll = uss.getMaxScrollY(this.originalContainer, this.options) - 1;
                 return (__currentPos <= 1 && deltaY < 0) || (__currentPos >= __maxScroll && deltaY > 0);
@@ -92,13 +92,13 @@ export class SmoothScrollBuilder {
                 _handleContainerScrolling(__deltaX, __deltaY, event);
             }
 
-            this.#overscrollConditionsX = this.options.overscroll ? (deltaX) => {
+            this.#overscrollConditionsX = this.options.overscrollX ? (deltaX) => {
                 const __currentPos = uss.getScrollXCalculator(this.originalContainer, this.options)();
                 const __maxScroll = uss.getMaxScrollX(this.originalContainer, this.options) - 1;
                 return (__currentPos <= 1 && deltaX < 0) || (__currentPos >= __maxScroll && deltaX > 0);
             } : () => false;
             
-            this.#overscrollConditionsY = this.options.overscroll ? (deltaY) => {
+            this.#overscrollConditionsY = this.options.overscrollY ? (deltaY) => {
                 const __currentPos = uss.getScrollYCalculator(this.originalContainer, this.options)();
                 const __maxScroll = uss.getMaxScrollY(this.originalContainer, this.options) - 1;
                 return (__currentPos <= 1 && deltaY < 0) || (__currentPos >= __maxScroll && deltaY > 0);
@@ -129,11 +129,12 @@ export class SmoothScrollBuilder {
                 return;
             }
 
+            const _scrollbarsAreEngaged = this.scrollbarX.isEngaged() || this.scrollbarY.isEngaged();
+            const _overscrollConditionsAreMet = this.#overscrollConditionsX(deltaX) || this.#overscrollConditionsY(deltaY);
+
             //Manage the overscroll behavior.
             //The scrollbars never cause overscroll.
-            if(event.pointerType !== "scrollbar" && 
-              (this.#overscrollConditionsX(deltaX) || this.#overscrollConditionsY(deltaY))
-            ) {
+            if(!_scrollbarsAreEngaged && _overscrollConditionsAreMet) {
                 const __scrollableParent = uss.getScrollableParent(this.originalContainer, true, this.options);
                 
                 //If there's no scrollable parent, the overscrol cannot be applied.

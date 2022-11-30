@@ -52,6 +52,10 @@ function effectShoudBeApplied(options, checker = value => !!value) {
  * @param {Object} options An Object which containing the smooth scrolling preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if the smooth scrolling should be enabled on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=true] True if the smooth scrolling should be enabled on the y-axis of container, false otherwise.
+ * @param {Boolean} [options.overscrollX=true] True if the scrolling should be propagated to the closest scrollable parent when 
+*                                              the boundaries on the x-axis of this container are reached, false otherwise.
+ * @param {Boolean} [options.overscrollY=true] True if the scrolling should be propagated to the closest scrollable parent when 
+*                                              the boundaries on the y-axis of this container are reached, false otherwise.
  * @param {Function} [options.callback] A function that will be executed when the container is done with the current smooth scrolling scroll-animation.
  * @param {Function} [options.speedModifierX] A function that must return the number of pixel that will be added to the current total scrolling amount (on the x-axis)
  *                                            of this smooth scrolling scroll-animation.
@@ -69,7 +73,8 @@ export function addSmoothScrolling(
     options = {
         onXAxis: false,
         onYAxis: true,
-        overscroll: false,
+        overscrollX: true,
+        overscrollY: true,
         callback: () => {},
         speedModifierX: (deltaX, deltaY) => deltaX,
         speedModifierY: (deltaX, deltaY) => deltaY,
@@ -158,7 +163,6 @@ export function addSnapScrolling(
     options = {
         onXAxis: false,
         onYAxis: "mandatory",
-        overscroll: false,
         callback: () => {},
         children: [],
         snapDelay: 0,
@@ -255,7 +259,6 @@ export function addElasticScrolling(
     options = {
         onXAxis: false,
         onYAxis: true,
-        overscroll: false,
         callback: () => {},
         children: [],
         elasticAmount: 100,
@@ -332,7 +335,6 @@ export function addSmoothScrollbar(
     options = {
         onXAxis: false,
         onYAxis: true,
-        overscroll: false,
         thumbSize: 17,
     } 
 ) {

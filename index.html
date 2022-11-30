@@ -300,7 +300,7 @@
         {
           onYAxis: "mandatory", 
           children: _yChildren,
-          overscroll: true,
+          overscrollY: true,
           snapEasingY: EASE_OUT_BOUNCE(700),
         }
       ), 
@@ -347,7 +347,7 @@
           xScrollerSection, 
           {
             onXAxis: true,
-            overscroll: true,
+            overscrollX: true,
             speedModifierX: (deltaX, deltaY) => {
               //console.log(deltaX, deltaY)
               return deltaX + deltaY;
