@@ -142,7 +142,9 @@ export class SmoothScrollBuilder {
                     if(event.type === "pointermove") {
                         //Remove the pointer from the list of ones that are 
                         //controlling the scroll of this.originalContainer.
-                        _handlePointerUpEvent(event);
+                        this.#pointersDownIds = [];
+                        window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:false});
+                        this.originalContainer.removeEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
 
                         //Add the pointer from the list of ones that are 
                         //controlling the scroll of the scrollable parent of this.originalContainer.
@@ -156,6 +158,9 @@ export class SmoothScrollBuilder {
                             )
                         );
                     }
+
+                    //Execute the callback since the scroll-animation on this container is finished.
+                    this.executeCallback();
 
                     //Re-dispatch the original scrolling event to the scrollable parent.
                     __scrollableParent.dispatchEvent(new event.constructor(event.type, event));
@@ -216,13 +221,16 @@ export class SmoothScrollBuilder {
         this.originalContainer.style.touchAction = "none";
         
         this.originalContainer.addEventListener("pointerdown", (event) => {    
+            const __eventId = event.pointerId;
+            if(this.#pointersDownIds.indexOf(__eventId) >= 0) return;
+
             //The pointerdown event is not relevant if the pointer is a mouse.
             if(event.pointerType === "mouse") return;
 
             event.preventDefault();
             event.stopPropagation();
 
-            this.#pointersDownIds.push(event.pointerId);
+            this.#pointersDownIds.push(__eventId);
 
             //Attach the listeners only on the first pointerdown event.
             if(this.#pointersDownIds.length > 1) return;
