@@ -252,6 +252,7 @@
     
     const _elasticOptions = {
       onYAxis: true, 
+      //overscrollX: true, //doesn't work well because speed modifier of pointer events is the same as the one for wheel events
       elasticAmount: 0.25 * window.innerHeight, //25vh in css
       children: [
         {
@@ -300,6 +301,7 @@
         {
           onYAxis: "mandatory", 
           children: _yChildren,
+          overscrollX: true,
           overscrollY: true,
           snapEasingY: EASE_OUT_BOUNCE(700),
         }
@@ -348,6 +350,7 @@
           {
             onXAxis: true,
             overscrollX: true,
+          //overscrollY: true, //doesn't work well because speed modifier of pointer events is the same as the one for wheel events
             speedModifierX: (deltaX, deltaY) => {
               //console.log(deltaX, deltaY)
               return deltaX + deltaY;

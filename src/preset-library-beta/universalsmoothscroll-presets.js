@@ -1,5 +1,6 @@
 /**
  * TODO: 
+ * - separate speedModifiers of wheel events from the ones of pointerEvents
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * - smooth scrolling with animation allowed
  * - fix mobile multitasking freezing scrollbars
