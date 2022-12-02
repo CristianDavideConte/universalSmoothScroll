@@ -5,6 +5,8 @@ export class SmoothScrollBuilder {
     #touchScrollExtender;
     #overscrollConditionsX;
     #overscrollConditionsY;
+    #overscrollConditionsXFilter;
+    #overscrollConditionsYFilter;
     #smoothScroller;
 
     //Parameters already sanitized.
@@ -34,19 +36,39 @@ export class SmoothScrollBuilder {
             //wheel event with deltaX = 0, so the conditions below will fail.
             if(this.scrollbarX.isEngaged()) return false;
 
+            //If the x-axis is non-scrollable, filter out micro-movements
+            //before considering the overscroll conditions.
+            if(this.#overscrollConditionsXFilter(deltaX, deltaY)) return false;
+
             const __nextPos = uss.getScrollXCalculator(this.originalContainer, this.options)() + this.options.speedModifierX(deltaX, deltaY);
-            const __maxScroll = uss.getMaxScrollX(this.originalContainer, this.options);
+            const __maxScroll = uss.getMaxScrollX(this.originalContainer, false, this.options);
             return (__nextPos <= 0 && deltaX < 0) || (__nextPos >= __maxScroll && deltaX > 0);
         } : () => false;
         
+        this.#overscrollConditionsXFilter = !this.onXAxis ? (deltaX, deltaY) => {
+            const __deltaX = Math.abs(deltaX);
+            const __deltaY = Math.abs(deltaY);
+            return __deltaX < 2 || __deltaX < 2 * __deltaY;            
+        } : () => false;
+
         this.#overscrollConditionsY = this.options.overscrollY ? (deltaX, deltaY) => {
             //Only the scrollbarY is checked because any scrollbarX movement will produce a 
             //wheel event with deltaY = 0, so the conditions below will fail.
             if(this.scrollbarY.isEngaged()) return false;
-            
+
+            //If the y-axis is non-scrollable, filter out micro-movements
+            //before considering the overscroll conditions.
+            if(this.#overscrollConditionsYFilter(deltaX, deltaY)) return false;
+
             const __nextPos = uss.getScrollYCalculator(this.originalContainer, this.options)() + this.options.speedModifierY(deltaX, deltaY);
-            const __maxScroll = uss.getMaxScrollY(this.originalContainer, this.options);
+            const __maxScroll = uss.getMaxScrollY(this.originalContainer, false, this.options);
             return (__nextPos <= 0 && deltaY < 0) || (__nextPos >= __maxScroll && deltaY > 0);
+        } : () => false;
+
+        this.#overscrollConditionsYFilter = !this.onYAxis ? (deltaX, deltaY) => {
+            const __deltaX = Math.abs(deltaX);
+            const __deltaY = Math.abs(deltaY);
+            return __deltaY < 2 || __deltaY < 2 * __deltaX;            
         } : () => false;
 
         if(this.onXAxis && !this.onYAxis) {
@@ -165,9 +187,33 @@ export class SmoothScrollBuilder {
             if(uss.isYScrolling(this.originalContainer, this.options)) this.scrollbarY.updatePosition();
         } 
 
+        const _handlePointerDownEvent = (event) => {
+            //Pointes should be unique.
+            const __eventId = event.pointerId;
+            if(this.#pointersDownIds.indexOf(__eventId) >= 0) return;
+
+            //The pointerdown event is not relevant if the pointer is a mouse.
+            if(event.pointerType === "mouse") return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            this.#pointersDownIds.push(__eventId);
+
+            //Attach the listeners only on the first pointerdown event.
+            if(this.#pointersDownIds.length > 1) return;
+                      
+            window.addEventListener("pointerup", _handlePointerUpEvent, {passive:false});
+
+            //The pointermove event is not relevant if the pointer is a scrollbar.
+            if(event.pointerType === "scrollbar") return;
+
+            this.originalContainer.addEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
+        } 
+        
         const _handlePointerMoveEvent = (event) => {
-            const __deltaY = Math.abs(event.movementY);
             const __deltaX = Math.abs(event.movementX);
+            const __deltaY = Math.abs(event.movementY);
             const __delta = __deltaX + __deltaY;
             const __directionX = -event.movementX > 0 ? 1 : -1;
             const __directionY = -event.movementY > 0 ? 1 : -1;
@@ -177,12 +223,12 @@ export class SmoothScrollBuilder {
                 return;
             } 
             
-            if(__deltaY > __deltaX) {
+            if(__deltaX < __deltaY) {
                 _handleContainerScrolling(0, __directionY * __delta, event);
                 return;
             }
             
-            _handleContainerScrolling(__directionX * __delta, __directionY * __delta, event);
+            _handleContainerScrolling(event.movementX, event.movementY, event);
         }
 
         const _handlePointerUpEvent = (event) => {
@@ -212,29 +258,7 @@ export class SmoothScrollBuilder {
         //Needed for the pointerevents to work as expected. 
         this.originalContainer.style.touchAction = "none";
         
-        this.originalContainer.addEventListener("pointerdown", (event) => {    
-            const __eventId = event.pointerId;
-            if(this.#pointersDownIds.indexOf(__eventId) >= 0) return;
-
-            //The pointerdown event is not relevant if the pointer is a mouse.
-            if(event.pointerType === "mouse") return;
-
-            event.preventDefault();
-            event.stopPropagation();
-
-            this.#pointersDownIds.push(__eventId);
-
-            //Attach the listeners only on the first pointerdown event.
-            if(this.#pointersDownIds.length > 1) return;
-                      
-            window.addEventListener("pointerup", _handlePointerUpEvent, {passive:false});
-
-            //The pointermove event is not relevant if the pointer is a scrollbar.
-            if(event.pointerType === "scrollbar") return;
-
-            this.originalContainer.addEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
-        }, {passive:false});
-
+        this.originalContainer.addEventListener("pointerdown", _handlePointerDownEvent, {passive:false});
         this.originalContainer.addEventListener("wheel", (event) => _handleContainerScrolling(event.deltaX, event.deltaY, event), {passive:false});
     }
 

@@ -172,7 +172,6 @@ a {
   display: flex;
   overflow-x: scroll;
   overflow-y: hidden;
-  overscroll-behavior: contain;
   height: 100%;
   width: 100%;
 }
@@ -180,7 +179,6 @@ a {
 #yScrollerSection {
   overflow-y: scroll;
   overflow-x: hidden;
-  overscroll-behavior: contain;
   height: 100%;
   width: 100%;
 }
