@@ -1,6 +1,6 @@
 /**
  * TODO: 
- * - fix elasticScrolling buggy bounce when you scroll too fast
+ * - fix snap scrolling triggering too early with trackpads
  * - separate speedModifiers of wheel events from the ones of pointerEvents
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * - smooth scrolling with animation allowed

@@ -24,7 +24,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
             const __nextFinalPos = finalPos + delta;
             if(__nextFinalPos <= this.elasticAmount) {
                 //We're at the left of the passed container, the snap scrolling
-                //will be triggered on this.elasticChildren[0] with align = "start".
+                //will be triggered on this.elasticChildren[0] (if it was passed) with align = "start".
                 if(this.elasticChildren[0]) this.options.children = [this.elasticChildren[0]];
 
                 //If the user scrolls in the same direction as the elastic part of
@@ -38,14 +38,16 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                 //Since the result will be a negative number, Math.floor is used to round its |value|.
                 let __progress = finalPos / this.elasticAmount;
                 if(__progress < 0) return 0; 
-                if(__progress > 1) __progress = __nextFinalPos / this.elasticAmount;
+                if(__progress > 1) {
+                    __progress = Math.max(0, __nextFinalPos / this.elasticAmount);
+                }
                 return Math.floor(delta * Math.pow(__progress, 3)); //delta * f3
             }
         
             const __maxScroll = getMaxScroll(this.originalContainer, false, this.options);
             if(__nextFinalPos >= __maxScroll - this.elasticAmount) {
                 //We're at the bottom of the passed container, the snap scrolling
-                //will be triggered on this.elasticChildren[1] with align = "end".
+                //will be triggered on this.elasticChildren[1] (if it was passed) with align = "end".
                 if(this.elasticChildren[1]) this.options.children = [this.elasticChildren[1]];
 
                 //If the user scrolls in the same direction as the elastic part of
@@ -59,7 +61,9 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                 //Since the result will be a positive number, Math.ceil is used to round its |value|.
                 let __progress = (__maxScroll - finalPos) / this.elasticAmount;
                 if(__progress < 0) return 0; 
-                if(__progress > 1) __progress = (__maxScroll - __nextFinalPos) / this.elasticAmount;
+                if(__progress > 1) {
+                    __progress = Math.max(0, (__maxScroll - __nextFinalPos) / this.elasticAmount);
+                }
                 return Math.ceil(delta * Math.pow(__progress, 3)); //delta * f3
             }
         

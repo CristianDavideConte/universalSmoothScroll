@@ -138,11 +138,6 @@ export class SmoothScrollBuilder {
             event.preventDefault();
             event.stopPropagation();
 
-            if(deltaX === 0 && deltaY === 0) {
-                this.executeCallback();
-                return;
-            }
-
             const __overscrollConditionsAreMet = this.#overscrollConditionsX(deltaX, deltaY) || 
                                                  this.#overscrollConditionsY(deltaX, deltaY);
 
@@ -244,6 +239,8 @@ export class SmoothScrollBuilder {
 
             window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:false});
             
+            //If the pointerup event was triggered by a scrollbar, just execute the callback,
+            //otherwise extend the scrolling
             if(event.pointerType === "mouse" || 
                __eventId === this.scrollbarX.previousPointerId || 
                __eventId === this.scrollbarY.previousPointerId
