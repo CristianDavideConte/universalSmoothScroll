@@ -223,7 +223,7 @@ export class SmoothScrollBuilder {
                 return;
             }
             
-            _handleContainerScrolling(event.movementX, event.movementY, event);
+            _handleContainerScrolling(__directionX * __delta, __directionY * __delta, event);
         }
 
         const _handlePointerUpEvent = (event) => {

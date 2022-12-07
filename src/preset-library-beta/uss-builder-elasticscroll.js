@@ -15,56 +15,81 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
         this.elasticChildren = this.options.children;
 
         //The first children is always aligned to the start of the container.
-        this.options.children[0].align = "start";
+        this.elasticChildren[0].align = "start";
 
         //The second children is always aligned to the end of the container.
-        if(this.options.children.length > 1) this.options.children[1].align = "end";
+        if(this.elasticChildren[1]) this.elasticChildren[1].align = "end";
         
         this.elasticSpeedModifier = (delta, finalPos, getMaxScroll) => {
             const __nextFinalPos = finalPos + delta;
             if(__nextFinalPos <= this.elasticAmount) {
-                //We're at the left of the passed container, the snap scrolling
-                //will be triggered on this.elasticChildren[0] (if it was passed) with align = "start".
-                if(this.elasticChildren[0]) this.options.children = [this.elasticChildren[0]];
+                /**
+                 * If the user scrolls in the same direction as the elastic part of
+                 * this scroll-animation, it will be helped to reach the beginning of the 
+                 * "elastic" part of the container. 
+                 */
+                if(delta > 0) return this.elasticAmount - finalPos;
 
-                //If the user scrolls in the same direction as the elastic part of
-                //this scroll-animation, it won't encounter resistance. 
-                if(delta > 0) return delta; 
-
-                //Mathematical explanation of the below delta's easing: 
-                //finalPos => f1 = -x + k   //f1 in [0.._elasticAmount]
-                //_progress => f2 = f1 / k  //f2 in [1..0]
-                //easing    => f3 = f2^(3)  //f3 in [0..1]
-                //Since the result will be a negative number, Math.floor is used to round its |value|.
+                //Make the __progress between 0 and 1.
                 let __progress = finalPos / this.elasticAmount;
-                if(__progress < 0) return 0; 
-                if(__progress > 1) {
-                    __progress = Math.max(0, __nextFinalPos / this.elasticAmount);
+                if(__progress < 0) __progress = 0;
+                else if(__progress > 1) __progress = 1;
+
+                /**
+                 * An ease-out pattern (inverted wrt y = this.elasticAmount / 2) is applied to the original delta.
+                 * Since the ease-out pattern returns a negative number, Math.floor (and not Math.ceil) is used to round it. 
+                 * The __finalDelta goes from the original delta to 0.    
+                 */
+                const __finalDelta = Math.floor(delta * Math.pow(__progress, 3));
+  
+                /**
+                 * The current scroll-position is at the left/top of the passed container, the snap scrolling
+                 * will be triggered on this.elasticChildren[0] (if it was passed) with align = "start".
+                 */
+                if(finalPos + __finalDelta <= this.elasticAmount && 
+                   this.elasticChildren[0]
+                ) {
+                    this.elasticChildren[0].align = "start";
+                    this.options.children = [this.elasticChildren[0]];
                 }
-                return Math.floor(delta * Math.pow(__progress, 3)); //delta * f3
+
+                return __finalDelta;
             }
         
             const __maxScroll = getMaxScroll(this.originalContainer, false, this.options);
-            if(__nextFinalPos >= __maxScroll - this.elasticAmount) {
-                //We're at the bottom of the passed container, the snap scrolling
-                //will be triggered on this.elasticChildren[1] (if it was passed) with align = "end".
-                if(this.elasticChildren[1]) this.options.children = [this.elasticChildren[1]];
+            const __bottomElasticBoundary = __maxScroll - this.elasticAmount; 
+            if(__nextFinalPos >= __bottomElasticBoundary) {
+                /**
+                 * If the user scrolls in the same direction as the elastic part of
+                 * this scroll-animation, it will be helped to reach the beginning of the 
+                 * "elastic" part of the container. 
+                 */
+                if(delta < 0) return __bottomElasticBoundary - finalPos;
 
-                //If the user scrolls in the same direction as the elastic part of
-                //this scroll-animation, it won't encounter resistance. 
-                if(delta < 0) return delta; 
-                
-                //Mathematical explanation of the below delta's easing: 
-                //finalPos => f1 = -x + k   //f1 in [_maxScroll - _elasticAmount.._maxScroll]
-                //_progress => f2 = f1 / k  //f2 in [1..0]
-                //easing    => f3 = f2^(3)  //f3 in [0..1]
-                //Since the result will be a positive number, Math.ceil is used to round its |value|.
+                //Make the __progress between 0 and 1.
                 let __progress = (__maxScroll - finalPos) / this.elasticAmount;
-                if(__progress < 0) return 0; 
-                if(__progress > 1) {
-                    __progress = Math.max(0, (__maxScroll - __nextFinalPos) / this.elasticAmount);
+                if(__progress < 0) __progress = 0;
+                else if(__progress > 1) __progress = 1;
+
+                /**
+                 * An ease-out pattern (inverted wrt y = this.elasticAmount / 2) is applied to the original delta.
+                 * Since the ease-out pattern returns a positive number, Math.ceil (and not Math.floor) is used to round it. 
+                 * The __finalDelta goes from the original delta to 0.    
+                 */
+                const __finalDelta = Math.ceil(delta * Math.pow(__progress, 3));
+
+                /**
+                 * The current scroll-position is at the right/bottom of the passed container, the snap scrolling
+                 * will be triggered on this.elasticChildren[1] (if it was passed) with align = "end".
+                 */
+                if(finalPos + __finalDelta >= __bottomElasticBoundary && 
+                   this.elasticChildren[1]
+                ) {
+                    this.elasticChildren[1].align = "end";
+                    this.options.children = [this.elasticChildren[1]];
                 }
-                return Math.ceil(delta * Math.pow(__progress, 3)); //delta * f3
+
+                return __finalDelta;
             }
         
             //The snap scrolling won't be triggered because we're not 
