@@ -12,6 +12,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
         this.onYAxis = this.options.onYAxis;
 
         this.elasticAmount = this.options.elasticAmount;
+        this.elasticResistance = this.options.elasticResistance;
         this.elasticChildren = this.options.children;
 
         //The first children is always aligned to the start of the container.
@@ -40,7 +41,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                  * Since the ease-out pattern returns a negative number, Math.floor (and not Math.ceil) is used to round it. 
                  * The __finalDelta goes from the original delta to 0.    
                  */
-                const __finalDelta = Math.floor(delta * Math.pow(__progress, 3));
+                const __finalDelta = Math.floor(delta * Math.pow(__progress, this.elasticResistance));
   
                 /**
                  * The current scroll-position is at the left/top of the passed container, the snap scrolling
@@ -76,7 +77,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                  * Since the ease-out pattern returns a positive number, Math.ceil (and not Math.floor) is used to round it. 
                  * The __finalDelta goes from the original delta to 0.    
                  */
-                const __finalDelta = Math.ceil(delta * Math.pow(__progress, 3));
+                const __finalDelta = Math.ceil(delta * Math.pow(__progress, this.elasticResistance));
 
                 /**
                  * The current scroll-position is at the right/bottom of the passed container, the snap scrolling

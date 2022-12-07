@@ -1,8 +1,13 @@
 /**
  * TODO: 
- * - fix snap scrolling triggering too early with trackpads
- * - separate speedModifiers of wheel events from the ones of pointerEvents
+ * - elasticScrolling should have 4 children (top, left, bottom, right) instead of 2
+ * - the options.elasticAmount property of elasticScrolling should be part of the options.children property
+ * - if options.elasticAmount of an options.children's object is not passed it should default to the parent's padding instead of returning an error  
  * - add speedModifiers to elasticScrolling without breaking the scrolling
+ * 
+ * - fix snap scrolling triggering too early with trackpads
+ *
+ * - separate speedModifiers of wheel events from the ones of pointerEvents
  * - smooth scrolling with animation allowed
  * - fix mobile multitasking freezing scrollbars
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
@@ -248,7 +253,9 @@ export function addSnapScrolling(
  *                                   options.children[0] should point to the element that will be left/top aligned after the elastic part of this scroll-animation. 
  *                                   options.children[1] should point to the element that will be right/bottom aligned after the elastic part of this scroll-animation.
  * @param {Number} [options.elasticAmount=100] The region of pixels from the left/top and the right/bottom borders of container that will trigger
- *                                             the elastic part of this scroll-animation when traspassed by the scroll-position of container.    
+ *                                             the elastic part of this scroll-animation when traspassed by the scroll-position of container.
+ * @param {Number} [options.elasticResistance=3] The higher this number is the more resistance will be applied to the elastic part of the scroll-animation.
+ *                                               The lowest possible value is 0, which means that no resistance will be applied.
  * @param {Function} [options.elasticEasingX] A valid stepLengthCalculator that will control the easing of the elastic part of this 
  *                                            scroll-animation (on the x-axis) of container. 
  * @param {Function} [options.elasticEasingY] A valid stepLengthCalculator that will control the easing of the elastic part of this 
@@ -264,6 +271,7 @@ export function addElasticScrolling(
         callback: () => {},
         children: [],
         elasticAmount: 100,
+        elasticResistance: 3,
         elasticEasingX: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
         elasticEasingY: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
     }, 
@@ -282,11 +290,14 @@ export function addElasticScrolling(
         return;
     }
     
-    //Check if the options.elasticAmount is a number.
-    if(!Number.isFinite(options.elasticAmount)) {
-        uss._errorLogger(options.debugString, "options.elasticAmount to be a finite number", false);
+    //Check if the options.elasticAmount is a number >= 0.
+    if(!Number.isFinite(options.elasticAmount) || options.elasticAmount < 0) {
+        uss._errorLogger(options.debugString, "options.elasticAmount to be a number >= 0", options.elasticAmount);
         return;
     }
+
+    //Check if the options.elasticResistance is a number >= 0.
+    if(!Number.isFinite(options.elasticResistance) || options.elasticResistance < 0) options.elasticResistance = 3;
 
     if(options.onXAxis) options.onXAxis = "mandatory";
     if(options.onYAxis) options.onYAxis = "mandatory";
