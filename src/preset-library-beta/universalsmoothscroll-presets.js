@@ -5,6 +5,11 @@
  * - if options.elasticAmount of an options.children's object is not passed it should default to the parent's padding instead of returning an error  
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * 
+ * - fix new implementation of touchScrollExtender not working properly with smoothScrollbars
+ * - make the _handlePointerMoveEvent of SmoothScrollBuilder dependent on the options.onXAxis/onYAxis passed
+ * 
+ * - improve touchScrollExtender easing pattern
+ * 
  * - fix snap scrolling triggering too early with trackpads
  *
  * - separate speedModifiers of wheel events from the ones of pointerEvents
@@ -17,7 +22,7 @@
 /**
  * Each of this functions should have an input interface that:
  *  - has the container as the first parameter
- *  - has an "options" Object as the second parameter
+ *  - has an "options" object as the second parameter
  *  - every function-specific input should be a property of the "options" parameter
  */
 
@@ -125,11 +130,17 @@ export function addSmoothScrolling(
 
     if(typeof options.speedModifierX !== "function") options.speedModifierX = (deltaX, deltaY) => deltaX;
     if(typeof options.speedModifierY !== "function") options.speedModifierY = (deltaX, deltaY) => deltaY;
-
+    
     //TODO Not good for touch-driven scrolling
     //Default easing behaviors: ease-out.
-    if(typeof options.easingX !== "function") options.easingX = (remaning) => remaning / 25 + 1;
-    if(typeof options.easingY !== "function") options.easingY = (remaning) => remaning / 25 + 1;
+    if(typeof options.easingX !== "function") options.easingX = (remaning) => {
+        console.log("default")
+        return remaning / 25 + 1;
+    }
+    if(typeof options.easingY !== "function") options.easingY = (remaning) => {
+        console.log("default")
+        return remaning / 25 + 1;
+    }
 
     const _builder = new SmoothScrollBuilder(container, options);
     _builder.build();

@@ -2,12 +2,15 @@ export class SmoothScrollBuilder {
     
     #pointersDownIds = [];
     
-    #touchScrollExtender;
     #overscrollConditionsX;
     #overscrollConditionsY;
     #overscrollConditionsXFilter;
     #overscrollConditionsYFilter;
     #smoothScroller;
+    #touchScrollExtender;
+
+    #getCurrentXPosition;
+    #getCurrentYPosition;
 
     //Parameters already sanitized.
     constructor(container, options) {
@@ -31,7 +34,14 @@ export class SmoothScrollBuilder {
         this.scrollbarX = { previousPointerId: null, isEngaged: () => false, updatePosition: () => {} };
         this.scrollbarY = { previousPointerId: null, isEngaged: () => false, updatePosition: () => {} };
 
-        this.#overscrollConditionsX = this.options.overscrollX ? (deltaX, deltaY) => {
+        //Getters for the current positions on the x and y axes of this.originalContainer.
+        this.#getCurrentXPosition = uss.getScrollXCalculator(this.originalContainer, this.options);
+        this.#getCurrentYPosition = uss.getScrollYCalculator(this.originalContainer, this.options);
+        
+        this.#overscrollConditionsX = this.options.overscrollX ? (deltaX, deltaY, event) => {
+            //With no movement, the overscroll conditions can never be satisfied.
+            if(deltaX === 0) return false;
+
             //Only the scrollbarX is checked because any scrollbarY movement will produce a 
             //wheel event with deltaX = 0, so the conditions below will fail.
             if(this.scrollbarX.isEngaged()) return false;
@@ -40,7 +50,7 @@ export class SmoothScrollBuilder {
             //before considering the overscroll conditions.
             if(this.#overscrollConditionsXFilter(deltaX, deltaY)) return false;
 
-            const __nextPos = uss.getScrollXCalculator(this.originalContainer, this.options)() + this.options.speedModifierX(deltaX, deltaY);
+            const __nextPos = this.currentXPosition + this.options.speedModifierX(deltaX, deltaY, event);
             const __maxScroll = uss.getMaxScrollX(this.originalContainer, false, this.options);
             return (__nextPos <= 0 && deltaX < 0) || (__nextPos >= __maxScroll && deltaX > 0);
         } : () => false;
@@ -51,7 +61,10 @@ export class SmoothScrollBuilder {
             return __deltaX < 2 || __deltaX < 2 * __deltaY;            
         } : () => false;
 
-        this.#overscrollConditionsY = this.options.overscrollY ? (deltaX, deltaY) => {
+        this.#overscrollConditionsY = this.options.overscrollY ? (deltaX, deltaY, event) => {
+            //With no movement, the overscroll conditions can never be satisfied.
+            if(deltaY === 0) return false;
+
             //Only the scrollbarY is checked because any scrollbarX movement will produce a 
             //wheel event with deltaY = 0, so the conditions below will fail.
             if(this.scrollbarY.isEngaged()) return false;
@@ -60,7 +73,7 @@ export class SmoothScrollBuilder {
             //before considering the overscroll conditions.
             if(this.#overscrollConditionsYFilter(deltaX, deltaY)) return false;
 
-            const __nextPos = uss.getScrollYCalculator(this.originalContainer, this.options)() + this.options.speedModifierY(deltaX, deltaY);
+            const __nextPos = this.currentYPosition + this.options.speedModifierY(deltaX, deltaY, event);
             const __maxScroll = uss.getMaxScrollY(this.originalContainer, false, this.options);
             return (__nextPos <= 0 && deltaY < 0) || (__nextPos >= __maxScroll && deltaY > 0);
         } : () => false;
@@ -72,41 +85,71 @@ export class SmoothScrollBuilder {
         } : () => false;
 
         if(this.onXAxis && !this.onYAxis) {
+            this.#smoothScroller = (deltaX, deltaY, event) => { 
+                uss.scrollXBy(this.options.speedModifierX(deltaX, deltaY, event), this.originalContainer, this.executeCallback, false, true, this.options);
+            }
+
             this.#touchScrollExtender = (event) => {
-                const __currentPos = uss.getScrollXCalculator(this.originalContainer, this.options)();
+                const __currentPos = this.currentXPosition;
                 const __finalPos = uss.getFinalXPosition(this.originalContainer, this.options);
 
                 //TODO 
                 //FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSION
                 const __delta = __finalPos - __currentPos; 
+                const __direction =  __delta > 0 ? 1 : -1;
                 
-                _handleContainerScrolling(__delta, 0, event);
-            }
+                console.log(
+                    "touch extended by", 
+                    Math.pow(Math.abs(__delta), 1.5) * __direction
+                )
 
-            this.#smoothScroller = (deltaX, deltaY) => { 
-                uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
-                uss.scrollXBy(this.options.speedModifierX(deltaX, deltaY), this.originalContainer, this.executeCallback, false, true, this.options);
+                _handleContainerScrolling(
+                    Math.pow(Math.abs(__delta), 1.5) * __direction, 
+                    0,
+                    event
+                );
             }
         } else if(!this.onXAxis && this.onYAxis) {
+            this.#smoothScroller = (deltaX, deltaY, event) => {
+                uss.scrollYBy(this.options.speedModifierY(deltaX, deltaY, event), this.originalContainer, this.executeCallback, false, true, this.options);                                                            
+            } 
+
             this.#touchScrollExtender = (event) => {
-                const __currentPos = uss.getScrollYCalculator(this.originalContainer, this.options)();
+                const __currentPos = this.currentYPosition;
                 const __finalPos = uss.getFinalYPosition(this.originalContainer, this.options);
                 
                 //TODO 
                 //FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSION
-                const __delta = __finalPos - __currentPos;
+                const __delta = __finalPos - __currentPos; 
+                const __direction =  __delta > 0 ? 1 : -1;
+                
+                console.log(
+                    "touch extended by", 
+                    Math.pow(Math.abs(__delta), 1.5) * __direction
+                )
 
-                _handleContainerScrolling(0, __delta, event);
+                _handleContainerScrolling(
+                    0,
+                    Math.pow(Math.abs(__delta), 1.5) * __direction, 
+                    event
+                );
+            }
+        } else {
+            this.#smoothScroller = (deltaX, deltaY, event) => {
+                uss.scrollBy(
+                    this.options.speedModifierX(deltaX, deltaY, event), 
+                    this.options.speedModifierY(deltaX, deltaY, event), 
+                    this.originalContainer, 
+                    this.executeCallback, 
+                    false, 
+                    true,
+                    this.options
+                );
             }
             
-            this.#smoothScroller = (deltaX, deltaY) => {
-                uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);
-                uss.scrollYBy(this.options.speedModifierY(deltaX, deltaY), this.originalContainer, this.executeCallback, false, true, this.options);                                                            
-            } 
-        } else {
             this.#touchScrollExtender = (event) => {
-                const __currentPosX = uss.getScrollXCalculator(this.originalContainer, this.options)();
-                const __currentPosY = uss.getScrollYCalculator(this.originalContainer, this.options)();
+                const __currentPosX = this.currentXPosition;
+                const __currentPosY = this.currentYPosition;
                 const __finalPosX = uss.getFinalXPosition(this.originalContainer, this.options);
                 const __finalPosY = uss.getFinalYPosition(this.originalContainer, this.options);
                 
@@ -114,21 +157,19 @@ export class SmoothScrollBuilder {
                 //FIND WHAT EASING/PATTERN IS THE BEST FOR THIS SCROLL-EXTENSIONS
                 const __deltaX = __finalPosX - __currentPosX;
                 const __deltaY = __finalPosY - __currentPosY;
+                const __directionX =  __deltaX > 0 ? 1 : -1;
+                const __directionY =  __deltaY > 0 ? 1 : -1;
 
-                _handleContainerScrolling(__deltaX, __deltaY, event);
-            }
+                console.log(
+                    "touch extended by", 
+                    Math.pow(Math.abs(__deltaX), 1.5) * __directionX, 
+                    Math.pow(Math.abs(__deltaY), 1.5) * __directionY
+                )
 
-            this.#smoothScroller = (deltaX, deltaY) => {
-                uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
-                uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);
-                uss.scrollBy(
-                    this.options.speedModifierX(deltaX, deltaY), 
-                    this.options.speedModifierY(deltaX, deltaY), 
-                    this.originalContainer, 
-                    this.executeCallback, 
-                    false, 
-                    true,
-                    this.options
+                _handleContainerScrolling(
+                    Math.pow(Math.abs(__deltaX), 1.5) * __directionX, 
+                    Math.pow(Math.abs(__deltaY), 1.5) * __directionY, 
+                    event
                 );
             }
         }
@@ -138,8 +179,8 @@ export class SmoothScrollBuilder {
             event.preventDefault();
             event.stopPropagation();
 
-            const __overscrollConditionsAreMet = this.#overscrollConditionsX(deltaX, deltaY) || 
-                                                 this.#overscrollConditionsY(deltaX, deltaY);
+            const __overscrollConditionsAreMet = this.#overscrollConditionsX(deltaX, deltaY, event) || 
+                                                 this.#overscrollConditionsY(deltaX, deltaY, event);
 
             //Manage the overscroll behavior.
             //Interactions with scrollbars prevent overscroll.
@@ -169,7 +210,7 @@ export class SmoothScrollBuilder {
                     }
 
                     //Finish the scrolling on this container before propagating it to the scrollable parent.
-                    this.#smoothScroller(deltaX, deltaY);
+                    this.#smoothScroller(deltaX, deltaY, event);
 
                     //Re-dispatch the original scrolling event to the scrollable parent.
                     __scrollableParent.dispatchEvent(new event.constructor(event.type, event));
@@ -177,11 +218,15 @@ export class SmoothScrollBuilder {
                 }
             }
 
-            this.#smoothScroller(deltaX, deltaY);
+            this.#smoothScroller(deltaX, deltaY, event);
             if(uss.isXScrolling(this.originalContainer, this.options)) this.scrollbarX.updatePosition();
             if(uss.isYScrolling(this.originalContainer, this.options)) this.scrollbarY.updatePosition();
         } 
 
+
+
+
+        
         const _handlePointerDownEvent = (event) => {
             //Pointes should be unique.
             const __eventId = event.pointerId;
@@ -198,7 +243,16 @@ export class SmoothScrollBuilder {
             //Attach the listeners only on the first pointerdown event.
             if(this.#pointersDownIds.length > 1) return;
                       
-            window.addEventListener("pointerup", _handlePointerUpEvent, {passive:false});
+            window.addEventListener("pointerup", _handlePointerUpEvent, {passive:false});        
+
+            uss.stopScrolling(this.originalContainer);
+            this.scrollbarX.updatePosition();
+            this.scrollbarY.updatePosition();
+
+            uss.setStepLengthCalculator(remaning => {
+                console.log("r => r", remaning)
+                return remaning < 2 ? remaning : Math.ceil(remaning / 3);
+            }, this.originalContainer, false, this.options);
 
             //The pointermove event is not relevant if the pointer is a scrollbar.
             if(event.pointerType === "scrollbar") return;
@@ -206,7 +260,16 @@ export class SmoothScrollBuilder {
             this.originalContainer.addEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
         } 
         
+
+
+
+ 
         const _handlePointerMoveEvent = (event) => {
+            
+            _handleContainerScrolling(-event.movementX, -event.movementY, event);
+            return;
+
+            /*
             const __deltaX = Math.abs(event.movementX);
             const __deltaY = Math.abs(event.movementY);
             const __delta = __deltaX + __deltaY;
@@ -214,17 +277,25 @@ export class SmoothScrollBuilder {
             const __directionY = -event.movementY > 0 ? 1 : -1;
             
             if(__deltaX > __deltaY) {
-                _handleContainerScrolling(__directionX * __delta, 0, event);
+                //_handleContainerScrolling(__directionX * __delta, 0, event);
+                _handleContainerScrolling(__directionX * __deltaX, 0, event);
                 return;
             } 
             
             if(__deltaX < __deltaY) {
-                _handleContainerScrolling(0, __directionY * __delta, event);
+                //_handleContainerScrolling(0, __directionY * __delta, event);
+                _handleContainerScrolling(0, __directionY * __deltaY, event);
                 return;
             }
             
-            _handleContainerScrolling(__directionX * __delta, __directionY * __delta, event);
+            //_handleContainerScrolling(__directionX * __delta, __directionY * __delta, event);
+            _handleContainerScrolling(__directionX * __deltaX, __directionY * __deltaY, event);
+            */
         }
+
+
+
+
 
         const _handlePointerUpEvent = (event) => {
             const __eventId = event.pointerId;
@@ -239,15 +310,15 @@ export class SmoothScrollBuilder {
 
             window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:false});
             
-            //If the pointerup event was triggered by a scrollbar, just execute the callback,
-            //otherwise extend the scrolling
-            if(event.pointerType === "mouse" || 
-               __eventId === this.scrollbarX.previousPointerId || 
-               __eventId === this.scrollbarY.previousPointerId
-            ) {
+            this.originalContainer.removeEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
+            
+            if(!uss.isScrolling(this.originalContainer)) {
+                console.log("was not scrolling")
                 this.executeCallback();
             } else {
-                this.originalContainer.removeEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
+                console.log("was scrolling, touch extended")
+                uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
+                uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);
                 this.#touchScrollExtender(event);
             }
         } 
@@ -256,7 +327,11 @@ export class SmoothScrollBuilder {
         this.originalContainer.style.touchAction = "none";
         
         this.originalContainer.addEventListener("pointerdown", _handlePointerDownEvent, {passive:false});
-        this.originalContainer.addEventListener("wheel", (event) => _handleContainerScrolling(event.deltaX, event.deltaY, event), {passive:false});
+        this.originalContainer.addEventListener("wheel", (event) => {
+            uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
+            uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);
+            _handleContainerScrolling(event.deltaX, event.deltaY, event);
+        }, {passive:false});
     }
 
     /**
@@ -286,5 +361,13 @@ export class SmoothScrollBuilder {
 
     get originalBuilder() {
         return this;
+    }
+
+    get currentXPosition() {
+        return this.#getCurrentXPosition();
+    }
+
+    get currentYPosition() {
+        return this.#getCurrentYPosition();
     }
 }

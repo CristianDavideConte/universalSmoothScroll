@@ -170,7 +170,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                                        __scrolledPercentage;
                                        
                 //The scrollbar.container has the same easing pattern as the originalContainer.
-                //TODO: if the deltaX is small EASE_OUT_BOUNCE (perhaps other slc too) only works if deltaX is < 0 
+                //TODO: if the deltaX is small EASE_OUT_BOUNCE (perhaps other stepLenCal too) only works if deltaX is < 0 
                 if(!_scrollbar.isEngaged()) {
                     const __easing = uss.getXStepLengthCalculator(this.originalContainer, true)  || 
                                      uss.getXStepLengthCalculator(this.originalContainer, false) || 
@@ -318,7 +318,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                                        __scrolledPercentage;
                 
                 //The scrollbar.container has the same easing pattern as the originalContainer.
-                //TODO: if the deltaY is small EASE_OUT_BOUNCE (perhaps other slc too) only works if deltaY is < 0 
+                //TODO: if the deltaY is small EASE_OUT_BOUNCE (perhaps other stepLenCal too) only works if deltaY is < 0 
                 if(!_scrollbar.isEngaged()) {
                     const __easing = uss.getYStepLengthCalculator(this.originalContainer, true)  || 
                                      uss.getYStepLengthCalculator(this.originalContainer, false) || 
@@ -416,6 +416,14 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         return this.container.originalBuilder;
     }
 
+    get currentXPosition() {
+        return this.originalBuilder.currentXPosition;
+    }
+
+    get currentYPosition() {
+        return this.originalBuilder.currentYPosition;
+    }
+    
     get scrollbarX() {
         return this.originalBuilder.scrollbarX;
     }

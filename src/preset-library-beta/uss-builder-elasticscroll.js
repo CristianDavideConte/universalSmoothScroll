@@ -128,6 +128,14 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
         return this.container.originalBuilder;
     }
     
+    get currentXPosition() {
+        return this.originalBuilder.currentXPosition;
+    }
+
+    get currentYPosition() {
+        return this.originalBuilder.currentYPosition;
+    }
+    
     get scrollbarX() {
         return this.originalBuilder.scrollbarX;
     }
