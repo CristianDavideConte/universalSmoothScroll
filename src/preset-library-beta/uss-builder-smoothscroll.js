@@ -179,12 +179,11 @@ export class SmoothScrollBuilder {
             event.preventDefault();
             event.stopPropagation();
 
-            const __overscrollConditionsAreMet = this.#overscrollConditionsX(deltaX, deltaY, event) || 
-                                                 this.#overscrollConditionsY(deltaX, deltaY, event);
-
             //Manage the overscroll behavior.
             //Interactions with scrollbars prevent overscroll.
-            if(__overscrollConditionsAreMet) {
+            if(this.#overscrollConditionsX(deltaX, deltaY, event) || 
+               this.#overscrollConditionsY(deltaX, deltaY, event)
+            ) {
                 const __scrollableParent = uss.getScrollableParent(this.originalContainer, true, this.options);
                 
                 //If there's no scrollable parent, the overscrol cannot be applied.
@@ -208,20 +207,17 @@ export class SmoothScrollBuilder {
                             )
                         );
                     }
-
-                    //Finish the scrolling on this container before propagating it to the scrollable parent.
-                    this.#smoothScroller(deltaX, deltaY, event);
-
+                    
                     //Re-dispatch the original scrolling event to the scrollable parent.
                     __scrollableParent.dispatchEvent(new event.constructor(event.type, event));
-                    return;
                 }
             }
-
+            
+            //Scroll this.originalContainer and updates the scrollbars position accordingly.
             this.#smoothScroller(deltaX, deltaY, event);
             if(uss.isXScrolling(this.originalContainer, this.options)) this.scrollbarX.updatePosition();
             if(uss.isYScrolling(this.originalContainer, this.options)) this.scrollbarY.updatePosition();
-        } 
+        }
 
 
 
@@ -264,33 +260,40 @@ export class SmoothScrollBuilder {
 
 
  
+        /**
+         * This function makes the scrolling stick more to the main
+         * scrolling axis.
+         * @param {*} event a pointermove event
+         */
         const _handlePointerMoveEvent = (event) => {
-            
-            _handleContainerScrolling(-event.movementX, -event.movementY, event);
-            return;
-
-            /*
             const __deltaX = Math.abs(event.movementX);
             const __deltaY = Math.abs(event.movementY);
-            const __delta = __deltaX + __deltaY;
             const __directionX = -event.movementX > 0 ? 1 : -1;
             const __directionY = -event.movementY > 0 ? 1 : -1;
             
+            /**
+             * If the movement on the x-axis is more then the one on the y-axis, 
+             * stick to the x-axis.
+             */
             if(__deltaX > __deltaY) {
-                //_handleContainerScrolling(__directionX * __delta, 0, event);
-                _handleContainerScrolling(__directionX * __deltaX, 0, event);
+                _handleContainerScrolling(__directionX * (__deltaX + __deltaY), 0, event);
                 return;
             } 
             
+            /**
+             * If the movement on the y-axis is more then the one on the x-axis, 
+             * stick to the y-axis.
+             */
             if(__deltaX < __deltaY) {
-                //_handleContainerScrolling(0, __directionY * __delta, event);
-                _handleContainerScrolling(0, __directionY * __deltaY, event);
+                _handleContainerScrolling(0, __directionY * (__deltaX + __deltaY), event);
                 return;
             }
             
-            //_handleContainerScrolling(__directionX * __delta, __directionY * __delta, event);
+            /**
+             * If the movements on the x-axis and the y-axis are equal, 
+             * don't apply any effect.
+             */
             _handleContainerScrolling(__directionX * __deltaX, __directionY * __deltaY, event);
-            */
         }
 
 
@@ -313,9 +316,16 @@ export class SmoothScrollBuilder {
             this.originalContainer.removeEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
             
             if(!uss.isScrolling(this.originalContainer)) {
-                console.log("was not scrolling")
+                console.log("was not scrolling", this.originalContainer);
                 this.executeCallback();
-            } else {
+                return;
+            } 
+            
+            //Extend the scroll only if it was not caused by a scrollbar.
+            if(event.pointerType !== "mouse" && 
+               __eventId !== this.scrollbarX.previousPointerId && 
+               __eventId !== this.scrollbarY.previousPointerId) 
+            {
                 console.log("was scrolling, touch extended")
                 uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
                 uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);

@@ -231,8 +231,12 @@
     
 
 
+  
 
-    
+    //TEMPORARY FIX
+    for(const link of document.links) {
+      link.addEventListener("pointerdown", e => e.stopPropagation());
+    }
 
     const _bodySmoothScrollBuilder = addSmoothScrollbar(
         addSmoothScrolling(

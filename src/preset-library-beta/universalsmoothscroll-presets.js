@@ -5,7 +5,7 @@
  * - if options.elasticAmount of an options.children's object is not passed it should default to the parent's padding instead of returning an error  
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * 
- * - fix new implementation of touchScrollExtender not working properly with smoothScrollbars
+ * - fix the pointerdown event on anchor elements not working properly in the demo (see index.html -> TEMPORARY FIX)
  * - make the _handlePointerMoveEvent of SmoothScrollBuilder dependent on the options.onXAxis/onYAxis passed
  * 
  * - improve touchScrollExtender easing pattern
