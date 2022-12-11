@@ -2,16 +2,18 @@
  * TODO: 
  * - elasticScrolling should have 4 children (top, left, bottom, right) instead of 2
  * - the options.elasticAmount property of elasticScrolling should be part of the options.children property
- * - if options.elasticAmount of an options.children's object is not passed it should default to the parent's padding instead of returning an error  
+ * - if options.elasticAmount of an options.children's object is not passed it should default to 
+ *    the parent's padding instead of returning an error  
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * 
- * - fix the pointerdown event on anchor elements not working properly in the demo (see index.html -> TEMPORARY FIX)
  * - make the _handlePointerMoveEvent of SmoothScrollBuilder dependent on the options.onXAxis/onYAxis passed
  * 
  * - improve touchScrollExtender easing pattern
  * 
  * - fix snap scrolling triggering too early with trackpads
  *
+ * - fix the pointerdown event on anchor elements not working properly in the demo (see index.html -> TEMPORARY FIX)
+ * 
  * - separate speedModifiers of wheel events from the ones of pointerEvents
  * - smooth scrolling with animation allowed
  * - fix mobile multitasking freezing scrollbars

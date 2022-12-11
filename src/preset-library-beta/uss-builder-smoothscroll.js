@@ -23,6 +23,9 @@ export class SmoothScrollBuilder {
     }
 
     build() {
+        //Needed for the touch-related pointerevents to work as expected. 
+        this.originalContainer.style.touchAction = "none";
+
         this.onXAxis = this.options.onXAxis;
         this.onYAxis = this.options.onYAxis;
         
@@ -240,18 +243,25 @@ export class SmoothScrollBuilder {
             if(this.#pointersDownIds.length > 1) return;
                       
             window.addEventListener("pointerup", _handlePointerUpEvent, {passive:false});        
-
+            
+            /**
+             * Whenever a pointer the first pointer is held down, stop the current scrolling.
+             * The new scroll-animation will start from the current position.
+             */
             uss.stopScrolling(this.originalContainer);
             this.scrollbarX.updatePosition();
             this.scrollbarY.updatePosition();
-
-            uss.setStepLengthCalculator(remaning => {
-                console.log("r => r", remaning)
-                return remaning < 2 ? remaning : Math.ceil(remaning / 3);
-            }, this.originalContainer, false, this.options);
-
+            
             //The pointermove event is not relevant if the pointer is a scrollbar.
             if(event.pointerType === "scrollbar") return;
+
+            //Makes this.originalContainer's scroll-animations instantly follow the pointer movements.
+            uss.setStepLengthCalculator(
+                remaning => remaning / 2 + 1, 
+                this.originalContainer, 
+                false, 
+                this.options
+            );
 
             this.originalContainer.addEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
         } 
@@ -316,7 +326,6 @@ export class SmoothScrollBuilder {
             this.originalContainer.removeEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
             
             if(!uss.isScrolling(this.originalContainer)) {
-                console.log("was not scrolling", this.originalContainer);
                 this.executeCallback();
                 return;
             } 
@@ -324,17 +333,13 @@ export class SmoothScrollBuilder {
             //Extend the scroll only if it was not caused by a scrollbar.
             if(event.pointerType !== "mouse" && 
                __eventId !== this.scrollbarX.previousPointerId && 
-               __eventId !== this.scrollbarY.previousPointerId) 
-            {
-                console.log("was scrolling, touch extended")
+               __eventId !== this.scrollbarY.previousPointerId
+            ){
                 uss.setXStepLengthCalculator(this.options.easingX, this.originalContainer, true, this.options);
                 uss.setYStepLengthCalculator(this.options.easingY, this.originalContainer, true, this.options);
                 this.#touchScrollExtender(event);
             }
         } 
-        
-        //Needed for the pointerevents to work as expected. 
-        this.originalContainer.style.touchAction = "none";
         
         this.originalContainer.addEventListener("pointerdown", _handlePointerDownEvent, {passive:false});
         this.originalContainer.addEventListener("wheel", (event) => {

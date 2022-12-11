@@ -41,7 +41,8 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 
                 scrollbar.pointerId = event.pointerId;
                 
-                setCalculatorFun(remaning => remaning, scrollbar.container, false, this.options); //Makes the scrollbar's movement instantaneous
+                //Makes the scrollbar's scroll-animations instantly follow the pointer movements.
+                setCalculatorFun(remaning => remaning, scrollbar.container, false, this.options); 
                 window.addEventListener("pointerup", __disengageScrollbar, {passive:false});
                 window.addEventListener("pointermove", handleOriginalContainerScrolling, {passive:false});   
                 
