@@ -9,6 +9,7 @@ export class SmoothScrollBuilder {
     #smoothScroller;
     #touchScrollExtender;
 
+    #style;
     #getCurrentXPosition;
     #getCurrentYPosition;
 
@@ -41,6 +42,9 @@ export class SmoothScrollBuilder {
         this.#getCurrentXPosition = uss.getScrollXCalculator(this.originalContainer, this.options);
         this.#getCurrentYPosition = uss.getScrollYCalculator(this.originalContainer, this.options);
         
+        //Cache the live pointer to the computed style of this.originalContainer.
+        this.#style = window.getComputedStyle(this.originalContainer);
+
         this.#overscrollConditionsX = this.options.overscrollX ? (deltaX, deltaY, event) => {
             //With no movement, the overscroll conditions can never be satisfied.
             if(deltaX === 0) return false;
@@ -376,6 +380,10 @@ export class SmoothScrollBuilder {
 
     get originalBuilder() {
         return this;
+    }
+
+    get style() {
+        return this.#style;
     }
 
     get currentXPosition() {

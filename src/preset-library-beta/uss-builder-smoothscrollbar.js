@@ -417,6 +417,10 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         return this.container.originalBuilder;
     }
 
+    get style() {
+        return this.originalBuilder.style;
+    }
+
     get currentXPosition() {
         return this.originalBuilder.currentXPosition;
     }

@@ -1,3 +1,60 @@
+/**
+ * TODO: THIS WILL BE THE NEXT EXTERNAL INTERFACE FOR THE ELASTIC SCROLL BUILDER.
+ * 
+ * addElasticScrolling{
+ *     container,
+ *     {   
+ *         onXAxis: true,
+ *         onYAxis: true,
+ *         ...
+ *         children: [ //OPTIONAL
+ *            {
+ *                 element: document.getElementById("easeFunctionSelectorList").children[0], //COMPULSORY
+ *                 position: "top",                                                          //COMPULSORY 
+ *                 elasticResistance: 3,                                                     //OPTIONAL
+ *                 elasticEasingX: () => 25                                                  //OPTIONAL
+ *                 elasticEasingY: () => 12                                                  //OPTIONAL
+ *                 getElasticAmount: (options) => {                                          //OPTIONAL
+ *                    return 100; 
+ *                 }
+ *            }, 
+ *            {
+ *                 element: document.getElementById("easeFunctionSelectorList").children[1],
+ *                 position: "right",                                                          
+ *                 elasticResistance: 10,
+ *                 elasticEasingX: () => 25                                                  
+ *                 getElasticAmount: (options) => {                                            
+ *                    return options.container.originalContainer.clientHeight / 10; 
+ *                 }
+ *            },
+ *            {
+ *                 element: document.body.children[1],
+ *                 position: "bottom",                                                          
+ *                 elasticEasingY: () => 25                                                  
+ *                 getElasticAmount: (options) => 25
+ *             },
+ *             {
+ *                 element: document.body.children[0],
+ *                 position: "left",                                                          
+ *             }
+ *          ]
+ *     }
+ * }
+ * 
+ * 
+ *  Defaults:
+ * - children: []
+ * 
+ * - element: undefined
+ * - position: undefined
+ * - elasticEasingX: //see preset.js
+ * - elasticEasingY: //see preset.js
+ * - elasticResistance: 3
+ * - getElasticAmount: (options) => { 
+ *      return this.style.padding\\Top/Left/Bottom/Right\\ || 0;
+ *   }
+ */
+
 import { SmoothScrollBuilder } from "./uss-builder-smoothscroll.js";
 
 export class ElasticScrollBuilder extends SmoothScrollBuilder {
@@ -16,10 +73,10 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
         this.elasticChildren = this.options.children;
 
         //The first children is always aligned to the start of the container.
-        this.elasticChildren[0].align = "start";
+        this.elasticChildren[0].alignY = "start";
 
         //The second children is always aligned to the end of the container.
-        if(this.elasticChildren[1]) this.elasticChildren[1].align = "end";
+        if(this.elasticChildren[1]) this.elasticChildren[1].alignY = "end";
         
         this.elasticSpeedModifier = (delta, finalPos, getMaxScroll) => {
             const __nextFinalPos = finalPos + delta;
@@ -50,7 +107,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                 if(finalPos + __finalDelta <= this.elasticAmount && 
                    this.elasticChildren[0]
                 ) {
-                    this.elasticChildren[0].align = "start";
+                    this.elasticChildren[0].alignY = "start";
                     this.options.children = [this.elasticChildren[0]];
                 }
 
@@ -86,7 +143,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                 if(finalPos + __finalDelta >= __bottomElasticBoundary && 
                    this.elasticChildren[1]
                 ) {
-                    this.elasticChildren[1].align = "end";
+                    this.elasticChildren[1].alignY = "end";
                     this.options.children = [this.elasticChildren[1]];
                 }
 
@@ -101,13 +158,25 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
 
         if(this.onXAxis) {
             this.originalBuilder.options.speedModifierX = (deltaX, deltaY) => {
-                return this.elasticSpeedModifier(deltaX, uss.getFinalXPosition(this.originalContainer, this.options), uss.getMaxScrollX);
+                return this.elasticSpeedModifier(
+                    deltaX, 
+                    uss.getFinalXPosition(this.originalContainer, this.options), 
+                    uss.getMaxScrollX,
+                    this.options.leftChild, 
+                    this.options.rightChild
+                );
             }
         }
         
         if(this.onYAxis) {
             this.originalBuilder.options.speedModifierY = (deltaX, deltaY) => {
-                return this.elasticSpeedModifier(deltaY, uss.getFinalYPosition(this.originalContainer, this.options), uss.getMaxScrollY);
+                return this.elasticSpeedModifier(
+                    deltaY, 
+                    uss.getFinalYPosition(this.originalContainer, this.options), 
+                    uss.getMaxScrollY,
+                    this.options.topChild, 
+                    this.options.bottomChild
+                );
             }
         }
     }
@@ -128,6 +197,10 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
         return this.container.originalBuilder;
     }
     
+    get style() {
+        return this.originalBuilder.style;
+    }
+
     get currentXPosition() {
         return this.originalBuilder.currentXPosition;
     }

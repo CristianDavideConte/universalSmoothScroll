@@ -11,8 +11,12 @@
  * - improve touchScrollExtender easing pattern
  * 
  * - fix snap scrolling triggering too early with trackpads
+ * 
+ * - fix smoothscrollbars not having the correct height/width onpageload sometimes
  *
  * - fix the pointerdown event on anchor elements not working properly in the demo (see index.html -> TEMPORARY FIX)
+ * 
+ * - improve snap scrolling performances (intersection observers) 
  * 
  * - separate speedModifiers of wheel events from the ones of pointerEvents
  * - smooth scrolling with animation allowed
@@ -136,11 +140,9 @@ export function addSmoothScrolling(
     //TODO Not good for touch-driven scrolling
     //Default easing behaviors: ease-out.
     if(typeof options.easingX !== "function") options.easingX = (remaning) => {
-        console.log("default")
         return remaning / 25 + 1;
     }
     if(typeof options.easingY !== "function") options.easingY = (remaning) => {
-        console.log("default")
         return remaning / 25 + 1;
     }
 
@@ -184,8 +186,8 @@ export function addSnapScrolling(
         onXAxis: false,
         onYAxis: "mandatory",
         callback: () => {},
-        children: [],
         snapDelay: 0,
+        children: [],
         snapEasingX: (remaning, ot, t, total) => (total - remaning) / 25 + 1,
         snapEasingY: (remaning, ot, t, total) => (total - remaning) / 25 + 1,
     }, 
@@ -283,10 +285,10 @@ export function addElasticScrolling(
         onYAxis: true,
         callback: () => {},
         children: [],
-        elasticAmount: 100,
-        elasticResistance: 3,
-        elasticEasingX: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
-        elasticEasingY: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
+        //elasticAmount: 100,
+        //elasticResistance: 3,
+        //elasticEasingX: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
+        //elasticEasingY: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
     }, 
 ) {
     //Check if the options parameter is a valid Object.

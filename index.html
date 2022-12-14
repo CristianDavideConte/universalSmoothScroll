@@ -148,7 +148,7 @@
     addSmoothScrolling,
     addSnapScrolling,
     addElasticScrolling,
-    addSmoothScrollbar
+    addSmoothScrollbar,
   } from "./src/preset-library-beta/universalsmoothscroll-presets.js"
 
   window.addEventListener("load", () => {
@@ -257,16 +257,20 @@
     const _elasticOptions = {
       onYAxis: true, 
       overscrollX: true,
-      elasticResistance: 3,
       //elasticEasingY: EASE_OUT_BOUNCE(), 
       //easingY: EASE_OUT_QUAD(),
-      elasticAmount: Number.parseFloat(window.getComputedStyle(easeFunctionSelectorList).paddingTop),
+        elasticResistance: 3,
+        elasticAmount: Number.parseFloat(window.getComputedStyle(easeFunctionSelectorList).paddingTop),
       children: [
         {
-          element: easeFunctionSelectorList.children[0]
+          element: easeFunctionSelectorList.children[0],
+          //elasticResistance: 3,
+          //getElasticAmount: () => Number.parseFloat(window.getComputedStyle(easeFunctionSelectorList).paddingTop),
         }, 
         {
-          element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1]
+          element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1],
+          //elasticResistance: 1,
+          //getElasticAmount: () => Number.parseFloat(window.getComputedStyle(easeFunctionSelectorList).paddingBottom),
         },
       ],
     }
@@ -286,19 +290,20 @@
     const _yChildren = [
       {
         element:__yChildren[0],
-        align: "start"
+        alignY: "start"
       },
       {
         element:__yChildren[1],
-        align: "end"
+        alignY: "end",
+        snapEasingY: EASE_OUT_EXPO(700),
       },
       {
         element:__yChildren[2],
-        align: "center"
+        alignY: "center"
       },
       {
         element:__yChildren[3],
-        align: "end"
+        alignY: "end"
       }
     ];
     
@@ -323,19 +328,21 @@
     const _xChildren = [
       {
         element:__xChildren[0],
-        align: "start"
+        alignX: "start",
+        snapEasingX: EASE_OUT_BOUNCE(900, null, 6),
       },
       {
         element:__xChildren[1],
-        align: "end"
+        alignX: "end",
       },
       {
         element:__xChildren[2],
-        align: "center"
+        alignX: "center"
       },
       {
         element:__xChildren[3],
-        align: "end"
+        alignX: "end",
+        snapEasingX: EASE_OUT_BOUNCE(1200, null, 3),
       }
   ];
 
