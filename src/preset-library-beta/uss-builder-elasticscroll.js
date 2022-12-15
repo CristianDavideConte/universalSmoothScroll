@@ -57,97 +57,158 @@
 
 import { SmoothScrollBuilder } from "./uss-builder-smoothscroll.js";
 
+const elasticPositionsRegex = /top|right|bottom|left/i;
+const defaultParameters = {
+    "top" : {
+        align: "start",
+        getElasticAmount: (style) => Number.parseFloat(style.paddingTop), 
+    },
+    "right" : {
+        align: "end",
+        getElasticAmount: (style) => Number.parseFloat(style.paddingRight), 
+    },
+    "bottom" : {
+        align: "end",
+        getElasticAmount: (style) => Number.parseFloat(style.paddingBottom), 
+    },
+    "left" : {
+        align: "start",
+        getElasticAmount: (style) => Number.parseFloat(style.paddingLeft), 
+    },
+}
+
 export class ElasticScrollBuilder extends SmoothScrollBuilder {
+
+    #childrenMap;
+    #remapElasticChildren;
 
     //Parameters already sanitized.
     constructor(container, options) {
         super(container, options);
+
+        this.#remapElasticChildren = () => {
+            this.#childrenMap = new Map();
+
+            for(const childObject of this.options.children) {
+                if(elasticPositionsRegex.test(childObject.position)) {
+                    const _childObjectPosition = childObject.position.toLowerCase();
+                    const _childObjectDefaultParameters = defaultParameters[_childObjectPosition];
+                    
+                    //If needed, define the elasticResistance of the childObject.
+                    if(!Number.isFinite(childObject.elasticResistance)) childObject.elasticResistance = 3;
+                    
+                    //If needed, define the getElasticAmount function of the childObject.
+                    if(typeof childObject.getElasticAmount !== "function")  {
+                        childObject.getElasticAmount = () => _childObjectDefaultParameters.getElasticAmount(this.style);
+                    }
+
+                    childObject.snapEasingX = childObject.elasticEasingX || this.options.elasticEasingX;
+                    childObject.snapEasingY = childObject.elasticEasingY || this.options.elasticEasingY;
+
+                    childObject.alignX = _childObjectDefaultParameters.align;
+                    childObject.alignY = _childObjectDefaultParameters.align;
+
+                    this.#childrenMap.set(_childObjectPosition, childObject);
+                }
+            }
+
+            //For the missing children, assign null so that no effect will be applied.
+            if(!this.#childrenMap.get("top"))    this.#childrenMap.set("top", null);
+            if(!this.#childrenMap.get("right"))  this.#childrenMap.set("right", null);
+            if(!this.#childrenMap.get("bottom")) this.#childrenMap.set("bottom", null);
+            if(!this.#childrenMap.get("left"))   this.#childrenMap.set("left", null);
+        }
     }
 
     build() {
         this.onXAxis = this.options.onXAxis;
         this.onYAxis = this.options.onYAxis;
 
-        this.elasticAmount = this.options.elasticAmount;
-        this.elasticResistance = this.options.elasticResistance;
         this.elasticChildren = this.options.children;
 
-        //The first children is always aligned to the start of the container.
-        this.elasticChildren[0].alignY = "start";
+        this.#remapElasticChildren();
 
-        //The second children is always aligned to the end of the container.
-        if(this.elasticChildren[1]) this.elasticChildren[1].alignY = "end";
-        
-        this.elasticSpeedModifier = (delta, finalPos, getMaxScroll) => {
-            const __nextFinalPos = finalPos + delta;
-            if(__nextFinalPos <= this.elasticAmount) {
-                /**
-                 * If the user scrolls in the same direction as the elastic part of
-                 * this scroll-animation, it will be helped to reach the beginning of the 
-                 * "elastic" part of the container. 
-                 */
-                if(delta > 0) return this.elasticAmount - finalPos;
+        this.elasticSpeedModifier = (delta, finalPos, getMaxScroll, firstChildObject, lastChildObject) => {
+            const _nextFinalPos = finalPos + delta;
 
-                //Make the __progress between 0 and 1.
-                let __progress = finalPos / this.elasticAmount;
-                if(__progress < 0) __progress = 0;
-                else if(__progress > 1) __progress = 1;
+            if(firstChildObject) {
+                const _firstChildElasticAmount = firstChildObject.getElasticAmount(this.options); 
 
-                /**
-                 * An ease-out pattern (inverted wrt y = this.elasticAmount / 2) is applied to the original delta.
-                 * Since the ease-out pattern returns a negative number, Math.floor (and not Math.ceil) is used to round it. 
-                 * The __finalDelta goes from the original delta to 0.    
-                 */
-                const __finalDelta = Math.floor(delta * Math.pow(__progress, this.elasticResistance));
-  
-                /**
-                 * The current scroll-position is at the left/top of the passed container, the snap scrolling
-                 * will be triggered on this.elasticChildren[0] (if it was passed) with align = "start".
-                 */
-                if(finalPos + __finalDelta <= this.elasticAmount && 
-                   this.elasticChildren[0]
-                ) {
-                    this.elasticChildren[0].alignY = "start";
-                    this.options.children = [this.elasticChildren[0]];
+                if(_nextFinalPos <= _firstChildElasticAmount) {
+                    /**
+                     * If the user scrolls in the same direction as the elastic part of
+                     * this scroll-animation, it will be helped to reach the beginning of the 
+                     * "elastic" part of the container. 
+                     */
+                    if(delta > 0) return _firstChildElasticAmount - finalPos;
+
+                    //Make the __progress between 0 and 1.
+                    let __progress = finalPos / _firstChildElasticAmount;
+                    if(__progress < 0) __progress = 0;
+                    else if(__progress > 1) __progress = 1;
+
+                    /**
+                     * An ease-out pattern (inverted wrt y = __firstChildElasticAmount / 2) is applied to the original delta.
+                     * Since the ease-out pattern returns a negative number, Math.floor (and not Math.ceil) is used to round it. 
+                     * The __finalDelta goes from the original delta to 0.    
+                     */
+                    const _finalDelta = Math.floor(delta * Math.pow(__progress, firstChildObject.elasticResistance));
+    
+                    /**
+                     * The current scroll-position is at the left/top of the passed container, the snap scrolling
+                     * will be triggered on firstChild (if it was passed) with align = "start".
+                     */
+                    if(finalPos + _finalDelta <= _firstChildElasticAmount) {
+                        firstChildObject.alignX = "start";
+                        firstChildObject.alignY = "start";
+                        firstChildObject.snapEasingX = firstChildObject.elasticEasingX || this.options.elasticEasingX;
+                        firstChildObject.snapEasingY = firstChildObject.elasticEasingY || this.options.elasticEasingY;
+                        this.options.children = [firstChildObject];
+                    }
+
+                    return _finalDelta;
                 }
-
-                return __finalDelta;
             }
         
-            const __maxScroll = getMaxScroll(this.originalContainer, false, this.options);
-            const __bottomElasticBoundary = __maxScroll - this.elasticAmount; 
-            if(__nextFinalPos >= __bottomElasticBoundary) {
-                /**
-                 * If the user scrolls in the same direction as the elastic part of
-                 * this scroll-animation, it will be helped to reach the beginning of the 
-                 * "elastic" part of the container. 
-                 */
-                if(delta < 0) return __bottomElasticBoundary - finalPos;
+            if(lastChildObject) {
+                const _maxScroll = getMaxScroll(this.originalContainer, false, this.options);
+                const _lastChildElasticAmount = lastChildObject.getElasticAmount(this.options); 
+                const _bottomElasticBoundary = _maxScroll - _lastChildElasticAmount; 
 
-                //Make the __progress between 0 and 1.
-                let __progress = (__maxScroll - finalPos) / this.elasticAmount;
-                if(__progress < 0) __progress = 0;
-                else if(__progress > 1) __progress = 1;
+                if(_nextFinalPos >= _bottomElasticBoundary) {
+                    /**
+                     * If the user scrolls in the same direction as the elastic part of
+                     * this scroll-animation, it will be helped to reach the beginning of the 
+                     * "elastic" part of the container. 
+                     */
+                    if(delta < 0) return _bottomElasticBoundary - finalPos;
 
-                /**
-                 * An ease-out pattern (inverted wrt y = this.elasticAmount / 2) is applied to the original delta.
-                 * Since the ease-out pattern returns a positive number, Math.ceil (and not Math.floor) is used to round it. 
-                 * The __finalDelta goes from the original delta to 0.    
-                 */
-                const __finalDelta = Math.ceil(delta * Math.pow(__progress, this.elasticResistance));
+                    //Make the __progress between 0 and 1.
+                    let __progress = (_maxScroll - finalPos) / _lastChildElasticAmount;
+                    if(__progress < 0) __progress = 0;
+                    else if(__progress > 1) __progress = 1;
 
-                /**
-                 * The current scroll-position is at the right/bottom of the passed container, the snap scrolling
-                 * will be triggered on this.elasticChildren[1] (if it was passed) with align = "end".
-                 */
-                if(finalPos + __finalDelta >= __bottomElasticBoundary && 
-                   this.elasticChildren[1]
-                ) {
-                    this.elasticChildren[1].alignY = "end";
-                    this.options.children = [this.elasticChildren[1]];
+                    /**
+                     * An ease-out pattern (inverted wrt y = __lastChildElasticAmount / 2) is applied to the original delta.
+                     * Since the ease-out pattern returns a positive number, Math.ceil (and not Math.floor) is used to round it. 
+                     * The __finalDelta goes from the original delta to 0.    
+                     */
+                    const _finalDelta = Math.ceil(delta * Math.pow(__progress, lastChildObject.elasticResistance));
+
+                    /**
+                     * The current scroll-position is at the right/bottom of the passed container, the snap scrolling
+                     * will be triggered on lastChild (if it was passed) with align = "end".
+                     */
+                    if(finalPos + _finalDelta >= _bottomElasticBoundary) {
+                        lastChildObject.alignX = "end";
+                        lastChildObject.alignY = "end";
+                        lastChildObject.snapEasingX = lastChildObject.elasticEasingX || this.options.elasticEasingX;
+                        lastChildObject.snapEasingY = lastChildObject.elasticEasingY || this.options.elasticEasingY;
+                        this.options.children = [lastChildObject];
+                    }
+
+                    return _finalDelta;
                 }
-
-                return __finalDelta;
             }
         
             //The snap scrolling won't be triggered because we're not 
@@ -158,24 +219,42 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
 
         if(this.onXAxis) {
             this.originalBuilder.options.speedModifierX = (deltaX, deltaY) => {
+                let _leftChildObject = this.#childrenMap.get("left");
+                let _rightChildObject = this.#childrenMap.get("right");
+
+                if(_leftChildObject === undefined || _rightChildObject === undefined) {
+                    this.#remapElasticChildren();
+                    _leftChildObject = this.#childrenMap.get("left");
+                    _rightChildObject = this.#childrenMap.get("right");
+                }
+                
                 return this.elasticSpeedModifier(
                     deltaX, 
                     uss.getFinalXPosition(this.originalContainer, this.options), 
                     uss.getMaxScrollX,
-                    this.options.leftChild, 
-                    this.options.rightChild
+                    _leftChildObject, 
+                    _rightChildObject
                 );
             }
         }
         
         if(this.onYAxis) {
             this.originalBuilder.options.speedModifierY = (deltaX, deltaY) => {
+                let _topChildObject = this.#childrenMap.get("top");
+                let _bottomChildObject = this.#childrenMap.get("bottom");
+
+                if(_topChildObject === undefined || _bottomChildObject === undefined) {
+                    this.#remapElasticChildren();
+                    _topChildObject = this.#childrenMap.get("top");
+                    _bottomChildObject = this.#childrenMap.get("bottom");
+                }
+                
                 return this.elasticSpeedModifier(
                     deltaY, 
                     uss.getFinalYPosition(this.originalContainer, this.options), 
                     uss.getMaxScrollY,
-                    this.options.topChild, 
-                    this.options.bottomChild
+                    _topChildObject, 
+                    _bottomChildObject
                 );
             }
         }

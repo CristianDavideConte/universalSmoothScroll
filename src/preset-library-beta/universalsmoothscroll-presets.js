@@ -1,9 +1,6 @@
 /**
  * TODO: 
- * - elasticScrolling should have 4 children (top, left, bottom, right) instead of 2
- * - the options.elasticAmount property of elasticScrolling should be part of the options.children property
- * - if options.elasticAmount of an options.children's object is not passed it should default to 
- *    the parent's padding instead of returning an error  
+ * - make elasticScrolling work properly with onXAxis = true && onYAxis = true
  * - add speedModifiers to elasticScrolling without breaking the scrolling
  * 
  * - make the _handlePointerMoveEvent of SmoothScrollBuilder dependent on the options.onXAxis/onYAxis passed
@@ -27,9 +24,16 @@
 
 /**
  * Each of this functions should have an input interface that:
- *  - has the container as the first parameter
+ *  - has the "container" as the first parameter
  *  - has an "options" object as the second parameter
- *  - every function-specific input should be a property of the "options" parameter
+ *  - returns a class that extends/ is a SmoothScrollBuilder
+ * 
+ * Every effect-specific input:
+ * - should be a property of the "options" parameter
+ * 
+ * Each returned SmoothScrollBuilder:
+ *  - can be the "container" parameter of other functions to enable chaining 
+ *  - keeps track of a reference its own options object, which cannot be modified by other SmoothScrollBuilders.
  */
 
 import { ElasticScrollBuilder } from "./uss-builder-elasticscroll.js";
@@ -171,7 +175,7 @@ export function addSmoothScrolling(
  *                                   - align: "start" if you want element to be left-aligned on the x-axis and top-aligned on the y-axis.
  *                                            "end" if you want element to be right-aligned on the x-axis and bottom-aligned on the y-axis.
  *                                            Any other value if you want element to be center-aligned on both axes.
- * @param {Number} [options.snapDelay=0] The number of milliseconds that will be waited from the end of the smooth scroll part of this scroll-animation 
+ * @param {Number} [options.activationDelay=0] The number of milliseconds that will be waited from the end of the smooth scroll part of this scroll-animation 
  *                                       in order to trigger the beginning of the snap-into-view part.
  * @param {Function} [options.snapEasingX] A valid stepLengthCalculator that will control the easing of the snap-into-view part of this 
  *                                         scroll-animation (on the x-axis) of container. 
@@ -186,7 +190,7 @@ export function addSnapScrolling(
         onXAxis: false,
         onYAxis: "mandatory",
         callback: () => {},
-        snapDelay: 0,
+        activationDelay: 0,
         children: [],
         snapEasingX: (remaning, ot, t, total) => (total - remaning) / 25 + 1,
         snapEasingY: (remaning, ot, t, total) => (total - remaning) / 25 + 1,
@@ -212,6 +216,13 @@ export function addSnapScrolling(
     options.callback = () => {};
     container = addSmoothScrolling(container, options);
     options.callback = _originalCallback;
+
+    //Check if the options.activationDelay parameter is a number >= 0.
+    options.activationDelay = options.activationDelay || 0;
+    if(!Number.isFinite(options.activationDelay) || options.activationDelay < 0) {
+        uss._errorLogger(options.debugString, "the options.activationDelay parameter to be a number >= 0", options.activationDelay);
+        return;
+    }
 
     //Check if the options.children parameter is an array.
     if(!Array.isArray(options.children)) {
@@ -263,14 +274,8 @@ export function addSnapScrolling(
  * @param {Object} options An Object which containing the elastic scrolling preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if the elastic smooth scrolling should be enabled on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=true] True if the elastic smooth scrolling should be enabled on the y-axis of container, false otherwise.
- * @param {Array} [options.children] An array of 1 or 2 Objects that have only 1 property:
- *                                   - element: a direct children of container.
- *                                   options.children[0] should point to the element that will be left/top aligned after the elastic part of this scroll-animation. 
- *                                   options.children[1] should point to the element that will be right/bottom aligned after the elastic part of this scroll-animation.
- * @param {Number} [options.elasticAmount=100] The region of pixels from the left/top and the right/bottom borders of container that will trigger
- *                                             the elastic part of this scroll-animation when traspassed by the scroll-position of container.
- * @param {Number} [options.elasticResistance=3] The higher this number is the more resistance will be applied to the elastic part of the scroll-animation.
- *                                               The lowest possible value is 0, which means that no resistance will be applied.
+ * @param {Array} [options.children] TODO
+ * 
  * @param {Function} [options.elasticEasingX] A valid stepLengthCalculator that will control the easing of the elastic part of this 
  *                                            scroll-animation (on the x-axis) of container. 
  * @param {Function} [options.elasticEasingY] A valid stepLengthCalculator that will control the easing of the elastic part of this 
@@ -284,11 +289,10 @@ export function addElasticScrolling(
         onXAxis: false,
         onYAxis: true,
         callback: () => {},
+        activationDelay: 0,
         children: [],
-        //elasticAmount: 100,
-        //elasticResistance: 3,
-        //elasticEasingX: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
-        //elasticEasingY: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
+        elasticEasingX: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
+        elasticEasingY: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
     }, 
 ) {
     //Check if the options parameter is a valid Object.
@@ -304,23 +308,14 @@ export function addElasticScrolling(
         uss._errorLogger(options.debugString, "onXAxis and/or onYAxis to be !== false", false);
         return;
     }
-    
-    //Check if the options.elasticAmount is a number >= 0.
-    if(!Number.isFinite(options.elasticAmount) || options.elasticAmount < 0) {
-        uss._errorLogger(options.debugString, "options.elasticAmount to be a number >= 0", options.elasticAmount);
-        return;
-    }
-
-    //Check if the options.elasticResistance is a number >= 0.
-    if(!Number.isFinite(options.elasticResistance) || options.elasticResistance < 0) options.elasticResistance = 3;
 
     if(options.onXAxis) options.onXAxis = "mandatory";
     if(options.onYAxis) options.onYAxis = "mandatory";
 
-    //Default easing behaviors: ease-out-like.
-    options.snapEasingX = typeof options.elasticEasingX === "function" ? options.elasticEasingX : (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110);
-    options.snapEasingY = typeof options.elasticEasingY === "function" ? options.elasticEasingY : (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110);
-    options.snapDelay = 60; //Debounce time
+    //Default easing behaviors: ease-out-like with 60ms of debounce time.
+    if(typeof options.elasticEasingX !== "function") options.elasticEasingX = (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110);
+    if(typeof options.elasticEasingY !== "function") options.elasticEasingY = (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110);
+    options.activationDelay = options.activationDelay || 60;
     
     container = addSnapScrolling(container, options);
 

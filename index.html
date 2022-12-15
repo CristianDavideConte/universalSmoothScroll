@@ -63,14 +63,12 @@
       </div>
       <div id = "section2" class = "page">
         <section id = "yScroller">
-          <!-- <button id = "yScrollerUp">&uarr;</button> -->
           <div id = "yScrollerSection" class = "scrollerSections">
             <div id = "section12" class = "listItem"></div>
             <div id = "section22" class = "listItem"></div>
             <div id = "section32" class = "listItem"></div>
             <div id = "section42" class = "listItem"></div>
           </div>
-          <!-- <button id = "yScrollerDown">&darr;</button> -->
         </section>
       </div>
     </div>
@@ -79,14 +77,12 @@
     <div class = "sections-container">
       <div id = "section3" class = "page">
         <section id = "xScroller">
-          <!-- <button id = "xScrollerLeft">&larr;</button> -->
           <div id = "xScrollerSection" class = "scrollerSections">
             <div id = "section11" class = "listItem"></div>
             <div id = "section21" class = "listItem"></div>
             <div id = "section31" class = "listItem"></div>
             <div id = "section41" class = "listItem"></div>
           </div>
-          <!-- <button id = "xScrollerRight">&rarr;</button> -->
         </section>
       </div>
       <div id = "section4" class = "page">
@@ -244,8 +240,8 @@
           {
             onYAxis: true,
             onXAxis: true,
-            //easingX: EASE_OUT_CUBIC(), //TODO fix the lag of these
-            //easingY: EASE_OUT_CUBIC(),
+            easingX: EASE_OUT_CUBIC(), //TODO fix the lag of these
+            easingY: EASE_OUT_CUBIC(),
           }
         ), 
         {
@@ -254,37 +250,29 @@
         }
     )
     
-    const _elasticOptions = {
-      onYAxis: true, 
-      overscrollX: true,
-      //elasticEasingY: EASE_OUT_BOUNCE(), 
-      //easingY: EASE_OUT_QUAD(),
-        elasticResistance: 3,
-        elasticAmount: Number.parseFloat(window.getComputedStyle(easeFunctionSelectorList).paddingTop),
-      children: [
-        {
-          element: easeFunctionSelectorList.children[0],
-          //elasticResistance: 3,
-          //getElasticAmount: () => Number.parseFloat(window.getComputedStyle(easeFunctionSelectorList).paddingTop),
-        }, 
-        {
-          element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1],
-          //elasticResistance: 1,
-          //getElasticAmount: () => Number.parseFloat(window.getComputedStyle(easeFunctionSelectorList).paddingBottom),
-        },
-      ],
-    }
-
     const _easeFunctionSelectorListScrollbars = addSmoothScrollbar(
       addElasticScrolling(
         easeFunctionSelectorList,
-        _elasticOptions
+        {
+          onYAxis: true, 
+          overscrollX: true,
+          children: [
+            {
+              element: easeFunctionSelectorList.children[0],
+              position: "top",
+            }, 
+            {
+              element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1],
+              position: "bottom",
+              //elasticEasingY: EASE_OUT_BOUNCE() //EASE_OUT_BOUNCE doesn't work with negative deltas
+            },
+          ],
+        }
       ),
       {
           onYAxis:true,
-      }
+      },
     )
-    uss.addOnResizeEndCallback(() => _elasticOptions.elasticAmount = Number.parseFloat(window.getComputedStyle(easeFunctionSelectorList).paddingTop));
 
     const __yChildren = Array.from(yScrollerSection.children);
     const _yChildren = [
@@ -315,7 +303,7 @@
           children: _yChildren,
           overscrollX: true,
           overscrollY: true,
-          //snapDelay: 100, //Touchpad devices and mouse devices may work better with different delays
+          //activationDelay: 100, //Touchpad devices and mouse devices may work better with different delays
           snapEasingY: EASE_OUT_BOUNCE(700),
         }
       ), 
@@ -384,7 +372,6 @@
           onXAxis:true,
       }
     )
-
 
 
 

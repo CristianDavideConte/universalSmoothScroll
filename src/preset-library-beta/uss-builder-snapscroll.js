@@ -134,15 +134,15 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
             this.#calcEuclideanDistance = (deltas) => Math.abs(deltas[0]);
 
             this.#snapScroll = (deltas, easingX, easingY) => {    
-                const delta = Math.round(deltas[0]);
+                const _delta = Math.round(deltas[0]);
                      
-                if(delta === 0) {
+                if(_delta === 0) {
                     this.executeCallback();
                     return;
                 }
 
                 uss.setXStepLengthCalculator(easingX, this.originalContainer, true, this.options);
-                uss.scrollXBy(delta, this.originalContainer, this.executeCallback, true, false, this.options);
+                uss.scrollXBy(_delta, this.originalContainer, this.executeCallback, true, false, this.options);
             }
         } else if(!this.onXAxis && this.onYAxis) {
             /**
@@ -183,15 +183,15 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
             this.#calcEuclideanDistance = (deltas) => Math.abs(deltas[1]);
 
             this.#snapScroll = (deltas, easingX, easingY) => {         
-                const delta = Math.round(deltas[1]);
+                const _delta = Math.round(deltas[1]);
                      
-                if(delta === 0) {
+                if(_delta === 0) {
                     this.executeCallback();
                     return;
                 }
 
                 uss.setYStepLengthCalculator(easingY, this.originalContainer, true, this.options);
-                uss.scrollYBy(delta, this.originalContainer, this.executeCallback, true, false, this.options);
+                uss.scrollYBy(_delta, this.originalContainer, this.executeCallback, true, false, this.options);
             }
         } else if(this.onXAxis && this.onYAxis) {
             /**
@@ -251,11 +251,11 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
              */
             this.#calcEuclideanDistance = (deltas) => Math.sqrt(deltas[0] * deltas[0] + deltas[1] * deltas[1]);
 
-            this.#snapScroll = (deltas) => {              
-                const deltaX = Math.round(deltas[0]);      
-                const deltaY = Math.round(deltas[1]);
+            this.#snapScroll = (deltas, easingX, easingY) => {     
+                const _deltaX = Math.round(deltas[0]);      
+                const _deltaY = Math.round(deltas[1]);
 
-                if(deltaX === 0 && deltaY === 0) {
+                if(_deltaX === 0 && _deltaY === 0) {
                     this.executeCallback();
                     return;
                 }
@@ -263,8 +263,8 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
                 uss.setXStepLengthCalculator(easingX, this.originalContainer, true, this.options);
                 uss.setYStepLengthCalculator(easingY, this.originalContainer, true, this.options);
                 uss.scrollBy(
-                    deltaX, 
-                    deltaY, 
+                    _deltaX, 
+                    _deltaY, 
                     this.originalContainer, 
                     this.executeCallback, 
                     true, 
@@ -278,19 +278,20 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
         this.snapScrolling = () => {        
             window.clearTimeout(this.snapScrollingTimeout);
             this.snapScrollingTimeout = window.setTimeout(() => {
+                //There's no element to be snap-scrolled.
                 if(this.options.children.length < 1) {
                     this.executeCallback();
                     return;
                 }  
 
-                const _containerPos = this.originalContainer.getBoundingClientRect();
-                const _containerBorders = uss.calcBordersDimensions(this.originalContainer, false, this.options);
+                const __containerPos = this.originalContainer.getBoundingClientRect();
+                const __containerBorders = uss.calcBordersDimensions(this.originalContainer, false, this.options);
 
-                let _minEuclideanDistance = Infinity;
-                let _minDistances = Infinity;
+                let __minEuclideanDistance = Infinity;
+                let __minDistancesArray = null;
 
-                let _snapEasingX = this.options.snapEasingX;
-                let _snapEasingY = this.options.snapEasingY;
+                let __snapEasingX = this.options.snapEasingX;
+                let __snapEasingY = this.options.snapEasingY;
 
                 /**
                 * Find the element to snap-align within the passed children parameter.
@@ -304,41 +305,45 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
                 *  },   
                 */
                 for(const childObject of this.options.children) {
-                    const _elementPos = childObject.element.getBoundingClientRect();
+                    const __elementPos = childObject.element.getBoundingClientRect();
                    
-                    const _distances = this.#calcDistances(
-                        _containerPos, 
-                        _containerBorders, 
-                        _elementPos, 
+                    const __distancesArray = this.#calcDistances(
+                        __containerPos, 
+                        __containerBorders, 
+                        __elementPos, 
                         childObject.alignX,
                         childObject.alignY,
                     );
                     
                     /**
-                     * If _distances is null, the snapping is set on "proximity" 
+                     * If __distancesArray is null, the snapping is set on "proximity" 
                      * and the child is too far.
-                     * Otherwise _distances = [deltaX, deltaY].
+                     * Otherwise __distancesArray = [deltaX, deltaY].
                      */
-                    if(!_distances) continue; 
+                    if(!__distancesArray) continue; 
 
-                    const _euclideanDistance = this.#calcEuclideanDistance(_distances);
+                    const __euclideanDistance = this.#calcEuclideanDistance(__distancesArray);
 
-                    if(_euclideanDistance <= _minEuclideanDistance) {
-                        _minEuclideanDistance = _euclideanDistance;
-                        _minDistances = _distances;
+                    //Save the best result's parameter so far.
+                    if(__euclideanDistance <= __minEuclideanDistance) {
+                        __minEuclideanDistance = __euclideanDistance;
+                        __minDistancesArray = __distancesArray;
 
-                        _snapEasingX = childObject.snapEasingX || this.options.snapEasingX;
-                        _snapEasingY = childObject.snapEasingY || this.options.snapEasingY;
+                        __snapEasingX = childObject.snapEasingX || this.options.snapEasingX;
+                        __snapEasingY = childObject.snapEasingY || this.options.snapEasingY;
                     }
                 }
 
-                //There's no element to be snap-scrolled.
-                if(!_minDistances) return; 
+                //If __minDistancesArray is null, there's no element close enough to be snap-scrolled.
+                if(!__minDistancesArray) {
+                    this.executeCallback();
+                    return;
+                } 
 
-                this.#snapScroll(_minDistances, _snapEasingX, _snapEasingY);
+                this.#snapScroll(__minDistancesArray, __snapEasingX, __snapEasingY);
                 this.scrollbarX.updatePosition();
                 this.scrollbarY.updatePosition();
-            }, this.options.snapDelay);
+            }, this.options.activationDelay);
         }
         
         uss.addOnResizeEndCallback(this.snapScrolling); 
