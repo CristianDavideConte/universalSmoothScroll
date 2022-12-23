@@ -1,7 +1,9 @@
 /**
  * TODO: 
- * - make elasticScrolling work properly with onXAxis = true && onYAxis = true
+ * - make elasticScrolling work properly with onXAxis = true && onYAxis = true (refactor probably needed)
  * - add speedModifiers to elasticScrolling without breaking the scrolling
+ * - fix speedModifiers affecting smoothscrollbars speed when user has its pointer down 
+ * - separate speedModifiers of wheel events from the ones of pointerEvents (or pass the event as a parameter)
  * 
  * - make the _handlePointerMoveEvent of SmoothScrollBuilder dependent on the options.onXAxis/onYAxis passed
  * 
@@ -15,7 +17,6 @@
  * 
  * - improve snap scrolling performances (intersection observers) 
  * 
- * - separate speedModifiers of wheel events from the ones of pointerEvents
  * - smooth scrolling with animation allowed
  * - fix mobile multitasking freezing scrollbars
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
@@ -384,7 +385,7 @@ export function addSmoothScrollbar(
 
     container = addSmoothScrolling(container, options);
 
-    //Check if the parent node has position:static because it breaks the scrollbars positions. 
+    //Check if the parent node has position:static because it breaks the scrollbars positions.
     if(container.originalContainer !== document.body && 
        container.originalContainer !== document.documentElement &&
        window.getComputedStyle(container.originalContainer.parentNode).position === "static"

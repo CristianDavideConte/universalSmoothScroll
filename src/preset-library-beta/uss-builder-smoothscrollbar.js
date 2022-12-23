@@ -8,9 +8,11 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
     constructor(container, options) {
         super(container, options);
 
-        this.#scrollbarSetup = (scrollbar, setCalculatorFun, handleOriginalContainerScrolling, handlePointerDownOnScrollbarContainer) => {
-            //Disengage the scrollbar and execute any callback.
+        this.#scrollbarSetup = (scrollbar, setCalculatorFun, setSpeedModifierFun, handleOriginalContainerScrolling, handlePointerDownOnScrollbarContainer) => {
             let __pointerIsHoveringTrack = false;
+            let __originalSpeedModifier;
+
+            //Disengage the scrollbar and execute any callback.
             const __disengageScrollbar = (event) => {    
                 //Wait for the initial pointer to leave the touch-surface.
                 if(event.pointerId !== scrollbar.pointerId) return;
@@ -24,6 +26,9 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 //Remove the unecessary listeners.
                 window.removeEventListener("pointermove", handleOriginalContainerScrolling, {passive:false});     
                 window.removeEventListener("pointerup", __disengageScrollbar, {passive:false});   
+
+                //Restore the original speedModifier of this.originalContainer.
+                    //setSpeedModifierFun(__originalSpeedModifier);
 
                 //Check if the scrollbar status should be set to idle.
                 if(!__pointerIsHoveringTrack) {
@@ -43,6 +48,11 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 
                 //Makes the scrollbar's scroll-animations instantly follow the pointer movements.
                 setCalculatorFun(remaning => remaning, scrollbar.container, false, this.options); 
+                
+                //Temporarely disable the speedModifier of this.originalContainer
+                //so that the pointer movement is followed precisely.
+                    //__originalSpeedModifier = setSpeedModifierFun();
+
                 window.addEventListener("pointerup", __disengageScrollbar, {passive:false});
                 window.addEventListener("pointermove", handleOriginalContainerScrolling, {passive:false});   
                 
@@ -103,6 +113,8 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         if(this.onXAxis) this.originalContainer.style.overflowX = "hidden";
         if(this.onYAxis) this.originalContainer.style.overflowY = "hidden";
 
+        const _scrollbarContainerPos = this.originalContainer === document.body || this.originalContainer === document.documentElement ? "fixed": "absolute";
+        
         if(this.onXAxis) {
             const _offset = this.onYAxis ? this.options.thumbSize : 0;
             const _scrollbar = {
@@ -114,7 +126,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 isEngaged: () => _scrollbar.pointerId !== null,
                 updateThumbLength: () => {
                     const __size = _scrollbar.container.clientWidth * _scrollbar.container.clientWidth / this.originalContainer.scrollWidth;
-                    _scrollbar.thumb.style.width = __size;
+                    _scrollbar.thumb.style.width = `${__size}px`;
                     _scrollbar.thumb.style.marginLeft = `-${__size}px`;
                 },
                 updateCache: () => uss.getMaxScrollX(this.originalContainer, true, this.options)
@@ -129,7 +141,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             _scrollbar.container.style = `
                 contain: style paint;
                 touch-action: none;
-                position: absolute;
+                position: ${_scrollbarContainerPos};
                 z-index: 100;
                 bottom: 0px;
                 left: 0px;
@@ -242,7 +254,19 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            this.scrollbarXObserver = this.#scrollbarSetup(_scrollbar, uss.setXStepLengthCalculator, _handleOriginalContainerScrolling, _handlePointerDownOnScrollbarContainer);
+            const _setSpeedModifier = (newSpeedModifierX = (deltaX, deltaY) => deltaX) => {
+                const __originalSpeedModifier = this.originalBuilder.options.speedModifierX;
+                //this.originalBuilder.options.speedModifierX = newSpeedModifierX; //Doesn't work well with elastic scrolling since it's the same speedModifier
+                return __originalSpeedModifier;
+            }
+
+            this.scrollbarXObserver = this.#scrollbarSetup(
+                _scrollbar, 
+                uss.setXStepLengthCalculator, 
+                _setSpeedModifier,
+                _handleOriginalContainerScrolling, 
+                _handlePointerDownOnScrollbarContainer
+            );
 
             //Add the scrollbar to the container.
             _scrollbar.track.appendChild(_scrollbar.thumb);
@@ -262,7 +286,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 isEngaged: () => _scrollbar.pointerId !== null,
                 updateThumbLength: () => {
                     const __size = _scrollbar.container.clientHeight * _scrollbar.container.clientHeight / this.originalContainer.scrollHeight;
-                    _scrollbar.thumb.style.height = __size;
+                    _scrollbar.thumb.style.height = `${__size}px`;
                     _scrollbar.thumb.style.marginTop = `-${__size}px`;
                 },
                 updateCache: () => uss.getMaxScrollY(this.originalContainer, true, this.options)
@@ -277,7 +301,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             _scrollbar.container.style = `
                 contain: style paint;
                 touch-action: none;
-                position: absolute;
+                position: ${_scrollbarContainerPos};
                 z-index: 100;
                 top: 0px;
                 right: 0px;
@@ -390,7 +414,19 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            this.scrollbarYObserver = this.#scrollbarSetup(_scrollbar, uss.setYStepLengthCalculator, _handleOriginalContainerScrolling, _handlePointerDownOnScrollbarContainer);
+            const _setSpeedModifier = (newSpeedModifierY = (deltaX, deltaY) => deltaY) => {
+                const __originalSpeedModifier = this.originalBuilder.options.speedModifierY;
+                //this.originalBuilder.options.speedModifierY = newSpeedModifierY; //Doesn't work well with elastic scrolling since it's the same speedModifier
+                return __originalSpeedModifier;
+            }
+
+            this.scrollbarYObserver = this.#scrollbarSetup(
+                _scrollbar, 
+                uss.setYStepLengthCalculator, 
+                _setSpeedModifier,
+                _handleOriginalContainerScrolling, 
+                _handlePointerDownOnScrollbarContainer
+            );
 
             //Add the scrollbar to the container.
             _scrollbar.track.appendChild(_scrollbar.thumb);
