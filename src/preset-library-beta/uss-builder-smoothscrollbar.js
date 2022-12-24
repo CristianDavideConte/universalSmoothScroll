@@ -28,7 +28,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 window.removeEventListener("pointerup", __disengageScrollbar, {passive:false});   
 
                 //Restore the original speedModifier of this.originalContainer.
-                    //setSpeedModifierFun(__originalSpeedModifier);
+                setSpeedModifierFun(__originalSpeedModifier);
 
                 //Check if the scrollbar status should be set to idle.
                 if(!__pointerIsHoveringTrack) {
@@ -51,7 +51,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 
                 //Temporarely disable the speedModifier of this.originalContainer
                 //so that the pointer movement is followed precisely.
-                    //__originalSpeedModifier = setSpeedModifierFun();
+                __originalSpeedModifier = setSpeedModifierFun();
 
                 window.addEventListener("pointerup", __disengageScrollbar, {passive:false});
                 window.addEventListener("pointermove", handleOriginalContainerScrolling, {passive:false});   
@@ -95,7 +95,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             //If new children are added/removed from the originalContainer (and its children) update the maxScrollX/Y
             //cached values and the scrollbar position (useful for lazy loading).
             const __mutationObserver = new MutationObserver(() => {
-                scrollbar.updateCache(); //Perhaps introduce a "flushCache" method in the uss object
+                scrollbar.updateCache(); //TODO: Perhaps introduce a "flushCache" method in the uss object
                 scrollbar.updateThumbLength();
                 scrollbar.updatePosition();
             });
@@ -254,9 +254,9 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            const _setSpeedModifier = (newSpeedModifierX = (deltaX, deltaY) => deltaX) => {
+            const _setSpeedModifier = (newSpeedModifier = (deltaX, deltaY) => deltaX) => {
                 const __originalSpeedModifier = this.originalBuilder.options.speedModifierX;
-                //this.originalBuilder.options.speedModifierX = newSpeedModifierX; //Doesn't work well with elastic scrolling since it's the same speedModifier
+                this.originalBuilder.speedModifierXQueue[0] = newSpeedModifier;
                 return __originalSpeedModifier;
             }
 
@@ -414,9 +414,9 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 );
             }
 
-            const _setSpeedModifier = (newSpeedModifierY = (deltaX, deltaY) => deltaY) => {
+            const _setSpeedModifier = (newSpeedModifier = (deltaX, deltaY) => deltaY) => {
                 const __originalSpeedModifier = this.originalBuilder.options.speedModifierY;
-                //this.originalBuilder.options.speedModifierY = newSpeedModifierY; //Doesn't work well with elastic scrolling since it's the same speedModifier
+                this.originalBuilder.speedModifierYQueue[0] = newSpeedModifier;
                 return __originalSpeedModifier;
             }
 
@@ -441,6 +441,14 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         this.container.addCallback(callback);
     }
 
+    addSpeedModifierX(speedModifier) {
+        this.container.addSpeedModifierX(speedModifier);
+    }
+    
+    addSpeedModifierY(speedModifier) {
+        this.container.addSpeedModifierY(speedModifier);
+    }
+
     executeCallback() {
         this.container.executeCallback();
     }
@@ -454,22 +462,22 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
     }
 
     get style() {
-        return this.originalBuilder.style;
+        return this.container.style;
     }
 
     get currentXPosition() {
-        return this.originalBuilder.currentXPosition;
+        return this.container.currentXPosition;
     }
 
     get currentYPosition() {
-        return this.originalBuilder.currentYPosition;
+        return this.container.currentYPosition;
     }
     
     get scrollbarX() {
-        return this.originalBuilder.scrollbarX;
+        return this.container.scrollbarX;
     }
 
     get scrollbarY() {
-        return this.originalBuilder.scrollbarY;
+        return this.container.scrollbarY;
     }
 }

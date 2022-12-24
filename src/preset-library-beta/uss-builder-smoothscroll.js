@@ -6,6 +6,7 @@ export class SmoothScrollBuilder {
     #overscrollConditionsY;
     #overscrollConditionsXFilter;
     #overscrollConditionsYFilter;
+
     #smoothScroller;
     #touchScrollExtender;
 
@@ -13,14 +14,23 @@ export class SmoothScrollBuilder {
     #getCurrentXPosition;
     #getCurrentYPosition;
 
+
     //Parameters already sanitized.
     constructor(container, options) {
         this.container = container; 
         this.options = options;
         
+        this.callbackQueue = [];
+        this.speedModifierXQueue = [];
+        this.speedModifierYQueue = [];
+
         //"bind" is used so "this" can be used inside these functions.
         this.addCallback = this.addCallback.bind(this); 
+        this.addSpeedModifierX = this.addSpeedModifierX.bind(this); 
+        this.addSpeedModifierY = this.addSpeedModifierY.bind(this); 
         this.executeCallback = this.executeCallback.bind(this);
+        this.executeSpeedModifierX = this.executeSpeedModifierX.bind(this);
+        this.executeSpeedModifierY = this.executeSpeedModifierY.bind(this);
     }
 
     build() {
@@ -30,9 +40,14 @@ export class SmoothScrollBuilder {
         this.onXAxis = this.options.onXAxis;
         this.onYAxis = this.options.onYAxis;
         
-        //Save the original callback so that even if it's modified by other builders,
-        //we still have a reference to it.
-        this.callback = this.options.callback;
+        //The only callback initially available is the options.callback one.
+        //Other builders can add other callbacks with the addCallback method. 
+        this.addCallback(this.options.callback);
+
+        //The only speedModifiers initially available are the options.speedModifierX/Y ones.
+        //Other builders can add more speedModifiers with the addSpeedModifierX/Y methods.
+        this.addSpeedModifierX(this.options.speedModifierX);
+        this.addSpeedModifierY(this.options.speedModifierY);
 
         //Default scrollbars objects.
         this.scrollbarX = { previousPointerId: null, isEngaged: () => false, updatePosition: () => {} };
@@ -57,7 +72,7 @@ export class SmoothScrollBuilder {
             //before considering the overscroll conditions.
             if(this.#overscrollConditionsXFilter(deltaX, deltaY)) return false;
 
-            const __nextPos = this.currentXPosition + this.options.speedModifierX(deltaX, deltaY, event);
+            const __nextPos = this.currentXPosition + this.executeSpeedModifierX(deltaX, deltaY, event);
             const __maxScroll = uss.getMaxScrollX(this.originalContainer, false, this.options);
             return (__nextPos <= 0 && deltaX < 0) || (__nextPos >= __maxScroll && deltaX > 0);
         } : () => false;
@@ -80,7 +95,7 @@ export class SmoothScrollBuilder {
             //before considering the overscroll conditions.
             if(this.#overscrollConditionsYFilter(deltaX, deltaY)) return false;
 
-            const __nextPos = this.currentYPosition + this.options.speedModifierY(deltaX, deltaY, event);
+            const __nextPos = this.currentYPosition + this.executeSpeedModifierY(deltaX, deltaY, event);
             const __maxScroll = uss.getMaxScrollY(this.originalContainer, false, this.options);
             return (__nextPos <= 0 && deltaY < 0) || (__nextPos >= __maxScroll && deltaY > 0);
         } : () => false;
@@ -93,7 +108,14 @@ export class SmoothScrollBuilder {
 
         if(this.onXAxis && !this.onYAxis) {
             this.#smoothScroller = (deltaX, deltaY, event) => { 
-                uss.scrollXBy(this.options.speedModifierX(deltaX, deltaY, event), this.originalContainer, this.executeCallback, false, true, this.options);
+                uss.scrollXBy(
+                    this.executeSpeedModifierX(deltaX, deltaY, event), 
+                    this.originalContainer, 
+                    this.executeCallback, 
+                    false, 
+                    true, 
+                    this.options
+                );
             }
 
             this.#touchScrollExtender = (event) => {
@@ -118,7 +140,14 @@ export class SmoothScrollBuilder {
             }
         } else if(!this.onXAxis && this.onYAxis) {
             this.#smoothScroller = (deltaX, deltaY, event) => {
-                uss.scrollYBy(this.options.speedModifierY(deltaX, deltaY, event), this.originalContainer, this.executeCallback, false, true, this.options);                                                            
+                uss.scrollYBy(
+                    this.executeSpeedModifierY(deltaX, deltaY, event), 
+                    this.originalContainer, 
+                    this.executeCallback, 
+                    false, 
+                    true, 
+                    this.options
+                );                                                            
             } 
 
             this.#touchScrollExtender = (event) => {
@@ -144,8 +173,8 @@ export class SmoothScrollBuilder {
         } else {
             this.#smoothScroller = (deltaX, deltaY, event) => {
                 uss.scrollBy(
-                    this.options.speedModifierX(deltaX, deltaY, event), 
-                    this.options.speedModifierY(deltaX, deltaY, event), 
+                    this.executeSpeedModifierX(deltaX, deltaY, event), 
+                    this.executeSpeedModifierY(deltaX, deltaY, event), 
                     this.originalContainer, 
                     this.executeCallback, 
                     false, 
@@ -359,19 +388,68 @@ export class SmoothScrollBuilder {
      * @param {Function} callback A function that will be invoked after all the current callback's queue functions.
      */
     addCallback(callback) {
-        const _originalCallback = this.callback;
-        this.callback = () => {
-            _originalCallback();
-            callback();
+        this.callbackQueue.push(callback);
+    }
+
+    /**
+     * The passed speedModifier will be added to the x-axis speedModifiers' queue.
+     * The passed speedModifier will be the last one to modify the deltaX value and its deltaX
+     * will be the returned value of all the other speedModifiers in the queue.
+     * @param {Function} speedModifier A function that will modify the deltaX value to add to the current scroll-animation,
+     *                                 it will be invoked after all the current x-axis speedModifiers' queue.
+     */
+    addSpeedModifierX(speedModifier) {
+        this.speedModifierXQueue.push(speedModifier);
+    }
+
+    /**
+     * The passed speedModifier will be added to the y-axis speedModifiers' queue.
+     * The passed speedModifier will be the last one to modify the deltaY value and its deltaY
+     * will be the returned value of all the other speedModifiers in the queue.
+     * @param {Function} speedModifier A function that will modify the deltaY value to add to the current scroll-animation,
+     *                                 it will be invoked after all the current y-axis speedModifiers' queue.
+     */
+    addSpeedModifierY(speedModifier) {
+        this.speedModifierYQueue.push(speedModifier);
+    }
+
+    /**
+     * If the user is not holding down any scrollbar or touch-related-pointer,
+     * executes every callback inside this.callbackQueue. 
+     * Wait for the pointerup event otherwise.
+     */
+    executeCallback() {
+        if(this.#pointersDownIds.length === 0) {
+            for(const callback of this.callbackQueue) {
+                callback();
+            }
         }
     }
 
     /**
-     * Execute this.callback only if the user is not holding any scrollbar
-     * or the touch-related-pointer down, wait for the pointerup event otherwise.
+     * @param {*} deltaX The original deltaX that should be added to the current scroll-animation on the x-axis of this.orginalContainer. 
+     * @param {*} deltaY The original deltaY that should be added to the current scroll-animation on the y-axis of this.orginalContainer.
+     * @param {*} event The original event that triggered this method.
+     * @returns The final deltaX modified accordingly to all the speedModifiers inside this.speedModifierXQueue.
      */
-    executeCallback() {
-        if(this.#pointersDownIds.length === 0) this.callback();
+    executeSpeedModifierX(deltaX, deltaY, event) {
+        for(const speedModifier of this.speedModifierXQueue) {
+            deltaX = speedModifier(deltaX, deltaY, event);
+        }
+        return deltaX;
+    }
+
+    /**
+     * @param {*} deltaX The original deltaX that should be added to the current scroll-animation on the x-axis of this.orginalContainer. 
+     * @param {*} deltaY The original deltaY that should be added to the current scroll-animation on the y-axis of this.orginalContainer.
+     * @param {*} event The original event that triggered this method.
+     * @returns The final deltaY modified accordingly to all the speedModifiers inside this.speedModifierYQueue.
+     */
+    executeSpeedModifierY(deltaX, deltaY, event) {
+        for(const speedModifier of this.speedModifierYQueue) {
+            deltaY = speedModifier(deltaX, deltaY, event);
+        }
+        return deltaY;
     }
 
     get originalContainer() {

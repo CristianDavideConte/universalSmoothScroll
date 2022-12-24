@@ -129,7 +129,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
         this.#remapElasticChildren();
 
         this.elasticSpeedModifier = (delta, finalPos, getMaxScroll, firstChildObject, lastChildObject) => {
-            const _nextFinalPos = finalPos + delta;
+            const _nextFinalPos = finalPos + delta; 
 
             if(firstChildObject) {
                 const _firstChildElasticAmount = firstChildObject.getElasticAmount(this.options); 
@@ -218,50 +218,62 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
         }
 
         if(this.onXAxis) {
-            this.originalBuilder.options.speedModifierX = (deltaX, deltaY) => {
-                let _leftChildObject = this.#childrenMap.get("left");
-                let _rightChildObject = this.#childrenMap.get("right");
+            this.addSpeedModifierX(
+                (deltaX, deltaY, event) => {
+                    let _leftChildObject = this.#childrenMap.get("left");
+                    let _rightChildObject = this.#childrenMap.get("right");
 
-                if(_leftChildObject === undefined || _rightChildObject === undefined) {
-                    this.#remapElasticChildren();
-                    _leftChildObject = this.#childrenMap.get("left");
-                    _rightChildObject = this.#childrenMap.get("right");
+                    if(_leftChildObject === undefined || _rightChildObject === undefined) {
+                        this.#remapElasticChildren();
+                        _leftChildObject = this.#childrenMap.get("left");
+                        _rightChildObject = this.#childrenMap.get("right");
+                    }
+                    
+                    return this.elasticSpeedModifier(
+                        deltaX, 
+                        uss.getFinalXPosition(this.originalContainer, this.options), 
+                        uss.getMaxScrollX,
+                        _leftChildObject, 
+                        _rightChildObject
+                    );
                 }
-                
-                return this.elasticSpeedModifier(
-                    deltaX, 
-                    uss.getFinalXPosition(this.originalContainer, this.options), 
-                    uss.getMaxScrollX,
-                    _leftChildObject, 
-                    _rightChildObject
-                );
-            }
+            );
         }
         
         if(this.onYAxis) {
-            this.originalBuilder.options.speedModifierY = (deltaX, deltaY) => {
-                let _topChildObject = this.#childrenMap.get("top");
-                let _bottomChildObject = this.#childrenMap.get("bottom");
+            this.addSpeedModifierY(
+                (deltaX, deltaY, event) => {
+                    let _topChildObject = this.#childrenMap.get("top");
+                    let _bottomChildObject = this.#childrenMap.get("bottom");
 
-                if(_topChildObject === undefined || _bottomChildObject === undefined) {
-                    this.#remapElasticChildren();
-                    _topChildObject = this.#childrenMap.get("top");
-                    _bottomChildObject = this.#childrenMap.get("bottom");
+                    if(_topChildObject === undefined || _bottomChildObject === undefined) {
+                        this.#remapElasticChildren();
+                        _topChildObject = this.#childrenMap.get("top");
+                        _bottomChildObject = this.#childrenMap.get("bottom");
+                    }
+                    
+                    return this.elasticSpeedModifier(
+                        deltaY, 
+                        uss.getFinalYPosition(this.originalContainer, this.options), 
+                        uss.getMaxScrollY,
+                        _topChildObject, 
+                        _bottomChildObject
+                    );
                 }
-                
-                return this.elasticSpeedModifier(
-                    deltaY, 
-                    uss.getFinalYPosition(this.originalContainer, this.options), 
-                    uss.getMaxScrollY,
-                    _topChildObject, 
-                    _bottomChildObject
-                );
-            }
+            );
         }
     }
 
     addCallback(callback) {
         this.container.addCallback(callback);
+    }
+
+    addSpeedModifierX(speedModifier) {
+        this.container.addSpeedModifierX(speedModifier);
+    }
+    
+    addSpeedModifierY(speedModifier) {
+        this.container.addSpeedModifierY(speedModifier);
     }
 
     executeCallback() {
@@ -277,22 +289,22 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
     }
     
     get style() {
-        return this.originalBuilder.style;
+        return this.container.style;
     }
 
     get currentXPosition() {
-        return this.originalBuilder.currentXPosition;
+        return this.container.currentXPosition;
     }
 
     get currentYPosition() {
-        return this.originalBuilder.currentYPosition;
+        return this.container.currentYPosition;
     }
     
     get scrollbarX() {
-        return this.originalBuilder.scrollbarX;
+        return this.container.scrollbarX;
     }
 
     get scrollbarY() {
-        return this.originalBuilder.scrollbarY;
+        return this.container.scrollbarY;
     }
 }

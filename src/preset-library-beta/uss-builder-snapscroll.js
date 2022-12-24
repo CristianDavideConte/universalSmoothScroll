@@ -347,15 +347,20 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
         }
         
         uss.addOnResizeEndCallback(this.snapScrolling); 
-        this.container.addCallback(this.snapScrolling);
+        this.addCallback(this.snapScrolling);
         this.snapScrolling();
     }
 
-    /**
-     * Execute this.callback only at the end of the snap scroll. 
-     */
     addCallback(callback) {
-        super.addCallback(callback); 
+        this.container.addCallback(callback); 
+    }
+
+    addSpeedModifierX(speedModifier) {
+        this.container.addSpeedModifierX(speedModifier);
+    }
+    
+    addSpeedModifierY(speedModifier) {
+        this.container.addSpeedModifierY(speedModifier);
     }
 
     executeCallback() {
@@ -371,22 +376,22 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
     }
     
     get style() {
-        return this.originalBuilder.style;
+        return this.container.style;
     }
     
     get currentXPosition() {
-        return this.originalBuilder.currentXPosition;
+        return this.container.currentXPosition;
     }
 
     get currentYPosition() {
-        return this.originalBuilder.currentYPosition;
+        return this.container.currentYPosition;
     }
     
     get scrollbarX() {
-        return this.originalBuilder.scrollbarX;
+        return this.container.scrollbarX;
     }
 
     get scrollbarY() {
-        return this.originalBuilder.scrollbarY;
+        return this.container.scrollbarY;
     }
 }
