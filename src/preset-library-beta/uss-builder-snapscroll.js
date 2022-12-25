@@ -4,8 +4,8 @@
  * addSnapScrolling{
  *     container,
  *     {   
- *         onXAxis: true,
- *         onYAxis: true,
+ *         onXAxis: "mandatory",
+ *         onYAxis: "proximity",
  *         ...
  *         children: [ //OPTIONAL
  *            {
@@ -274,78 +274,87 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
             }
         }
 
-        
-        this.snapScrolling = () => {        
-            window.clearTimeout(this.snapScrollingTimeout);
-            this.snapScrollingTimeout = window.setTimeout(() => {
-                //There's no element to be snap-scrolled.
-                if(this.options.children.length < 1) {
-                    this.executeCallback();
-                    return;
-                }  
+        /**
+         * Function that invokes all the functions needed to manage the snap-scroll.
+         * It's async because the snap-scroll animation must be completed before 
+         * any other builder starts its effect. 
+         */
+        this.snapScrolling = async () => {
+            return new Promise((resolve) => {
+                this.resolve = resolve;
 
-                const __containerPos = this.originalContainer.getBoundingClientRect();
-                const __containerBorders = uss.calcBordersDimensions(this.originalContainer, false, this.options);
+                window.clearTimeout(this.snapScrollingTimeout);
+                this.snapScrollingTimeout = window.setTimeout(() => {
+                    //There's no element to be snap-scrolled.
+                    if(this.options.children.length < 1) {
+                        this.executeCallback();
+                        return;
+                    }  
 
-                let __minEuclideanDistance = Infinity;
-                let __minDistancesArray = null;
+                    const __containerPos = this.originalContainer.getBoundingClientRect();
+                    const __containerBorders = uss.calcBordersDimensions(this.originalContainer, false, this.options);
 
-                let __snapEasingX = this.options.snapEasingX;
-                let __snapEasingY = this.options.snapEasingY;
+                    let __minEuclideanDistance = Infinity;
+                    let __minDistancesArray = null;
 
-                /**
-                * Find the element to snap-align within the passed children parameter.
-                * Example of childObject:
-                *  {
-                *     element: document.getElementById("element1"), 
-                *     alignX: "center",                                                          
-                *     alignY: "center",                                                          
-                *     snapEasingX: () => 25                                                      
-                *     snapEasingY: () => 12                                                      
-                *  },   
-                */
-                for(const childObject of this.options.children) {
-                    const __elementPos = childObject.element.getBoundingClientRect();
-                   
-                    const __distancesArray = this.#calcDistances(
-                        __containerPos, 
-                        __containerBorders, 
-                        __elementPos, 
-                        childObject.alignX,
-                        childObject.alignY,
-                    );
-                    
+                    let __snapEasingX = this.options.snapEasingX;
+                    let __snapEasingY = this.options.snapEasingY;
+
                     /**
-                     * If __distancesArray is null, the snapping is set on "proximity" 
-                     * and the child is too far.
-                     * Otherwise __distancesArray = [deltaX, deltaY].
-                     */
-                    if(!__distancesArray) continue; 
+                    * Find the element to snap-align within the passed children parameter.
+                    * Example of childObject:
+                    *  {
+                    *     element: document.getElementById("element1"), 
+                    *     alignX: "center",                                                          
+                    *     alignY: "center",                                                          
+                    *     snapEasingX: () => 25                                                      
+                    *     snapEasingY: () => 12                                                      
+                    *  },   
+                    */
+                    for(const childObject of this.options.children) {
+                        const __elementPos = childObject.element.getBoundingClientRect();
+                    
+                        const __distancesArray = this.#calcDistances(
+                            __containerPos, 
+                            __containerBorders, 
+                            __elementPos, 
+                            childObject.alignX,
+                            childObject.alignY,
+                        );
+                        
+                        /**
+                         * If __distancesArray is null, the snapping is set on "proximity" 
+                         * and the child is too far.
+                         * Otherwise __distancesArray = [deltaX, deltaY].
+                         */
+                        if(!__distancesArray) continue; 
 
-                    const __euclideanDistance = this.#calcEuclideanDistance(__distancesArray);
+                        const __euclideanDistance = this.#calcEuclideanDistance(__distancesArray);
 
-                    //Save the best result's parameter so far.
-                    if(__euclideanDistance <= __minEuclideanDistance) {
-                        __minEuclideanDistance = __euclideanDistance;
-                        __minDistancesArray = __distancesArray;
+                        //Save the best result's parameter so far.
+                        if(__euclideanDistance <= __minEuclideanDistance) {
+                            __minEuclideanDistance = __euclideanDistance;
+                            __minDistancesArray = __distancesArray;
 
-                        __snapEasingX = childObject.snapEasingX || this.options.snapEasingX;
-                        __snapEasingY = childObject.snapEasingY || this.options.snapEasingY;
+                            __snapEasingX = childObject.snapEasingX || this.options.snapEasingX;
+                            __snapEasingY = childObject.snapEasingY || this.options.snapEasingY;
+                        }
                     }
-                }
 
-                //If __minDistancesArray is null, there's no element close enough to be snap-scrolled.
-                if(!__minDistancesArray) {
-                    this.executeCallback();
-                    return;
-                } 
+                    //If __minDistancesArray is null, there's no element close enough to be snap-scrolled.
+                    if(!__minDistancesArray) {
+                        this.executeCallback();
+                        return;
+                    } 
 
-                this.#snapScroll(__minDistancesArray, __snapEasingX, __snapEasingY);
-                this.scrollbarX.updatePosition();
-                this.scrollbarY.updatePosition();
-            }, this.options.activationDelay);
-        }
-        
+                    this.#snapScroll(__minDistancesArray, __snapEasingX, __snapEasingY);
+                    this.scrollbarX.updatePosition();
+                    this.scrollbarY.updatePosition();
+                }, this.options.activationDelay);
+            }
+        )
+    }
+
         uss.addOnResizeEndCallback(this.snapScrolling); 
         this.addCallback(this.snapScrolling);
         this.snapScrolling();
@@ -363,8 +372,9 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
         this.container.addSpeedModifierY(speedModifier);
     }
 
-    executeCallback() {
-        this.callback();
+    async executeCallback() {
+        await this.callback(); //Executes the callback passed to the SnapScrollBuilder
+        this.resolve(); //Tells this.originalBuilder to proceed to the next effect/callback
     }
 
     get originalContainer() {

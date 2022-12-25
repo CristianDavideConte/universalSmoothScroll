@@ -417,11 +417,14 @@ export class SmoothScrollBuilder {
      * If the user is not holding down any scrollbar or touch-related-pointer,
      * executes every callback inside this.callbackQueue. 
      * Wait for the pointerup event otherwise.
+     * Each callback of this.callbackQueue is considered async and executeCallback waits until
+     * the current callback completes and tells this method to proceed to the next callback.
+     * Callbacks that are not actually async will immediately resolve. 
      */
-    executeCallback() {
+    async executeCallback() {
         if(this.#pointersDownIds.length === 0) {
             for(const callback of this.callbackQueue) {
-                callback();
+                await callback();
             }
         }
     }
