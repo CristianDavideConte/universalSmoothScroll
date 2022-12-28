@@ -449,6 +449,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         this.container.addSpeedModifierY(speedModifier);
     }
 
+    //TODO: DECIDE WHAT TO DO OF THIS METHOD SINCE IT'S NOT NEEDED
     executeCallback() {
         this.container.executeCallback();
     }
@@ -460,7 +461,11 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
     get originalBuilder() {
         return this.container.originalBuilder;
     }
-
+    
+    get isPointerDown() {
+        return this.container.isPointerDown;
+    }
+    
     get style() {
         return this.container.style;
     }

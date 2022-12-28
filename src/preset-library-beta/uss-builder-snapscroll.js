@@ -52,7 +52,6 @@ const NO_SNAP = 0;
 
 export class SnapScrollBuilder extends SmoothScrollBuilder {
     
-    
     #calcDistances;
     #calcEuclideanDistance;
     #snapScroll;
@@ -351,13 +350,16 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
                     this.scrollbarX.updatePosition();
                     this.scrollbarY.updatePosition();
                 }, this.options.activationDelay);
-            }
-        )
-    }
+            });
+        }
 
         uss.addOnResizeEndCallback(this.snapScrolling); 
         this.addCallback(this.snapScrolling);
+
+        const _activationDelay = this.options.activationDelay;
+        this.options.activationDelay = 0;
         this.snapScrolling();
+        this.options.activationDelay = _activationDelay;
     }
 
     addCallback(callback) {
@@ -383,6 +385,10 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
 
     get originalBuilder() {
         return this.container.originalBuilder;
+    }
+        
+    get isPointerDown() {
+        return this.container.isPointerDown;
     }
     
     get style() {

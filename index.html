@@ -249,28 +249,20 @@
             onXAxis:true,
         }
     )
-    
+
     const _easeFunctionSelectorListScrollbars = addSmoothScrollbar(
       addElasticScrolling(
         easeFunctionSelectorList,
         {
           onYAxis: true, 
+          //onXAxis: true, 
           overscrollX: true,
-          children: [
-            {
-              element: easeFunctionSelectorList.children[0],
-              position: "top",
-            }, 
-            {
-              element: easeFunctionSelectorList.children[easeFunctionSelectorList.children.length - 1],
-              position: "bottom",
-              //elasticEasingY: EASE_OUT_BOUNCE() //EASE_OUT_BOUNCE doesn't work with negative deltas
-            },
-          ],
+          //elasticResistance: 50,
         }
       ),
       {
           onYAxis:true,
+          //onXAxis: true,
       },
     )
 

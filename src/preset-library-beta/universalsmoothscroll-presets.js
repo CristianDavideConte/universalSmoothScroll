@@ -1,24 +1,18 @@
 /**
  * TODO: 
- * - make elasticScrolling work properly with onXAxis = true && onYAxis = true (refactor probably needed)
- * - add speedModifiers to elasticScrolling without breaking the scrolling
- * - fix speedModifiers affecting smoothscrollbars speed when user has its pointer down 
- * - separate speedModifiers of wheel events from the ones of pointerEvents (or pass the event as a parameter)
- * 
- * - make the _handlePointerMoveEvent of SmoothScrollBuilder dependent on the options.onXAxis/onYAxis passed
- * 
- * - improve touchScrollExtender easing pattern
- * 
+ * - improve snap scrolling performances (intersection observers) 
  * - fix snap scrolling triggering too early with trackpads
  * 
+ * - improve touchScrollExtender easing pattern
+ * - make the _handlePointerMoveEvent of SmoothScrollBuilder dependent on the options.onXAxis/onYAxis passed
+ * 
+ * - the width/height of smoothscrollbars should be counted as normal scrollbars' width/height if specified
  * - fix smoothscrollbars not having the correct height/width onpageload sometimes
  *
  * - fix the pointerdown event on anchor elements not working properly in the demo (see index.html -> TEMPORARY FIX)
  * 
- * - improve snap scrolling performances (intersection observers) 
- * 
- * - smooth scrolling with animation allowed
  * - fix mobile multitasking freezing scrollbars
+ * - smooth scrolling with animation allowed
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
  */
 
@@ -268,20 +262,34 @@ export function addSnapScrolling(
 
 
 
+
+const elasticScrollingDefaults = {
+    top: {
+        easing: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110),
+        getElasticAmount: (builder) => Number.parseFloat(builder.style.paddingTop) || 0,
+    },
+    right: {
+        easing: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110),
+        getElasticAmount: (builder) => Number.parseFloat(builder.style.paddingRight) || 0,
+    },
+    bottom: {
+        easing: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110),
+        getElasticAmount: (builder) => Number.parseFloat(builder.style.paddingBottom) || 0,
+    },
+    left: {
+        easing: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110),
+        getElasticAmount: (builder) => Number.parseFloat(builder.style.paddingLeft) || 0,
+    }
+}
+
 /**
  * This function enables the elastic scrolling on the passed container
  * accordingly to what is specified in the passed options parameter. 
  * @param {*} container An Element or a SmoothScrollBuilder.
  * @param {Object} options An Object which containing the elastic scrolling preferences/properties listed below.
- * @param {Boolean} [options.onXAxis=false] True if the elastic smooth scrolling should be enabled on the x-axis of container, false otherwise.
- * @param {Boolean} [options.onYAxis=true] True if the elastic smooth scrolling should be enabled on the y-axis of container, false otherwise.
- * @param {Array} [options.children] TODO
  * 
- * @param {Function} [options.elasticEasingX] A valid stepLengthCalculator that will control the easing of the elastic part of this 
- *                                            scroll-animation (on the x-axis) of container. 
- * @param {Function} [options.elasticEasingY] A valid stepLengthCalculator that will control the easing of the elastic part of this 
- *                                            scroll-animation (on the y-axis) of container. 
- *
+ * //TODO
+ * 
  * @returns {SmoothScrollBuilder} The underling SmoothScrollBuilder used for this effect.  
  */
 export function addElasticScrolling(
@@ -289,11 +297,9 @@ export function addElasticScrolling(
     options = {
         onXAxis: false,
         onYAxis: true,
+        activationDelay: 60,
+        elasticResistance: 3,
         callback: () => {},
-        activationDelay: 0,
-        children: [],
-        elasticEasingX: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
-        elasticEasingY: (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110), 
     }, 
 ) {
     //Check if the options parameter is a valid Object.
@@ -309,21 +315,58 @@ export function addElasticScrolling(
         uss._errorLogger(options.debugString, "onXAxis and/or onYAxis to be !== false", false);
         return;
     }
-
-    if(options.onXAxis) options.onXAxis = "mandatory";
-    if(options.onYAxis) options.onYAxis = "mandatory";
+    
+    //The callback should be called after the elasticScrolling instead of 
+    //being called at the end of the smooth scrolling.
+    const _originalCallback = typeof options.callback === "function" ? options.callback : () => {};
+    options.callback = () => {};
+    container = addSmoothScrolling(container, options);
+    options.callback = _originalCallback;
 
     //Default easing behaviors: ease-out-like with 60ms of debounce time.
-    if(typeof options.elasticEasingX !== "function") options.elasticEasingX = (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110);
-    if(typeof options.elasticEasingY !== "function") options.elasticEasingY = (remaning) => Math.ceil(uss.getFramesTime(true) * remaning / 110);
     options.activationDelay = options.activationDelay || 60;
-    
-    container = addSnapScrolling(container, options);
+    options.elasticResistance = Number.isFinite(options.elasticResistance) && 
+                                                options.elasticResistance >= 0 ? options.elasticResistance : 3;
 
-    //Check if the options.children parameter has exactly 1 or 2 elements.
-    const _childrenNum = options.children.length;
-    if(_childrenNum < 1 || _childrenNum > 2) {
-        uss._warningLogger(options.children, "should have exactly 1 or 2 elements");
+    //Check options.top, options.right, options.bottom or options.left
+    //and fill the missing values if needed.
+    const _elasticProps = ["top", "right", "bottom", "left"];
+
+    for(const prop of _elasticProps) {
+        const _propObj = options[prop];
+
+        //Check if they are objects.
+        if(!isObject(_propObj)) {
+            options[prop] = elasticScrollingDefaults[prop];
+            options[prop].elasticResistance = options.elasticResistance;
+            continue;
+        }
+
+        //elasticResistance must be a finite number >= 0
+        if(!Number.isFinite(_propObj.elasticResistance) || _propObj.elasticResistance < 0) {
+            options[prop].elasticResistance = options.elasticResistance;
+        }
+
+        //Check if the easing is a function.
+        if(typeof _propObj.easing !== "function") {
+            options[prop].easing = elasticScrollingDefaults[prop].easing;
+        }
+        
+        //Check if the getElasticAmount is a function.
+        if(typeof _propObj.getElasticAmount !== "function") {
+            options[prop].getElasticAmount = elasticScrollingDefaults[prop].getElasticAmount;
+        }
+    }
+
+    //If these values are not passed at all, use the default values. 
+    if(options.onXAxis) {
+        options.right = options.right || elasticScrollingDefaults.right;
+        options.left = options.left || elasticScrollingDefaults.left;
+    }
+
+    if(options.onYAxis) {
+        options.top = options.top || elasticScrollingDefaults.top;
+        options.bottom = options.bottom || elasticScrollingDefaults.bottom;
     }
 
     const _builder = new ElasticScrollBuilder(container, options);
@@ -331,8 +374,6 @@ export function addElasticScrolling(
 
     return _builder;
 }
-
-
 
 
 

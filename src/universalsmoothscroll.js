@@ -445,7 +445,7 @@ window.uss = {
       _scrollBox.id = "_uss-scrollbox";
       _scrollBoxStyle.appendChild(
         document.createTextNode(
-          "#_uss-scrollbox { display:block; width:100px; height:100px; overflow-x:scroll; border:none; padding:0px; }"  + 
+          "#_uss-scrollbox { display:block; width:100px; height:100px; overflow-x:scroll; border:none; padding:0px; scrollbar-height:auto; }" + 
           "#_uss-scrollbox::-webkit-scrollbar { display:block; width:initial; height:initial; }"
         )
       );

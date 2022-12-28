@@ -31,6 +31,10 @@ export class SmoothScrollBuilder {
         this.executeCallback = this.executeCallback.bind(this);
         this.executeSpeedModifierX = this.executeSpeedModifierX.bind(this);
         this.executeSpeedModifierY = this.executeSpeedModifierY.bind(this);
+
+        //Getters for the current positions on the x and y axes of this.originalContainer.
+        this.#getCurrentXPosition = uss.getScrollXCalculator(this.originalContainer, this.options);
+        this.#getCurrentYPosition = uss.getScrollYCalculator(this.originalContainer, this.options);
     }
 
     build() {
@@ -52,10 +56,6 @@ export class SmoothScrollBuilder {
         //Default scrollbars objects.
         this.scrollbarX = { previousPointerId: null, isEngaged: () => false, updatePosition: () => {} };
         this.scrollbarY = { previousPointerId: null, isEngaged: () => false, updatePosition: () => {} };
-
-        //Getters for the current positions on the x and y axes of this.originalContainer.
-        this.#getCurrentXPosition = uss.getScrollXCalculator(this.originalContainer, this.options);
-        this.#getCurrentYPosition = uss.getScrollYCalculator(this.originalContainer, this.options);
         
         //Cache the live pointer to the computed style of this.originalContainer.
         this.#style = window.getComputedStyle(this.originalContainer);
@@ -222,7 +222,7 @@ export class SmoothScrollBuilder {
             ) {
                 const __scrollableParent = uss.getScrollableParent(this.originalContainer, true, this.options);
                 
-                //If there's no scrollable parent, the overscrol cannot be applied.
+                //Apply the overscroll only if a scrollable parent exists.
                 if(__scrollableParent) {
                     if(event.type === "pointermove") {
                         //Remove the pointer from the list of ones that are 
@@ -461,6 +461,10 @@ export class SmoothScrollBuilder {
 
     get originalBuilder() {
         return this;
+    }
+
+    get isPointerDown() {
+        return this.#pointersDownIds.length !== 0;
     }
 
     get style() {
