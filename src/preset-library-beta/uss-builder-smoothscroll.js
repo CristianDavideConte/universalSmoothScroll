@@ -64,6 +64,10 @@ export class SmoothScrollBuilder {
             //With no movement, the overscroll conditions can never be satisfied.
             if(deltaX === 0) return false;
 
+            //The overscroll conditions can only be triggered 
+            //if at most one pointer is currently held down.
+            if(this.#pointersDownIds.length > 1) return false;
+
             //Only the scrollbarX is checked because any scrollbarY movement will produce a 
             //wheel event with deltaX = 0, so the conditions below will fail.
             if(this.scrollbarX.isEngaged()) return false;
@@ -86,6 +90,10 @@ export class SmoothScrollBuilder {
         this.#overscrollConditionsY = this.options.overscrollY ? (deltaX, deltaY, event) => {
             //With no movement, the overscroll conditions can never be satisfied.
             if(deltaY === 0) return false;
+            
+            //The overscroll conditions can only be triggered 
+            //if at most one pointer is currently held down.
+            if(this.#pointersDownIds.length > 1) return false;
 
             //Only the scrollbarY is checked because any scrollbarX movement will produce a 
             //wheel event with deltaY = 0, so the conditions below will fail.

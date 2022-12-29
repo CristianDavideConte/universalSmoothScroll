@@ -114,7 +114,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
 
         if(this.onXAxis) {
             this.#elasticParamsX = {
-                delta: this.options.left.getElasticAmount(this),
+                pos: this.options.left.getElasticAmount(this),
                 easing: this.options.left.easing,
             }
 
@@ -122,7 +122,8 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                 (deltaX, deltaY, event) => {
                     const __currentFinalPos = uss.getFinalXPosition(this.originalContainer, this.options); 
                     const __nextFinalPos = __currentFinalPos + deltaX;
-
+                   
+                    //The final position is in the left elastic zone.
                     let __elasticAmount = this.options.left.getElasticAmount(this);
                     if(__nextFinalPos <= __elasticAmount) {
                         return this.#topLeftSpeedModifier(
@@ -131,15 +132,16 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                             __currentFinalPos, 
                             __elasticAmount, 
                             this.options.left.elasticResistance, 
-                            (delta) => {
-                                this.#elasticParamsX = delta === null ? null : {
-                                    delta: delta,
+                            (pos) => {
+                                this.#elasticParamsX = pos === null ? null : {
+                                    pos: pos,
                                     easing: this.options.left.easing
                                 }
                             },
                         );
                     } 
-                    
+
+                    //The final position is in the right elastic zone.
                     const __maxScroll = uss.getMaxScrollX(this.originalContainer, false, this.options);
                     __elasticAmount = this.options.right.getElasticAmount(this);
                     if(__nextFinalPos >= __maxScroll - __elasticAmount) {
@@ -150,15 +152,16 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                             __elasticAmount, 
                             this.options.right.elasticResistance, 
                             __maxScroll,
-                            (delta) => {
-                                this.#elasticParamsX = delta === null ? null : {
-                                    delta: delta,
+                            (pos) => {
+                                this.#elasticParamsX = pos === null ? null : {
+                                    pos: pos,
                                     easing: this.options.right.easing
                                 }
                             }, 
                         );
                     }
 
+                    //The final position is not in any elastic zone.
                     this.#elasticParamsX = null;
                     return deltaX;
                 }
@@ -169,7 +172,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
         
         if(this.onYAxis) {
             this.#elasticParamsY = {
-                delta: this.options.top.getElasticAmount(this),
+                pos: this.options.top.getElasticAmount(this),
                 easing: this.options.top.easing,
             }
 
@@ -177,8 +180,9 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                 (deltaX, deltaY, event) => {
                     const __currentFinalPos = uss.getFinalYPosition(this.originalContainer, this.options); 
                     const __nextFinalPos = __currentFinalPos + deltaY;
-                    let __elasticAmount = this.options.top.getElasticAmount(this);
                     
+                    //The final position is in the top elastic zone.
+                    let __elasticAmount = this.options.top.getElasticAmount(this);
                     if(__nextFinalPos <= __elasticAmount) {
                         return this.#topLeftSpeedModifier(
                             event,
@@ -186,15 +190,16 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                             __currentFinalPos, 
                             __elasticAmount, 
                             this.options.top.elasticResistance, 
-                            (delta) => {
-                                this.#elasticParamsY = delta === null ? null : {
-                                    delta: delta,
+                            (pos) => {
+                                this.#elasticParamsY = pos === null ? null : {
+                                    pos: pos,
                                     easing: this.options.top.easing
                                 }
                             },
                         );
                     } 
-                    
+
+                    //The final position is in the bottom elastic zone.
                     const __maxScroll = uss.getMaxScrollY(this.originalContainer, false, this.options);
                     __elasticAmount = this.options.bottom.getElasticAmount(this);
                     if(__nextFinalPos >= __maxScroll - __elasticAmount) {
@@ -205,15 +210,16 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                             __elasticAmount, 
                             this.options.bottom.elasticResistance, 
                             __maxScroll,
-                            (delta) => {
-                                this.#elasticParamsY = delta === null ? null : {
-                                    delta: delta,
+                            (pos) => {
+                                this.#elasticParamsY = pos === null ? null : {
+                                    pos: pos,
                                     easing: this.options.bottom.easing
                                 }
                             }, 
                         );
                     }
 
+                    //The final position is not in any elastic zone.
                     this.#elasticParamsY = null;
                     return deltaY;
                 }
@@ -222,6 +228,13 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
             this.#elasticParamsY = null;
         }
         
+        /**
+         * If this.#elasticParamsX or this.#elasticParamsY are not null:
+         * - wait for the options.activationDelay timeout
+         * - scroll back to the position specified by this.#elasticParamsX/Y.pos with
+         *   the easings specified by this.#elasticParamsX/Y.easing
+         * - tell the underlying SmoothScrollBuilder to proceed in the callbacks chain
+         */
         this.elasticScrolling = async () => {
             return new Promise((resolve) => {
                 this.resolve = resolve;
@@ -231,7 +244,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                     if(this.#elasticParamsX && !this.#elasticParamsY) {
                         uss.setXStepLengthCalculator(this.#elasticParamsX.easing, this.originalContainer, true, this.options);
                         uss.scrollXTo(
-                            this.#elasticParamsX.delta,
+                            this.#elasticParamsX.pos,
                             this.originalContainer,
                             this.executeCallback,
                             false, 
@@ -242,7 +255,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                     } else if(!this.#elasticParamsX && this.#elasticParamsY) {
                         uss.setYStepLengthCalculator(this.#elasticParamsY.easing, this.originalContainer, true, this.options);
                         uss.scrollYTo(
-                            this.#elasticParamsY.delta,
+                            this.#elasticParamsY.pos,
                             this.originalContainer,
                             this.executeCallback,
                             false, 
@@ -254,8 +267,8 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
                         uss.setXStepLengthCalculator(this.#elasticParamsX.easing, this.originalContainer, true, this.options);
                         uss.setYStepLengthCalculator(this.#elasticParamsY.easing, this.originalContainer, true, this.options);
                         uss.scrollTo(
-                            this.#elasticParamsX.delta,
-                            this.#elasticParamsY.delta,
+                            this.#elasticParamsX.pos,
+                            this.#elasticParamsY.pos,
                             this.originalContainer,
                             this.executeCallback,
                             false,
@@ -271,8 +284,47 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
             });
         }
 
+        //Allow this.elasticScrolling to work onresize.
+        uss.addOnResizeEndCallback(() => {
+            let __elasticAmount = this.options.left.getElasticAmount(this);
+            if(this.currentXPosition < __elasticAmount) {
+                this.#elasticParamsX = {
+                    pos: __elasticAmount,
+                    easing: this.options.left.easing,
+                }
+            } else {
+                const __maxScroll = uss.getMaxScrollX(this.originalContainer, false, this.options);
+                __elasticAmount = this.options.right.getElasticAmount(this);
+                if(this.currentXPosition > __maxScroll - __elasticAmount) {
+                    this.#elasticParamsX = {
+                        pos: __maxScroll - __elasticAmount,
+                        easing: this.options.right.easing
+                    }
+                }
+            }
+
+            __elasticAmount = this.options.top.getElasticAmount(this);
+            if(this.currentYPosition < __elasticAmount) {
+                this.#elasticParamsY = {
+                    pos: __elasticAmount,
+                    easing: this.options.top.easing,
+                }
+            } else {
+                const __maxScroll = uss.getMaxScrollY(this.originalContainer, false, this.options);
+                __elasticAmount = this.options.bottom.getElasticAmount(this);
+                if(this.currentYPosition > __maxScroll - __elasticAmount) {
+                    this.#elasticParamsY = {
+                        pos: __maxScroll - __elasticAmount,
+                        easing: this.options.bottom.easing
+                    }
+                }
+            }
+
+            this.elasticScrolling();
+        }); 
         this.addCallback(this.elasticScrolling);
 
+        //Temporarily set the activationDelay to 0, so that elasticScrolling can be immediately applied.
         const _activationDelay = this.options.activationDelay;
         this.options.activationDelay = 0;
         this.elasticScrolling();
