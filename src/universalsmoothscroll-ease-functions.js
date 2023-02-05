@@ -41,67 +41,80 @@
   }
 }  
 
-/*
- * Internally used to setup the control points' arrays for bounce-type StepLengthCalculators.
+/**
+ * All the constants below are internally used by DEFAULT_BOUNCE_CUSTOMIZER. 
+ * CALC_BOUNCEX defines: the pattern of the x-coordinates of the control points (same for bounces(mins) and peaks(maxes))
+ * CALC_BOUNCEY defines: the pattern of the y-coordinates of the bounce(mins) control points
+ * CALC_PEAKY defines: the pattern of the y-coordinates of the peaks(maxes) control points
  */
+const CALC_BOUNCEX = x => 1 - Math.pow(1 - x, 1.6); //ease-out-sine pattern
+const CALC_BOUNCEY = x => x * 0.005 + 0.995; //almost constant pattern very close to 1
+const CALC_PEAKY   = x => x < 0.6234 ? x * (2 - x) : x * 0.35 + 0.64; //ease-out-sine then linear patter (they meet at 0.6234)
+const CONTROL_POINTS_INIT_NUM = 10;
+
+//Internally used to setup the control points' arrays for bounce-type StepLengthCalculators.
 const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumber) => {
-  const _bounceDeltaX = 1 / endBouncesNumber;
-  const _bounceDeltaXHalf = _bounceDeltaX * 0.5; 
-  const _bounceCorrectionDelta = _bounceDeltaX * 0.0005;
-
-  /**
-   * These functions define:
-   * - The pattern of the control points' x coordinates (same for bounces and peaks)
-   * - The pattern of the control points' y coordinates (2 different ones for bounces and peaks)
-   */
-  const _bounceXCalc = x => 1 - Math.pow(1 - x, 1.6);
-  const _bounceYCalc = x => x * 0.005 + 0.995;
-  const _peakYCalc   = x => x > 0.6 ? x * 0.35 + 0.64 : 1 - (1 - x) * (1 - x);
+  const _deltaX = 1 / endBouncesNumber; //the non-eased deltaX between two control points
+  const _deltaXHalf = _deltaX * 0.5; 
+  const _deltaXShift = _deltaX * 0.0005; //an infinitesimal shift from the non-eased deltaX
   
-  const _initPointsNum = 10;
-  const _arrLen = _initPointsNum + (endBouncesNumber - 1) * 5 + 1 
+  const _arrLen = CONTROL_POINTS_INIT_NUM + (endBouncesNumber - 1) * 5 + 1 
   let _arrIndex = 0;
-  let _i;
 
-  if(startBouncesNumber !== 1) _arrIndex = _initPointsNum + (startBouncesNumber - 1) * 5;
-  else {
-    //Force an ease-in pattern for the first initPointsNum control points.
-    const _initBounceDeltaX = (_bounceDeltaX - _bounceCorrectionDelta) / _initPointsNum;
-    const _closeToBounceDeltaX = _bounceDeltaX - 2 * _bounceCorrectionDelta;
-    for (_i = 0; _i < _closeToBounceDeltaX; _i += _initBounceDeltaX) {
-      arrInserter(xs, _bounceXCalc(_i), _arrIndex, _arrLen);
-      arrInserter(ys,  Math.pow(_i * endBouncesNumber, 2), _arrIndex, _arrLen);
+  if(startBouncesNumber !== 1) {
+    _arrIndex = CONTROL_POINTS_INIT_NUM + (startBouncesNumber - 1) * 5;
+  } else {
+    //From 0 to _deltaX, CONTROL_POINTS_NUM_INIT control points are inserted with an ease-in pattern.   
+    const _deltaXInit = (_deltaX - _deltaXShift) / CONTROL_POINTS_INIT_NUM;
+        
+    //Control points at the beginning of the spline (0,0).
+    arrInserter(xs, 0, _arrIndex, _arrLen);
+    arrInserter(ys, 0, _arrIndex, _arrLen);
+    _arrIndex++;
+
+    for(let i = startBouncesNumber; i < CONTROL_POINTS_INIT_NUM; i++) {
+      const _bounceXNoEasing = _deltaXInit * i;
+
+      arrInserter(xs, CALC_BOUNCEX(_bounceXNoEasing), _arrIndex, _arrLen); //ease-out-sine pattern
+      arrInserter(ys, Math.pow(_bounceXNoEasing * endBouncesNumber, 2), _arrIndex, _arrLen); //ease-in pattern
       _arrIndex++;
     }
   }
 
   //Defines the control points of the spline between the first and the last bounce.
-  for(_i = startBouncesNumber; _i < endBouncesNumber; _i++) {
-    const _originalBounceX = _bounceDeltaX * _i;
-    const _calcBounceX = _bounceXCalc(_originalBounceX);
-    const _calcBounceY = _bounceYCalc(_calcBounceX);
-    const _nextPeakX   = _bounceXCalc(_originalBounceX + _bounceDeltaXHalf);
-    const _nextPeakY   = _peakYCalc(_nextPeakX);
-    const _nextSlopeY  = _nextPeakY * 0.65 + 0.35 * _calcBounceY;
+  for(let i = startBouncesNumber; i < endBouncesNumber; i++) {
+    const _bounceXNoEasing = _deltaX * i; //_bounceX without the _calcBounceX easing 
 
-    arrInserter(xs, _calcBounceX,                                            _arrIndex,     _arrLen);
-    arrInserter(xs, _bounceXCalc(_originalBounceX + _bounceCorrectionDelta), _arrIndex + 1, _arrLen);
+    const _bounceX = CALC_BOUNCEX(_bounceXNoEasing);
+    const _bounceY = CALC_BOUNCEY(_bounceX);
+    const _peakX   = CALC_BOUNCEX(_bounceXNoEasing + _deltaXHalf);
+    const _peakY   = CALC_PEAKY(_peakX);
+    const _slopeY  = _peakY * 0.65 + _bounceY * 0.35; //the y of a point between the bounce and the peak 
 
-    arrInserter(xs, _bounceXCalc(_originalBounceX + _bounceDeltaXHalf * 0.35), _arrIndex + 2, _arrLen);
-    arrInserter(xs, _nextPeakX,                                                _arrIndex + 3, _arrLen);
-    arrInserter(xs, _bounceXCalc(_originalBounceX + _bounceDeltaXHalf * 1.65), _arrIndex + 4, _arrLen);
-    
-    arrInserter(ys, _calcBounceY, _arrIndex,     _arrLen); 
-    arrInserter(ys, _calcBounceY, _arrIndex + 1, _arrLen); 
+    //Insert a bounce control point.
+    arrInserter(xs, _bounceX, _arrIndex, _arrLen);
+    arrInserter(ys, _bounceY, _arrIndex, _arrLen);
 
-    arrInserter(ys, _nextSlopeY, _arrIndex + 2, _arrLen);
-    arrInserter(ys, _nextPeakY,  _arrIndex + 3, _arrLen);
-    arrInserter(ys, _nextSlopeY, _arrIndex + 4, _arrLen);
+    //Insert a control point very close to the bounce one just inserted (hermite spline approximation purposes).
+    arrInserter(xs, CALC_BOUNCEX(_bounceXNoEasing + _deltaXShift), _arrIndex + 1, _arrLen);
+    arrInserter(ys, _bounceY, _arrIndex + 1, _arrLen); 
+
+    //Insert a control point slighly before the next peak control point (hermite spline approximation purposes).
+    arrInserter(xs, CALC_BOUNCEX(_bounceXNoEasing + _deltaXHalf * 0.35), _arrIndex + 2, _arrLen);
+    arrInserter(ys, _slopeY, _arrIndex + 2, _arrLen);
+
+    //Instert a peak control point.
+    arrInserter(xs, _peakX, _arrIndex + 3, _arrLen);
+    arrInserter(ys, _peakY, _arrIndex + 3, _arrLen);
+
+    //Insert a control point slighly after the next peak control point (hermite spline approximation purposes).
+    arrInserter(xs, CALC_BOUNCEX(_bounceXNoEasing + _deltaXHalf * 1.65), _arrIndex + 4, _arrLen);
+    arrInserter(ys, _slopeY, _arrIndex + 4, _arrLen);
     
     _arrIndex += 5;
   }
 
-  //Defines the control points of the spline at (1,1).
+  //Control points at the end of the spline (1,1).
   arrInserter(xs, 1, _arrIndex, _arrLen);      
   arrInserter(ys, 1, _arrIndex, _arrLen);    
 }
