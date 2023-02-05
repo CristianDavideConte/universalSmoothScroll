@@ -35,7 +35,9 @@
     
     const __startingPos = _startingPosMap.get(container);
     const __nextPos = (progressEvaluator(__progress) * (1 - __startingPos) + __startingPos) * (total - 1);
-    return Math.ceil(remaning - total + __nextPos);
+    const __delta = remaning - total + __nextPos;
+
+    return __delta > 0 ? Math.ceil(__delta) : Math.floor(__delta);
   }
 }  
 
