@@ -201,6 +201,7 @@ const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);      
 const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789))); //38px at 789px of height && 22px at 1920px of height
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_FRAME_TIME = 16.6; //in ms
+const HIGHEST_SAFE_SCROLL_POS = 1073741824; //2^30
 //const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame; //To look more into
 
 const DEFAULT_REGEX_LOGGER_DISABLED = /disabled/i;
@@ -462,34 +463,32 @@ window.uss = {
     //Check if the _windowScroller has already been calculated.
     if(forceCalculation || !uss._windowScroller) {
       /**
-       * Test if the window is scrollable and if scrolling it 
-       * also scrolls the passed element.
+       * This function tests if:
+       * - the window is scrollable
+       * - scrolling the window also scrolls the passed element
        * Returns true if the uss._windowScroller has been set, false otherwise.
        */
       const _testScroller = (element) => {
         //Save the original scroll positions of the Window and the element.
-        const __originalWindowXPos = window.scrollX;
-        const __originalWindowYPos = window.scrollY; 
-        const __originalElementXPos = element.scrollLeft;
-        const __originalElementYPos = element.scrollTop; 
+        const __originalXPosition = window.scrollX;
+        const __originalYPosition = window.scrollY; 
 
-        //Scroll the Window and the element to a known initial position.
+        //Scroll the Window to a known initial position.
         window.scroll(0,0);
-        element.scroll(0,0);
 
         //Try to scroll the element by scrolling the Window.
-        window.scroll(100, 100);
+        window.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
 
-        const __isWindowScrollable = window.scrollX !== 0 || window.scrollY !== 0;
-        const __windowScrollsElement = __isWindowScrollable && 
-                                      element.scrollLeft === window.scrollX && 
-                                      element.scrollTop === window.scrollY;
-                          
-        //Restore the original scroll positions of the Window and the element.
-        window.scroll(__originalWindowXPos, __originalWindowYPos);
-        element.scroll(__originalElementXPos, __originalElementYPos);
+        const __windowMaxScrollX = window.scrollX;
+        const __windowMaxScrollY = window.scrollY;
+        const __windowScrollsElement = __windowMaxScrollX === element.scrollLeft && 
+                                       __windowMaxScrollY === element.scrollTop;
+
+        //Restore the original scroll position of the Window.
+        window.scroll(__originalXPosition, __originalYPosition);
         
-        if(!__isWindowScrollable) {
+        //Window is not scrollable.
+        if(__windowMaxScrollX === 0 && __windowMaxScrollY === 0) {
           const __oldData = uss._containersData.get(window);
           const __containerData = __oldData || [];
           __containerData[16] = 0; //maxScrollX
@@ -500,10 +499,27 @@ window.uss = {
           uss._windowScroller = window;
           return true;
         }
+        
+        //Window scrolls the element.
         if(__windowScrollsElement) {
+          const __windowOldData = uss._containersData.get(window);
+          const __elementOldData = uss._containersData.get(element);
+          const __windowData = __windowOldData || [];
+          const __elementData = __elementOldData || [];
+
+          __windowData[16] = __windowMaxScrollX; //maxScrollX
+          __windowData[17] = __windowMaxScrollY; //maxScrollY
+          __elementData[16] = __windowMaxScrollX; //maxScrollX
+          __elementData[17] = __windowMaxScrollY; //maxScrollY
+
+          if(!__windowOldData) uss._containersData.set(window, __windowData);
+          if(!__elementOldData) uss._containersData.set(element, __elementData);
+
           uss._windowScroller = element;
           return true;
         }
+
+        //Window is scrollable but doesn't scroll the element.
         return false;
       }
 
@@ -527,10 +543,10 @@ window.uss = {
       //The _pageScroller is the element that can scroll the further between document.documentElement and document.body.
       //If there's a tie or neither of those can scroll, it's defaulted to the 
       //the document.scrollingElement (if supported) or the Window.
-      const _htmlMaxScrollX = uss.getMaxScrollX(document.documentElement, true, options);
-      const _htmlMaxScrollY = uss.getMaxScrollY(document.documentElement, true, options);
-      const _bodyMaxScrollX = uss.getMaxScrollX(document.body, true, options);
-      const _bodyMaxScrollY = uss.getMaxScrollY(document.body, true, options);
+      const _htmlMaxScrollX = uss.getMaxScrollX(document.documentElement, forceCalculation, options);
+      const _htmlMaxScrollY = uss.getMaxScrollY(document.documentElement, forceCalculation, options);
+      const _bodyMaxScrollX = uss.getMaxScrollX(document.body, forceCalculation, options);
+      const _bodyMaxScrollY = uss.getMaxScrollY(document.body, forceCalculation, options);
 
       //Cache the _pageScroller for later use.
       if(
@@ -1057,7 +1073,7 @@ window.uss = {
     }
 
     const _originalXPosition = container.scrollLeft;
-    container.scrollLeft = 1073741824; //highest safe scroll value: 2^30 = 1073741824
+    container.scrollLeft = HIGHEST_SAFE_SCROLL_POS;
     const _maxScroll = container.scrollLeft;
     container.scrollLeft = _originalXPosition;
 
@@ -1089,7 +1105,7 @@ window.uss = {
     }
 
     const _originalYPosition = container.scrollTop;
-    container.scrollTop = 1073741824; //highest safe scroll value: 2^30 = 1073741824
+    container.scrollTop = HIGHEST_SAFE_SCROLL_POS;
     const _maxScroll = container.scrollTop;
     container.scrollTop = _originalYPosition;
 
@@ -1102,7 +1118,7 @@ window.uss = {
     const _containerData = _oldData || [];
     const _cachedParent = includeHiddenParents ? _containerData[25] : _containerData[24];
     
-    if(_cachedParent || _cachedParent === null) return _cachedParent;
+    if(_cachedParent !== undefined) return _cachedParent;
 
     const _body = document.body;
     const _html = document.documentElement;
@@ -1198,7 +1214,7 @@ window.uss = {
     const _containerData = _oldData || [];
     const _cachedParent = includeHiddenParents ? _containerData[27] : _containerData[26];
     
-    if(_cachedParent || _cachedParent === null) return _cachedParent;
+    if(_cachedParent !== undefined) return _cachedParent;
 
     const _body = document.body;
     const _html = document.documentElement;
@@ -1306,8 +1322,8 @@ window.uss = {
      * If at least one parent is cached, get the other and return the one
      * that is met first during the parents' exploration.
      */
-    const _xParentIsCached = _cachedXParent || _cachedXParent === null;
-    const _yParentIsCached = _cachedYParent || _cachedYParent === null;
+    const _xParentIsCached = _cachedXParent !== undefined;
+    const _yParentIsCached = _cachedYParent !== undefined;
     if(_xParentIsCached || _yParentIsCached) {
       if(_xParentIsCached && !_yParentIsCached) {
         _cachedYParent = uss.getYScrollableParent(element, includeHiddenParents, options);
@@ -1315,7 +1331,9 @@ window.uss = {
         _cachedXParent = uss.getXScrollableParent(element, includeHiddenParents, options);
       }
 
-      return _cachedXParent === window || _cachedXParent === null || _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
+      return _cachedXParent === window || 
+             _cachedXParent === null || 
+             _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
     }
 
     const _body = document.body;
@@ -1404,6 +1422,7 @@ window.uss = {
     //no other parent can scroll the element.
     if(element === _body && _style.position === "absolute") {
       _cacheXResult(null);
+      _cacheYResult(null);
       return null;
     }
 
@@ -2338,14 +2357,14 @@ window.addEventListener("resize", () => {
 }, {passive:true});
 
 function ussInit() {
-  //Force the calculation of the _windowScroller.
-  uss.getWindowScroller(true);
+  //Calculate the _windowScroller.
+  uss.getWindowScroller();
 
-  //Force the calculation of the _pageScroller.
-  uss.getPageScroller(true);
+  //Calculate the _pageScroller.
+  uss.getPageScroller();
 
-  //Force the calculation of the _scrollbarsMaxDimension at the startup.
-  uss.getScrollbarsMaxDimension(true);
+  //Calculate the _scrollbarsMaxDimension.
+  uss.getScrollbarsMaxDimension();
 
   //Calculate the average frames' time of the user's screen. 
   let _currentMeasurementsLeft = 60; //Do 60 measurements to establish the initial value

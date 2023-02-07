@@ -43,9 +43,9 @@
 
 /**
  * All the constants below are internally used by DEFAULT_BOUNCE_CUSTOMIZER. 
- * CALC_BOUNCEX defines: the pattern of the x-coordinates of the control points (same for bounces(mins) and peaks(maxes))
- * CALC_BOUNCEY defines: the pattern of the y-coordinates of the bounce(mins) control points
- * CALC_PEAKY defines: the pattern of the y-coordinates of the peaks(maxes) control points
+ * CALC_BOUNCEX: defines the pattern of the x-coordinates of the control points (same for bounces(mins) and peaks(maxes))
+ * CALC_BOUNCEY: defines the pattern of the y-coordinates of the bounce(mins) control points
+ * CALC_PEAKY: defines the pattern of the y-coordinates of the peaks(maxes) control points
  */
 const CALC_BOUNCEX = x => 1 - Math.pow(1 - x, 1.6); //ease-out-sine pattern
 const CALC_BOUNCEY = x => x * 0.005 + 0.995; //almost constant pattern very close to 1
@@ -64,14 +64,14 @@ const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endB
   if(startBouncesNumber !== 1) {
     _arrIndex = CONTROL_POINTS_INIT_NUM + (startBouncesNumber - 1) * 5;
   } else {
-    //From 0 to _deltaX, CONTROL_POINTS_NUM_INIT control points are inserted with an ease-in pattern.   
-    const _deltaXInit = (_deltaX - _deltaXShift) / CONTROL_POINTS_INIT_NUM;
+    const _deltaXInit = (_deltaX - _deltaXShift) / CONTROL_POINTS_INIT_NUM; //deltaX for the init phase
         
     //Control points at the beginning of the spline (0,0).
     arrInserter(xs, 0, _arrIndex, _arrLen);
     arrInserter(ys, 0, _arrIndex, _arrLen);
     _arrIndex++;
 
+    //From _deltaXInit to _deltaX, CONTROL_POINTS_NUM_INIT control points are inserted with an ease-in pattern.   
     for(let i = startBouncesNumber; i < CONTROL_POINTS_INIT_NUM; i++) {
       const _bounceXNoEasing = _deltaXInit * i;
 
