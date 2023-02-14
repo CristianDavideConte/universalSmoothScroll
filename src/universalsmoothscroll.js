@@ -982,43 +982,39 @@ window.uss = {
         return;
       }
       uss._containersData.set(container, _containerData);
-    } else if(!forceCalculation && 
-        Number.isFinite(_containerData[20]) && 
-        Number.isFinite(_containerData[21]) && 
-        Number.isFinite(_containerData[22]) && 
-        Number.isFinite(_containerData[23]) 
+    }
+
+    if(
+      forceCalculation ||
+      !Number.isFinite(_containerData[20]) || 
+      !Number.isFinite(_containerData[21]) || 
+      !Number.isFinite(_containerData[22]) || 
+      !Number.isFinite(_containerData[23]) 
     ) {
-      return [
-        _containerData[20], //top
-        _containerData[21], //right
-        _containerData[22], //bottom
-        _containerData[23], //left
-      ];
+      if(container === window) {
+        const _windowScroller = uss.getWindowScroller(false);
+        const _bordersDimensions = _windowScroller === window ? [0,0,0,0] : uss.calcBordersDimensions(_windowScroller, forceCalculation, options);
+
+        _containerData[20] = _bordersDimensions[0];
+        _containerData[21] = _bordersDimensions[1];
+        _containerData[22] = _bordersDimensions[2];
+        _containerData[23] = _bordersDimensions[3];
+      } else {
+        const _style = window.getComputedStyle(container);
+        
+        _containerData[20] = Number.parseFloat(_style.borderTopWidth);
+        _containerData[21] = Number.parseFloat(_style.borderRightWidth);
+        _containerData[22] = Number.parseFloat(_style.borderBottomWidth);
+        _containerData[23] = Number.parseFloat(_style.borderLeftWidth);
+      }
     }
-
-    let _bordersDimensions;
-
-    if(container === window) { 
-      const _pageScroller = uss.getPageScroller(false, options);
-      options.debugString = "calcBordersDimensions(uss.getPageScroller())";
-      _bordersDimensions = _pageScroller === window ? [0,0,0,0] : uss.calcBordersDimensions(_pageScroller, forceCalculation, options);
-    } else {
-      const _style = window.getComputedStyle(container);
-      _bordersDimensions = [
-                              Number.parseFloat(_style.borderTopWidth),
-                              Number.parseFloat(_style.borderRightWidth),
-                              Number.parseFloat(_style.borderBottomWidth),
-                              Number.parseFloat(_style.borderLeftWidth)
-                            ];
-    }
-
-    //Cache the values for later use.
-    _containerData[20] = _bordersDimensions[0]; //top
-    _containerData[21] = _bordersDimensions[1]; //right
-    _containerData[22] = _bordersDimensions[2]; //bottom
-    _containerData[23] = _bordersDimensions[3]; //left
-
-    return _bordersDimensions;
+    
+    return [
+      _containerData[20], //top
+      _containerData[21], //right
+      _containerData[22], //bottom
+      _containerData[23], //left
+    ];
   },
   getScrollXCalculator: (container = uss._pageScroller, options = {debugString: "getScrollXCalculator"}) => {
     const _oldData = uss._containersData.get(container);
