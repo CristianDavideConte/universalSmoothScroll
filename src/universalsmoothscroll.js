@@ -212,6 +212,23 @@ const DEFAULT_REGEX_OVERFLOW_HIDDEN = /(auto|scroll|hidden)/;
 const DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
 const DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
 
+const CHECK_INSTANCEOF = (element, classType = Element) => {
+  if(element instanceof classType) return true;
+
+  try {
+    let _elementClass = Object.getPrototypeOf(element);
+    classType = classType.prototype.toString();
+
+    //Traverse the prototype chain up to Object.prototype.
+    while(_elementClass) {
+      if(_elementClass.toString() === classType) return true;
+      _elementClass = Object.getPrototypeOf(_elementClass);
+    }
+  } catch(e){}
+  
+  return false;
+}
+
 const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
   const _stepLength = total / uss._minAnimationFrame;
   if(_stepLength < 1) return 1;
@@ -235,7 +252,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
     if(receivedValue === null || receivedValue === undefined) receivedValue = String(receivedValue);
     else if(receivedValue === window) receivedValue = "window";
     else if(Array.isArray(receivedValue)) receivedValue = "[" + receivedValue.toString() + "]"; 
-    else if(receivedValue instanceof Element || (receivedValue.tagName && (receivedValue.id || receivedValue.className))) {
+    else if(CHECK_INSTANCEOF(receivedValue) || (receivedValue.tagName && (receivedValue.id || receivedValue.className))) {
       const _id = receivedValue.id ? "#" + receivedValue.id : "";
       const _className = receivedValue.className ? "." + receivedValue.className : "";
       receivedValue = receivedValue.tagName.toLowerCase() + _id + _className;
@@ -286,7 +303,7 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
     if(subject === null || subject === undefined) subject = String(subject);
     else if(subject === window) subject = "window";
     else if(Array.isArray(subject)) subject = "[" + subject.toString() + "]"; 
-    else if(subject instanceof Element || (subject.tagName && (subject.id || subject.className))) {
+    else if(CHECK_INSTANCEOF(subject) || (subject.tagName && (subject.id || subject.className))) {
       const _id = subject.id ? "#" + subject.id : "";
       const _className = subject.className ? "." + subject.className : "";
       subject = subject.tagName.toLowerCase() + _id + _className;
@@ -345,7 +362,7 @@ window.uss = {
 
     if(_containerData) return !!_containerData[0];
 
-    if(container === window || container instanceof Element) {
+    if(container === window || CHECK_INSTANCEOF(container)) {
       uss._containersData.set(container, []);
       return false;
     }
@@ -356,7 +373,7 @@ window.uss = {
 
     if(_containerData) return !!_containerData[1];
 
-    if(container === window || container instanceof Element) {
+    if(container === window || CHECK_INSTANCEOF(container)) {
       uss._containersData.set(container, []);
       return false;
     }
@@ -367,7 +384,7 @@ window.uss = {
 
     if(_containerData) return !!(_containerData[0] || _containerData[1]);
 
-    if(container === window || container instanceof Element) {
+    if(container === window || CHECK_INSTANCEOF(container)) {
       uss._containersData.set(container, []);
       return false;
     }
@@ -389,7 +406,7 @@ window.uss = {
     //If there's no scroll-animation, 0 is returned.
     if(_containerData) return _containerData[4] || 0;
     
-    if(container === window || container instanceof Element) {
+    if(container === window || CHECK_INSTANCEOF(container)) {
       uss._containersData.set(container, []);
       return 0; 
     }
@@ -401,7 +418,7 @@ window.uss = {
     //If there's no scroll-animation, 0 is returned.
     if(_containerData) return _containerData[5] || 0;
     
-    if(container === window || container instanceof Element) {
+    if(container === window || CHECK_INSTANCEOF(container)) {
       uss._containersData.set(container, []);
       return 0; 
     }
@@ -412,7 +429,7 @@ window.uss = {
         
     if(_containerData) return getTemporary ? _containerData[14] : _containerData[12];
 
-    if(container === window || container instanceof Element) {
+    if(container === window || CHECK_INSTANCEOF(container)) {
       uss._containersData.set(container, []);
       return; 
     }
@@ -423,7 +440,7 @@ window.uss = {
         
     if(_containerData) return getTemporary ? _containerData[15] : _containerData[13];
 
-    if(container === window || container instanceof Element) {
+    if(container === window || CHECK_INSTANCEOF(container)) {
       uss._containersData.set(container, []);
       return; 
     }
@@ -470,8 +487,8 @@ window.uss = {
        */
       const _testScroller = (element) => {
         //Save the original scroll positions of the Window and the element.
-        const __originalXPosition = window.scrollX;
-        const __originalYPosition = window.scrollY; 
+        const __windowInitialX = window.scrollX;
+        const __windowInitialY = window.scrollY; 
 
         //Scroll the Window to a known initial position.
         window.scroll(0,0);
@@ -484,8 +501,8 @@ window.uss = {
         const __windowScrollsElement = __windowMaxScrollX === element.scrollLeft && 
                                        __windowMaxScrollY === element.scrollTop;
 
-        //Restore the original scroll position of the Window.
-        window.scroll(__originalXPosition, __originalYPosition);
+        //Scroll the Window back to its initial position.
+        window.scroll(__windowInitialX, __windowInitialY);
         
         //Window is not scrollable.
         if(__windowMaxScrollX === 0 && __windowMaxScrollY === 0) {
@@ -580,7 +597,7 @@ window.uss = {
     const _containerData = _oldData || [];
 
     if(!_oldData) {
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -606,7 +623,7 @@ window.uss = {
     const _containerData = _oldData || [];
 
     if(!_oldData) {
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -632,7 +649,7 @@ window.uss = {
     const _containerData = _oldData || [];
 
     if(!_oldData) {
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -684,7 +701,7 @@ window.uss = {
   },
   setPageScroller: (newPageScroller, options = {debugString: "setPageScroller"}) => {
     if(!uss._containersData.get(newPageScroller)) {
-      if(newPageScroller !== window && !(newPageScroller instanceof Element)) {
+      if(newPageScroller !== window && !CHECK_INSTANCEOF(newPageScroller)) {
         uss._errorLogger(options.debugString, "the newPageScroller to be an Element or the Window", newPageScroller);
         return;
       }
@@ -774,7 +791,7 @@ window.uss = {
        * they both implement Element and there are no other implementation of this interface on a website,
        * so its fine to check for the container being instanceof Element.
        */
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -831,7 +848,7 @@ window.uss = {
        * they both implement Element and there are no other implementation of this interface on a website,
        * so its fine to check for the container being instanceof Element.
        */
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -888,7 +905,7 @@ window.uss = {
        * they both implement Element and there are no other implementation of this interface on a website,
        * so its fine to check for the container being instanceof Element.
        */
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -960,7 +977,7 @@ window.uss = {
     const _containerData = _oldData || [];
 
     if(!_oldData) {
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element the Window", container);
         return;
       }
@@ -1015,7 +1032,7 @@ window.uss = {
       if(container === window) {
         _containerData[28] = () => window.scrollX; //ScrollXCalculator
         _containerData[29] = () => window.scrollY; //ScrollYCalculator
-      } else if(container instanceof Element) {
+      } else if(CHECK_INSTANCEOF(container)) {
         _containerData[28] = () => container.scrollLeft; //ScrollXCalculator
         _containerData[29] = () => container.scrollTop;  //ScrollYCalculator
       } else {
@@ -1038,7 +1055,7 @@ window.uss = {
       if(container === window) {
         _containerData[28] = () => window.scrollX; //ScrollXCalculator
         _containerData[29] = () => window.scrollY; //ScrollYCalculator
-      } else if(container instanceof Element) {
+      } else if(CHECK_INSTANCEOF(container)) {
         _containerData[28] = () => container.scrollLeft; //ScrollXCalculator
         _containerData[29] = () => container.scrollTop;  //ScrollYCalculator
       } else {
@@ -1059,13 +1076,13 @@ window.uss = {
       if(!_oldData) uss._containersData.set(container, _containerData);
 
       container = uss.getWindowScroller(false, options);
-      const _maxScroll = container === window ? 0 : uss.getMaxScrollX(container, forceCalculation, options);
-      _containerData[16] = _maxScroll;
-      return _maxScroll;
+      _containerData[16] = container === window ? 0 : uss.getMaxScrollX(container, forceCalculation, options);
+    
+      return _containerData[16];
     }
 
     if(!_oldData) {
-      if(!(container instanceof Element)) {
+      if(!CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -1074,12 +1091,22 @@ window.uss = {
 
     const _originalXPosition = container.scrollLeft;
     container.scrollLeft = HIGHEST_SAFE_SCROLL_POS;
-    const _maxScroll = container.scrollLeft;
+    _containerData[16] = container.scrollLeft; //cache the value for later use
     container.scrollLeft = _originalXPosition;
 
-    //Cache the value for later use.
-    _containerData[16] = _maxScroll;
-    return _maxScroll;
+    /**
+     * The container and the window are the same, 
+     * cache the just calculated maxScroll for the window too.
+     */
+    if(container === uss.getWindowScroller(false, options)) {
+      const _windowOldData = uss._containersData.get(window);
+      const _windowData = _windowOldData || [];
+      if(!_windowOldData) uss._containersData.set(window, _windowData);
+
+      _windowData[16] = _containerData[16];
+    }
+
+    return _containerData[16];
   },
   getMaxScrollY: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollY"}) => {
     //Check if the maxScrollY value for the passed container has already been calculated. 
@@ -1091,13 +1118,13 @@ window.uss = {
       if(!_oldData) uss._containersData.set(container, _containerData);
 
       container = uss.getWindowScroller(false, options);
-      const _maxScroll = container === window ? 0 : uss.getMaxScrollY(container, forceCalculation, options);
-      _containerData[17] = _maxScroll;
-      return _maxScroll;
+      _containerData[17] = container === window ? 0 : uss.getMaxScrollY(container, forceCalculation, options);
+      
+      return _containerData[17];
     }
 
     if(!_oldData) {
-      if(!(container instanceof Element)) {
+      if(!CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -1106,12 +1133,22 @@ window.uss = {
 
     const _originalYPosition = container.scrollTop;
     container.scrollTop = HIGHEST_SAFE_SCROLL_POS;
-    const _maxScroll = container.scrollTop;
+    _containerData[17] = container.scrollTop; //cache the value for later use
     container.scrollTop = _originalYPosition;
 
-    //Cache the value for later use.
-    _containerData[17] = _maxScroll;
-    return _maxScroll;
+    /**
+     * The container and the window are the same, 
+     * cache the just calculated maxScroll for the window too.
+     */
+    if(container === uss.getWindowScroller(false, options)) {
+      const _windowOldData = uss._containersData.get(window);
+      const _windowData = _windowOldData || [];
+      if(!_windowOldData) uss._containersData.set(window, _windowData);
+
+      _windowData[17] = _containerData[17];
+    }
+
+    return _containerData[17];
   },
   getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
@@ -1119,12 +1156,12 @@ window.uss = {
     const _cachedParent = includeHiddenParents ? _containerData[25] : _containerData[24];
     
     if(_cachedParent !== undefined) return _cachedParent;
-
+    
     const _body = document.body;
     const _html = document.documentElement;
-    let _cacheResult;
     let _overflowRegex, _overflowRegexWithVisible;
-
+    let _cacheResult;
+    
     if(includeHiddenParents) {
       _cacheResult = (el) => _containerData[25] = el;
       _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
@@ -1134,78 +1171,92 @@ window.uss = {
       _overflowRegex = DEFAULT_REGEX_OVERFLOW;
       _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
     }
-    
-    if(element === window || element === _html) {
+
+    if(element === window) {
       _cacheResult(null);
       if(!_oldData) uss._containersData.set(element, _containerData);
       return null;
     }
 
     if(!_oldData) {
-      if(!(element instanceof Element)) {
+      if(!CHECK_INSTANCEOF(element)) {
         uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
         return;
       }
       uss._containersData.set(element, _containerData);
     }
     
-    //If the element has position:fixed,  
-    //it has no scrollable parent.
-    let _style = window.getComputedStyle(element);
-    if(_style.position === "fixed") {
-      _cacheResult(null);
-      return null;
-    }
-
-    const _relativePositioned = _style.position !== "absolute";
-    const _testIfScrollable = (el) => uss.getMaxScrollX(el) >= 1; 
-    element = element.parentElement;
-
-    //Test if the any parent of the passed element (up to the _body) 
-    //is scrollable on either the x or y axes.
-    while(element && element !== _body && element !== _html) {
-      _style = window.getComputedStyle(element);
-
-      if((_relativePositioned || _style.position !== "static") &&
-          _overflowRegex.test(_style.overflowX) && 
-          _testIfScrollable(element)
-      ) {
-        _cacheResult(element);
-        return element;
-      }
-
-      //This parent has position:fixed, no other parent can scroll the element.
-      if(_style.position === "fixed") {
-        _cacheResult(null);
-        return null;
-      }
-
-      element = element.parentElement;
-    }
-
-    //This parent has position:absolute and it's a child of _body, 
-    //no other parent can scroll the element.
-    if(element === _body && _style.position === "absolute") {
-      _cacheResult(null);
-      return null;
-    }
-
     const _windowScroller = uss.getWindowScroller(false, options);
+    let _container = element.parentElement;
 
-    while(element) {
-      _style = window.getComputedStyle(element);
-      
-      if(_overflowRegexWithVisible.test(_style.overflowX) && 
-         _testIfScrollable(element)
-      ) {
-        if(_windowScroller === element) element = window;
-        _cacheResult(element);
-        return element;
+    let _elementPosition = element.getBoundingClientRect();
+    const _elementInitialX = _elementPosition.left;
+
+    const _isScrollableParent = (overflowRegex) => {
+      let _testScrollX;
+
+      if(_container === window) {
+        _testScrollX = true;  
+      } else {
+        //The parent is not scrollable on the x-axis, skip it.
+        if(_container.scrollWidth <= _container.clientWidth) {
+          return false;
+        }
+        
+        //Check if the overflow conditions are met.
+        const _style = window.getComputedStyle(_container);
+        _testScrollX = overflowRegex.test(_style.overflowX);  
       }
 
-      element = element.parentElement;
+      //The y-axis should be tested.
+      if(_testScrollX) {
+        if(_container === _windowScroller) _container = window;
+
+        const _containerInitialX = uss.getScrollXCalculator(_container, options)();
+        const _containerInitialY = uss.getScrollYCalculator(_container, options)();
+        let _finalXPosition;
+
+        if(_testScrollX) {
+          _finalXPosition = _containerInitialX > 0 ? 0: HIGHEST_SAFE_SCROLL_POS;
+        } else {
+          _finalXPosition = _containerInitialX;
+        }
+
+        //Try to scroll the element by scrolling the parent.
+        _container.scroll(_finalXPosition, _containerInitialY);
+
+        //Check if the element has moved.
+        _elementPosition = element.getBoundingClientRect();
+        const _isXScrollable = _elementInitialX !== _elementPosition.left;
+        
+        //Scroll the container back to its initial position.
+        _container.scroll(_containerInitialX, _containerInitialY);
+
+        if(_isXScrollable) {
+          _cacheResult(_container);
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    //Test if the any parent of the passed element
+    //is scrollable on the x-axis.
+    while(_container) {
+      const _regexToUse = _container === _body || _container === _html ? _overflowRegexWithVisible : 
+                                                                         _overflowRegex;
+      if(_isScrollableParent(_regexToUse)) return _container;
+
+      _container = _container.parentElement;
     }
     
+    //Test the Window if necessary.
+    if(_windowScroller === window) {
+      _container = window;
+      if(_isScrollableParent()) return _container;
+    }
+
     _cacheResult(null);
     return null;
   },
@@ -1215,12 +1266,12 @@ window.uss = {
     const _cachedParent = includeHiddenParents ? _containerData[27] : _containerData[26];
     
     if(_cachedParent !== undefined) return _cachedParent;
-
+    
     const _body = document.body;
     const _html = document.documentElement;
-    let _cacheResult;
     let _overflowRegex, _overflowRegexWithVisible;
-
+    let _cacheResult;
+    
     if(includeHiddenParents) {
       _cacheResult = (el) => _containerData[27] = el;
       _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
@@ -1230,86 +1281,100 @@ window.uss = {
       _overflowRegex = DEFAULT_REGEX_OVERFLOW;
       _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
     }
-    
-    if(element === window || element === _html) {
+
+    if(element === window) {
       _cacheResult(null);
       if(!_oldData) uss._containersData.set(element, _containerData);
       return null;
     }
-    
+
     if(!_oldData) {
-      if(!(element instanceof Element)) {
+      if(!CHECK_INSTANCEOF(element)) {
         uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
         return;
       }
       uss._containersData.set(element, _containerData);
     }
-
-    //If the element has position:fixed,  
-    //it has no scrollable parent.
-    let _style = window.getComputedStyle(element);
-    if(_style.position === "fixed") {
-      _cacheResult(null);
-      return null;
-    }
-
-    const _relativePositioned = _style.position !== "absolute";
-    const _testIfScrollable = (el) => uss.getMaxScrollY(el) >= 1; 
-    element = element.parentElement;
-
-    //Test if the any parent of the passed element (up to the _body) 
-    //is scrollable on either the x or y axes.
-    while(element && element !== _body && element !== _html) {
-      _style = window.getComputedStyle(element);
-
-      if((_relativePositioned || _style.position !== "static") &&
-          _overflowRegex.test(_style.overflowY) && 
-          _testIfScrollable(element)
-      ) {
-        _cacheResult(element);
-        return element;
-      }
-
-      //This parent has position:fixed, no other parent can scroll the element.
-      if(_style.position === "fixed") {
-        _cacheResult(null);
-        return null;
-      }
-
-      element = element.parentElement;
-    }
-
-    //This parent has position:absolute and it's a child of _body, 
-    //no other parent can scroll the element.
-    if(element === _body && _style.position === "absolute") {
-      _cacheResult(null);
-      return null;
-    }
-
+    
     const _windowScroller = uss.getWindowScroller(false, options);
+    let _container = element.parentElement;
 
-    while(element) {
-      _style = window.getComputedStyle(element);
-      
-      if(_overflowRegexWithVisible.test(_style.overflowY) && 
-         _testIfScrollable(element)
-      ) {
-        if(_windowScroller === element) element = window;
-        _cacheResult(element);
-        return element;
+    let _elementPosition = element.getBoundingClientRect();
+    const _elementInitialY = _elementPosition.top;
+
+    const _isScrollableParent = (overflowRegex) => {
+      let _testScrollY;
+
+      if(_container === window) {
+        _testScrollY = true;  
+      } else {
+        //The parent is not scrollable on the y-axis, skip it.
+        if(_container.scrollHeight <= _container.clientHeight) {
+          return false;
+        }
+        
+        //Check if the overflow conditions are met.
+        const _style = window.getComputedStyle(_container);
+        _testScrollY = overflowRegex.test(_style.overflowY);  
       }
 
-      element = element.parentElement;
+      //The y-axis should be tested.
+      if(_testScrollY) {
+        if(_container === _windowScroller) _container = window;
+
+        const _containerInitialX = uss.getScrollXCalculator(_container, options)();
+        const _containerInitialY = uss.getScrollYCalculator(_container, options)();
+        let _finalYPosition;
+
+        if(_testScrollY) {
+          _finalYPosition = _containerInitialY > 0 ? 0: HIGHEST_SAFE_SCROLL_POS;
+        } else {
+          _finalYPosition = _containerInitialY;
+        }
+
+        //Try to scroll the element by scrolling the parent.
+        _container.scroll(_containerInitialX, _finalYPosition);
+
+        //Check if the element has moved.
+        _elementPosition = element.getBoundingClientRect();
+        const _isYScrollable = _elementInitialY !== _elementPosition.top;
+        
+        //Scroll the container back to its initial position.
+        _container.scroll(_containerInitialX, _containerInitialY);
+
+        if(_isYScrollable) {
+          _cacheResult(_container);
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    //Test if the any parent of the passed element
+    //is scrollable on the y-axis.
+    while(_container) {
+      const _regexToUse = _container === _body || _container === _html ? _overflowRegexWithVisible : 
+                                                                         _overflowRegex;
+      if(_isScrollableParent(_regexToUse)) return _container;
+
+      _container = _container.parentElement;
     }
     
+    //Test the Window if necessary.
+    if(_windowScroller === window) {
+      _container = window;
+      if(_isScrollableParent()) return _container;
+    }
+
     _cacheResult(null);
     return null;
   },
-  getScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
+  getScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
     let _cachedXParent, _cachedYParent;
-
+    
     if(includeHiddenParents) {
       _cachedXParent = _containerData[25];
       _cachedYParent = _containerData[27];
@@ -1322,25 +1387,35 @@ window.uss = {
      * If at least one parent is cached, get the other and return the one
      * that is met first during the parents' exploration.
      */
-    const _xParentIsCached = _cachedXParent !== undefined;
-    const _yParentIsCached = _cachedYParent !== undefined;
-    if(_xParentIsCached || _yParentIsCached) {
-      if(_xParentIsCached && !_yParentIsCached) {
+    const _isXParentCached = _cachedXParent !== undefined; //null is a valid scrollable parent
+    const _isYParentCached = _cachedYParent !== undefined; //null is a valid scrollable parent
+    if(_isXParentCached || _isYParentCached) {
+      if(_isXParentCached && !_isYParentCached) {
         _cachedYParent = uss.getYScrollableParent(element, includeHiddenParents, options);
-      } else if(!_xParentIsCached && _yParentIsCached) {
+      } else if(!_isXParentCached && _isYParentCached) {
         _cachedXParent = uss.getXScrollableParent(element, includeHiddenParents, options);
       }
 
-      return _cachedXParent === window || 
-             _cachedXParent === null || 
-             _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
+      /**
+       * This is a summary table of the output:
+       *                              _cachedXParent
+       *                         window |  null  | el1 
+       *                window | window | window | el1
+       * _cachedYParent  null  | window |  null  | el1
+       *                  el2  |  el2   |  el2   | el_ that is contained by the other el_
+       */
+      if(_cachedXParent === null) return _cachedYParent;
+      if(_cachedYParent === null) return _cachedXParent;
+      if(_cachedXParent === window) return _cachedYParent;
+      if(_cachedYParent === window) return _cachedXParent;
+      return _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
     }
 
     const _body = document.body;
     const _html = document.documentElement;
-    let _cacheXResult, _cacheYResult;
     let _overflowRegex, _overflowRegexWithVisible;
-
+    let _cacheXResult, _cacheYResult;
+    
     if(includeHiddenParents) {
       _cacheXResult = (el) => _containerData[25] = el;
       _cacheYResult = (el) => _containerData[27] = el;
@@ -1352,8 +1427,8 @@ window.uss = {
       _overflowRegex = DEFAULT_REGEX_OVERFLOW;
       _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
     }
-    
-    if(element === window || element === _html) {
+
+    if(element === window) {
       _cacheXResult(null);
       _cacheYResult(null);
       if(!_oldData) uss._containersData.set(element, _containerData);
@@ -1361,100 +1436,107 @@ window.uss = {
     }
 
     if(!_oldData) {
-      if(!(element instanceof Element)) {
+      if(!CHECK_INSTANCEOF(element)) {
         uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
         return;
       }
       uss._containersData.set(element, _containerData);
     }
+    
+    const _windowScroller = uss.getWindowScroller(false, options);
+    let _container = element.parentElement;
 
-    //If the element has position:fixed,  
-    //it has no scrollable parent.
-    let _style = window.getComputedStyle(element);
-    if(_style.position === "fixed") {
-      _cacheXResult(null);
-      _cacheYResult(null);
-      return null;
-    }
+    let _elementPosition = element.getBoundingClientRect();
+    const _elementInitialX = _elementPosition.left;
+    const _elementInitialY = _elementPosition.top;
 
-    const _relativePositioned = _style.position !== "absolute";
-    const _testIfScrollableX = (el) => uss.getMaxScrollX(el) >= 1; 
-    const _testIfScrollableY = (el) => uss.getMaxScrollY(el) >= 1; 
-    element = element.parentElement;
+    const _isScrollableParent = (overflowRegex) => {
+      let _testScrollX, _testScrollY;
 
-    //Test if the any parent of the passed element (up to the _body) 
-    //is scrollable on either the x or y axes.
-    while(element && element !== _body && element !== _html) {
-      _style = window.getComputedStyle(element);
+      if(_container === window) {
+        _testScrollX = true;
+        _testScrollY = true;  
+      } else {
+        //The parent is not scrollable, skip it.
+        if(_container.scrollHeight <= _container.clientHeight && 
+           _container.scrollWidth  <= _container.clientWidth
+        ) {
+          return false;
+        }
+        
+        //Check if the overflow conditions are met.
+        const _style = window.getComputedStyle(_container);
+        _testScrollX = overflowRegex.test(_style.overflowX);
+        _testScrollY = overflowRegex.test(_style.overflowY);  
+      }
 
-      if((_relativePositioned || _style.position !== "static")) {
-        const _isXScrollable = _overflowRegex.test(_style.overflowX) && _testIfScrollableX(element);
-        const _isYScrollable = _overflowRegex.test(_style.overflowY) && _testIfScrollableY(element);
+      //At least one axis should be tested.
+      if(_testScrollX || _testScrollY) {
+        if(_container === _windowScroller) _container = window;
 
-        if(_isXScrollable && !_isYScrollable) {
-          _cacheXResult(element);
-          return element;
+        const _containerInitialX = uss.getScrollXCalculator(_container, options)();
+        const _containerInitialY = uss.getScrollYCalculator(_container, options)();
+        let _finalXPosition, _finalYPosition;
+
+        if(_testScrollX) {
+          _finalXPosition = _containerInitialX > 0 ? 0 : HIGHEST_SAFE_SCROLL_POS;
+        } else {
+          _finalXPosition = _containerInitialX;
         }
 
+        if(_testScrollY) {
+          _finalYPosition = _containerInitialY > 0 ? 0: HIGHEST_SAFE_SCROLL_POS;
+        } else {
+          _finalYPosition = _containerInitialY;
+        }
+
+        //Try to scroll the element by scrolling the parent.
+        _container.scroll(_finalXPosition, _finalYPosition);
+
+        //Check if the element has moved.
+        _elementPosition = element.getBoundingClientRect();
+        const _isXScrollable = _elementInitialX !== _elementPosition.left;
+        const _isYScrollable = _elementInitialY !== _elementPosition.top;
+        
+        //Scroll the container back to its initial position.
+        _container.scroll(_containerInitialX, _containerInitialY);
+
+        if(_isXScrollable && !_isYScrollable) {
+          _cacheXResult(_container);
+          return true;
+        }
+  
         if(!_isXScrollable && _isYScrollable) {
-          _cacheYResult(element);
-          return element;
+          _cacheYResult(_container);
+          return true;
         }
         
         if(_isXScrollable && _isYScrollable) {
-          _cacheXResult(element);
-          _cacheYResult(element);
-          return element;
+          _cacheXResult(_container);
+          _cacheYResult(_container);
+          return true;
         }
       }
 
-      //This parent has position:fixed, no other parent can scroll the element.
-      if(_style.position === "fixed") {
-        _cacheXResult(null);
-        _cacheYResult(null);
-        return null;
-      }
-
-      element = element.parentElement;
+      return false;
     }
 
-    //This parent has position:absolute and it's a child of _body, 
-    //no other parent can scroll the element.
-    if(element === _body && _style.position === "absolute") {
-      _cacheXResult(null);
-      _cacheYResult(null);
-      return null;
-    }
+    //Test if the any parent of the passed element
+    //is scrollable on either the x or y axes.
+    while(_container) {
+      const _regexToUse = _container === _body || _container === _html ? _overflowRegexWithVisible : 
+                                                                         _overflowRegex;
+      if(_isScrollableParent(_regexToUse)) return _container;
 
-    const _windowScroller = uss.getWindowScroller(false, options);
-
-    while(element) {
-      _style = window.getComputedStyle(element);
-
-      const _isXScrollable = _overflowRegexWithVisible.test(_style.overflowX) && _testIfScrollableX(element);
-      const _isYScrollable = _overflowRegexWithVisible.test(_style.overflowY) && _testIfScrollableY(element);
-
-      if(_windowScroller === element) element = window;
-
-      if(_isXScrollable && !_isYScrollable) {
-        _cacheXResult(element);
-        return element;
-      }
-
-      if(!_isXScrollable && _isYScrollable) {
-        _cacheYResult(element);
-        return element;
-      }
-      
-      if(_isXScrollable && _isYScrollable) {
-        _cacheXResult(element);
-        _cacheYResult(element);
-        return element;
-      }
-
-      element = element.parentElement;
+      _container = _container.parentElement;
     }
     
+    //Test the Window if necessary.
+    if(_windowScroller === window) {
+      _container = window;
+      if(_isScrollableParent()) return _container;
+    }
+
     _cacheXResult(null);
     _cacheYResult(null);
     return null;
@@ -2088,7 +2170,7 @@ window.uss = {
         uss._containersData.set(container, _newData);
       } 
     } else {
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -2133,7 +2215,7 @@ window.uss = {
         uss._containersData.set(container, _newData);
       } 
     } else {
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }
@@ -2176,7 +2258,7 @@ window.uss = {
       
       uss._containersData.set(container, _newData);
     } else {
-      if(container !== window && !(container instanceof Element)) {
+      if(container !== window && !CHECK_INSTANCEOF(container)) {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
         return;
       }

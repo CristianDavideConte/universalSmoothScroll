@@ -20,8 +20,8 @@ describe("getScrollableParent", function() {
                 expect(res).to.throw(constants.defaultUssException);
               })
               .then(() => {
-                const _htmlParent = null;
-                const _bodyParent = null;
+                const _htmlParent = win;
+                const _bodyParent = win;
                 
                 const _body = win.document.body;
                 
@@ -65,13 +65,13 @@ describe("getScrollableParent", function() {
                 expect(uss.getScrollableParent(_positionFixedElement)).to.be.null;
                 
                 //test element with position:absolute which is a direct child of body
-                expect(uss.getScrollableParent(_positionAbsoluteElementDirectBodyChild)).to.be.null;
+                expect(uss.getScrollableParent(_positionAbsoluteElementDirectBodyChild)).to.equal(_bodyParent);
 
                 //test element with position:absolute which is a child of a position:absolute parent
                 expect(uss.getScrollableParent(_positionAbsoluteElementA)).to.equal(_genericElementParent0);
 
                 //test element with position:absolute which is a child of a position:static parent
-                expect(uss.getScrollableParent(_positionAbsoluteElementB)).to.equal(_body);
+                expect(uss.getScrollableParent(_positionAbsoluteElementB)).to.equal(_htmlParent);
 
                 //test elements with no constraint 
                 expect(uss.getScrollableParent(_genericElement1)).to.equal(_genericElementParent1);
