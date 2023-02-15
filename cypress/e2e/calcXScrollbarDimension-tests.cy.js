@@ -30,9 +30,10 @@ describe("calcXScrollbarDimension", function() {
                 uss._containersData = new Map();
                 expect(uss._containersData.size).to.equal(0);
 
-                //Test if the window's x scrollbar is cached correctly. 
+                //Test the window's x-scrollbar. 
                 const _windowXScrollbarDimension = uss.calcXScrollbarDimension(win, true);
-                expect(_windowXScrollbarDimension).to.equal(uss.calcXScrollbarDimension(uss.getPageScroller(true)));
+                expect(_windowXScrollbarDimension).to.equal(uss.calcXScrollbarDimension(uss.getWindowScroller(true)));
+
                 const _windowXScrollbarCachedDimension = uss._containersData.get(win)[18];
                 expect(_windowXScrollbarDimension).to.equal(_windowXScrollbarCachedDimension);
 
@@ -47,6 +48,8 @@ describe("calcXScrollbarDimension", function() {
                 .then(() => {
                     const _maxDim = uss.getScrollbarsMaxDimension();
                     const _pageScroller = win.document.scrollingElement || win.document.body;
+                    const _unsupportedTestElement = () => {};
+                    Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
 
                     const _noScrollbarElement = win.document.getElementById("no-scroller");
                     const _elementWithScrollbarOnTheXAxis = win.document.getElementById("y-scroller");
@@ -60,9 +63,12 @@ describe("calcXScrollbarDimension", function() {
                     const _elementWithScrollbarOnTheYAxisOriginalScrollPos = _getCurrentScrollPos(_elementWithScrollbarOnTheYAxis);
                     const _elementWithScrollbarOnTheXYAxesOriginalScrollPos = _getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes);
 
-                    uss.setPageScroller(win.document.scrollingElement || win.document.body);
+                    uss.setPageScroller(_pageScroller);
 
-                    //Test the scrollbars dimensions.
+                    //Test the x-scrollbar's dimension of an element that is instanceof Element but doesn't have the style property.
+                    expect(uss.calcXScrollbarDimension(_unsupportedTestElement)).to.equal(0);
+
+                    //Test the x-scrollbar's dimension.
                     expect(uss.calcXScrollbarDimension(_noScrollbarElement)).to.equal(0);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXAxis)).to.equal(_maxDim);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheYAxis)).to.equal(0);
@@ -78,13 +84,14 @@ describe("calcXScrollbarDimension", function() {
                     expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _elementWithScrollbarOnTheXYAxesOriginalScrollPos)).to.be.true;
 
                     //Test if the yielded results are the same as the uss.calcScrollbarsDimensions method
+                    expect(uss.calcXScrollbarDimension(_unsupportedTestElement)).to.equal(uss.calcScrollbarsDimensions(_unsupportedTestElement)[0]);
                     expect(uss.calcXScrollbarDimension(_pageScroller)).to.equal(uss.calcScrollbarsDimensions(_pageScroller)[0]);
                     expect(uss.calcXScrollbarDimension(_noScrollbarElement)).to.equal(uss.calcScrollbarsDimensions(_noScrollbarElement)[0]);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXAxis)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXAxis)[0]);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheYAxis)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheYAxis)[0]);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0]);
                
-                    //Test if the methods used for stopping one or more scroll-animation/s erase the cached values (they should not).
+                    //Test if the methods that stop one or more scroll-animation/s, actually erase the cached values (they should not).
                     const _dim = uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true);
                     uss.stopScrollingX(_elementWithScrollbarOnTheXYAxes);
                     uss.stopScrollingY(_elementWithScrollbarOnTheXYAxes);

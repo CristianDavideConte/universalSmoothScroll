@@ -48,6 +48,13 @@ describe("calcBordersDimensions", function() {
                     expect(res).to.throw(constants.defaultUssException);
                 })
                 .then(() => {
+                    const _unsupportedTestElement = () => {};
+                    Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
+                    
+                    expect(arraysAreEqual(uss.calcBordersDimensions(_unsupportedTestElement), 
+                                          [0,0,0,0])
+                    ).to.be.true;
+
                     const _borderedElement = win.document.getElementById("bordered");   
 
                     expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
