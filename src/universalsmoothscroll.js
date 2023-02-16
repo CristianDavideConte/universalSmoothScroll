@@ -578,30 +578,58 @@ window.uss = {
     if(forceCalculation) uss.calcFramesTimes(undefined, undefined, callback, options);
     return uss._framesTime;
   },
-  getPageScroller: (forceCalculation = false, options = {debugString: "getPageScroller"}) => {
+  getPageScroller: (forceCalculation = false) => {
     //Check if the _pageScroller has already been calculated.
     if(forceCalculation || !uss._pageScroller) {
-      //The _pageScroller is the element that can scroll the further between document.documentElement and document.body.
-      //If there's a tie or neither of those can scroll, it's defaulted to the 
-      //the document.scrollingElement (if supported) or the Window.
-      const _htmlMaxScrollX = uss.getMaxScrollX(document.documentElement, forceCalculation, options);
-      const _htmlMaxScrollY = uss.getMaxScrollY(document.documentElement, forceCalculation, options);
-      const _bodyMaxScrollX = uss.getMaxScrollX(document.body, forceCalculation, options);
-      const _bodyMaxScrollY = uss.getMaxScrollY(document.body, forceCalculation, options);
+      const _body = document.body;
+      const _html = document.documentElement;
 
-      //Cache the _pageScroller for later use.
+      const _htmlOldData = uss._containersData.get(_html);
+      const _bodyOldData = uss._containersData.get(_body);
+      const _htmlData = _htmlOldData || [];
+      const _bodyData = _bodyOldData || [];
+
+      const _htmlInitialX = _html.scrollLeft;
+      const _htmlInitialY = _html.scrollTop;
+      const _bodyInitialX = _body.scrollLeft;
+      const _bodyInitialY = _body.scrollTop;
+
+      _html.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
+      _body.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
+
+      const _htmlMaxScrollX = _html.scrollLeft;
+      const _htmlMaxScrollY = _html.scrollTop;
+      const _bodyMaxScrollX = _body.scrollLeft;
+      const _bodyMaxScrollY = _body.scrollTop;
+      
+      _html.scroll(_htmlInitialX, _htmlInitialY);
+      _body.scroll(_bodyInitialX, _bodyInitialY);
+      
+      //Cache the maxScrollX/maxScrollY.
+      _htmlData[16] = _htmlMaxScrollX;
+      _htmlData[17] = _htmlMaxScrollY;
+      _bodyData[16] = _bodyMaxScrollX;
+      _bodyData[17] = _bodyMaxScrollY;
+
+      if(!_htmlOldData) uss._containersData.set(_html, _htmlData);
+      if(!_bodyOldData) uss._containersData.set(_body, _bodyData);
+
+      /**
+       * The _pageScroller is the element that scrolls the further between _html and _body.
+       * If there's a tie or neither of those can scroll, it's defaulted to the Window.
+       */
       if(
         (_htmlMaxScrollX >  _bodyMaxScrollX && _htmlMaxScrollY >= _bodyMaxScrollY) ||
         (_htmlMaxScrollX >= _bodyMaxScrollX && _htmlMaxScrollY >  _bodyMaxScrollY)
       ) {
-        uss._pageScroller = document.documentElement;
+        uss._pageScroller = _html;
       } else if(
         (_bodyMaxScrollX >  _htmlMaxScrollX && _bodyMaxScrollY >= _htmlMaxScrollY) || 
         (_bodyMaxScrollX >= _htmlMaxScrollX && _bodyMaxScrollY >  _htmlMaxScrollY) 
       ) {
-        uss._pageScroller = document.body;
+        uss._pageScroller = _body;
       } else {
-        uss._pageScroller = document.scrollingElement || window;
+        uss._pageScroller = window;
       }
     }
 
@@ -2478,11 +2506,11 @@ window.addEventListener("resize", () => {
 }, {passive:true});
 
 function ussInit() {
-  //Calculate the _windowScroller.
-  uss.getWindowScroller();
-
   //Calculate the _pageScroller.
   uss.getPageScroller();
+
+  //Calculate the _windowScroller.
+  uss.getWindowScroller();
 
   //Calculate the _scrollbarsMaxDimension.
   uss.getScrollbarsMaxDimension();
