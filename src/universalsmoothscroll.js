@@ -477,75 +477,99 @@ window.uss = {
     return uss._scrollbarsMaxDimension;
   },
   getWindowScroller: (forceCalculation = false) => {
-    //Check if the _windowScroller has already been calculated.
     if(forceCalculation || !uss._windowScroller) {
-      /**
-       * This function tests if:
-       * - the window is scrollable
-       * - scrolling the window also scrolls the passed element
-       * Returns true if the uss._windowScroller has been set, false otherwise.
-       */
-      const _testScroller = (element) => {
-        //Save the original scroll positions of the Window and the element.
-        const __windowInitialX = window.scrollX;
-        const __windowInitialY = window.scrollY; 
+      const _oldData = uss._containersData.get(window);
+      const _containerData = _oldData || [];
+            
+      const _body = document.body;
+      const _html = document.documentElement;
 
-        //Scroll the Window to a known initial position.
-        window.scroll(0,0); //TODO: this is probably useless, remove it
+      const _windowInitialX = window.scrollX; 
+      const _windowInitialY = window.scrollY; 
+      const _elementsToTest = [];
+      let _elementsIndex = 0;
 
-        //Try to scroll the element by scrolling the Window.
-        window.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
-
-        const __windowMaxScrollX = window.scrollX;
-        const __windowMaxScrollY = window.scrollY;
-        const __windowScrollsElement = __windowMaxScrollX === element.scrollLeft && 
-                                       __windowMaxScrollY === element.scrollTop;
-
-        //Scroll the Window back to its initial position.
-        window.scroll(__windowInitialX, __windowInitialY);
+      if(
+        _html.scrollLeft === _windowInitialX && 
+        _html.scrollTop === _windowInitialY
+      ) {
+        _elementsToTest[_elementsIndex] = _html;
+        _elementsIndex++;
+      }   
+      
+      if(
+        _body.scrollLeft === _windowInitialX && 
+        _body.scrollTop === _windowInitialY
+      ) {
+        _elementsToTest[_elementsIndex] = _body;
+        _elementsIndex++;
+      }   
         
-        //Window is not scrollable.
-        if(__windowMaxScrollX === 0 && __windowMaxScrollY === 0) {
-          const __oldData = uss._containersData.get(window);
-          const __containerData = __oldData || [];
-          __containerData[16] = 0; //maxScrollX
-          __containerData[17] = 0; //maxScrollY
+      //Neither _html nor _body have the same scrollPosition of Window.
+      if(_elementsIndex === 0) {
+        uss._windowScroller = window;
+        return uss._windowScroller;
+      }
 
-          if(!__oldData) uss._containersData.set(window, __containerData);
+      let _maxScrollX = _containerData[16] || HIGHEST_SAFE_SCROLL_POS; //is never 0
+      let _maxScrollY = _containerData[17] || HIGHEST_SAFE_SCROLL_POS; //is never 0
 
-          uss._windowScroller = window;
-          return true;
-        }
-        
-        //Window scrolls the element.
-        if(__windowScrollsElement) {
-          const __windowOldData = uss._containersData.get(window);
-          const __elementOldData = uss._containersData.get(element);
-          const __windowData = __windowOldData || [];
-          const __elementData = __elementOldData || [];
+      if(_windowInitialX !== _maxScrollX || _windowInitialY !== _maxScrollY) {
+        //Try to scroll the body/html by scrolling the Window.
+        window.scroll(_maxScrollX, _maxScrollY);
 
-          __windowData[16] = __windowMaxScrollX; //maxScrollX
-          __windowData[17] = __windowMaxScrollY; //maxScrollY
-          __elementData[16] = __windowMaxScrollX; //maxScrollX
-          __elementData[17] = __windowMaxScrollY; //maxScrollY
+        _maxScrollX = window.scrollX;
+        _maxScrollY = window.scrollY;
+      }
+      
+      //The Window cannot scroll.
+      if(_maxScrollX === 0 && _maxScrollY === 0) {
+        uss._windowScroller = window;
+        return uss._windowScroller;
+      }
 
-          if(!__windowOldData) uss._containersData.set(window, __windowData);
-          if(!__elementOldData) uss._containersData.set(element, __elementData);
+      //The Window was already at its maxScrollX/maxScrollY.
+      if(_windowInitialX === _maxScrollX && _windowInitialY === _maxScrollY) {
+        //Try to scroll the body/html by scrolling the Window.
+        window.scroll(0,0);
+      }
 
+      let _windowScrollerFound = false;
+      for(const element of _elementsToTest) {        
+        if(
+          element.scrollLeft === window.scrollX && 
+          element.scrollTop === window.scrollY
+        ) {
+          //Cache the maxScrollX/maxScrollY.
+          const _elementOldData = uss._containersData.get(element); 
+          const _elementData = _elementOldData || [];
+          _elementData[16] = _maxScrollX;
+          _elementData[17] = _maxScrollY;
+          
+          if(!_elementOldData) uss._containersData.set(element, _elementData);
+          
           uss._windowScroller = element;
-          return true;
-        }
-
-        //Window is scrollable but doesn't scroll the element.
-        return false;
-      }
-
-      //Only test the body if the html is not the element that scrolls the window.
-      if(!_testScroller(document.documentElement)) {
-        if(!_testScroller(document.body)) {
-          uss._windowScroller = window; //Fallback to window
+          _windowScrollerFound = true;
+          break;
         }
       }
+
+      /**
+       * Scroll the Window back to its initial position.
+       * Note that if the Window scrolls any other element, 
+       * the latter will be scrolled back into place too.
+       * Otherwise it was already in the correct scroll position 
+       * because the tests didn't affect it. 
+       */
+      window.scroll(_windowInitialX, _windowInitialY);
+
+      //Cache the maxScrollX/maxScrollY.
+      _containerData[16] = _maxScrollX;
+      _containerData[17] = _maxScrollY;
+      if(!_oldData) uss._containersData.set(window, _containerData);
+
+      //Fallback to the Window.
+      if(!_windowScrollerFound) uss._windowScroller = window;
     }
 
     return uss._windowScroller;
@@ -802,9 +826,9 @@ window.uss = {
       !Number.isFinite(_containerData[18])
     ) {
       if(container === window) { 
-        const _windowScroller = uss.getWindowScroller(false);
+        const _windowScroller = uss.getWindowScroller();
         _containerData[18] = _windowScroller === window ? 0 : uss.calcXScrollbarDimension(_windowScroller, forceCalculation, options);
-      } else if(!container.style || uss.getScrollbarsMaxDimension(false) === 0) {
+      } else if(!container.style || uss.getScrollbarsMaxDimension() === 0) {
         //The element cannot have scrollbars or they are 0px on this webpage.
         _containerData[18] = 0;
      } else {
@@ -863,9 +887,9 @@ window.uss = {
       !Number.isFinite(_containerData[19])
     ) {
       if(container === window) { 
-        const _windowScroller = uss.getWindowScroller(false);
+        const _windowScroller = uss.getWindowScroller();
         _containerData[19] = _windowScroller === window ? 0 : uss.calcYScrollbarDimension(_windowScroller, forceCalculation, options);
-      } else if(!container.style || uss.getScrollbarsMaxDimension(false) === 0) {
+      } else if(!container.style || uss.getScrollbarsMaxDimension() === 0) {
         //The element cannot have scrollbars or they are 0px on this webpage.
         _containerData[19] = 0;
      } else {
@@ -925,12 +949,12 @@ window.uss = {
       !Number.isFinite(_containerData[19])
     ) {
       if(container === window) { 
-        const _windowScroller = uss.getWindowScroller(false);
+        const _windowScroller = uss.getWindowScroller();
         const _scrollbarsDimensions = _windowScroller === window ? [0,0] : uss.calcScrollbarsDimensions(_windowScroller, forceCalculation, options);
         
         _containerData[18] = _scrollbarsDimensions[0];
         _containerData[19] = _scrollbarsDimensions[1];
-      } else if(!container.style || uss.getScrollbarsMaxDimension(false) === 0) {
+      } else if(!container.style || uss.getScrollbarsMaxDimension() === 0) {
         //The element cannot have scrollbars or they are 0px on this webpage.
         _containerData[18] = 0;
         _containerData[19] = 0;
@@ -1003,7 +1027,7 @@ window.uss = {
       !Number.isFinite(_containerData[23]) 
     ) {
       if(container === window) {
-        const _windowScroller = uss.getWindowScroller(false);
+        const _windowScroller = uss.getWindowScroller();
         const _bordersDimensions = _windowScroller === window ? [0,0,0,0] : uss.calcBordersDimensions(_windowScroller, forceCalculation, options);
 
         _containerData[20] = _bordersDimensions[0];
@@ -1090,7 +1114,7 @@ window.uss = {
     if(container === window) {
       if(!_oldData) uss._containersData.set(container, _containerData);
 
-      container = uss.getWindowScroller(false, options);
+      container = uss.getWindowScroller();
       _containerData[16] = container === window ? 0 : uss.getMaxScrollX(container, forceCalculation, options);
     
       return _containerData[16];
@@ -1113,7 +1137,7 @@ window.uss = {
      * The container and the window are the same, 
      * cache the just calculated maxScroll for the window too.
      */
-    if(container === uss.getWindowScroller(false, options)) {
+    if(container === uss.getWindowScroller()) {
       const _windowOldData = uss._containersData.get(window);
       const _windowData = _windowOldData || [];
       if(!_windowOldData) uss._containersData.set(window, _windowData);
@@ -1132,7 +1156,7 @@ window.uss = {
     if(container === window) {
       if(!_oldData) uss._containersData.set(container, _containerData);
 
-      container = uss.getWindowScroller(false, options);
+      container = uss.getWindowScroller();
       _containerData[17] = container === window ? 0 : uss.getMaxScrollY(container, forceCalculation, options);
       
       return _containerData[17];
@@ -1155,7 +1179,7 @@ window.uss = {
      * The container and the window are the same, 
      * cache the just calculated maxScroll for the window too.
      */
-    if(container === uss.getWindowScroller(false, options)) {
+    if(container === uss.getWindowScroller()) {
       const _windowOldData = uss._containersData.get(window);
       const _windowData = _windowOldData || [];
       if(!_windowOldData) uss._containersData.set(window, _windowData);
@@ -1201,7 +1225,7 @@ window.uss = {
       uss._containersData.set(element, _containerData);
     }
     
-    const _windowScroller = uss.getWindowScroller(false, options);
+    const _windowScroller = uss.getWindowScroller();
     let _container = element.parentElement;
 
     let _elementPosition = element.getBoundingClientRect();
@@ -1311,7 +1335,7 @@ window.uss = {
       uss._containersData.set(element, _containerData);
     }
     
-    const _windowScroller = uss.getWindowScroller(false, options);
+    const _windowScroller = uss.getWindowScroller();
     let _container = element.parentElement;
 
     let _elementPosition = element.getBoundingClientRect();
@@ -1458,7 +1482,7 @@ window.uss = {
       uss._containersData.set(element, _containerData);
     }
     
-    const _windowScroller = uss.getWindowScroller(false, options);
+    const _windowScroller = uss.getWindowScroller();
     let _container = element.parentElement;
 
     let _elementPosition = element.getBoundingClientRect();
@@ -1981,13 +2005,13 @@ window.uss = {
     function _scrollContainer() {   
       //__scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
       //__scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
-      const __scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false);
+      const __scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false, options);
 
       //__bordersDimensions[0] = _currentContainer's top border size
       //__bordersDimensions[1] = _currentContainer's right border size
       //__bordersDimensions[2] = _currentContainer's bottom border size
       //__bordersDimensions[3] = _currentContainer's left border size
-      const __bordersDimensions = uss.calcBordersDimensions(_currentContainer, false);   
+      const __bordersDimensions = uss.calcBordersDimensions(_currentContainer, false, options);   
 
       const __containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
       const __containerWidth  = __containerRect.width;
@@ -2023,8 +2047,8 @@ window.uss = {
       
       const __deltaX = Math.round(__elementInitialX - __elementFinalX);
       const __deltaY = Math.round(__elementInitialY - __elementFinalY);
-      const __scrollContainerX = __deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
-      const __scrollContainerY = __deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
+      const __scrollContainerX = __deltaX !== 0 && uss.getMaxScrollX(_currentContainer, false, options) >= 1;
+      const __scrollContainerY = __deltaY !== 0 && uss.getMaxScrollY(_currentContainer, false, options) >= 1;
 
       if(__scrollContainerX && __scrollContainerY) uss.scrollBy(__deltaX, __deltaY, _currentContainer, _callback, true, true, options);
       else if(__scrollContainerX) uss.scrollXBy(__deltaX, _currentContainer, _callback, true, true, options);
@@ -2066,13 +2090,13 @@ window.uss = {
     function _scrollContainer() {   
       //__scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
       //__scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
-      const __scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false);
+      const __scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false, options);
 
       //__bordersDimensions[0] = _currentContainer's top border size
       //__bordersDimensions[1] = _currentContainer's right border size
       //__bordersDimensions[2] = _currentContainer's bottom border size
       //__bordersDimensions[3] = _currentContainer's left border size
-      const __bordersDimensions = uss.calcBordersDimensions(_currentContainer, false);   
+      const __bordersDimensions = uss.calcBordersDimensions(_currentContainer, false, options);
 
       const __containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
       const __containerWidth  = __containerRect.width;
@@ -2140,8 +2164,8 @@ window.uss = {
       
       const __deltaX = Math.round(__elementInitialX - __elementFinalX);
       const __deltaY = Math.round(__elementInitialY - __elementFinalY);
-      const __scrollContainerX = __deltaX !== 0 && uss.getMaxScrollX(_currentContainer) >= 1;
-      const __scrollContainerY = __deltaY !== 0 && uss.getMaxScrollY(_currentContainer) >= 1;
+      const __scrollContainerX = __deltaX !== 0 && uss.getMaxScrollX(_currentContainer, false, options) >= 1;
+      const __scrollContainerY = __deltaY !== 0 && uss.getMaxScrollY(_currentContainer, false, options) >= 1;
 
       if(__scrollContainerX && __scrollContainerY) uss.scrollBy(__deltaX, __deltaY, _currentContainer, _callback, true, true, options);
       else if(__scrollContainerX) uss.scrollXBy(__deltaX, _currentContainer, _callback, true, true, options);

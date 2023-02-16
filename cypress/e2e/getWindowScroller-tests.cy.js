@@ -19,12 +19,15 @@ describe("getWindowScroller", function() {
                 //Reset the window to a known scroll position.
                 win.scroll(0, 0);
 
+                const _htmlResetCorrectly = _hasSameCoordinatesAsWindow(_html); 
+                const _bodyResetCorrectly = _hasSameCoordinatesAsWindow(_body); 
+
                 //Scroll the window to a random position to see if the html/body scrolls accordingly.
                 win.scroll(100, 100);
 
-                if(_hasSameCoordinatesAsWindow(_html)) {
+                if(_htmlResetCorrectly && _hasSameCoordinatesAsWindow(_html)) {
                     expect(uss.getWindowScroller()).to.equal(_html);
-                } else if(_hasSameCoordinatesAsWindow(_body)) {
+                } else if(_bodyResetCorrectly && _hasSameCoordinatesAsWindow(_body)) {
                     expect(uss.getWindowScroller()).to.equal(_body);
                 } else {
                     expect(uss.getWindowScroller()).to.equal(win);
