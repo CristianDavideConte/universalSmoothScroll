@@ -584,35 +584,8 @@ window.uss = {
       const _body = document.body;
       const _html = document.documentElement;
 
-      const _htmlOldData = uss._containersData.get(_html);
-      const _bodyOldData = uss._containersData.get(_body);
-      const _htmlData = _htmlOldData || [];
-      const _bodyData = _bodyOldData || [];
-
-      const _htmlInitialX = _html.scrollLeft;
-      const _htmlInitialY = _html.scrollTop;
-      const _bodyInitialX = _body.scrollLeft;
-      const _bodyInitialY = _body.scrollTop;
-
-      _html.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
-      _body.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
-
-      const _htmlMaxScrollX = _html.scrollLeft;
-      const _htmlMaxScrollY = _html.scrollTop;
-      const _bodyMaxScrollX = _body.scrollLeft;
-      const _bodyMaxScrollY = _body.scrollTop;
-      
-      _html.scroll(_htmlInitialX, _htmlInitialY);
-      _body.scroll(_bodyInitialX, _bodyInitialY);
-      
-      //Cache the maxScrollX/maxScrollY.
-      _htmlData[16] = _htmlMaxScrollX;
-      _htmlData[17] = _htmlMaxScrollY;
-      _bodyData[16] = _bodyMaxScrollX;
-      _bodyData[17] = _bodyMaxScrollY;
-
-      if(!_htmlOldData) uss._containersData.set(_html, _htmlData);
-      if(!_bodyOldData) uss._containersData.set(_body, _bodyData);
+      const [_htmlMaxScrollX, _htmlMaxScrollY] = uss.getMaxScrolls(_html, forceCalculation);
+      const [_bodyMaxScrollX, _bodyMaxScrollY] = uss.getMaxScrolls(_body, forceCalculation);
 
       /**
        * The _pageScroller is the element that scrolls the further between _html and _body.
@@ -1088,14 +1061,16 @@ window.uss = {
     ];
   },
   getScrollXCalculator: (container = uss._pageScroller, options = {debugString: "getScrollXCalculator"}) => {
+    return uss.getScrollCalculators(container, options)[0];
+  },
+  getScrollYCalculator: (container = uss._pageScroller, options = {debugString: "getScrollYCalculator"}) => {
+    return uss.getScrollCalculators(container, options)[1];
+  },
+  getScrollCalculators: (container = uss._pageScroller, options = {debugString: "getScrollCalculators"}) => {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
 
-    if(!_containerData[28]) {
-      /**
-       * Since the functions that determine the scroll position of the container
-       * are fixed, the scrollYCalculator can be cached too. 
-       */
+    if(!_containerData[28] || !_containerData[29]) {
       if(container === window) {
         _containerData[28] = () => window.scrollX; //ScrollXCalculator
         _containerData[29] = () => window.scrollY; //ScrollYCalculator
@@ -1106,116 +1081,58 @@ window.uss = {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);     
         return;                                  
       }
+      
       if(!_oldData) uss._containersData.set(container, _containerData);
     }
-    return _containerData[28];
-  },
-  getScrollYCalculator: (container = uss._pageScroller, options = {debugString: "getScrollYCalculator"}) => {
-    const _oldData = uss._containersData.get(container);
-    const _containerData = _oldData || [];
 
-    if(!_containerData[29]) {
-      /**
-       * Since the functions that determine the scroll position of the container
-       * are fixed, the scrollXCalculator can be cached too. 
-       */
-      if(container === window) {
-        _containerData[28] = () => window.scrollX; //ScrollXCalculator
-        _containerData[29] = () => window.scrollY; //ScrollYCalculator
-      } else if(CHECK_INSTANCEOF(container)) {
-        _containerData[28] = () => container.scrollLeft; //ScrollXCalculator
-        _containerData[29] = () => container.scrollTop;  //ScrollYCalculator
-      } else {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);                                       
-        return;                                  
-      }
-      uss._containersData.set(container, _containerData);
-    }
-    return _containerData[29];
+    return [_containerData[28], _containerData[29]];
   },
   getMaxScrollX: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollX"}) => {
-    //Check if the maxScrollX value for the passed container has already been calculated. 
-    const _oldData = uss._containersData.get(container);
-    const _containerData = _oldData || [];
-    if(!forceCalculation && Number.isFinite(_containerData[16])) return _containerData[16];
-
-    if(container === window) {
-      if(!_oldData) uss._containersData.set(container, _containerData);
-
-      container = uss.getWindowScroller();
-      _containerData[16] = container === window ? 0 : uss.getMaxScrollX(container, forceCalculation, options);
-    
-      return _containerData[16];
-    }
-
-    if(!_oldData) {
-      if(!CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, _containerData);
-    }
-
-    const _originalXPosition = container.scrollLeft;
-    container.scrollLeft = HIGHEST_SAFE_SCROLL_POS;
-    _containerData[16] = container.scrollLeft; //cache the value for later use
-    container.scrollLeft = _originalXPosition;
-
-    /**
-     * The container and the window are the same, 
-     * cache the just calculated maxScroll for the window too.
-     */
-    if(container === uss.getWindowScroller()) {
-      const _windowOldData = uss._containersData.get(window);
-      const _windowData = _windowOldData || [];
-      if(!_windowOldData) uss._containersData.set(window, _windowData);
-
-      _windowData[16] = _containerData[16];
-    }
-
-    return _containerData[16];
+    return uss.getMaxScrolls(container, forceCalculation, options)[0];
   },
   getMaxScrollY: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollY"}) => {
-    //Check if the maxScrollY value for the passed container has already been calculated. 
-    const _oldData = uss._containersData.get(container);
-    const _containerData = _oldData || [];
-    if(!forceCalculation && Number.isFinite(_containerData[17])) return _containerData[17];
+    return uss.getMaxScrolls(container, forceCalculation, options)[1];
+  },
+  getMaxScrolls: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrolls"}) => {
+    //Check if the maxScrollX/maxScrollY values for the passed container have already been calculated. 
+    const _oldData = uss._containersData.get(container) || [];
+    if(
+      !forceCalculation && 
+      Number.isFinite(_oldData[16]) && 
+      Number.isFinite(_oldData[17])
+    ) {
+      return [_oldData[16], _oldData[17]];
+    }
 
-    if(container === window) {
-      if(!_oldData) uss._containersData.set(container, _containerData);
+    const [_scrollXCalculator, _scrollYCalculator] = uss.getScrollCalculators(container, options);
+    const _initialXPosition = _scrollXCalculator();
+    const _initialYPosition = _scrollYCalculator();
+    const _containerData = uss._containersData.get(container);
 
-      container = uss.getWindowScroller();
-      _containerData[17] = container === window ? 0 : uss.getMaxScrollY(container, forceCalculation, options);
+    container.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
+
+    _containerData[16] = _scrollXCalculator(); //maxScrollX
+    _containerData[17] = _scrollYCalculator(); //maxScrollY
+    
+    //Scroll the container back to its initial position.
+    container.scroll(_initialXPosition, _initialYPosition);
+    
+    let _windowScroller = uss.getWindowScroller();
+    _windowScroller = (container !== window && _windowScroller === container) ? window :
+                      (container === window && _windowScroller !== window)    ? _windowScroller : 
+                                                                                null;
+    //Bidirectionally cache the value for the window/windowScroller too.
+    if(_windowScroller) {
+      const _windowScrollerOldData = uss._containersData.get(_windowScroller);
+      const _windowScrollerData = _windowScrollerOldData || [];
+
+      _windowScrollerData[16] = _containerData[16];
+      _windowScrollerData[17] = _containerData[17];
       
-      return _containerData[17];
+      if(!_windowScrollerOldData) uss._containersData.set(_windowScroller, _windowScrollerData);
     }
 
-    if(!_oldData) {
-      if(!CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, _containerData);
-    }
-
-    const _originalYPosition = container.scrollTop;
-    container.scrollTop = HIGHEST_SAFE_SCROLL_POS;
-    _containerData[17] = container.scrollTop; //cache the value for later use
-    container.scrollTop = _originalYPosition;
-
-    /**
-     * The container and the window are the same, 
-     * cache the just calculated maxScroll for the window too.
-     */
-    if(container === uss.getWindowScroller()) {
-      const _windowOldData = uss._containersData.get(window);
-      const _windowData = _windowOldData || [];
-      if(!_windowOldData) uss._containersData.set(window, _windowData);
-
-      _windowData[17] = _containerData[17];
-    }
-
-    return _containerData[17];
+    return [_containerData[16], _containerData[17]];
   },
   getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
@@ -2506,11 +2423,11 @@ window.addEventListener("resize", () => {
 }, {passive:true});
 
 function ussInit() {
-  //Calculate the _pageScroller.
-  uss.getPageScroller();
-
   //Calculate the _windowScroller.
   uss.getWindowScroller();
+
+  //Calculate the _pageScroller.
+  uss.getPageScroller();
 
   //Calculate the _scrollbarsMaxDimension.
   uss.getScrollbarsMaxDimension();

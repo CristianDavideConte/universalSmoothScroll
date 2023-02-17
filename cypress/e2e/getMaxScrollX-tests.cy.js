@@ -23,7 +23,7 @@ describe("getMaxScrollX", function() {
               .then(() => {
                 const _expectedMaxScrollX = 0.5 * _testElement.scrollWidth + uss.getScrollbarsMaxDimension(); 
 
-                //test the Window
+                //Test the Window
                 expect(uss.getMaxScrollX(win, false)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(), false));
                 expect(uss.getMaxScrollX(win, true)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(), true));
 
@@ -34,7 +34,7 @@ describe("getMaxScrollX", function() {
                 expect(uss.getMaxScrollX(_testElement, true)).to.be.closeTo(_expectedMaxScrollX, 1);   
                 expect(uss.getMaxScrollX(_testElement, false)).to.be.closeTo(_expectedMaxScrollX, 1);   
                 
-                //test elements that are unscrollable on the x-axis 
+                //Test elements that are unscrollable on the x-axis 
                 expect(uss.getMaxScrollX(win.document.getElementById("no-scroll-x-1"), true)).to.equal(0);
                 expect(uss.getMaxScrollX(win.document.getElementById("no-scroll-x-1"), false)).to.equal(0);
                 expect(uss.getMaxScrollX(win.document.getElementById("no-scroll-x-2"), true)).to.equal(0);

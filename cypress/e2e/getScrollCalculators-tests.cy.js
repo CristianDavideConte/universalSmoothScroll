@@ -1,19 +1,19 @@
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
-  cy.visit("getScrollYCalculator-tests.html"); 
+  cy.visit("getScrollCalculators-tests.html"); 
 })
 
-describe("getScrollYCalculator", function() {
+describe("getScrollCalculators", function() {
     let uss;
     let result = false;
-
-    it("Tests the getScrollYCalculator method", function() {
+    
+    it("Tests the getScrollCalculators method", function() {
       cy.window()
         .then((win) => {
             uss = win.uss;
                               
-            cy.testFailingValues(uss.getScrollYCalculator, {
+            cy.testFailingValues(uss.getScrollCalculators, {
               0: [constants.failingValuesNoUndefined]
             },
             (res, v1, v2, v3, v4, v5, v6, v7) => {
@@ -37,19 +37,28 @@ describe("getScrollYCalculator", function() {
                   _randomElement
               ];
 
-              _elements.forEach(el => expect(uss.getScrollYCalculator(el)()).to.equal(el.scrollTop));
-              expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
+              _elements.forEach(el => {
+                const [_scrollXCalculator, _scrollYCalculator] = uss.getScrollCalculators(el);
+                expect(_scrollXCalculator()).to.equal(el.scrollLeft)
+                expect(_scrollYCalculator()).to.equal(el.scrollTop)
+              });
+              expect(uss.getScrollCalculators(win)[0]()).to.equal(win.scrollX);
+              expect(uss.getScrollCalculators(win)[1]()).to.equal(win.scrollY);
 
               cy.waitForUssCallback( 
                 (resolve) => {
                     _elements.forEach(
                         el => {
-                            uss.scrollYTo(
+                            uss.scrollTo(
+                                Math.random() * el.scrollWidth, 
                                 Math.random() * el.scrollHeight, 
                                 el, 
                                 () => {
-                                    result = uss.getScrollYCalculator(el)() === el.scrollTop;
-                                    
+                                    const [_scrollXCalculator, _scrollYCalculator] = uss.getScrollCalculators(el);
+
+                                    result = _scrollXCalculator() === el.scrollLeft && 
+                                             _scrollYCalculator() === el.scrollTop;
+
                                     if(!result || _elements.filter(el => uss.isScrolling(el)).length <= 0) {
                                         uss.stopScrollingAll(resolve);
                                     }
@@ -61,7 +70,8 @@ describe("getScrollYCalculator", function() {
               ).then(
                   () => {
                   expect(result).to.be.true;
-                  expect(uss.getScrollYCalculator(win)()).to.equal(win.scrollY);
+                  expect(uss.getScrollCalculators(win)[0]()).to.equal(win.scrollX);
+                  expect(uss.getScrollCalculators(win)[1]()).to.equal(win.scrollY);
                 }
               );
             });

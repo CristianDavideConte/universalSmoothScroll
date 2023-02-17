@@ -1,0 +1,60 @@
+<html>
+    <head>
+        <base href = ".."/>
+        <script async src = "./src/universalsmoothscroll.js"></script>
+        <script async src = "./src/universalsmoothscroll-ease-functions.js" type = "module"></script>
+        <script async src = "./src/universalsmoothscroll-dev-helpers.js" type = "module"></script>
+        <script async src = "./src/universalsmoothscroll-presets.js" type = "module"></script>
+        <style>
+            html, body {
+                width: 1000px;
+                height: 2000px;
+                overflow: scroll;
+            }
+            .scrollable-content {
+                display: block;
+                width: 4000px;
+                height: 4000px;
+            }
+            #scrollable-y {
+                display: block;
+                width: 3000px;
+                height: 3000px;
+                overflow-y: scroll;
+                overflow-x: visible;
+            } 
+            #scrollable-x {
+                display: block;
+                width: 3000px;
+                height: 3000px;
+                overflow-x: scroll;
+                overflow-y: visible;
+            } 
+            #position-fixed {
+                position: fixed;
+                overflow: scroll;
+                width: 100px;
+                height: 100px;
+            }
+            #random-element {
+                overflow: scroll;
+                width: 200px;
+                height: 50px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id = "scrollable-y">
+            <div class = "scrollable-content"></div>
+        </div>
+        <div id = "scrollable-x">
+            <div class = "scrollable-content"></div>
+        </div>
+        <div id = "position-fixed">
+            <div class = "scrollable-content"></div>
+        </div>
+        <div id = "random-element">
+            <div class = "scrollable-content"></div>
+        </div>
+    </body>
+</html>

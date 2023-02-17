@@ -49,6 +49,7 @@ describe("getScrollXCalculator", function() {
                                 el, 
                                 () => {
                                     result = uss.getScrollXCalculator(el)() === el.scrollLeft;
+                                    
                                     if(!result || _elements.filter(el => uss.isScrolling(el)).length <= 0) {
                                         uss.stopScrollingAll(resolve);
                                     }
