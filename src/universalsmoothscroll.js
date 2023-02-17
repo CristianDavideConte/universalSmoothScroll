@@ -807,126 +807,10 @@ window.uss = {
     if(typeof callback === "function") callback();
   },
   calcXScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
-    const _oldData = uss._containersData.get(container);
-    const _containerData = _oldData || [];
-
-    if(!_oldData) {
-      /**
-       * Only instances of HTMLElement and SVGElement have the style property, and they both implement Element.
-       * All the other unsupported implementations are filtered out by the checking style property later.
-       */
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, _containerData);
-    } 
-    
-    if(
-      forceCalculation ||
-      !Number.isFinite(_containerData[18])
-    ) {
-      if(container === window) { 
-        const _windowScroller = uss.getWindowScroller();
-        _containerData[18] = _windowScroller === window ? 0 : uss.calcXScrollbarDimension(_windowScroller, forceCalculation, options);
-      } else if(!container.style || uss.getScrollbarsMaxDimension() === 0) {
-        //The element cannot have scrollbars or they are 0px on this webpage.
-        _containerData[18] = 0;
-     } else {
-        //The properties of _style are automatically updated whenever the style is changed.
-        const _style = window.getComputedStyle(container);
-
-        const _initialStyleWidth  = Number.parseInt(_style.width);
-        const _initialClientWidth  = container.clientWidth;
-        const _initialOverflowY = container.style.overflowY;
-        const _initialXPosition = container.scrollLeft;
-  
-        //The container is forced to hide its vertical scrollbar.
-        container.style.overflowY = "hidden";
-      
-        /**
-         * When the scrollbar is hidden the container's width increases only if 
-         * it was originally showing a scrollbar, otherwise it remains the same. 
-         */
-        _containerData[18] = Number.parseInt(_style.width)  - _initialStyleWidth;
-  
-        /**
-         * If the container is not scrollable but has "overflow:scroll"
-         * the dimension can only be calculated by using clientWidth.
-         * If the overflow is "visible" the dimension is < 0.
-         */
-        if(_containerData[18] === 0)    _containerData[18] = container.clientWidth - _initialClientWidth;
-        else if(_containerData[18] < 0) _containerData[18] = 0;
-        
-        container.style.overflowY = _initialOverflowY;
-
-        //After modifying the styles of the container, the scroll position may change.
-        container.scrollLeft = _initialXPosition;
-      }
-    }
-          
-    return _containerData[18]; //Vertical scrollbar's width
+    return uss.calcScrollbarsDimensions(container, forceCalculation, options)[0];
   },
   calcYScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcYScrollbarDimension"}) => {
-    const _oldData = uss._containersData.get(container);
-    const _containerData = _oldData || [];
-
-    if(!_oldData) {
-      /**
-       * Only instances of HTMLElement and SVGElement have the style property, and they both implement Element.
-       * All the other unsupported implementations are filtered out by the checking style property later.
-       */
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, _containerData);
-    } 
-    
-    if(
-      forceCalculation ||
-      !Number.isFinite(_containerData[19])
-    ) {
-      if(container === window) { 
-        const _windowScroller = uss.getWindowScroller();
-        _containerData[19] = _windowScroller === window ? 0 : uss.calcYScrollbarDimension(_windowScroller, forceCalculation, options);
-      } else if(!container.style || uss.getScrollbarsMaxDimension() === 0) {
-        //The element cannot have scrollbars or they are 0px on this webpage.
-        _containerData[19] = 0;
-     } else {
-        //The properties of _style are automatically updated whenever the style is changed.
-        const _style = window.getComputedStyle(container);
-
-        const _initialStyleHeight = Number.parseInt(_style.height);   
-        const _initialClientHeight = container.clientHeight;
-        const _initialOverflowX = container.style.overflowX;
-        const _initialYPosition  = container.scrollTop;
-  
-        //The container is forced to hide its horizontal scrollbar.
-        container.style.overflowX = "hidden";
-      
-        /**
-         * When the scrollbar is hidden the container's height increases only if 
-         * it was originally showing a scrollbar, otherwise it remains the same. 
-         */
-        _containerData[19] = Number.parseInt(_style.height) - _initialStyleHeight;
-  
-        /**
-         * If the container is not scrollable but has "overflow:scroll"
-         * the dimension can only be calculated by using clientHeight.
-         * If the overflow is "visible" the dimension is < 0.
-         */
-        if(_containerData[19] === 0)    _containerData[19] = container.clientHeight - _initialClientHeight;
-        else if(_containerData[19] < 0) _containerData[19] = 0;
-        
-        container.style.overflowX = _initialOverflowX;
-
-        //After modifying the styles of the container, the scroll position may change.
-        container.scrollTop = _initialYPosition;
-      }
-    }
-          
-    return _containerData[19]; //Horizontal scrollbar's height
+    return uss.calcScrollbarsDimensions(container, forceCalculation, options)[1];
   },
   calcScrollbarsDimensions: (container, forceCalculation = false, options = {debugString: "calcScrollbarsDimensions"}) => {
     const _oldData = uss._containersData.get(container);
@@ -1081,7 +965,7 @@ window.uss = {
         uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);     
         return;                                  
       }
-      
+
       if(!_oldData) uss._containersData.set(container, _containerData);
     }
 
