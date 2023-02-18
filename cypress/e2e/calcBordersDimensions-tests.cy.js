@@ -39,8 +39,20 @@ describe("calcBordersDimensions", function() {
                         )
                 ).to.be.true;
 
+                const _unsupportedTestElement = () => {};
+                Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
+                
+                expect(arraysAreEqual(uss.calcBordersDimensions(_unsupportedTestElement), 
+                                      [0,0,0,0])
+                ).to.be.true;
+
+                const _head = win.document.head;
+                
+                expect(arraysAreEqual(uss.calcBordersDimensions(_head), [0,0,0,0])).to.be.true;
+                Array.from(_head.children).forEach(el => expect(arraysAreEqual(uss.calcBordersDimensions(el), [0,0,0,0])).to.be.true);
+                
                 cy.testFailingValues(uss.calcBordersDimensions, {
-                    0: [constants.failingValuesAll,
+                    0: [constants.failingValuesAllNoUndefined,
                         [true, false],
                        ]
                 }, 
@@ -48,13 +60,6 @@ describe("calcBordersDimensions", function() {
                     expect(res).to.throw(constants.defaultUssException);
                 })
                 .then(() => {
-                    const _unsupportedTestElement = () => {};
-                    Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
-                    
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_unsupportedTestElement), 
-                                          [0,0,0,0])
-                    ).to.be.true;
-
                     const _borderedElement = win.document.getElementById("bordered");   
 
                     expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 

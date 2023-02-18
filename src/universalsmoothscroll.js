@@ -574,10 +574,6 @@ window.uss = {
 
     return uss._windowScroller;
   },
-  getFramesTime: (forceCalculation = false, callback, options = {debugString: "getFramesTime", requestPhase: 0}) => {
-    if(forceCalculation) uss.calcFramesTimes(undefined, undefined, callback, options);
-    return uss._framesTime;
-  },
   getPageScroller: (forceCalculation = false) => {
     //Check if the _pageScroller has already been calculated.
     if(forceCalculation || !uss._pageScroller) {
@@ -607,6 +603,10 @@ window.uss = {
     }
 
     return uss._pageScroller;
+  },
+  getFramesTime: (forceCalculation = false, callback, options = {debugString: "getFramesTime", requestPhase: 0}) => {
+    if(forceCalculation) uss.calcFramesTimes(undefined, undefined, callback, options);
+    return uss._framesTime;
   },
   getReducedMotionState: () => uss._reducedMotion,
   getOnResizeEndCallbacks: () => uss._onResizeEndCallbacks,
@@ -806,13 +806,13 @@ window.uss = {
     
     if(typeof callback === "function") callback();
   },
-  calcXScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
+  calcXScrollbarDimension: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
     return uss.calcScrollbarsDimensions(container, forceCalculation, options)[0];
   },
-  calcYScrollbarDimension: (container, forceCalculation = false, options = {debugString: "calcYScrollbarDimension"}) => {
+  calcYScrollbarDimension: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcYScrollbarDimension"}) => {
     return uss.calcScrollbarsDimensions(container, forceCalculation, options)[1];
   },
-  calcScrollbarsDimensions: (container, forceCalculation = false, options = {debugString: "calcScrollbarsDimensions"}) => {
+  calcScrollbarsDimensions: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcScrollbarsDimensions"}) => {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
 
@@ -826,7 +826,7 @@ window.uss = {
         return;
       }
       uss._containersData.set(container, _containerData);
-    } 
+    }
     
     if(
       forceCalculation ||
@@ -844,45 +844,51 @@ window.uss = {
         _containerData[18] = 0;
         _containerData[19] = 0;
      } else {
-        //The properties of _style are automatically updated whenever the style is changed.
-        const _style = window.getComputedStyle(container);
-
-        const _initialStyleWidth  = Number.parseInt(_style.width);
-        const _initialStyleHeight = Number.parseInt(_style.height);   
-        const _initialClientWidth  = container.clientWidth;
-        const _initialClientHeight = container.clientHeight;
-        const _initialOverflowX = container.style.overflowX;
-        const _initialOverflowY = container.style.overflowY;
         const _initialXPosition = container.scrollLeft;
         const _initialYPosition  = container.scrollTop;
-  
-        //The container is forced to hide both its horizontal and vertical scrollbars.
-        container.style.overflowX = "hidden";
-        container.style.overflowY = "hidden";
-      
-        /**
-         * When the scrollbars are hidden the container's width/height increase only if 
-         * it was originally showing scrollbars, otherwise they remain the same. 
-         */
-        _containerData[18] = Number.parseInt(_style.width)  - _initialStyleWidth;
-        _containerData[19] = Number.parseInt(_style.height) - _initialStyleHeight;
-  
-        /**
-         * If the container is not scrollable but has "overflow:scroll"
-         * the dimensions can only be calculated by using clientWidth/clientHeight.
-         * If the overflow is "visible" the dimensions are < 0.
-         */
-        if(_containerData[18] === 0)    _containerData[18] = container.clientWidth - _initialClientWidth;
-        else if(_containerData[18] < 0) _containerData[18] = 0;
+
+        if(container === document.body || container === document.documentElement) {
+          //The properties of _style are automatically updated whenever the style is changed.
+          const _style = window.getComputedStyle(container);
+
+          const _initialWidth  = Number.parseInt(_style.width);
+          const _initialHeight = Number.parseInt(_style.height);  
+          const _initialOverflowX = container.style.overflowX;
+          const _initialOverflowY = container.style.overflowY;
+
+          //The container is forced to hide its scrollbars.
+          container.style.overflowX = "hidden";
+          container.style.overflowY = "hidden";
         
-        if(_containerData[19] === 0)    _containerData[19] = container.clientHeight - _initialClientHeight;
-        else if(_containerData[19] < 0) _containerData[19] = 0;
+          _containerData[18] = Number.parseInt(_style.width)  - _initialWidth;
+          _containerData[19] = Number.parseInt(_style.height) - _initialHeight;
+    
+          container.style.overflowX = _initialOverflowX;
+          container.style.overflowY = _initialOverflowY;
+        } else {
+          const _initialBorder = container.style.border;
+
+          container.style.border = "none";
         
-        container.style.overflowX = _initialOverflowX;
-        container.style.overflowY = _initialOverflowY;
+          _containerData[18] = container.offsetWidth - container.clientWidth;
+          _containerData[19] = container.offsetHeight - container.clientHeight;
+          
+          container.style.border = _initialBorder;
+        }
 
         //After modifying the styles of the container, the scroll position may change.
         container.scroll(_initialXPosition, _initialYPosition);
+
+        //If the container is the windowScroller, cache the values for the window too.
+        if(container === uss.getWindowScroller()) {
+          const _windowOldData = uss._containersData.get(window);
+          const _windowData = _windowOldData || [];
+
+          _windowData[18] = _containerData[18];
+          _windowData[19] = _containerData[19];
+
+          if(!_windowOldData) uss._containersData.set(window, _windowData);
+        }
       }
     }
           
@@ -891,7 +897,7 @@ window.uss = {
       _containerData[19]  //Horizontal scrollbar's height
     ];
   },
-  calcBordersDimensions: (container, forceCalculation = false, options = {debugString: "calcBordersDimensions"}) => {
+  calcBordersDimensions: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcBordersDimensions"}) => {
     //Check if the bordersDimensions of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];

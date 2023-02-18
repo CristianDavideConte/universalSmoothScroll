@@ -46,7 +46,7 @@ describe("calcScrollbarsDimensions", function() {
                 ).to.be.true;
 
                 cy.testFailingValues(uss.calcScrollbarsDimensions, {
-                    0: [constants.failingValuesAll,
+                    0: [constants.failingValuesAllNoUndefined,
                         [true, false],
                        ]
                 }, 
@@ -59,6 +59,7 @@ describe("calcScrollbarsDimensions", function() {
                     const _unsupportedTestElement = () => {};
                     Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
 
+                    const _head = win.document.head;
                     const _noScrollbarElement = win.document.getElementById("no-scroller");
                     const _elementWithScrollbarOnTheXAxis = win.document.getElementById("y-scroller");
                     const _elementWithScrollbarOnTheYAxis = win.document.getElementById("x-scroller");
@@ -76,12 +77,17 @@ describe("calcScrollbarsDimensions", function() {
                     //Test the scrollbars' dimensions of an element that is instanceof Element but doesn't have the style property.
                     expect(arraysAreEqual(uss.calcScrollbarsDimensions(_unsupportedTestElement), [0,0])).to.be.true;
 
+                    //Test the scrollbars' dimensions of document.head's elements.
+                    expect(arraysAreEqual(uss.calcScrollbarsDimensions(_head), [0,0])).to.be.true;
+                    Array.from(_head.children).forEach(el => expect(arraysAreEqual(uss.calcScrollbarsDimensions(el), [0,0])).to.be.true);
+
                     //Test the scrollbars' dimensions.
+                    expect(arraysAreEqual(uss.calcScrollbarsDimensions(uss.getPageScroller()), [_maxDim,0])).to.be.true;
                     expect(arraysAreEqual(uss.calcScrollbarsDimensions(_noScrollbarElement), [0,0])).to.be.true;
                     expect(arraysAreEqual(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXAxis), [_maxDim,0])).to.be.true;
                     expect(arraysAreEqual(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheYAxis), [0,_maxDim])).to.be.true;
                     expect(arraysAreEqual(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes), [_maxDim,_maxDim])).to.be.true;
-                    expect(arraysAreEqual(uss.calcScrollbarsDimensions(uss.getPageScroller()), 
+                    expect(arraysAreEqual(uss.calcScrollbarsDimensions(uss.getWindowScroller()), 
                                           uss.calcScrollbarsDimensions(win))
                     ).to.be.true;
 
@@ -128,7 +134,9 @@ describe("calcScrollbarsDimensions-webkit-scrollbar-modifiers", function() {
                 uss = win.uss;
                 
                 cy.testFailingValues(uss.calcScrollbarsDimensions, {
-                    0: [constants.failingValuesAll]
+                    0: [constants.failingValuesAllNoUndefined,
+                        [true, false],
+                       ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
                     expect(res).to.throw(constants.defaultUssException);
