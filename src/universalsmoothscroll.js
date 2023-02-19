@@ -833,19 +833,17 @@ window.uss = {
       !Number.isFinite(_containerData[18]) || 
       !Number.isFinite(_containerData[19])
     ) {
-      if(container === window) { 
-        const _windowScroller = uss.getWindowScroller();
-        const _scrollbarsDimensions = _windowScroller === window ? [0,0] : uss.calcScrollbarsDimensions(_windowScroller, forceCalculation, options);
-        
-        _containerData[18] = _scrollbarsDimensions[0];
-        _containerData[19] = _scrollbarsDimensions[1];
+      const _windowScroller = uss.getWindowScroller();
+
+      if(container === window && window !== _windowScroller) {
+        return uss.calcScrollbarsDimensions(_windowScroller, forceCalculation, options);
       } else if(!container.style || uss.getScrollbarsMaxDimension() === 0) {
-        //The element cannot have scrollbars or they are 0px on this webpage.
+        //The element cannot have scrollbars or their size is 0px on this webpage.
         _containerData[18] = 0;
         _containerData[19] = 0;
      } else {
         const _initialXPosition = container.scrollLeft;
-        const _initialYPosition  = container.scrollTop;
+        const _initialYPosition = container.scrollTop;
 
         if(container === document.body || container === document.documentElement) {
           //The properties of _style are automatically updated whenever the style is changed.
@@ -880,7 +878,7 @@ window.uss = {
         container.scroll(_initialXPosition, _initialYPosition);
 
         //If the container is the windowScroller, cache the values for the window too.
-        if(container === uss.getWindowScroller()) {
+        if(container === _windowScroller) {
           const _windowOldData = uss._containersData.get(window);
           const _windowData = _windowOldData || [];
 
