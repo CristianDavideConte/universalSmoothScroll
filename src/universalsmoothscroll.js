@@ -561,12 +561,15 @@ window.uss = {
         return uss._windowScroller;
       }
 
-      let _maxScrollX = _containerData[KX_MS] || HIGHEST_SAFE_SCROLL_POS; //is never 0
-      let _maxScrollY = _containerData[KY_MS] || HIGHEST_SAFE_SCROLL_POS; //is never 0
+      let _maxScrollX = _containerData[KX_MS] !== NO_VAL ? _containerData[KX_MS] : HIGHEST_SAFE_SCROLL_POS;
+      let _maxScrollY = _containerData[KY_MS] !== NO_VAL ? _containerData[KY_MS] : HIGHEST_SAFE_SCROLL_POS;
 
-      if(_windowInitialX !== _maxScrollX || _windowInitialY !== _maxScrollY) {
+      if(
+        (_maxScrollX > 0 && _windowInitialX !== _maxScrollX) ||
+        (_maxScrollY > 0 && _windowInitialY !== _maxScrollY)
+      ) {
         //Try to scroll the body/html by scrolling the Window.
-        window.scroll(_maxScrollX, _maxScrollY);
+        window.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
 
         _maxScrollX = window.scrollX;
         _maxScrollY = window.scrollY;
@@ -591,8 +594,8 @@ window.uss = {
       let _windowScrollerFound = false;
       for(const element of _elementsToTest) {        
         if(
-          element.scrollLeft === window.scrollX && 
-          element.scrollTop === window.scrollY
+          window.scrollX === element.scrollLeft  && 
+          window.scrollY === element.scrollTop
         ) {
           //Cache the maxScrollX/maxScrollY.
           const _elementOldData = uss._containersData.get(element); 
