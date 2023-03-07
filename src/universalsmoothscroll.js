@@ -238,6 +238,9 @@ const KY_HSP = 27; //Key to get the hidden scrollable parent on the y-axis (over
 const KX_SC = 28;  //Key to get the ScrollXCalculator
 const KY_SC = 29;  //Key to get the ScrollYCalculator
 
+  //TODO: check if this makes sense
+  const K_RCB = 30;  //Key to get the resize callback function
+
 const NO_VAL = undefined; //No value has been calculated yet
 const NO_SP = null;       //No scrollable parent has been found
 
@@ -386,6 +389,58 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 }
 
+var DEFAULT_RESIZE_OBSERVER = new ResizeObserver((entries) => {
+  for(const entry of entries) {
+    const _container = entry.target;
+    const _containerData = uss._containersData.get(_container);
+    
+    if(!_containerData) continue;
+
+    //TODO: make sure this is done only once
+    _containerData[KX_MS] = NO_VAL; 
+    _containerData[KY_MS] = NO_VAL; 
+    _containerData[KX_SB] = NO_VAL; 
+    _containerData[KY_SB] = NO_VAL; 
+    _containerData[KY_TB] = NO_VAL; 
+    _containerData[KX_RB] = NO_VAL; 
+    _containerData[KY_BB] = NO_VAL; 
+    _containerData[KX_LB] = NO_VAL; 
+    _containerData[KX_SSP] = NO_VAL; 
+    _containerData[KX_HSP] = NO_VAL; 
+    _containerData[KY_SSP] = NO_VAL; 
+    _containerData[KY_HSP] = NO_VAL; 
+
+    //TODO: make sure this is called only once
+    if(_containerData[K_RCB]) _containerData[K_RCB]();
+  }
+});
+
+const INIT_CONTAINER_DATA = (container, containerData = []) => {
+  if(container === window) {
+    //The Window doesn't have any scrollable parent.
+    containerData[KX_SSP] = NO_SP;
+    containerData[KX_HSP] = NO_SP;
+    containerData[KY_SSP] = NO_SP;
+    containerData[KY_HSP] = NO_SP;
+
+    containerData[KX_SC] = () => window.scrollX; //ScrollXCalculator
+    containerData[KY_SC] = () => window.scrollY; //ScrollYCalculator
+
+    uss._containersData.set(container, containerData);
+    return true;
+  }
+  
+  if(CHECK_INSTANCEOF(container)) {
+    containerData[KX_SC] = () => container.scrollLeft; //ScrollXCalculator
+    containerData[KY_SC] = () => container.scrollTop;  //ScrollYCalculator
+
+    uss._containersData.set(container, containerData);
+    return true;
+  }
+
+  return false;
+}
+
 window.uss = {
   _containersData: new Map(),
   _xStepLength: DEFAULT_XSTEP_LENGTH,
@@ -416,21 +471,17 @@ window.uss = {
 
     if(_containerData) return !!_containerData[KX_ID];
 
-    if(container === window || CHECK_INSTANCEOF(container)) {
-      uss._containersData.set(container, []);
-      return false;
-    }
+    if(INIT_CONTAINER_DATA(container)) return false;
+
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   }, 
   isYScrolling: (container = uss._pageScroller, options = {debugString: "isYScrolling"}) => {
     const _containerData = uss._containersData.get(container);
 
     if(_containerData) return !!_containerData[KY_ID];
+    
+    if(INIT_CONTAINER_DATA(container)) return false;
 
-    if(container === window || CHECK_INSTANCEOF(container)) {
-      uss._containersData.set(container, []);
-      return false;
-    }
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },   
   isScrolling: (container = uss._pageScroller, options = {debugString: "isScrolling"}) => {
@@ -438,10 +489,8 @@ window.uss = {
 
     if(_containerData) return !!(_containerData[KX_ID] || _containerData[KY_ID]);
 
-    if(container === window || CHECK_INSTANCEOF(container)) {
-      uss._containersData.set(container, []);
-      return false;
-    }
+    if(INIT_CONTAINER_DATA(container)) return false;
+
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getFinalXPosition: (container = uss._pageScroller, options = {debugString: "getFinalXPosition"}) => {
@@ -460,10 +509,8 @@ window.uss = {
     //If there's no scroll-animation, 0 is returned.
     if(_containerData) return _containerData[KX_SD] || 0;
     
-    if(container === window || CHECK_INSTANCEOF(container)) {
-      uss._containersData.set(container, []);
-      return 0; 
-    }
+    if(INIT_CONTAINER_DATA(container)) return 0;
+
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getScrollYDirection: (container = uss._pageScroller, options = {debugString: "getScrollYDirection"}) => {
@@ -472,10 +519,8 @@ window.uss = {
     //If there's no scroll-animation, 0 is returned.
     if(_containerData) return _containerData[KY_SD] || 0;
     
-    if(container === window || CHECK_INSTANCEOF(container)) {
-      uss._containersData.set(container, []);
-      return 0; 
-    }
+    if(INIT_CONTAINER_DATA(container)) return 0;
+
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
   },
   getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getXStepLengthCalculator"}) => {
@@ -483,10 +528,8 @@ window.uss = {
         
     if(_containerData) return getTemporary ? _containerData[KX_TSC] : _containerData[KX_FSC];
 
-    if(container === window || CHECK_INSTANCEOF(container)) {
-      uss._containersData.set(container, []);
-      return; 
-    }
+    if(INIT_CONTAINER_DATA(container)) return;
+
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);    
   },
   getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getYStepLengthCalculator"}) => {    
@@ -494,10 +537,8 @@ window.uss = {
         
     if(_containerData) return getTemporary ? _containerData[KY_TSC] : _containerData[KY_FSC];
 
-    if(container === window || CHECK_INSTANCEOF(container)) {
-      uss._containersData.set(container, []);
-      return; 
-    }
+    if(INIT_CONTAINER_DATA(container)) return;
+
     uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);    
   },
   getScrollbarsMaxDimension: (forceCalculation = false) => {
@@ -529,7 +570,7 @@ window.uss = {
     if(forceCalculation || !uss._windowScroller) {
       const _oldData = uss._containersData.get(window);
       const _containerData = _oldData || [];
-      if(!_oldData) uss._containersData.set(window, _containerData);
+      if(!_oldData) INIT_CONTAINER_DATA(window, _containerData);
             
       const _body = document.body;
       const _html = document.documentElement;
@@ -603,7 +644,7 @@ window.uss = {
           _elementData[KX_MS] = _maxScrollX;
           _elementData[KY_MS] = _maxScrollY;
           
-          if(!_elementOldData) uss._containersData.set(element, _elementData);
+          if(!_elementOldData) INIT_CONTAINER_DATA(element, _elementData);
           
           uss._windowScroller = element;
           _windowScrollerFound = true;
@@ -669,13 +710,10 @@ window.uss = {
 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-
-    if(!_oldData) {
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, _containerData);
+    
+    if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
     }
 
     if(isTemporary) {
@@ -697,12 +735,9 @@ window.uss = {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
 
-    if(!_oldData) {
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, _containerData);
+    if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
     }
 
     if(isTemporary) {
@@ -724,12 +759,9 @@ window.uss = {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
 
-    if(!_oldData) {
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, _containerData);
+    if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
     }
 
     if(isTemporary) {
@@ -776,12 +808,9 @@ window.uss = {
     uss._minAnimationFrame = newMinAnimationFrame;
   },
   setPageScroller: (newPageScroller, options = {debugString: "setPageScroller"}) => {
-    if(!uss._containersData.get(newPageScroller)) {
-      if(newPageScroller !== window && !CHECK_INSTANCEOF(newPageScroller)) {
-        uss._errorLogger(options.debugString, "the newPageScroller to be an Element or the Window", newPageScroller);
-        return;
-      }
-      uss._containersData.set(newPageScroller, []);
+    if(!uss._containersData.get(newPageScroller) && !INIT_CONTAINER_DATA(newPageScroller)) {
+      uss._errorLogger(options.debugString, "the newPageScroller to be an Element or the Window", newPageScroller);
+      return;
     }
     uss._pageScroller = newPageScroller;
   },
@@ -866,17 +895,14 @@ window.uss = {
   calcScrollbarsDimensions: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcScrollbarsDimensions"}) => {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
-
-    if(!_oldData) {
-      /**
-       * Only instances of HTMLElement and SVGElement have the style property, and they both implement Element.
-       * All the other unsupported implementations are filtered out by the checking style property later.
-       */
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, _containerData);
+    
+    /**
+     * Only instances of HTMLElement and SVGElement have the style property, and they both implement Element.
+     * All the other unsupported implementations are filtered out by the checking style property later.
+     */
+    if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
     }
     
     if(
@@ -936,7 +962,7 @@ window.uss = {
           _windowData[KX_SB] = _containerData[KX_SB];
           _windowData[KY_SB] = _containerData[KY_SB];
 
-          if(!_windowOldData) uss._containersData.set(window, _windowData);
+          if(!_windowOldData) INIT_CONTAINER_DATA(window, _windowData);
         }
       }
     }
@@ -951,12 +977,9 @@ window.uss = {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
 
-    if(!_oldData) {
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element the Window", container);
-        return;
-      }
-      uss._containersData.set(container, _containerData);
+    if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
     }
 
     if(
@@ -1009,19 +1032,9 @@ window.uss = {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
 
-    if(!_containerData[KX_SC] || !_containerData[KY_SC]) {
-      if(container === window) {
-        _containerData[KX_SC] = () => window.scrollX; //ScrollXCalculator
-        _containerData[KY_SC] = () => window.scrollY; //ScrollYCalculator
-      } else if(CHECK_INSTANCEOF(container)) {
-        _containerData[KX_SC] = () => container.scrollLeft; //ScrollXCalculator
-        _containerData[KY_SC] = () => container.scrollTop;  //ScrollYCalculator
-      } else {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);     
-        return;                                  
-      }
-
-      if(!_oldData) uss._containersData.set(container, _containerData);
+    if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);     
+      return;                                  
     }
 
     return [_containerData[KX_SC], _containerData[KY_SC]];
@@ -1068,7 +1081,7 @@ window.uss = {
       _windowScrollerData[KX_MS] = _containerData[KX_MS];
       _windowScrollerData[KY_MS] = _containerData[KY_MS];
       
-      if(!_windowScrollerOldData) uss._containersData.set(_windowScroller, _windowScrollerData);
+      if(!_windowScrollerOldData) INIT_CONTAINER_DATA(_windowScroller, _windowScrollerData); 
     }
 
     return [_containerData[KX_MS], _containerData[KY_MS]];
@@ -1080,6 +1093,13 @@ window.uss = {
     
     if(_cachedParent !== NO_VAL) return _cachedParent;
     
+    if(!_oldData && !INIT_CONTAINER_DATA(element, _containerData)) {
+      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+      return;
+    }
+    
+    if(element === window) return NO_SP;
+
     const _body = document.body;
     const _html = document.documentElement;
     let _overflowRegex, _overflowRegexWithVisible;
@@ -1095,20 +1115,6 @@ window.uss = {
       _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
     }
 
-    if(element === window) {
-      _cacheResult(NO_SP);
-      if(!_oldData) uss._containersData.set(element, _containerData);
-      return NO_SP;
-    }
-
-    if(!_oldData) {
-      if(!CHECK_INSTANCEOF(element)) {
-        uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-        return;
-      }
-      uss._containersData.set(element, _containerData);
-    }
-    
     const _elementInitialX = element.getBoundingClientRect().left;
     const _windowScroller = uss.getWindowScroller();
     let _container = element.parentElement;
@@ -1188,6 +1194,13 @@ window.uss = {
     
     if(_cachedParent !== NO_VAL) return _cachedParent;
     
+    if(!_oldData && !INIT_CONTAINER_DATA(element, _containerData)) {
+      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+      return;
+    }
+    
+    if(element === window) return NO_SP;
+
     const _body = document.body;
     const _html = document.documentElement;
     let _overflowRegex, _overflowRegexWithVisible;
@@ -1203,20 +1216,6 @@ window.uss = {
       _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
     }
 
-    if(element === window) {
-      _cacheResult(NO_SP);
-      if(!_oldData) uss._containersData.set(element, _containerData);
-      return NO_SP;
-    }
-
-    if(!_oldData) {
-      if(!CHECK_INSTANCEOF(element)) {
-        uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-        return;
-      }
-      uss._containersData.set(element, _containerData);
-    }
-    
     const _elementInitialY = element.getBoundingClientRect().top;
     const _windowScroller = uss.getWindowScroller();
     let _container = element.parentElement;
@@ -1329,6 +1328,13 @@ window.uss = {
       if(_cachedYParent === window) return _cachedXParent;
       return _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
     }
+    
+    if(!_oldData && !INIT_CONTAINER_DATA(element, _containerData)) {
+      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+      return;
+    }
+
+    if(element === window) return NO_SP;
 
     const _body = document.body;
     const _html = document.documentElement;
@@ -1345,21 +1351,6 @@ window.uss = {
       _cacheYResult = (el) => _containerData[KY_SSP] = el;
       _overflowRegex = DEFAULT_REGEX_OVERFLOW;
       _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
-    }
-
-    if(element === window) {
-      _cacheXResult(NO_SP);
-      _cacheYResult(NO_SP);
-      if(!_oldData) uss._containersData.set(element, _containerData);
-      return NO_SP;
-    }
-
-    if(!_oldData) {
-      if(!CHECK_INSTANCEOF(element)) {
-        uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
-        return;
-      }
-      uss._containersData.set(element, _containerData);
     }
 
     const _elementInitialPos = element.getBoundingClientRect();
@@ -1525,8 +1516,7 @@ window.uss = {
     //Two possible cases:
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
-    const _oldData = uss._containersData.get(container);
-    const _containerData = _oldData || [];
+    const _containerData = uss._containersData.get(container);
     _containerData[KX_FP] = finalXPosition;      //finalXPosition
     _containerData[KX_SD] = _direction;          //direction
     _containerData[KX_TSA] = _totalScrollAmount; //totalScrollAmount
@@ -1539,7 +1529,6 @@ window.uss = {
 
     //No scroll-animation is being performed so a new one is created.
     _containerData[KX_ID] = window.requestAnimationFrame(_stepX);
-    if(!_oldData) uss._containersData.set(container, _containerData);
 
     function _stepX(timestamp) {
       const __finalXPosition = _containerData[KX_FP];
@@ -1657,8 +1646,7 @@ window.uss = {
     //Two possible cases:
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
-    const _oldData = uss._containersData.get(container);
-    const _containerData = _oldData || [];
+    const _containerData = uss._containersData.get(container);
     _containerData[KY_FP] = finalYPosition;      //finalYPosition
     _containerData[KY_SD] = _direction;          //direction
     _containerData[KY_TSA] = _totalScrollAmount; //totalScrollAmount
@@ -1671,7 +1659,6 @@ window.uss = {
 
     //No scroll-animation is being performed so a new one is created.
     _containerData[KY_ID] = window.requestAnimationFrame(_stepY);
-    if(!_oldData) uss._containersData.set(container, _containerData);
      
     function _stepY(timestamp) {
       const __finalYPosition = _containerData[KY_FP];
@@ -2132,12 +2119,9 @@ window.uss = {
         
         uss._containersData.set(container, _newData);
       } 
-    } else {
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, []);
+    } else if(!INIT_CONTAINER_DATA(container)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
     }
 
     if(typeof callback === "function") callback();
@@ -2177,12 +2161,9 @@ window.uss = {
         
         uss._containersData.set(container, _newData);
       } 
-    } else {
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, []);
+    } else if(!INIT_CONTAINER_DATA(container)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
     }
 
     if(typeof callback === "function") callback();
@@ -2220,12 +2201,9 @@ window.uss = {
       if(_containerData[KY_SC]) _newData[KY_SC] = _containerData[KY_SC]; //scrollYCalculator
       
       uss._containersData.set(container, _newData);
-    } else {
-      if(container !== window && !CHECK_INSTANCEOF(container)) {
-        uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
-        return;
-      }
-      uss._containersData.set(container, []);
+    } else if(!INIT_CONTAINER_DATA(container)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
     }
 
     if(typeof callback === "function") callback();
@@ -2369,18 +2347,18 @@ function onResize() {
 
   //Flush the internal caches.
   for(const containerData of uss._containersData.values()) {
-    containerData[KX_MS] = NO_VAL;
-    containerData[KY_MS] = NO_VAL; 
-    containerData[KX_SB] = NO_VAL; //Perhaps use a mutation observer
-    containerData[KY_SB] = NO_VAL; //Perhaps use a mutation observer
-    containerData[KY_TB] = NO_VAL; //Perhaps use a resize observer 
-    containerData[KX_RB] = NO_VAL; //Perhaps use a resize observer 
-    containerData[KY_BB] = NO_VAL; //Perhaps use a resize observer 
-    containerData[KX_LB] = NO_VAL; //Perhaps use a resize observer 
-    containerData[KX_SSP] = NO_VAL; //Perhaps use a resize observer 
-    containerData[KX_HSP] = NO_VAL; //Perhaps use a resize observer 
-    containerData[KY_SSP] = NO_VAL; //Perhaps use a resize observer 
-    containerData[KY_HSP] = NO_VAL; //Perhaps use a resize observer 
+    containerData[KX_MS] = NO_VAL;  //Perhaps use a resize observer
+    containerData[KY_MS] = NO_VAL;  //Perhaps use a resize observer
+    containerData[KX_SB] = NO_VAL;  //Perhaps use a mutation observer
+    containerData[KY_SB] = NO_VAL;  //Perhaps use a mutation observer
+    containerData[KY_TB] = NO_VAL;  //Perhaps use a mutation/resize observer 
+    containerData[KX_RB] = NO_VAL;  //Perhaps use a mutation/resize observer 
+    containerData[KY_BB] = NO_VAL;  //Perhaps use a mutation/resize observer 
+    containerData[KX_LB] = NO_VAL;  //Perhaps use a mutation/resize observer 
+    containerData[KX_SSP] = NO_VAL; //Perhaps use a mutation/resize observer 
+    containerData[KX_HSP] = NO_VAL; //Perhaps use a mutation/resize observer 
+    containerData[KY_SSP] = NO_VAL; //Perhaps use a mutation/resize observer 
+    containerData[KY_HSP] = NO_VAL; //Perhaps use a mutation/resize observer 
     //containerData[KX_SC] doesn't need to be reset
     //containerData[KY_SC] doesn't need to be reset
   }
