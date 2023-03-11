@@ -56,8 +56,13 @@ describe("calcScrollbarsDimensions", function() {
                 .then(() => {
                     const _maxDim = uss.getScrollbarsMaxDimension();
                     const _pageScroller = win.document.scrollingElement || win.document.body;
+                    
+                    /* 
+                    //TODO: add this case to the failingvaluesAll + variants
+                    //this should fail
                     const _unsupportedTestElement = () => {};
                     Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
+                    */
 
                     const _head = win.document.head;
                     const _noScrollbarElement = win.document.getElementById("no-scroller");
@@ -73,9 +78,6 @@ describe("calcScrollbarsDimensions", function() {
                     const _elementWithScrollbarOnTheXYAxesOriginalScrollPos = _getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes);
 
                     uss.setPageScroller(_pageScroller);
-
-                    //Test the scrollbars' dimensions of an element that is instanceof Element but doesn't have the style property.
-                    expect(arraysAreEqual(uss.calcScrollbarsDimensions(_unsupportedTestElement), [0,0])).to.be.true;
 
                     //Test the scrollbars' dimensions of document.head's elements.
                     expect(arraysAreEqual(uss.calcScrollbarsDimensions(_head), [0,0])).to.be.true;

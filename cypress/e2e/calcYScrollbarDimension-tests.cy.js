@@ -48,8 +48,12 @@ describe("calcYScrollbarDimension", function() {
                 .then(() => {
                     const _maxDim = uss.getScrollbarsMaxDimension();
                     const _pageScroller = win.document.scrollingElement || win.document.body;
+                    /* 
+                    //TODO: add this case to the failingvaluesAll + variants
+                    //this should fail
                     const _unsupportedTestElement = () => {};
                     Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
+                    */
 
                     const _head = win.document.head;
                     const _noScrollbarElement = win.document.getElementById("no-scroller");
@@ -65,9 +69,6 @@ describe("calcYScrollbarDimension", function() {
                     const _elementWithScrollbarOnTheXYAxesOriginalScrollPos = _getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes);
 
                     uss.setPageScroller(_pageScroller);
-
-                    //Test the y-scrollbar's dimension of an element that is instanceof Element but doesn't have the style property.
-                    expect(uss.calcYScrollbarDimension(_unsupportedTestElement)).to.equal(0);
 
                     //Test the y-scrollbar's dimension of document.head's elements.
                     expect(uss.calcYScrollbarDimension(_head)).to.equal(0);
@@ -90,7 +91,6 @@ describe("calcYScrollbarDimension", function() {
                     expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _elementWithScrollbarOnTheXYAxesOriginalScrollPos)).to.be.true;
 
                     //Test if the yielded results are the same as the uss.calcScrollbarsDimensions method
-                    expect(uss.calcYScrollbarDimension(_unsupportedTestElement)).to.equal(uss.calcScrollbarsDimensions(_unsupportedTestElement)[1]);
                     expect(uss.calcYScrollbarDimension(_pageScroller)).to.equal(uss.calcScrollbarsDimensions(_pageScroller)[1]);
                     expect(uss.calcYScrollbarDimension(_noScrollbarElement)).to.equal(uss.calcScrollbarsDimensions(_noScrollbarElement)[1]);
                     expect(uss.calcYScrollbarDimension(_elementWithScrollbarOnTheXAxis)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXAxis)[1]);

@@ -353,7 +353,7 @@ export class SnapScrollBuilder extends SmoothScrollBuilder {
             });
         }
 
-        uss.addOnResizeEndCallback(this.snapScrolling); 
+        uss.addResizeCallback(this.snapScrolling, this.originalContainer, this.options); 
         this.addCallback(this.snapScrolling);
 
         const _activationDelay = this.options.activationDelay;

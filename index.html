@@ -17,7 +17,7 @@
 
   </head>
   <body>
-    <div id = "betaBanner"><p>ver. 6.1.0</p></div>
+    <div id = "betaBanner"><p>ver. 7.0 beta</p></div>
     <nav id = "header">
       <ul>
         <li><a href = "#section1">YELLOW</a></li>
@@ -98,6 +98,22 @@
         </div>
       </div>
     </div>
+
+<!--
+    <div class = "sections-container">
+      <div id = "section1" class = "page"></div>
+    </div>
+    <div class = "sections-container">
+      <div id = "section2" class = "page"></div>
+    </div>
+    <div class = "sections-container">
+      <div id = "section3" class = "page"></div>
+    </div>
+    <div class = "sections-container">
+      <div id = "section4" class = "page"></div>
+    </div>
+-->
+
   </body>
 </html>
 
@@ -227,6 +243,26 @@
     
 
 
+    
+
+    const NUM_CHILDREN_TEST = 0;
+    for(let i = 0; i < NUM_CHILDREN_TEST; i++) {
+      const div = document.createElement("div");
+      const red = Number.parseInt(Math.random() * 255);
+      const green = Number.parseInt(Math.random() * 255);
+      const blue = Number.parseInt(Math.random() * 255);
+      
+      div.className = "listItem";
+      
+      div.style.background = `rgb(${red}, ${green}, ${blue})`;
+      div.style.margin = "200% 0";
+      
+      yScrollerSection.appendChild(div)
+    }
+
+    //yScrollerSection.style.scrollSnapType = "y mandatory";
+    //Array.from(yScrollerSection.children).forEach(div => div.style.scrollSnapAlign = "center");
+
   
 
     //TEMPORARY FIX
@@ -250,6 +286,16 @@
         }
     )
 
+    addSmoothScrolling(
+      uss.getPageScroller(),
+      {
+        onYAxis: true,
+        onXAxis: true,
+        easingX: EASE_OUT_CUBIC(400), 
+        easingY: EASE_OUT_CUBIC(400),
+      }
+    ); 
+
     const _easeFunctionSelectorListScrollbars = addSmoothScrollbar(
       addElasticScrolling(
         easeFunctionSelectorList,
@@ -258,6 +304,7 @@
           //onXAxis: true, 
           overscrollX: true,
           //elasticResistance: 50,
+          callback: () => console.log("end of elastic")
         }
       ),
       {
@@ -275,7 +322,7 @@
       {
         element:__yChildren[1],
         alignY: "end",
-        snapEasingY: EASE_OUT_EXPO(700),
+        easingY: EASE_OUT_EXPO(700),
       },
       {
         element:__yChildren[2],
@@ -286,21 +333,39 @@
         alignY: "end"
       }
     ];
-    
+
+    /*
+    const _yChildren = Array.from(yScrollerSection.children).reduce(
+      (prev, val) => {
+        prev.push({
+          element: val,
+          alignY: "center",
+        })
+        return prev;
+      }
+    , []);
+    */
+
     const _yScrollerScrollbars = addSmoothScrollbar(
       addSnapScrolling(
-        yScrollerSection, 
+        addSmoothScrolling(
+          yScrollerSection, 
+          {
+            onYAxis: true,
+          }
+        ),
         {
-          onYAxis: "mandatory", 
+          onYAxis: "proximity", 
           overscrollX: true,
           overscrollY: true,
           //activationDelay: 100, //Touchpad devices and mouse devices may work better with different delays
-          snapEasingY: EASE_OUT_BOUNCE(700),
+          easingY: EASE_OUT_BOUNCE(),
           children: _yChildren,
         }
       ), 
       {
           onYAxis:true,
+          //length: 50,
       }
     )
 
@@ -309,7 +374,7 @@
       {
         element:__xChildren[0],
         alignX: "start",
-        snapEasingX: EASE_OUT_BOUNCE(900, null, 6),
+        easingX: EASE_OUT_BOUNCE(900, null, 6),
       },
       {
         element:__xChildren[1],
@@ -322,7 +387,7 @@
       {
         element:__xChildren[3],
         alignX: "end",
-        snapEasingX: EASE_OUT_BOUNCE(1200, null, 3),
+        easingX: EASE_OUT_BOUNCE(1200, null, 3),
       }
   ];
 
@@ -356,7 +421,7 @@
         {
           onXAxis: "mandatory", 
           children: _xChildren,
-          snapEasingX: EASE_OUT_QUAD(400),
+          easingX: EASE_OUT_QUAD(400),
           callback: () => console.log("end of snap")
         }
       ), 

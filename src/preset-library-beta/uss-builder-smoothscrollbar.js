@@ -89,8 +89,10 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
             //The scrollbar is initially in idle.
             scrollbar.container.dataset.ussScrollbarIdle = true; 
 
-            uss.addOnResizeEndCallback(scrollbar.updateThumbLength, this.options);
-            uss.addOnResizeEndCallback(scrollbar.updatePosition, this.options);
+            uss.addResizeCallback(() => {
+                scrollbar.updateThumbLength();
+                scrollbar.updatePosition();
+            }, this.originalContainer, this.options);
 
             //If new children are added/removed from the originalContainer (and its children) update the maxScrollX/Y
             //cached values and the scrollbar position (useful for lazy loading).
@@ -116,7 +118,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
         const _scrollbarContainerPos = this.originalContainer === document.body || this.originalContainer === document.documentElement ? "fixed": "absolute";
         
         if(this.onXAxis) {
-            const _offset = this.onYAxis ? this.options.thumbSize : 0;
+            const _offset = this.onYAxis ? this.options.thickness : 0;
             const _scrollbar = {
                 container: document.createElement("div"),
                 track: document.createElement("div"),
@@ -125,7 +127,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 pointerId: null,
                 isEngaged: () => _scrollbar.pointerId !== null,
                 updateThumbLength: () => {
-                    const __size = _scrollbar.container.clientWidth * _scrollbar.container.clientWidth / this.originalContainer.scrollWidth;
+                    const __size = this.options.length || _scrollbar.container.clientWidth * _scrollbar.container.clientWidth / this.originalContainer.scrollWidth;
                     _scrollbar.thumb.style.width = `${__size}px`;
                     _scrollbar.thumb.style.marginLeft = `-${__size}px`;
                 },
@@ -146,7 +148,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 bottom: 0px;
                 left: 0px;
                 width: calc(100% - ${_offset}px);
-                height: ${this.options.thumbSize}px;
+                height: ${this.options.thickness}px;
                 overflow: hidden;
             `
 
@@ -176,14 +178,13 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 //it's better to use the _scrollbar.thumb.style.width.
                 const __thumbSize = Number.parseInt(_scrollbar.thumb.style.width);
                 const __containerSize = _scrollbar.container.clientWidth;
-                
+
                 let __scrolledPercentage = 1 - uss.getFinalXPosition(this.originalContainer, this.options) / uss.getMaxScrollX(this.originalContainer, false, this.options);
                 __scrolledPercentage = __scrolledPercentage > 1 ? 1 :
                                        __scrolledPercentage < 0 || !__scrolledPercentage ? 0 : 
                                        __scrolledPercentage;
-                                       
+                         
                 //The scrollbar.container has the same easing pattern as the originalContainer.
-                //TODO: if the deltaX is small EASE_OUT_BOUNCE (perhaps other stepLenCal too) only works if deltaX is < 0 
                 if(!_scrollbar.isEngaged()) {
                     const __easing = uss.getXStepLengthCalculator(this.originalContainer, true)  || 
                                      uss.getXStepLengthCalculator(this.originalContainer, false) || 
@@ -285,7 +286,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 pointerId: null,
                 isEngaged: () => _scrollbar.pointerId !== null,
                 updateThumbLength: () => {
-                    const __size = _scrollbar.container.clientHeight * _scrollbar.container.clientHeight / this.originalContainer.scrollHeight;
+                    const __size = this.options.length || _scrollbar.container.clientHeight * _scrollbar.container.clientHeight / this.originalContainer.scrollHeight;
                     _scrollbar.thumb.style.height = `${__size}px`;
                     _scrollbar.thumb.style.marginTop = `-${__size}px`;
                 },
@@ -305,7 +306,7 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                 z-index: 100;
                 top: 0px;
                 right: 0px;
-                width: ${this.options.thumbSize}px;
+                width: ${this.options.thickness}px;
                 height: 100%;
                 overflow: hidden;
             `
@@ -343,7 +344,6 @@ export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
                                        __scrolledPercentage;
                 
                 //The scrollbar.container has the same easing pattern as the originalContainer.
-                //TODO: if the deltaY is small EASE_OUT_BOUNCE (perhaps other stepLenCal too) only works if deltaY is < 0 
                 if(!_scrollbar.isEngaged()) {
                     const __easing = uss.getYStepLengthCalculator(this.originalContainer, true)  || 
                                      uss.getYStepLengthCalculator(this.originalContainer, false) || 

@@ -1,6 +1,6 @@
 export class SmoothScrollBuilder {
     
-    #pointersDownIds = [];
+    #pointersIdSet = new Set();
     
     #overscrollConditionsX;
     #overscrollConditionsY;
@@ -66,7 +66,7 @@ export class SmoothScrollBuilder {
 
             //The overscroll conditions can only be triggered 
             //if at most one pointer is currently held down.
-            if(this.#pointersDownIds.length > 1) return false;
+            if(this.#pointersIdSet.size > 1) return false;
 
             //Only the scrollbarX is checked because any scrollbarY movement will produce a 
             //wheel event with deltaX = 0, so the conditions below will fail.
@@ -93,7 +93,7 @@ export class SmoothScrollBuilder {
             
             //The overscroll conditions can only be triggered 
             //if at most one pointer is currently held down.
-            if(this.#pointersDownIds.length > 1) return false;
+            if(this.#pointersIdSet.size > 1) return false;
 
             //Only the scrollbarY is checked because any scrollbarX movement will produce a 
             //wheel event with deltaY = 0, so the conditions below will fail.
@@ -235,7 +235,7 @@ export class SmoothScrollBuilder {
                     if(event.type === "pointermove") {
                         //Remove the pointer from the list of ones that are 
                         //controlling the scroll of this.originalContainer.
-                        this.#pointersDownIds = [];
+                        this.#pointersIdSet.clear();
                         window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:false});
                         this.originalContainer.removeEventListener("pointermove", _handlePointerMoveEvent, {passive:false});
 
@@ -270,7 +270,7 @@ export class SmoothScrollBuilder {
         const _handlePointerDownEvent = (event) => {
             //Pointes should be unique.
             const __eventId = event.pointerId;
-            if(this.#pointersDownIds.indexOf(__eventId) >= 0) return;
+            if(this.#pointersIdSet.has(__eventId)) return;
 
             //The pointerdown event is not relevant if the pointer is a mouse.
             if(event.pointerType === "mouse") return;
@@ -278,10 +278,10 @@ export class SmoothScrollBuilder {
             event.preventDefault();
             event.stopPropagation();
 
-            this.#pointersDownIds.push(__eventId);
+            this.#pointersIdSet.add(__eventId);
 
             //Attach the listeners only on the first pointerdown event.
-            if(this.#pointersDownIds.length > 1) return;
+            if(this.#pointersIdSet.size > 1) return;
                       
             window.addEventListener("pointerup", _handlePointerUpEvent, {passive:false});        
             
@@ -353,14 +353,13 @@ export class SmoothScrollBuilder {
 
         const _handlePointerUpEvent = (event) => {
             const __eventId = event.pointerId;
-            const __pointerIdIndex = this.#pointersDownIds.indexOf(__eventId);
 
             //The pointerup event was triggered by a pointer not related with this this.originalContainer.
-            if(__pointerIdIndex < 0) return;
+            if(!this.#pointersIdSet.has(__eventId)) return;
 
-            this.#pointersDownIds.splice(__pointerIdIndex, 1);
+            this.#pointersIdSet.delete(__eventId);
         
-            if(this.#pointersDownIds.length !== 0) return;
+            if(this.#pointersIdSet.size !== 0) return;
 
             window.removeEventListener("pointerup", _handlePointerUpEvent, {passive:false});
             
@@ -427,13 +426,15 @@ export class SmoothScrollBuilder {
      * Wait for the pointerup event otherwise.
      * Each callback of this.callbackQueue is considered async and executeCallback waits until
      * the current callback completes and tells this method to proceed to the next callback.
-     * Callbacks that are not actually async will immediately resolve. 
+     * Callbacks that are not actually async will immediately resolve.
+     * If a previous callback chain was being executed and a new executeCallback call is made,
+     * the old async callback will never be executed (they'll be garbage collected later).
      */
     async executeCallback() {
-        if(this.#pointersDownIds.length === 0) {
-            for(const callback of this.callbackQueue) {
-                await callback();
-            }
+        if(this.isPointerDown) return;
+
+        for(const callback of this.callbackQueue) {
+            await callback();
         }
     }
 
@@ -472,7 +473,7 @@ export class SmoothScrollBuilder {
     }
 
     get isPointerDown() {
-        return this.#pointersDownIds.length !== 0;
+        return this.#pointersIdSet.size !== 0;
     }
 
     get style() {

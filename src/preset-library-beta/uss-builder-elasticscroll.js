@@ -285,7 +285,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
         }
 
         //Allow this.elasticScrolling to work onresize.
-        uss.addOnResizeEndCallback(() => {
+        uss.addResizeCallback(() => {
             let __elasticAmount = this.options.left.getElasticAmount(this);
             if(this.currentXPosition < __elasticAmount) {
                 this.#elasticParamsX = {
@@ -321,7 +321,7 @@ export class ElasticScrollBuilder extends SmoothScrollBuilder {
             }
 
             this.elasticScrolling();
-        }); 
+        }, this.originalContainer, this.options); 
         this.addCallback(this.elasticScrolling);
 
         //Temporarily set the activationDelay to 0, so that elasticScrolling can be immediately applied.

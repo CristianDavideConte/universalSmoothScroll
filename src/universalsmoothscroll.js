@@ -90,15 +90,6 @@
  * _reducedMotion: boolean, true if the user has enabled any reduce-motion setting devicewise, false otherwise. 
  *                 Internally used by the API to follow the user's accessibility preferences by reverting back every scroll-animation 
  *                 to the default jump-to-position behavior.
- * _onResizeEndCallbacks: array, contains all the functions that should be executed only 
- *                        once the user has finished resizing the browser's Window and has interacted with it.
- *                        An interaction can be a:
- *                         - pointerover event
- *                         - pointerdown event
- *                         - touchstart event
- *                         - mousemove event
- *                         - keydown event
- *                         - focus event
  * _debugMode: string, controls the way the warning and error messages are logged by the default error/warning loggers.
  *             If it's set to:
  *             - "disabled" (case insensitive) the API won't show any warning or error message. 
@@ -136,7 +127,6 @@
  * getWindowScroller: function, returns the value of the "_windowScroller" property.
  * getPageScroller: function, returns the value of the "_pageScroller" property.
  * getReducedMotionState: function, returns the value of the "_reducedMotion" property.
- * getOnResizeEndCallbacks: function, returns the value of the "_onResizeEndCallbacks" property.
  * getDebugMode: function, returns the value of the "_debugMode" property.
  * setXStepLengthCalculator: function, sets the StepLengthCalculator for (the x-axis of) the passed container if compatible.
  * setYStepLengthCalculator: function, sets the StepLengthCalculator for (the y-axis of) the passed container if compatible.
@@ -146,7 +136,7 @@
  * setStepLength: function, sets both the "_xStepLength" and the "_yStepLength" properties to the passed value if compatible.
  * setMinAnimationFrame: function, sets the "_minAnimationFrame" property to the passed value if compatible.
  * setPageScroller: function, sets the "_pageScroller" property to the passed value if compatible.
- * addOnResizeEndCallback: function, adds the passed function to the "_onResizeEndCallbacks" array. 
+ * addResizeCallback: function, add the passed resize callback to the resize callback queue of the passed container if compatible. 
  * setDebugMode: function, sets the "_debugMode" property to the passed value if compatible.
  * setErrorLogger: function, sets the "_errorLogger" property to the passed value if compatible.
  * setWarningLogger: function, sets the "_warningLogger" property to the passed value if compatible.
@@ -195,51 +185,50 @@
 "use strict";
 
 {
-const KX_ID = 0;   //Key to get the scroll id on the x-axis
-const KY_ID = 1;   //Key to get the scroll id on the y-axis
+const K_IDX = 0;   //Key to get the scroll id on the x-axis
+const K_IDY = 1;   //Key to get the scroll id on the y-axis
 
-const KX_FP = 2;   //Key to get the final x position
-const KY_FP = 3;   //Key to get the final y position
+const K_FPX = 2;   //Key to get the final x position
+const K_FPY = 3;   //Key to get the final y position
 
-const KX_SD = 4;   //Key to get the scroll direction on the x-axis 
-const KY_SD = 5;   //Key to get the scroll direction on the y-axis
+const K_SDX = 4;   //Key to get the scroll direction on the x-axis 
+const K_SDY = 5;   //Key to get the scroll direction on the y-axis
 
-const KX_TSA = 6;  //Key to get the total scroll amount on the x-axis
-const KY_TSA = 7;  //Key to get the total scroll amount on the y-axis
+const K_TSAX = 6;  //Key to get the total scroll amount on the x-axis
+const K_TSAY = 7;  //Key to get the total scroll amount on the y-axis
 
-const KX_OTS = 8;  //Key to get the original timestamp of the scroll animation on the x-axis
-const KY_OTS = 9;  //Key to get the original timestamp of the scroll animation on the y-axis
+const K_OTSX = 8;  //Key to get the original timestamp of the scroll animation on the x-axis
+const K_OTSY = 9;  //Key to get the original timestamp of the scroll animation on the y-axis
 
-const KX_CB = 10;  //Key to get the callback for the scroll animation on the x-axis
-const KY_CB = 11;  //Key to get the callback for the scroll animation on the y-axis
+const K_CBX = 10;  //Key to get the callback for the scroll animation on the x-axis
+const K_CBY = 11;  //Key to get the callback for the scroll animation on the y-axis
 
-const KX_FSC = 12; //Key to get the fixed StepLengthCalculator for the scroll animation on the x-axis
-const KY_FSC = 13; //Key to get the fixed StepLengthCalculator for the scroll animation on the y-axis
+const K_FSCX = 12; //Key to get the fixed StepLengthCalculator for the scroll animation on the x-axis
+const K_FSCY = 13; //Key to get the fixed StepLengthCalculator for the scroll animation on the y-axis
 
-const KX_TSC = 14; //Key to get the temporary StepLengthCalculator for the scroll animation on the x-axis
-const KY_TSC = 15; //Key to get the temporary StepLengthCalculator for the scroll animation on the y-axis
+const K_TSCX = 14; //Key to get the temporary StepLengthCalculator for the scroll animation on the x-axis
+const K_TSCY = 15; //Key to get the temporary StepLengthCalculator for the scroll animation on the y-axis
 
-const KX_MS = 16;  //Key to get the maxScrollX value 
-const KY_MS = 17;  //Key to get the maxScrollY value 
+const K_MSX = 16;  //Key to get the maxScrollX value 
+const K_MSY = 17;  //Key to get the maxScrollY value 
 
-const KX_SB = 18;  //Key to get the vertical scrollbar's width 
-const KY_SB = 19;  //Key to get the horizontal scrollbar's height
+const K_VSB = 18;  //Key to get the vertical scrollbar's width 
+const K_HSB = 19;  //Key to get the horizontal scrollbar's height
 
-const KY_TB = 20;  //Key to get the top border's height
-const KX_RB = 21;  //Key to get the right border's width
-const KY_BB = 22;  //Key to get the bottom border's height
-const KX_LB = 23;  //Key to get the left border's width
+const K_TB = 20;   //Key to get the top border's height
+const K_RB = 21;   //Key to get the right border's width
+const K_BB = 22;   //Key to get the bottom border's height
+const K_LB = 23;   //Key to get the left border's width
 
-const KX_SSP = 24; //Key to get the standard scrollable parent on the x-axis (overflow !== "hidden") 
-const KX_HSP = 25; //Key to get the hidden scrollable parent on the x-axis (overflow === "hidden") 
-const KY_SSP = 26; //Key to get the standard scrollable parent on the y-axis (overflow !== "hidden") 
-const KY_HSP = 27; //Key to get the hidden scrollable parent on the y-axis (overflow === "hidden") 
+const K_SSPX = 24; //Key to get the standard scrollable parent on the x-axis (overflow !== "hidden") 
+const K_HSPX = 25; //Key to get the hidden scrollable parent on the x-axis (overflow === "hidden") 
+const K_SSPY = 26; //Key to get the standard scrollable parent on the y-axis (overflow !== "hidden") 
+const K_HSPY = 27; //Key to get the hidden scrollable parent on the y-axis (overflow === "hidden") 
 
-const KX_SC = 28;  //Key to get the ScrollXCalculator
-const KY_SC = 29;  //Key to get the ScrollYCalculator
+const K_SCX = 28;  //Key to get the ScrollXCalculator
+const K_SCY = 29;  //Key to get the ScrollYCalculator
 
-  //TODO: check if this makes sense
-  const K_RCB = 30;  //Key to get the resize callback function
+const K_RCBQ = 30;  //Key to get the resize callbacks queue
 
 const NO_VAL = undefined; //No value has been calculated yet
 const NO_SP = null;       //No scrollable parent has been found
@@ -253,28 +242,49 @@ const DEFAULT_FRAME_TIME = 16.6; //in ms
 const HIGHEST_SAFE_SCROLL_POS = 1073741824; //2^30
 //const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame; //To look more into
 
-const DEFAULT_REGEX_LOGGER_DISABLED = /disabled/i;
-const DEFAULT_REGEX_LOGGER_LEGACY = /legacy/i;
-const DEFAULT_REGEX_ALIGNMENT_NEAREST = /nearest/i;
-const DEFAULT_REGEX_OVERFLOW = /(auto|scroll)/;
-const DEFAULT_REGEX_OVERFLOW_HIDDEN = /(auto|scroll|hidden)/;
-const DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
-const DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
+const REGEX_LOGGER_DISABLED = /disabled/i;
+const REGEX_LOGGER_LEGACY = /legacy/i;
+const REGEX_ALIGNMENT_NEAREST = /nearest/i;
+const REGEX_OVERFLOW = /(auto|scroll)/;
+const REGEX_OVERFLOW_HIDDEN = /(auto|scroll|hidden)/;
+const REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
+const REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
 
 const CHECK_INSTANCEOF = (element, classType = Element) => {
   if(element instanceof classType) return true;
 
+  //This part is used for checking iFrames' elements from outside the iFrame.
+  //TODO: doesn't work well withe the fact that it only checks the name of the 
+  /* 
   try {
     let _elementClass = Object.getPrototypeOf(element);
-    classType = classType.prototype.toString();
+    const classTypePrototype = classType.prototype;
+    const classTypeString = classTypePrototype.toString();
 
     //Traverse the prototype chain up to Object.prototype.
     while(_elementClass) {
-      if(_elementClass.toString() === classType) return true;
+      //They must have the same prototype and the same type
+      if(
+        _elementClass.toString() === classTypeString && 
+        typeof _elementClass === typeof classTypePrototype
+      ) {
+        let _isInstanceOf = true;
+
+        //Their prototype must have the same properties' names
+        for(const propName in _elementClass) {
+          if(!(propName in classType)) {
+            _isInstanceOf = false;
+            break;
+          }
+        }
+
+        if(_isInstanceOf) return true;
+      }
       _elementClass = Object.getPrototypeOf(_elementClass);
     }
   } catch(e){}
-  
+  */
+
   return false;
 }
 
@@ -293,7 +303,7 @@ const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
 }
 
 const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
-  if(DEFAULT_REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
+  if(REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
   
   //Convert to a string and eventually trim the receivedValue.
   const _receivedValueIsString = typeof receivedValue === "string";
@@ -317,7 +327,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(receivedValue.length > 40) receivedValue = receivedValue.slice(0, 40) + " ...";
   if(_receivedValueIsString) receivedValue = "\"" + receivedValue + "\"";
 
-  if(DEFAULT_REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
+  if(REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
     console.error("USS ERROR\n", functionName, "was expecting", expectedValue + ", but received", receivedValue + ".");
     throw "USS fatal error (execution stopped)";
@@ -344,7 +354,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
 }
 
 const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) => {
-  if(DEFAULT_REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
+  if(REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
 
   //Convert to a string and eventually trim the subject.
   const _subjectIsString = typeof subject === "string";
@@ -368,7 +378,7 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   if(subject.length > 40) subject = subject.slice(0, 40) + " ...";
   if(_subjectIsString && keepQuotesForString) subject = "\"" + subject + "\"";
 
-  if(DEFAULT_REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
+  if(REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
     console.warn("USS WARNING\n", subject, message + ".");
     return;
@@ -389,52 +399,119 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 }
 
-var DEFAULT_RESIZE_OBSERVER = new ResizeObserver((entries) => {
-  for(const entry of entries) {
-    const _container = entry.target;
-    const _containerData = uss._containersData.get(_container);
-    
-    if(!_containerData) continue;
+var DEFAULT_RESIZE_OBSERVER = {
+  callbackId: NO_VAL,
+  debouncedFrames: 0,
+  totalDebounceFrames: 16,
+  resizedEntries: new Map(),
+  observer: new ResizeObserver((entries) => {
+    /**
+     * Each time a resize event is observed on one of the entries
+     * the number of debouced frames is reset.
+     */
+    DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
-    //TODO: make sure this is done only once
-    _containerData[KX_MS] = NO_VAL; 
-    _containerData[KY_MS] = NO_VAL; 
-    _containerData[KX_SB] = NO_VAL; 
-    _containerData[KY_SB] = NO_VAL; 
-    _containerData[KY_TB] = NO_VAL; 
-    _containerData[KX_RB] = NO_VAL; 
-    _containerData[KY_BB] = NO_VAL; 
-    _containerData[KX_LB] = NO_VAL; 
-    _containerData[KX_SSP] = NO_VAL; 
-    _containerData[KX_HSP] = NO_VAL; 
-    _containerData[KY_SSP] = NO_VAL; 
-    _containerData[KY_HSP] = NO_VAL; 
+    //Keep only the most up-to-date entry for each target
+    for(const entry of entries) {
+      DEFAULT_RESIZE_OBSERVER.resizedEntries.set(entry.target, entry)
+    }
 
-    //TODO: make sure this is called only once
-    if(_containerData[K_RCB]) _containerData[K_RCB]();
+    if(DEFAULT_RESIZE_OBSERVER.callbackId !== NO_VAL) return;
+
+    DEFAULT_RESIZE_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+  }),
+  callback: () => {
+    /**
+     * This check ensures that before doing any work, 
+     * a fixed number of frames has passed. 
+     * Combining this debouncing with the fact that 
+     * the resize observer only run once per frame, 
+     * allows to clear the caches and execute any resize callback 
+     * just once after the resizing has been completed. 
+     */
+    if(DEFAULT_RESIZE_OBSERVER.debouncedFrames < DEFAULT_RESIZE_OBSERVER.totalDebounceFrames) {
+      DEFAULT_RESIZE_OBSERVER.debouncedFrames++;
+      DEFAULT_RESIZE_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+      return;
+    }
+
+    for(const [container, entry] of DEFAULT_RESIZE_OBSERVER.resizedEntries) { 
+      const _containerData = uss._containersData.get(container);
+      
+      //Empty the caches
+      if(_containerData[K_MSX] !== NO_VAL) _containerData[K_MSX] = NO_VAL; 
+      if(_containerData[K_MSY] !== NO_VAL) _containerData[K_MSY] = NO_VAL; 
+      if(_containerData[K_VSB] !== NO_VAL) _containerData[K_VSB] = NO_VAL; 
+      if(_containerData[K_HSB] !== NO_VAL) _containerData[K_HSB] = NO_VAL; 
+      if(_containerData[K_TB] !== NO_VAL) _containerData[K_TB] = NO_VAL; 
+      if(_containerData[K_RB] !== NO_VAL) _containerData[K_RB] = NO_VAL; 
+      if(_containerData[K_BB] !== NO_VAL) _containerData[K_BB] = NO_VAL; 
+      if(_containerData[K_LB] !== NO_VAL) _containerData[K_LB] = NO_VAL; 
+
+      //TODO: does it make sense to clear the cache for the scrollable parents on resize?
+      //if(_containerData[K_SSPX] !== NO_VAL) _containerData[K_SSPX] = NO_VAL; 
+      //if(_containerData[K_HSPX] !== NO_VAL) _containerData[K_HSPX] = NO_VAL; 
+      //if(_containerData[K_SSPY] !== NO_VAL) _containerData[K_SSPY] = NO_VAL; 
+      //if(_containerData[K_HSPY] !== NO_VAL) _containerData[K_HSPY] = NO_VAL; 
+
+      //TODO: decide what to pass as the input of callback
+
+      //Execute the resize callbacks
+      for(const callback of _containerData[K_RCBQ]) callback();
+    }
+
+    DEFAULT_RESIZE_OBSERVER.callbackId = NO_VAL;
+    DEFAULT_RESIZE_OBSERVER.resizedEntries.clear();
   }
-});
+}
 
 const INIT_CONTAINER_DATA = (container, containerData = []) => {
   if(container === window) {
     //The Window doesn't have any scrollable parent.
-    containerData[KX_SSP] = NO_SP;
-    containerData[KX_HSP] = NO_SP;
-    containerData[KY_SSP] = NO_SP;
-    containerData[KY_HSP] = NO_SP;
+    containerData[K_SSPX] = NO_SP;
+    containerData[K_HSPX] = NO_SP;
+    containerData[K_SSPY] = NO_SP;
+    containerData[K_HSPY] = NO_SP;
 
-    containerData[KX_SC] = () => window.scrollX; //ScrollXCalculator
-    containerData[KY_SC] = () => window.scrollY; //ScrollYCalculator
+    containerData[K_SCX] = () => window.scrollX; //ScrollXCalculator
+    containerData[K_SCY] = () => window.scrollY; //ScrollYCalculator
+    
+    containerData[K_RCBQ] = []; //Resize callback queue
 
     uss._containersData.set(container, containerData);
+    
+    //Make the resize callback fire only once per frame like the resize observer.
+    let _debounceWindowResize = false;
+    window.addEventListener("resize", () => {
+      //Update the internal Window sizes.
+      uss._windowWidth = window.innerWidth;
+      uss._windowHeight = window.innerHeight; 
+      
+      if(_debounceWindowResize) return;
+
+      _debounceWindowResize = true;
+      window.requestAnimationFrame(() => _debounceWindowResize = false);
+
+      DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
+
+      DEFAULT_RESIZE_OBSERVER.resizedEntries.set(window, NO_VAL);  
+      
+      if(DEFAULT_RESIZE_OBSERVER.callbackId !== NO_VAL) return;
+      
+      DEFAULT_RESIZE_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+    }, {passive:true});
+
     return true;
   }
   
   if(CHECK_INSTANCEOF(container)) {
-    containerData[KX_SC] = () => container.scrollLeft; //ScrollXCalculator
-    containerData[KY_SC] = () => container.scrollTop;  //ScrollYCalculator
+    containerData[K_SCX] = () => container.scrollLeft; //ScrollXCalculator
+    containerData[K_SCY] = () => container.scrollTop;  //ScrollYCalculator
+
+    containerData[K_RCBQ] = []; //Resize callback queue
 
     uss._containersData.set(container, containerData);
+    DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" });
     return true;
   }
 
@@ -454,7 +531,6 @@ window.uss = {
   _windowScroller: NO_VAL,
   _pageScroller: NO_VAL,
   _reducedMotion: "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches,
-  _onResizeEndCallbacks: [],
   _debugMode: "",
   _errorLogger: DEFAULT_ERROR_LOGGER,
   _warningLogger: DEFAULT_WARNING_LOGGER,
@@ -464,12 +540,11 @@ window.uss = {
   getWindowWidth:  () => uss._windowWidth,
   getWindowHeight: () => uss._windowHeight,
   getReducedMotionState: () => uss._reducedMotion,
-  getOnResizeEndCallbacks: () => uss._onResizeEndCallbacks,
   getDebugMode: () => uss._debugMode, 
   isXScrolling: (container = uss._pageScroller, options = {debugString: "isXScrolling"}) => {
     const _containerData = uss._containersData.get(container);
 
-    if(_containerData) return !!_containerData[KX_ID];
+    if(_containerData) return !!_containerData[K_IDX];
 
     if(INIT_CONTAINER_DATA(container)) return false;
 
@@ -478,7 +553,7 @@ window.uss = {
   isYScrolling: (container = uss._pageScroller, options = {debugString: "isYScrolling"}) => {
     const _containerData = uss._containersData.get(container);
 
-    if(_containerData) return !!_containerData[KY_ID];
+    if(_containerData) return !!_containerData[K_IDY];
     
     if(INIT_CONTAINER_DATA(container)) return false;
 
@@ -487,7 +562,7 @@ window.uss = {
   isScrolling: (container = uss._pageScroller, options = {debugString: "isScrolling"}) => {
     const _containerData = uss._containersData.get(container);
 
-    if(_containerData) return !!(_containerData[KX_ID] || _containerData[KY_ID]);
+    if(_containerData) return !!(_containerData[K_IDX] || _containerData[K_IDY]);
 
     if(INIT_CONTAINER_DATA(container)) return false;
 
@@ -496,18 +571,18 @@ window.uss = {
   getFinalXPosition: (container = uss._pageScroller, options = {debugString: "getFinalXPosition"}) => {
     //If there's no scroll-animation on the x-axis, the current position is returned instead.
     const _containerData = uss._containersData.get(container) || [];
-    return _containerData[KX_FP] === 0 ? 0 : _containerData[KX_FP] || uss.getScrollXCalculator(container, options)();
+    return _containerData[K_FPX] === 0 ? 0 : _containerData[K_FPX] || uss.getScrollXCalculator(container, options)();
   },
   getFinalYPosition: (container = uss._pageScroller, options = {debugString: "getFinalYPosition"}) => {
     //If there's no scroll-animation on the y-axis, the current position is returned instead.
     const _containerData = uss._containersData.get(container) || [];
-    return _containerData[KY_FP] === 0 ? 0 : _containerData[KY_FP] || uss.getScrollYCalculator(container, options)();
+    return _containerData[K_FPY] === 0 ? 0 : _containerData[K_FPY] || uss.getScrollYCalculator(container, options)();
   },
   getScrollXDirection: (container = uss._pageScroller, options = {debugString: "getScrollXDirection"}) => {
     const _containerData = uss._containersData.get(container);
     
     //If there's no scroll-animation, 0 is returned.
-    if(_containerData) return _containerData[KX_SD] || 0;
+    if(_containerData) return _containerData[K_SDX] || 0;
     
     if(INIT_CONTAINER_DATA(container)) return 0;
 
@@ -517,7 +592,7 @@ window.uss = {
     const _containerData = uss._containersData.get(container);
     
     //If there's no scroll-animation, 0 is returned.
-    if(_containerData) return _containerData[KY_SD] || 0;
+    if(_containerData) return _containerData[K_SDY] || 0;
     
     if(INIT_CONTAINER_DATA(container)) return 0;
 
@@ -526,7 +601,7 @@ window.uss = {
   getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getXStepLengthCalculator"}) => {
     const _containerData = uss._containersData.get(container);
         
-    if(_containerData) return getTemporary ? _containerData[KX_TSC] : _containerData[KX_FSC];
+    if(_containerData) return getTemporary ? _containerData[K_TSCX] : _containerData[K_FSCX];
 
     if(INIT_CONTAINER_DATA(container)) return;
 
@@ -535,7 +610,7 @@ window.uss = {
   getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getYStepLengthCalculator"}) => {    
     const _containerData = uss._containersData.get(container);
         
-    if(_containerData) return getTemporary ? _containerData[KY_TSC] : _containerData[KY_FSC];
+    if(_containerData) return getTemporary ? _containerData[K_TSCY] : _containerData[K_FSCY];
 
     if(INIT_CONTAINER_DATA(container)) return;
 
@@ -602,8 +677,8 @@ window.uss = {
         return uss._windowScroller;
       }
 
-      let _maxScrollX = _containerData[KX_MS] !== NO_VAL ? _containerData[KX_MS] : HIGHEST_SAFE_SCROLL_POS;
-      let _maxScrollY = _containerData[KY_MS] !== NO_VAL ? _containerData[KY_MS] : HIGHEST_SAFE_SCROLL_POS;
+      let _maxScrollX = _containerData[K_MSX] !== NO_VAL ? _containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
+      let _maxScrollY = _containerData[K_MSY] !== NO_VAL ? _containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
 
       if(
         (_maxScrollX > 0 && _windowInitialX !== _maxScrollX) ||
@@ -616,8 +691,8 @@ window.uss = {
         _maxScrollY = window.scrollY;
 
         //Cache the maxScrollX/maxScrollY.
-        _containerData[KX_MS] = _maxScrollX;
-        _containerData[KY_MS] = _maxScrollY;
+        _containerData[K_MSX] = _maxScrollX;
+        _containerData[K_MSY] = _maxScrollY;
       }
       
       //The Window cannot scroll.
@@ -641,8 +716,8 @@ window.uss = {
           //Cache the maxScrollX/maxScrollY.
           const _elementOldData = uss._containersData.get(element); 
           const _elementData = _elementOldData || [];
-          _elementData[KX_MS] = _maxScrollX;
-          _elementData[KY_MS] = _maxScrollY;
+          _elementData[K_MSX] = _maxScrollX;
+          _elementData[K_MSY] = _maxScrollY;
           
           if(!_elementOldData) INIT_CONTAINER_DATA(element, _elementData);
           
@@ -717,12 +792,12 @@ window.uss = {
     }
 
     if(isTemporary) {
-      _containerData[KX_TSC] = newCalculator;
+      _containerData[K_TSCX] = newCalculator;
     } else {
-      _containerData[KX_FSC] = newCalculator;
+      _containerData[K_FSCX] = newCalculator;
 
       //Setting a fixed StepLengthCalculator will unset the temporary one.
-      if(_isSettingOp) _containerData[KX_TSC] = NO_VAL; 
+      if(_isSettingOp) _containerData[K_TSCX] = NO_VAL; 
     }  
   },
   setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setYStepLengthCalculator"}) => {
@@ -741,12 +816,12 @@ window.uss = {
     }
 
     if(isTemporary) {
-      _containerData[KY_TSC] = newCalculator;
+      _containerData[K_TSCY] = newCalculator;
     } else {
-      _containerData[KY_FSC] = newCalculator;
+      _containerData[K_FSCY] = newCalculator;
 
       //Setting a fixed StepLengthCalculator will unset the temporary one.
-      if(_isSettingOp) _containerData[KY_TSC] = NO_VAL; 
+      if(_isSettingOp) _containerData[K_TSCY] = NO_VAL; 
     }  
   },
   setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setStepLengthCalculator"}) => {
@@ -765,16 +840,16 @@ window.uss = {
     }
 
     if(isTemporary) {
-      _containerData[KX_TSC] = newCalculator;
-      _containerData[KY_TSC] = newCalculator;
+      _containerData[K_TSCX] = newCalculator;
+      _containerData[K_TSCY] = newCalculator;
     } else {
-      _containerData[KX_FSC] = newCalculator;
-      _containerData[KY_FSC] = newCalculator;
+      _containerData[K_FSCX] = newCalculator;
+      _containerData[K_FSCY] = newCalculator;
 
       //Setting a fixed StepLengthCalculator will unset the temporary one.
       if(_isSettingOp) {
-        _containerData[KX_TSC] = NO_VAL;
-        _containerData[KY_TSC] = NO_VAL;
+        _containerData[K_TSCX] = NO_VAL;
+        _containerData[K_TSCY] = NO_VAL;
       } 
     }
   },
@@ -814,12 +889,21 @@ window.uss = {
     }
     uss._pageScroller = newPageScroller;
   },
-  addOnResizeEndCallback: (newCallback, options = {debugString: "addOnResizeEndCallback"}) => {
+  addResizeCallback: (newCallback, container = uss._pageScroller, options = {debugString: "addResizeCallback"}) => {
     if(typeof newCallback !== "function") {
       uss._errorLogger(options.debugString, "the newCallback to be a function", newCallback);
       return;
     }
-    uss._onResizeEndCallbacks.push(newCallback);
+    
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+
+    if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
+    }
+
+    _containerData[K_RCBQ].push(newCallback);
   },
   setDebugMode: (newDebugMode = "", options = {debugString: "setDebugMode"}) => {
     if(typeof newDebugMode === "string") {
@@ -907,8 +991,8 @@ window.uss = {
     
     if(
       forceCalculation ||
-      _containerData[KX_SB] === NO_VAL || 
-      _containerData[KY_SB] === NO_VAL
+      _containerData[K_VSB] === NO_VAL || 
+      _containerData[K_HSB] === NO_VAL
     ) {
       const _windowScroller = uss.getWindowScroller();
 
@@ -916,8 +1000,8 @@ window.uss = {
         return uss.calcScrollbarsDimensions(_windowScroller, forceCalculation, options);
       } else if(!container.style || uss.getScrollbarsMaxDimension() === 0) {
         //The element cannot have scrollbars or their size is 0px on this webpage.
-        _containerData[KX_SB] = 0;
-        _containerData[KY_SB] = 0;
+        _containerData[K_VSB] = 0;
+        _containerData[K_HSB] = 0;
      } else {
         const _initialXPosition = container.scrollLeft;
         const _initialYPosition = container.scrollTop;
@@ -935,8 +1019,8 @@ window.uss = {
           container.style.overflowX = "hidden";
           container.style.overflowY = "hidden";
         
-          _containerData[KX_SB] = Number.parseInt(_style.width)  - _initialWidth;
-          _containerData[KY_SB] = Number.parseInt(_style.height) - _initialHeight;
+          _containerData[K_VSB] = Number.parseInt(_style.width)  - _initialWidth;
+          _containerData[K_HSB] = Number.parseInt(_style.height) - _initialHeight;
     
           container.style.overflowX = _initialOverflowX;
           container.style.overflowY = _initialOverflowY;
@@ -945,8 +1029,8 @@ window.uss = {
 
           container.style.border = "none";
         
-          _containerData[KX_SB] = container.offsetWidth - container.clientWidth;
-          _containerData[KY_SB] = container.offsetHeight - container.clientHeight;
+          _containerData[K_VSB] = container.offsetWidth - container.clientWidth;
+          _containerData[K_HSB] = container.offsetHeight - container.clientHeight;
           
           container.style.border = _initialBorder;
         }
@@ -959,8 +1043,8 @@ window.uss = {
           const _windowOldData = uss._containersData.get(window);
           const _windowData = _windowOldData || [];
 
-          _windowData[KX_SB] = _containerData[KX_SB];
-          _windowData[KY_SB] = _containerData[KY_SB];
+          _windowData[K_VSB] = _containerData[K_VSB];
+          _windowData[K_HSB] = _containerData[K_HSB];
 
           if(!_windowOldData) INIT_CONTAINER_DATA(window, _windowData);
         }
@@ -968,8 +1052,8 @@ window.uss = {
     }
           
     return [
-      _containerData[KX_SB], //Vertical scrollbar's width
-      _containerData[KY_SB]  //Horizontal scrollbar's height
+      _containerData[K_VSB], //Vertical scrollbar's width
+      _containerData[K_HSB]  //Horizontal scrollbar's height
     ];
   },
   calcBordersDimensions: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcBordersDimensions"}) => {
@@ -984,42 +1068,42 @@ window.uss = {
 
     if(
       forceCalculation ||
-      _containerData[KY_TB] === NO_VAL || 
-      _containerData[KX_RB] === NO_VAL || 
-      _containerData[KY_BB] === NO_VAL || 
-      _containerData[KX_LB] === NO_VAL 
+      _containerData[K_TB] === NO_VAL || 
+      _containerData[K_RB] === NO_VAL || 
+      _containerData[K_BB] === NO_VAL || 
+      _containerData[K_LB] === NO_VAL 
     ) {
       if(container === window) {
         const _windowScroller = uss.getWindowScroller();
         const _bordersDimensions = _windowScroller === window ? [0,0,0,0] : uss.calcBordersDimensions(_windowScroller, forceCalculation, options);
 
-        _containerData[KY_TB] = _bordersDimensions[0];
-        _containerData[KX_RB] = _bordersDimensions[1];
-        _containerData[KY_BB] = _bordersDimensions[2];
-        _containerData[KX_LB] = _bordersDimensions[3];
+        _containerData[K_TB] = _bordersDimensions[0];
+        _containerData[K_RB] = _bordersDimensions[1];
+        _containerData[K_BB] = _bordersDimensions[2];
+        _containerData[K_LB] = _bordersDimensions[3];
       } else {
         try {
           const _style = window.getComputedStyle(container);
           
-          _containerData[KY_TB] = Number.parseFloat(_style.borderTopWidth);
-          _containerData[KX_RB] = Number.parseFloat(_style.borderRightWidth);
-          _containerData[KY_BB] = Number.parseFloat(_style.borderBottomWidth);
-          _containerData[KX_LB] = Number.parseFloat(_style.borderLeftWidth);
+          _containerData[K_TB] = Number.parseFloat(_style.borderTopWidth);
+          _containerData[K_RB] = Number.parseFloat(_style.borderRightWidth);
+          _containerData[K_BB] = Number.parseFloat(_style.borderBottomWidth);
+          _containerData[K_LB] = Number.parseFloat(_style.borderLeftWidth);
         } catch(e) { 
           //window.getComputedStyle may not work on the passed container 
-          _containerData[KY_TB] = 0;
-          _containerData[KX_RB] = 0;
-          _containerData[KY_BB] = 0;
-          _containerData[KX_LB] = 0;
+          _containerData[K_TB] = 0;
+          _containerData[K_RB] = 0;
+          _containerData[K_BB] = 0;
+          _containerData[K_LB] = 0;
         }
       }
     }
     
     return [
-      _containerData[KY_TB], //top
-      _containerData[KX_RB], //right
-      _containerData[KY_BB], //bottom
-      _containerData[KX_LB], //left
+      _containerData[K_TB], //top
+      _containerData[K_RB], //right
+      _containerData[K_BB], //bottom
+      _containerData[K_LB], //left
     ];
   },
   getScrollXCalculator: (container = uss._pageScroller, options = {debugString: "getScrollXCalculator"}) => {
@@ -1037,7 +1121,7 @@ window.uss = {
       return;                                  
     }
 
-    return [_containerData[KX_SC], _containerData[KY_SC]];
+    return [_containerData[K_SCX], _containerData[K_SCY]];
   },
   getMaxScrollX: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollX"}) => {
     return uss.getMaxScrolls(container, forceCalculation, options)[0];
@@ -1050,10 +1134,10 @@ window.uss = {
     const _oldData = uss._containersData.get(container) || [];
     if(
       !forceCalculation && 
-      _oldData[KX_MS] !== NO_VAL && 
-      _oldData[KY_MS] !== NO_VAL
+      _oldData[K_MSX] !== NO_VAL && 
+      _oldData[K_MSY] !== NO_VAL
     ) {
-      return [_oldData[KX_MS], _oldData[KY_MS]];
+      return [_oldData[K_MSX], _oldData[K_MSY]];
     }
 
     const [_scrollXCalculator, _scrollYCalculator] = uss.getScrollCalculators(container, options);
@@ -1063,8 +1147,8 @@ window.uss = {
 
     container.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
 
-    _containerData[KX_MS] = _scrollXCalculator(); //maxScrollX
-    _containerData[KY_MS] = _scrollYCalculator(); //maxScrollY
+    _containerData[K_MSX] = _scrollXCalculator(); //maxScrollX
+    _containerData[K_MSY] = _scrollYCalculator(); //maxScrollY
     
     //Scroll the container back to its initial position.
     container.scroll(_initialXPosition, _initialYPosition);
@@ -1078,18 +1162,18 @@ window.uss = {
       const _windowScrollerOldData = uss._containersData.get(_windowScroller);
       const _windowScrollerData = _windowScrollerOldData || [];
 
-      _windowScrollerData[KX_MS] = _containerData[KX_MS];
-      _windowScrollerData[KY_MS] = _containerData[KY_MS];
+      _windowScrollerData[K_MSX] = _containerData[K_MSX];
+      _windowScrollerData[K_MSY] = _containerData[K_MSY];
       
       if(!_windowScrollerOldData) INIT_CONTAINER_DATA(_windowScroller, _windowScrollerData); 
     }
 
-    return [_containerData[KX_MS], _containerData[KY_MS]];
+    return [_containerData[K_MSX], _containerData[K_MSY]];
   },
   getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
-    const _cachedParent = includeHiddenParents ? _containerData[KX_HSP] : _containerData[KX_SSP];
+    const _cachedParent = includeHiddenParents ? _containerData[K_HSPX] : _containerData[K_SSPX];
     
     if(_cachedParent !== NO_VAL) return _cachedParent;
     
@@ -1106,13 +1190,13 @@ window.uss = {
     let _cacheResult;
     
     if(includeHiddenParents) {
-      _cacheResult = (el) => _containerData[KX_HSP] = el;
-      _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
-      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
+      _cacheResult = (el) => _containerData[K_HSPX] = el;
+      _overflowRegex = REGEX_OVERFLOW_HIDDEN;
+      _overflowRegexWithVisible = REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
     } else {
-      _cacheResult = (el) => _containerData[KX_SSP] = el;
-      _overflowRegex = DEFAULT_REGEX_OVERFLOW;
-      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
+      _cacheResult = (el) => _containerData[K_SSPX] = el;
+      _overflowRegex = REGEX_OVERFLOW;
+      _overflowRegexWithVisible = REGEX_OVERFLOW_WITH_VISIBLE;
     }
 
     const _elementInitialX = element.getBoundingClientRect().left;
@@ -1132,7 +1216,7 @@ window.uss = {
         const __containerInitialY = __scrollYCalculator();
         
         const __containerData = uss._containersData.get(_container);
-        let __maxScrollX = __containerData[KX_MS] !== NO_VAL ? __containerData[KX_MS] : HIGHEST_SAFE_SCROLL_POS;
+        let __maxScrollX = __containerData[K_MSX] !== NO_VAL ? __containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
         
         if(__maxScrollX > 0 && __containerInitialX !== __maxScrollX) {
           //Try to scroll the element by scrolling the parent.
@@ -1141,7 +1225,7 @@ window.uss = {
           __maxScrollX = __scrollXCalculator();
   
           //Cache the maxScrollX.
-          __containerData[KX_MS] = __maxScrollX;
+          __containerData[K_MSX] = __maxScrollX;
         }
 
         //The parent cannot scroll.
@@ -1190,7 +1274,7 @@ window.uss = {
   getYScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
-    const _cachedParent = includeHiddenParents ? _containerData[KY_HSP] : _containerData[KY_SSP];
+    const _cachedParent = includeHiddenParents ? _containerData[K_HSPY] : _containerData[K_SSPY];
     
     if(_cachedParent !== NO_VAL) return _cachedParent;
     
@@ -1207,13 +1291,13 @@ window.uss = {
     let _cacheResult;
     
     if(includeHiddenParents) {
-      _cacheResult = (el) => _containerData[KY_HSP] = el;
-      _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
-      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
+      _cacheResult = (el) => _containerData[K_HSPY] = el;
+      _overflowRegex = REGEX_OVERFLOW_HIDDEN;
+      _overflowRegexWithVisible = REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
     } else {
-      _cacheResult = (el) => _containerData[KY_SSP] = el;
-      _overflowRegex = DEFAULT_REGEX_OVERFLOW;
-      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
+      _cacheResult = (el) => _containerData[K_SSPY] = el;
+      _overflowRegex = REGEX_OVERFLOW;
+      _overflowRegexWithVisible = REGEX_OVERFLOW_WITH_VISIBLE;
     }
 
     const _elementInitialY = element.getBoundingClientRect().top;
@@ -1233,7 +1317,7 @@ window.uss = {
         const __containerInitialY = __scrollYCalculator();
         
         const __containerData = uss._containersData.get(_container);
-        let __maxScrollY = __containerData[KY_MS] !== NO_VAL ? __containerData[KY_MS] : HIGHEST_SAFE_SCROLL_POS;
+        let __maxScrollY = __containerData[K_MSY] !== NO_VAL ? __containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
         
         if(__maxScrollY > 0 && __containerInitialY !== __maxScrollY) {
           //Try to scroll the element by scrolling the parent.
@@ -1242,7 +1326,7 @@ window.uss = {
           __maxScrollY = __scrollYCalculator();
 
           //Cache the maxScrollY.
-          __containerData[KY_MS] = __maxScrollY;
+          __containerData[K_MSY] = __maxScrollY;
         }
 
         //The parent cannot scroll.
@@ -1294,11 +1378,11 @@ window.uss = {
     let _cachedXParent, _cachedYParent;
     
     if(includeHiddenParents) {
-      _cachedXParent = _containerData[KX_HSP];
-      _cachedYParent = _containerData[KY_HSP];
+      _cachedXParent = _containerData[K_HSPX];
+      _cachedYParent = _containerData[K_HSPY];
     } else {
-      _cachedXParent = _containerData[KX_SSP];
-      _cachedYParent = _containerData[KY_SSP];
+      _cachedXParent = _containerData[K_SSPX];
+      _cachedYParent = _containerData[K_SSPY];
     }
 
     /**
@@ -1342,15 +1426,15 @@ window.uss = {
     let _cacheXResult, _cacheYResult;
     
     if(includeHiddenParents) {
-      _cacheXResult = (el) => _containerData[KX_HSP] = el;
-      _cacheYResult = (el) => _containerData[KY_HSP] = el;
-      _overflowRegex = DEFAULT_REGEX_OVERFLOW_HIDDEN;
-      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
+      _cacheXResult = (el) => _containerData[K_HSPX] = el;
+      _cacheYResult = (el) => _containerData[K_HSPY] = el;
+      _overflowRegex = REGEX_OVERFLOW_HIDDEN;
+      _overflowRegexWithVisible = REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE;
     } else {
-      _cacheXResult = (el) => _containerData[KX_SSP] = el;
-      _cacheYResult = (el) => _containerData[KY_SSP] = el;
-      _overflowRegex = DEFAULT_REGEX_OVERFLOW;
-      _overflowRegexWithVisible = DEFAULT_REGEX_OVERFLOW_WITH_VISIBLE;
+      _cacheXResult = (el) => _containerData[K_SSPX] = el;
+      _cacheYResult = (el) => _containerData[K_SSPY] = el;
+      _overflowRegex = REGEX_OVERFLOW;
+      _overflowRegexWithVisible = REGEX_OVERFLOW_WITH_VISIBLE;
     }
 
     const _elementInitialPos = element.getBoundingClientRect();
@@ -1381,8 +1465,8 @@ window.uss = {
         const __containerInitialY = __scrollYCalculator();
         
         const __containerData = uss._containersData.get(_container);
-        let __maxScrollX = __containerData[KX_MS] !== NO_VAL ? __containerData[KX_MS] : HIGHEST_SAFE_SCROLL_POS;
-        let __maxScrollY = __containerData[KY_MS] !== NO_VAL ? __containerData[KY_MS] : HIGHEST_SAFE_SCROLL_POS;
+        let __maxScrollX = __containerData[K_MSX] !== NO_VAL ? __containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
+        let __maxScrollY = __containerData[K_MSY] !== NO_VAL ? __containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
         
         if(
           (__maxScrollX > 0 && __containerInitialX !== __maxScrollX) ||
@@ -1395,8 +1479,8 @@ window.uss = {
           __maxScrollY = __scrollYCalculator();
 
           //Cache the maxScrollX/maxScrollY.
-          __containerData[KX_MS] = __maxScrollX;
-          __containerData[KY_MS] = __maxScrollY;
+          __containerData[K_MSX] = __maxScrollX;
+          __containerData[K_MSY] = __maxScrollY;
         }
 
         //The parent cannot scroll.
@@ -1517,55 +1601,55 @@ window.uss = {
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
     const _containerData = uss._containersData.get(container);
-    _containerData[KX_FP] = finalXPosition;      //finalXPosition
-    _containerData[KX_SD] = _direction;          //direction
-    _containerData[KX_TSA] = _totalScrollAmount; //totalScrollAmount
-    _containerData[KX_OTS] = NO_VAL;             //originalTimestamp
-    _containerData[KX_CB] = callback;            //callback
+    _containerData[K_FPX] = finalXPosition;      //finalXPosition
+    _containerData[K_SDX] = _direction;          //direction
+    _containerData[K_TSAX] = _totalScrollAmount; //totalScrollAmount
+    _containerData[K_OTSX] = NO_VAL;             //originalTimestamp
+    _containerData[K_CBX] = callback;            //callback
 
     //A scroll-animation is already being performed and
     //the scroll-animation's informations have already been updated.
-    if(_containerData[KX_ID]) return;
+    if(_containerData[K_IDX]) return;
 
     //No scroll-animation is being performed so a new one is created.
-    _containerData[KX_ID] = window.requestAnimationFrame(_stepX);
+    _containerData[K_IDX] = window.requestAnimationFrame(_stepX);
 
     function _stepX(timestamp) {
-      const __finalXPosition = _containerData[KX_FP];
-      const __direction = _containerData[KX_SD];
+      const __finalXPosition = _containerData[K_FPX];
+      const __direction = _containerData[K_SDX];
       const __currentXPosition = _scrollXCalculator();
       const __remaningScrollAmount = (__finalXPosition - __currentXPosition) * __direction;
       
       if(__remaningScrollAmount < 1) {
-        uss.stopScrollingX(container, _containerData[KX_CB]);
+        uss.stopScrollingX(container, _containerData[K_CBX]);
         return;
       }
       
       //There's no originalTimeStamp at the beginning of a scroll-animation.
-      if(!_containerData[KX_OTS]) _containerData[KX_OTS] = timestamp;
+      if(!_containerData[K_OTSX]) _containerData[K_OTSX] = timestamp;
       
-      const __scrollID = _containerData[KX_ID];  
+      const __scrollID = _containerData[K_IDX];  
       
-      const __stepLengthCalculator = _containerData[KX_TSC] ? _containerData[KX_TSC] :   
-                                     _containerData[KX_FSC] ? _containerData[KX_FSC] :
+      const __stepLengthCalculator = _containerData[K_TSCX] ? _containerData[K_TSCX] :   
+                                     _containerData[K_FSCX] ? _containerData[K_FSCX] :
                                                               DEFAULT_XSTEP_LENGTH_CALCULATOR;
 
       let __stepLength = __stepLengthCalculator(
         __remaningScrollAmount, //Remaning scroll amount
-        _containerData[KX_OTS], //Original timestamp
+        _containerData[K_OTSX], //Original timestamp
         timestamp,              //Current timestamp
-        _containerData[KX_TSA], //Total scroll amount
+        _containerData[K_TSAX], //Total scroll amount
         __currentXPosition,     //Current position
         __finalXPosition,       //Final position
         container               //Container
       );
       
       //The current scroll-animation has been aborted by the StepLengthCalculator.
-      if(__scrollID !== _containerData[KX_ID]) return; 
+      if(__scrollID !== _containerData[K_IDX]) return; 
 
       //The current scroll-animation has been altered by the StepLengthCalculator.
-      if(__finalXPosition !== _containerData[KX_FP]) {  
-        _containerData[KX_ID] = window.requestAnimationFrame(_stepX); 
+      if(__finalXPosition !== _containerData[K_FPX]) {  
+        _containerData[K_IDX] = window.requestAnimationFrame(_stepX); 
         return;
       } 
 
@@ -1575,9 +1659,9 @@ window.uss = {
 
         __stepLength = DEFAULT_XSTEP_LENGTH_CALCULATOR(
           __remaningScrollAmount, //Remaning scroll amount
-          _containerData[KX_OTS], //Original timestamp
+          _containerData[K_OTSX], //Original timestamp
           timestamp,              //Current timestamp
-          _containerData[KX_TSA], //Total scroll amount
+          _containerData[K_TSAX], //Total scroll amount
           __currentXPosition,     //Current position
           __finalXPosition,       //Final position
           container               //Container
@@ -1586,7 +1670,7 @@ window.uss = {
 
       if(__remaningScrollAmount <= __stepLength) {
         _scroll(__finalXPosition);
-        uss.stopScrollingX(container, _containerData[KX_CB]);
+        uss.stopScrollingX(container, _containerData[K_CBX]);
         return;
       }
 
@@ -1594,11 +1678,11 @@ window.uss = {
 
       //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container.
       if(__stepLength !== 0 && __currentXPosition === _scrollXCalculator()) {
-        uss.stopScrollingX(container, _containerData[KX_CB]);
+        uss.stopScrollingX(container, _containerData[K_CBX]);
         return;
       }
 
-      _containerData[KX_ID] = window.requestAnimationFrame(_stepX);
+      _containerData[K_IDX] = window.requestAnimationFrame(_stepX);
     }
   },
   scrollYTo: (finalYPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollYTo"}) => {
@@ -1647,54 +1731,54 @@ window.uss = {
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
     const _containerData = uss._containersData.get(container);
-    _containerData[KY_FP] = finalYPosition;      //finalYPosition
-    _containerData[KY_SD] = _direction;          //direction
-    _containerData[KY_TSA] = _totalScrollAmount; //totalScrollAmount
-    _containerData[KY_OTS] = NO_VAL;             //originalTimestamp
-    _containerData[KY_CB] = callback;            //callback
+    _containerData[K_FPY] = finalYPosition;      //finalYPosition
+    _containerData[K_SDY] = _direction;          //direction
+    _containerData[K_TSAY] = _totalScrollAmount; //totalScrollAmount
+    _containerData[K_OTSY] = NO_VAL;             //originalTimestamp
+    _containerData[K_CBY] = callback;            //callback
 
     //A scroll-animation is already being performed and
     //the scroll-animation's informations have already been updated.
-    if(_containerData[KY_ID]) return;
+    if(_containerData[K_IDY]) return;
 
     //No scroll-animation is being performed so a new one is created.
-    _containerData[KY_ID] = window.requestAnimationFrame(_stepY);
+    _containerData[K_IDY] = window.requestAnimationFrame(_stepY);
      
     function _stepY(timestamp) {
-      const __finalYPosition = _containerData[KY_FP];
-      const __direction = _containerData[KY_SD];
+      const __finalYPosition = _containerData[K_FPY];
+      const __direction = _containerData[K_SDY];
       const __currentYPosition = _scrollYCalculator();
       const __remaningScrollAmount = (__finalYPosition - __currentYPosition) * __direction;
 
       if(__remaningScrollAmount < 1) {
-        uss.stopScrollingY(container, _containerData[KY_CB]);
+        uss.stopScrollingY(container, _containerData[K_CBY]);
         return;
       }
 
       //There's no originalTimeStamp at the beginning of a scroll-animation.
-      if(!_containerData[KY_OTS]) _containerData[KY_OTS] = timestamp;
+      if(!_containerData[K_OTSY]) _containerData[K_OTSY] = timestamp;
 
-      const __scrollID = _containerData[KY_ID];
-      const __stepLengthCalculator = _containerData[KY_TSC] ? _containerData[KY_TSC] :   
-                                     _containerData[KY_FSC] ? _containerData[KY_FSC] :
+      const __scrollID = _containerData[K_IDY];
+      const __stepLengthCalculator = _containerData[K_TSCY] ? _containerData[K_TSCY] :   
+                                     _containerData[K_FSCY] ? _containerData[K_FSCY] :
                                                               DEFAULT_YSTEP_LENGTH_CALCULATOR;
 
       let __stepLength = __stepLengthCalculator(
         __remaningScrollAmount, //Remaning scroll amount
-        _containerData[KY_OTS], //Original timestamp
+        _containerData[K_OTSY], //Original timestamp
         timestamp,              //Current timestamp
-        _containerData[KY_TSA], //Total scroll amount
+        _containerData[K_TSAY], //Total scroll amount
         __currentYPosition,     //Current position
         __finalYPosition,       //Final position
         container               //Container
       );
       
       //The current scroll-animation has been aborted by the StepLengthCalculator.
-      if(__scrollID !== _containerData[KY_ID]) return; 
+      if(__scrollID !== _containerData[K_IDY]) return; 
 
       //The current scroll-animation has been altered by the StepLengthCalculator.
-      if(__finalYPosition !== _containerData[KY_FP]) {  
-        _containerData[KY_ID] = window.requestAnimationFrame(_stepY); 
+      if(__finalYPosition !== _containerData[K_FPY]) {  
+        _containerData[K_IDY] = window.requestAnimationFrame(_stepY); 
         return;
       } 
       
@@ -1704,9 +1788,9 @@ window.uss = {
 
         __stepLength = DEFAULT_YSTEP_LENGTH_CALCULATOR(
           __remaningScrollAmount, //Remaning scroll amount
-          _containerData[KY_OTS], //Original timestamp
+          _containerData[K_OTSY], //Original timestamp
           timestamp,              //Current timestamp
-          _containerData[KY_TSA], //Total scroll amount
+          _containerData[K_TSAY], //Total scroll amount
           __currentYPosition,     //Current position
           __finalYPosition,       //Final position
           container               //Container
@@ -1715,7 +1799,7 @@ window.uss = {
 
       if(__remaningScrollAmount <= __stepLength) {
         _scroll(__finalYPosition);
-        uss.stopScrollingY(container, _containerData[KY_CB]);
+        uss.stopScrollingY(container, _containerData[K_CBY]);
         return;
       }
 
@@ -1723,11 +1807,11 @@ window.uss = {
 
       //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container.
       if(__stepLength !== 0 && __currentYPosition === _scrollYCalculator()) {
-        uss.stopScrollingY(container, _containerData[KY_CB]);
+        uss.stopScrollingY(container, _containerData[K_CBY]);
         return;
       }
 
-      _containerData[KY_ID] = window.requestAnimationFrame(_stepY);
+      _containerData[K_IDY] = window.requestAnimationFrame(_stepY);
     }
   },
   scrollXBy: (deltaX, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollXBy"}) => {
@@ -1741,11 +1825,11 @@ window.uss = {
       const _containerData = uss._containersData.get(container) || [];
 
       //A scroll-animation on the x-axis is already being performed and can be repurposed.
-      if(_containerData[KX_ID]) {  
+      if(_containerData[K_IDX]) {  
 
         //An actual scroll has been requested.   
         if(deltaX !== 0) { 
-          let _finalXPosition = _containerData[KX_FP] + deltaX;
+          let _finalXPosition = _containerData[K_FPX] + deltaX;
 
           //Limit the final position to the [0, maxScrollX] interval. 
           if(containScroll) {
@@ -1754,7 +1838,7 @@ window.uss = {
             else if(_finalXPosition > _maxScrollX) _finalXPosition = _maxScrollX;
           }
 
-          const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _containerData[KX_SD];
+          const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _containerData[K_SDX];
           
           //The scroll-animation has to scroll less than 1px.
           if(_remaningScrollAmount * _remaningScrollAmount < 1) { 
@@ -1769,13 +1853,13 @@ window.uss = {
             return;
           }
           
-          const _totalScrollAmount = _containerData[KX_TSA] * _containerData[KX_SD] + deltaX; 
-          _containerData[KX_FP] = _finalXPosition;                             //finalXPosition
-          _containerData[KX_SD] = _totalScrollAmount > 0 ? 1 : -1;             //direction
-          _containerData[KX_TSA] = _totalScrollAmount * _containerData[KX_SD]; //totalScrollAmount (always positive)
+          const _totalScrollAmount = _containerData[K_TSAX] * _containerData[K_SDX] + deltaX; 
+          _containerData[K_FPX] = _finalXPosition;                             //finalXPosition
+          _containerData[K_SDX] = _totalScrollAmount > 0 ? 1 : -1;             //direction
+          _containerData[K_TSAX] = _totalScrollAmount * _containerData[K_SDX]; //totalScrollAmount (always positive)
         }
-        _containerData[KX_OTS] = NO_VAL;  //originalTimestamp
-        _containerData[KX_CB] = callback; //callback
+        _containerData[K_OTSX] = NO_VAL;  //originalTimestamp
+        _containerData[K_CBX] = callback; //callback
         return;
       }
     }
@@ -1793,10 +1877,10 @@ window.uss = {
       const _containerData = uss._containersData.get(container) || [];
 
       //A scroll-animation on the y-axis is already being performed and can be repurposed.
-      if(_containerData[KY_ID]) {     
+      if(_containerData[K_IDY]) {     
         //An actual scroll has been requested.   
         if(deltaY !== 0) { 
-          let _finalYPosition = _containerData[KY_FP] + deltaY;
+          let _finalYPosition = _containerData[K_FPY] + deltaY;
 
           //Limit the final position to the [0, maxScrollY] interval. 
           if(containScroll) {
@@ -1805,7 +1889,7 @@ window.uss = {
             else if(_finalYPosition > _maxScrollY) _finalYPosition = _maxScrollY;
           }
 
-          const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _containerData[KY_SD];
+          const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _containerData[K_SDY];
           
           //The scroll-animation has to scroll less than 1px. 
           if(_remaningScrollAmount * _remaningScrollAmount < 1) { 
@@ -1820,13 +1904,13 @@ window.uss = {
             return;
           }
           
-          const _totalScrollAmount = _containerData[KY_TSA] * _containerData[KY_SD] + deltaY; 
-          _containerData[KY_FP] = _finalYPosition;                             //finalYPosition
-          _containerData[KY_SD] = _totalScrollAmount > 0 ? 1 : -1;             //direction
-          _containerData[KY_TSA] = _totalScrollAmount * _containerData[KY_SD]; //totalScrollAmount (always positive)
+          const _totalScrollAmount = _containerData[K_TSAY] * _containerData[K_SDY] + deltaY; 
+          _containerData[K_FPY] = _finalYPosition;                             //finalYPosition
+          _containerData[K_SDY] = _totalScrollAmount > 0 ? 1 : -1;             //direction
+          _containerData[K_TSAY] = _totalScrollAmount * _containerData[K_SDY]; //totalScrollAmount (always positive)
         }
-        _containerData[KY_OTS] = NO_VAL;  //originalTimestamp
-        _containerData[KY_CB] = callback; //callback
+        _containerData[K_OTSY] = NO_VAL;  //originalTimestamp
+        _containerData[K_CBY] = callback; //callback
         return;
       }
     }
@@ -1843,13 +1927,13 @@ window.uss = {
     //the scroll-animation on the y-axis has finished too or it has been altered.
     const _scrollXCallback = () => {
       const __containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && __containerData[KY_CB] !== _scrollYCallback) callback();
+      if(!_initPhase && __containerData[K_CBY] !== _scrollYCallback) callback();
     }
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the x-axis has finished too or it has been altered.
     const _scrollYCallback = () => {
       const __containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && __containerData[KX_CB] !== _scrollXCallback) callback();
+      if(!_initPhase && __containerData[K_CBX] !== _scrollXCallback) callback();
     }
 
     let _initPhase = true;
@@ -1867,13 +1951,13 @@ window.uss = {
     //the scroll-animation on the y-axis has finished too or it has been altered.
     const _scrollXCallback = () => {
       const __containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && __containerData[KY_CB] !== _scrollYCallback) callback();
+      if(!_initPhase && __containerData[K_CBY] !== _scrollYCallback) callback();
     }
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the x-axis has finished too or it has been altered.
     const _scrollYCallback = () => {
       const __containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && __containerData[KX_CB] !== _scrollXCallback) callback();
+      if(!_initPhase && __containerData[K_CBX] !== _scrollXCallback) callback();
     }
 
     let _initPhase = true;
@@ -1891,8 +1975,8 @@ window.uss = {
       return;
     }
 
-    const _alignToNearestLeft = DEFAULT_REGEX_ALIGNMENT_NEAREST.test(alignToLeft);
-    const _alignToNearestTop  = DEFAULT_REGEX_ALIGNMENT_NEAREST.test(alignToTop);
+    const _alignToNearestLeft = REGEX_ALIGNMENT_NEAREST.test(alignToLeft);
+    const _alignToNearestTop  = REGEX_ALIGNMENT_NEAREST.test(alignToTop);
 
     let _alignToLeft = alignToLeft;
     let _alignToTop  = alignToTop;
@@ -2088,35 +2172,37 @@ window.uss = {
     const _containerData = uss._containersData.get(container);
     
     if(_containerData) {
-      window.cancelAnimationFrame(_containerData[KX_ID]); 
-      _containerData[KX_ID] = NO_VAL;  //scrollID on x-axis
-      _containerData[KX_CB] = NO_VAL;  //callback on x-axis  
-      _containerData[KX_TSC] = NO_VAL; //temporary StepLengthCalculator on the x-axis
+      window.cancelAnimationFrame(_containerData[K_IDX]); 
+      _containerData[K_IDX] = NO_VAL;  //scrollID on x-axis
+      _containerData[K_CBX] = NO_VAL;  //callback on x-axis  
+      _containerData[K_TSCX] = NO_VAL; //temporary StepLengthCalculator on the x-axis
           
       //No scroll-animation on the y-axis is being performed.
-      if(!_containerData[KY_ID]) { 
+      if(!_containerData[K_IDY]) { 
         const _newData = [];
         
-        if(_containerData[KX_FSC]) _newData[KX_FSC] = _containerData[KX_FSC]; //fixed StepLengthCalculator on the x-axis
-        if(_containerData[KY_FSC]) _newData[KY_FSC] = _containerData[KY_FSC]; //fixed StepLengthCalculator on the y-axis
-        if(_containerData[KY_TSC]) _newData[KY_TSC] = _containerData[KY_TSC]; //temporary StepLengthCalculator on the y-axis
+        if(_containerData[K_FSCX]) _newData[K_FSCX] = _containerData[K_FSCX]; //fixed StepLengthCalculator on the x-axis
+        if(_containerData[K_FSCY]) _newData[K_FSCY] = _containerData[K_FSCY]; //fixed StepLengthCalculator on the y-axis
+        if(_containerData[K_TSCY]) _newData[K_TSCY] = _containerData[K_TSCY]; //temporary StepLengthCalculator on the y-axis
 
         //Cached values.
-        if(_containerData[KX_MS] !== NO_VAL) _newData[KX_MS] = _containerData[KX_MS]; //maxScrollX
-        if(_containerData[KY_MS] !== NO_VAL) _newData[KY_MS] = _containerData[KY_MS]; //maxScrollY
-        if(_containerData[KX_SB] !== NO_VAL) _newData[KX_SB] = _containerData[KX_SB]; //vertical scrollbar's width
-        if(_containerData[KY_SB] !== NO_VAL) _newData[KY_SB] = _containerData[KY_SB]; //horizontal scrollbar's height
-        if(_containerData[KY_TB] !== NO_VAL) _newData[KY_TB] = _containerData[KY_TB]; //top border's height
-        if(_containerData[KX_RB] !== NO_VAL) _newData[KX_RB] = _containerData[KX_RB]; //right border's width
-        if(_containerData[KY_BB] !== NO_VAL) _newData[KY_BB] = _containerData[KY_BB]; //bottom border's height
-        if(_containerData[KX_LB] !== NO_VAL) _newData[KX_LB] = _containerData[KX_LB]; //left border's width
-        if(_containerData[KX_SSP] || _containerData[KX_SSP] === NO_SP) _newData[KX_SSP] = _containerData[KX_SSP]; //next standard scrollable parent on the x-axis
-        if(_containerData[KX_HSP] || _containerData[KX_HSP] === NO_SP) _newData[KX_HSP] = _containerData[KX_HSP]; //next hidden scrollable parent on the x-axis
-        if(_containerData[KY_SSP] || _containerData[KY_SSP] === NO_SP) _newData[KY_SSP] = _containerData[KY_SSP]; //next standard scrollable parent on the y-axis
-        if(_containerData[KY_HSP] || _containerData[KY_HSP] === NO_SP) _newData[KY_HSP] = _containerData[KY_HSP]; //next hidden scrollable parent on the y-axis
-        if(_containerData[KX_SC]) _newData[KX_SC] = _containerData[KX_SC]; //scrollXCalculator
-        if(_containerData[KY_SC]) _newData[KY_SC] = _containerData[KY_SC]; //scrollYCalculator
+        if(_containerData[K_MSX] !== NO_VAL) _newData[K_MSX] = _containerData[K_MSX]; //maxScrollX
+        if(_containerData[K_MSY] !== NO_VAL) _newData[K_MSY] = _containerData[K_MSY]; //maxScrollY
+        if(_containerData[K_VSB] !== NO_VAL) _newData[K_VSB] = _containerData[K_VSB]; //vertical scrollbar's width
+        if(_containerData[K_HSB] !== NO_VAL) _newData[K_HSB] = _containerData[K_HSB]; //horizontal scrollbar's height
+        if(_containerData[K_TB] !== NO_VAL) _newData[K_TB] = _containerData[K_TB]; //top border's height
+        if(_containerData[K_RB] !== NO_VAL) _newData[K_RB] = _containerData[K_RB]; //right border's width
+        if(_containerData[K_BB] !== NO_VAL) _newData[K_BB] = _containerData[K_BB]; //bottom border's height
+        if(_containerData[K_LB] !== NO_VAL) _newData[K_LB] = _containerData[K_LB]; //left border's width
+        if(_containerData[K_SSPX] || _containerData[K_SSPX] === NO_SP) _newData[K_SSPX] = _containerData[K_SSPX]; //next standard scrollable parent on the x-axis
+        if(_containerData[K_HSPX] || _containerData[K_HSPX] === NO_SP) _newData[K_HSPX] = _containerData[K_HSPX]; //next hidden scrollable parent on the x-axis
+        if(_containerData[K_SSPY] || _containerData[K_SSPY] === NO_SP) _newData[K_SSPY] = _containerData[K_SSPY]; //next standard scrollable parent on the y-axis
+        if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
+        if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
+        if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
         
+        if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
+
         uss._containersData.set(container, _newData);
       } 
     } else if(!INIT_CONTAINER_DATA(container)) {
@@ -2130,35 +2216,37 @@ window.uss = {
     const _containerData = uss._containersData.get(container);
     
     if(_containerData) {
-      window.cancelAnimationFrame(_containerData[KY_ID]);
-      _containerData[KY_ID] = NO_VAL;  //scrollID on y-axis
-      _containerData[KY_CB] = NO_VAL;  //callback on y-axis
-      _containerData[KY_TSC] = NO_VAL; //temporary StepLengthCalculator on the y-axis
+      window.cancelAnimationFrame(_containerData[K_IDY]);
+      _containerData[K_IDY] = NO_VAL;  //scrollID on y-axis
+      _containerData[K_CBY] = NO_VAL;  //callback on y-axis
+      _containerData[K_TSCY] = NO_VAL; //temporary StepLengthCalculator on the y-axis
           
       //No scroll-animation on the x-axis is being performed.
-      if(!_containerData[KX_ID]) { 
+      if(!_containerData[K_IDX]) { 
         const _newData = [];
         
-        if(_containerData[KX_FSC]) _newData[KX_FSC] = _containerData[KX_FSC]; //fixed StepLengthCalculator on the x-axis
-        if(_containerData[KY_FSC]) _newData[KY_FSC] = _containerData[KY_FSC]; //fixed StepLengthCalculator on the y-axis
-        if(_containerData[KX_TSC]) _newData[KX_TSC] = _containerData[KX_TSC]; //temporary StepLengthCalculator on the x-axis
+        if(_containerData[K_FSCX]) _newData[K_FSCX] = _containerData[K_FSCX]; //fixed StepLengthCalculator on the x-axis
+        if(_containerData[K_FSCY]) _newData[K_FSCY] = _containerData[K_FSCY]; //fixed StepLengthCalculator on the y-axis
+        if(_containerData[K_TSCX]) _newData[K_TSCX] = _containerData[K_TSCX]; //temporary StepLengthCalculator on the x-axis
         
         //Cached values.
-        if(_containerData[KX_MS] !== NO_VAL) _newData[KX_MS] = _containerData[KX_MS]; //maxScrollX
-        if(_containerData[KY_MS] !== NO_VAL) _newData[KY_MS] = _containerData[KY_MS]; //maxScrollY
-        if(_containerData[KX_SB] !== NO_VAL) _newData[KX_SB] = _containerData[KX_SB]; //vertical scrollbar's width
-        if(_containerData[KY_SB] !== NO_VAL) _newData[KY_SB] = _containerData[KY_SB]; //horizontal scrollbar's height
-        if(_containerData[KY_TB] !== NO_VAL) _newData[KY_TB] = _containerData[KY_TB]; //top border's height
-        if(_containerData[KX_RB] !== NO_VAL) _newData[KX_RB] = _containerData[KX_RB]; //right border's width
-        if(_containerData[KY_BB] !== NO_VAL) _newData[KY_BB] = _containerData[KY_BB]; //bottom border's height
-        if(_containerData[KX_LB] !== NO_VAL) _newData[KX_LB] = _containerData[KX_LB]; //left border's width
-        if(_containerData[KX_SSP] || _containerData[KX_SSP] === NO_SP) _newData[KX_SSP] = _containerData[KX_SSP]; //next standard scrollable parent on the x-axis
-        if(_containerData[KX_HSP] || _containerData[KX_HSP] === NO_SP) _newData[KX_HSP] = _containerData[KX_HSP]; //next hidden scrollable parent on the x-axis
-        if(_containerData[KY_SSP] || _containerData[KY_SSP] === NO_SP) _newData[KY_SSP] = _containerData[KY_SSP]; //next standard scrollable parent on the y-axis
-        if(_containerData[KY_HSP] || _containerData[KY_HSP] === NO_SP) _newData[KY_HSP] = _containerData[KY_HSP]; //next hidden scrollable parent on the y-axis
-        if(_containerData[KX_SC]) _newData[KX_SC] = _containerData[KX_SC]; //scrollXCalculator
-        if(_containerData[KY_SC]) _newData[KY_SC] = _containerData[KY_SC]; //scrollYCalculator
+        if(_containerData[K_MSX] !== NO_VAL) _newData[K_MSX] = _containerData[K_MSX]; //maxScrollX
+        if(_containerData[K_MSY] !== NO_VAL) _newData[K_MSY] = _containerData[K_MSY]; //maxScrollY
+        if(_containerData[K_VSB] !== NO_VAL) _newData[K_VSB] = _containerData[K_VSB]; //vertical scrollbar's width
+        if(_containerData[K_HSB] !== NO_VAL) _newData[K_HSB] = _containerData[K_HSB]; //horizontal scrollbar's height
+        if(_containerData[K_TB] !== NO_VAL) _newData[K_TB] = _containerData[K_TB]; //top border's height
+        if(_containerData[K_RB] !== NO_VAL) _newData[K_RB] = _containerData[K_RB]; //right border's width
+        if(_containerData[K_BB] !== NO_VAL) _newData[K_BB] = _containerData[K_BB]; //bottom border's height
+        if(_containerData[K_LB] !== NO_VAL) _newData[K_LB] = _containerData[K_LB]; //left border's width
+        if(_containerData[K_SSPX] || _containerData[K_SSPX] === NO_SP) _newData[K_SSPX] = _containerData[K_SSPX]; //next standard scrollable parent on the x-axis
+        if(_containerData[K_HSPX] || _containerData[K_HSPX] === NO_SP) _newData[K_HSPX] = _containerData[K_HSPX]; //next hidden scrollable parent on the x-axis
+        if(_containerData[K_SSPY] || _containerData[K_SSPY] === NO_SP) _newData[K_SSPY] = _containerData[K_SSPY]; //next standard scrollable parent on the y-axis
+        if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
+        if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
+        if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
         
+        if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
+
         uss._containersData.set(container, _newData);
       } 
     } else if(!INIT_CONTAINER_DATA(container)) {
@@ -2172,34 +2260,36 @@ window.uss = {
     const _containerData = uss._containersData.get(container);
     
     if(_containerData) {
-      window.cancelAnimationFrame(_containerData[KX_ID]);
-      window.cancelAnimationFrame(_containerData[KY_ID]);
-      _containerData[KX_ID] = NO_VAL; //scrollID on x-axis
-      _containerData[KY_ID] = NO_VAL; //scrollID on y-axis
-      _containerData[KX_CB] = NO_VAL; //callback on x-axis
-      _containerData[KY_CB] = NO_VAL; //callback on y-axis
+      window.cancelAnimationFrame(_containerData[K_IDX]);
+      window.cancelAnimationFrame(_containerData[K_IDY]);
+      _containerData[K_IDX] = NO_VAL; //scrollID on x-axis
+      _containerData[K_IDY] = NO_VAL; //scrollID on y-axis
+      _containerData[K_CBX] = NO_VAL; //callback on x-axis
+      _containerData[K_CBY] = NO_VAL; //callback on y-axis
           
       const _newData = [];
           
-      if(_containerData[KX_FSC]) _newData[KX_FSC] = _containerData[KX_FSC]; //fixed StepLengthCalculator on the x-axis
-      if(_containerData[KY_FSC]) _newData[KY_FSC] = _containerData[KY_FSC]; //fixed StepLengthCalculator on the y-axis
+      if(_containerData[K_FSCX]) _newData[K_FSCX] = _containerData[K_FSCX]; //fixed StepLengthCalculator on the x-axis
+      if(_containerData[K_FSCY]) _newData[K_FSCY] = _containerData[K_FSCY]; //fixed StepLengthCalculator on the y-axis
 
       //Cached values.  
-      if(_containerData[KX_MS] !== NO_VAL) _newData[KX_MS] = _containerData[KX_MS]; //maxScrollX
-      if(_containerData[KY_MS] !== NO_VAL) _newData[KY_MS] = _containerData[KY_MS]; //maxScrollY
-      if(_containerData[KX_SB] !== NO_VAL) _newData[KX_SB] = _containerData[KX_SB]; //vertical scrollbar's width
-      if(_containerData[KY_SB] !== NO_VAL) _newData[KY_SB] = _containerData[KY_SB]; //horizontal scrollbar's height
-      if(_containerData[KY_TB] !== NO_VAL) _newData[KY_TB] = _containerData[KY_TB]; //top border's height
-      if(_containerData[KX_RB] !== NO_VAL) _newData[KX_RB] = _containerData[KX_RB]; //right border's width
-      if(_containerData[KY_BB] !== NO_VAL) _newData[KY_BB] = _containerData[KY_BB]; //bottom border's height
-      if(_containerData[KX_LB] !== NO_VAL) _newData[KX_LB] = _containerData[KX_LB]; //left border's width
-      if(_containerData[KX_SSP] || _containerData[KX_SSP] === NO_SP) _newData[KX_SSP] = _containerData[KX_SSP]; //next standard scrollable parent on the x-axis
-      if(_containerData[KX_HSP] || _containerData[KX_HSP] === NO_SP) _newData[KX_HSP] = _containerData[KX_HSP]; //next hidden scrollable parent on the x-axis
-      if(_containerData[KY_SSP] || _containerData[KY_SSP] === NO_SP) _newData[KY_SSP] = _containerData[KY_SSP]; //next standard scrollable parent on the y-axis
-      if(_containerData[KY_HSP] || _containerData[KY_HSP] === NO_SP) _newData[KY_HSP] = _containerData[KY_HSP]; //next hidden scrollable parent on the y-axis
-      if(_containerData[KX_SC]) _newData[KX_SC] = _containerData[KX_SC]; //scrollXCalculator
-      if(_containerData[KY_SC]) _newData[KY_SC] = _containerData[KY_SC]; //scrollYCalculator
+      if(_containerData[K_MSX] !== NO_VAL) _newData[K_MSX] = _containerData[K_MSX]; //maxScrollX
+      if(_containerData[K_MSY] !== NO_VAL) _newData[K_MSY] = _containerData[K_MSY]; //maxScrollY
+      if(_containerData[K_VSB] !== NO_VAL) _newData[K_VSB] = _containerData[K_VSB]; //vertical scrollbar's width
+      if(_containerData[K_HSB] !== NO_VAL) _newData[K_HSB] = _containerData[K_HSB]; //horizontal scrollbar's height
+      if(_containerData[K_TB] !== NO_VAL) _newData[K_TB] = _containerData[K_TB]; //top border's height
+      if(_containerData[K_RB] !== NO_VAL) _newData[K_RB] = _containerData[K_RB]; //right border's width
+      if(_containerData[K_BB] !== NO_VAL) _newData[K_BB] = _containerData[K_BB]; //bottom border's height
+      if(_containerData[K_LB] !== NO_VAL) _newData[K_LB] = _containerData[K_LB]; //left border's width
+      if(_containerData[K_SSPX] || _containerData[K_SSPX] === NO_SP) _newData[K_SSPX] = _containerData[K_SSPX]; //next standard scrollable parent on the x-axis
+      if(_containerData[K_HSPX] || _containerData[K_HSPX] === NO_SP) _newData[K_HSPX] = _containerData[K_HSPX]; //next hidden scrollable parent on the x-axis
+      if(_containerData[K_SSPY] || _containerData[K_SSPY] === NO_SP) _newData[K_SSPY] = _containerData[K_SSPY]; //next standard scrollable parent on the y-axis
+      if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
+      if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
+      if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
       
+      if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
+
       uss._containersData.set(container, _newData);
     } else if(!INIT_CONTAINER_DATA(container)) {
       uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
@@ -2210,34 +2300,36 @@ window.uss = {
   },
   stopScrollingAll: (callback) => {
     for(const [_container, _containerData] of uss._containersData.entries()) {
-      window.cancelAnimationFrame(_containerData[KX_ID]);
-      window.cancelAnimationFrame(_containerData[KY_ID]);
-      _containerData[KX_ID] = NO_VAL; //scrollID on x-axis
-      _containerData[KY_ID] = NO_VAL; //scrollID on y-axis
-      _containerData[KX_CB] = NO_VAL; //callback on x-axis
-      _containerData[KY_CB] = NO_VAL; //callback on y-axis
+      window.cancelAnimationFrame(_containerData[K_IDX]);
+      window.cancelAnimationFrame(_containerData[K_IDY]);
+      _containerData[K_IDX] = NO_VAL; //scrollID on x-axis
+      _containerData[K_IDY] = NO_VAL; //scrollID on y-axis
+      _containerData[K_CBX] = NO_VAL; //callback on x-axis
+      _containerData[K_CBY] = NO_VAL; //callback on y-axis
 
       const _newData = [];
 
-      if(_containerData[KX_FSC]) _newData[KX_FSC] = _containerData[KX_FSC]; //fixed StepLengthCalculator on the x-axis
-      if(_containerData[KY_FSC]) _newData[KY_FSC] = _containerData[KY_FSC]; //fixed StepLengthCalculator on the y-axis
+      if(_containerData[K_FSCX]) _newData[K_FSCX] = _containerData[K_FSCX]; //fixed StepLengthCalculator on the x-axis
+      if(_containerData[K_FSCY]) _newData[K_FSCY] = _containerData[K_FSCY]; //fixed StepLengthCalculator on the y-axis
       
       //Cached values.
-      if(_containerData[KX_MS] !== NO_VAL) _newData[KX_MS] = _containerData[KX_MS]; //maxScrollX
-      if(_containerData[KY_MS] !== NO_VAL) _newData[KY_MS] = _containerData[KY_MS]; //maxScrollY
-      if(_containerData[KX_SB] !== NO_VAL) _newData[KX_SB] = _containerData[KX_SB]; //vertical scrollbar's width
-      if(_containerData[KY_SB] !== NO_VAL) _newData[KY_SB] = _containerData[KY_SB]; //horizontal scrollbar's height
-      if(_containerData[KY_TB] !== NO_VAL) _newData[KY_TB] = _containerData[KY_TB]; //top border's height
-      if(_containerData[KX_RB] !== NO_VAL) _newData[KX_RB] = _containerData[KX_RB]; //right border's width
-      if(_containerData[KY_BB] !== NO_VAL) _newData[KY_BB] = _containerData[KY_BB]; //bottom border's height
-      if(_containerData[KX_LB] !== NO_VAL) _newData[KX_LB] = _containerData[KX_LB]; //left border's width
-      if(_containerData[KX_SSP] || _containerData[KX_SSP] === NO_SP) _newData[KX_SSP] = _containerData[KX_SSP]; //next standard scrollable parent on the x-axis
-      if(_containerData[KX_HSP] || _containerData[KX_HSP] === NO_SP) _newData[KX_HSP] = _containerData[KX_HSP]; //next hidden scrollable parent on the x-axis
-      if(_containerData[KY_SSP] || _containerData[KY_SSP] === NO_SP) _newData[KY_SSP] = _containerData[KY_SSP]; //next standard scrollable parent on the y-axis
-      if(_containerData[KY_HSP] || _containerData[KY_HSP] === NO_SP) _newData[KY_HSP] = _containerData[KY_HSP]; //next hidden scrollable parent on the y-axis
-      if(_containerData[KX_SC]) _newData[KX_SC] = _containerData[KX_SC]; //scrollXCalculator
-      if(_containerData[KY_SC]) _newData[KY_SC] = _containerData[KY_SC]; //scrollYCalculator
+      if(_containerData[K_MSX] !== NO_VAL) _newData[K_MSX] = _containerData[K_MSX]; //maxScrollX
+      if(_containerData[K_MSY] !== NO_VAL) _newData[K_MSY] = _containerData[K_MSY]; //maxScrollY
+      if(_containerData[K_VSB] !== NO_VAL) _newData[K_VSB] = _containerData[K_VSB]; //vertical scrollbar's width
+      if(_containerData[K_HSB] !== NO_VAL) _newData[K_HSB] = _containerData[K_HSB]; //horizontal scrollbar's height
+      if(_containerData[K_TB] !== NO_VAL) _newData[K_TB] = _containerData[K_TB]; //top border's height
+      if(_containerData[K_RB] !== NO_VAL) _newData[K_RB] = _containerData[K_RB]; //right border's width
+      if(_containerData[K_BB] !== NO_VAL) _newData[K_BB] = _containerData[K_BB]; //bottom border's height
+      if(_containerData[K_LB] !== NO_VAL) _newData[K_LB] = _containerData[K_LB]; //left border's width
+      if(_containerData[K_SSPX] || _containerData[K_SSPX] === NO_SP) _newData[K_SSPX] = _containerData[K_SSPX]; //next standard scrollable parent on the x-axis
+      if(_containerData[K_HSPX] || _containerData[K_HSPX] === NO_SP) _newData[K_HSPX] = _containerData[K_HSPX]; //next hidden scrollable parent on the x-axis
+      if(_containerData[K_SSPY] || _containerData[K_SSPY] === NO_SP) _newData[K_SSPY] = _containerData[K_SSPY]; //next standard scrollable parent on the y-axis
+      if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
+      if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
+      if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
       
+      if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
+
       uss._containersData.set(_container, _newData)
     }
 
@@ -2330,56 +2422,20 @@ window.uss = {
   }
 }
 
-
-
-function onResize() {
-  window.removeEventListener("pointerover", onResize, {passive:true});
-  window.removeEventListener("pointerdown", onResize, {passive:true});
-  window.removeEventListener("touchstart", onResize, {passive:true});
-  window.removeEventListener("mousemove", onResize, {passive:true});
-  window.removeEventListener("keydown", onResize, {passive:true});
-  window.removeEventListener("focus", onResize, {passive:true});
-  resizeHandled = false;
-  
-  //Update the internal Window sizes.
-  uss._windowWidth = window.innerWidth;
-  uss._windowHeight = window.innerHeight; 
-
-  //Flush the internal caches.
-  for(const containerData of uss._containersData.values()) {
-    containerData[KX_MS] = NO_VAL;  //Perhaps use a resize observer
-    containerData[KY_MS] = NO_VAL;  //Perhaps use a resize observer
-    containerData[KX_SB] = NO_VAL;  //Perhaps use a mutation observer
-    containerData[KY_SB] = NO_VAL;  //Perhaps use a mutation observer
-    containerData[KY_TB] = NO_VAL;  //Perhaps use a mutation/resize observer 
-    containerData[KX_RB] = NO_VAL;  //Perhaps use a mutation/resize observer 
-    containerData[KY_BB] = NO_VAL;  //Perhaps use a mutation/resize observer 
-    containerData[KX_LB] = NO_VAL;  //Perhaps use a mutation/resize observer 
-    containerData[KX_SSP] = NO_VAL; //Perhaps use a mutation/resize observer 
-    containerData[KX_HSP] = NO_VAL; //Perhaps use a mutation/resize observer 
-    containerData[KY_SSP] = NO_VAL; //Perhaps use a mutation/resize observer 
-    containerData[KY_HSP] = NO_VAL; //Perhaps use a mutation/resize observer 
-    //containerData[KX_SC] doesn't need to be reset
-    //containerData[KY_SC] doesn't need to be reset
+function ussInit() {
+  //Set the uss._reducedMotion.
+  try { //Chrome, Firefox & Safari >= 14
+    window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
+      uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
+      uss.stopScrollingAll();
+    }, {passive:true});
+  } catch(e) { //Safari < 14
+    window.matchMedia("(prefers-reduced-motion)").addListener(() => {
+      uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
+      uss.stopScrollingAll();
+    }, {passive:true});
   }
 
-  for(const callback of uss._onResizeEndCallbacks) callback();
-}
-
-let resizeHandled = false;  
-window.addEventListener("resize", () => {
-  if(resizeHandled) return;
-  
-  window.addEventListener("pointerover", onResize, {passive:true});
-  window.addEventListener("pointerdown", onResize, {passive:true});
-  window.addEventListener("touchstart", onResize, {passive:true});
-  window.addEventListener("mousemove", onResize, {passive:true});
-  window.addEventListener("keydown", onResize, {passive:true});
-  window.addEventListener("focus", onResize, {passive:true});
-  resizeHandled = true;
-}, {passive:true});
-
-function ussInit() {
   //Calculate the _windowScroller.
   uss.getWindowScroller();
 
@@ -2404,16 +2460,4 @@ function ussInit() {
 
 if(document.readyState === "complete") ussInit();
 else window.addEventListener("load", ussInit, {passive:true, once:true});
-
-try { //Chrome, Firefox & Safari >= 14
-  window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
-    uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
-    uss.stopScrollingAll();
-  }, {passive:true});
-} catch(e) { //Safari < 14
-  window.matchMedia("(prefers-reduced-motion)").addListener(() => {
-    uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
-    uss.stopScrollingAll();
-  }, {passive:true});
-}
 }

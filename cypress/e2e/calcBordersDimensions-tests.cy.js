@@ -39,12 +39,16 @@ describe("calcBordersDimensions", function() {
                         )
                 ).to.be.true;
 
+                /* 
+                //TODO: add this case to the failingvaluesAll + variants
+                //this should fail
                 const _unsupportedTestElement = () => {};
                 Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
                 
                 expect(arraysAreEqual(uss.calcBordersDimensions(_unsupportedTestElement), 
                                       [0,0,0,0])
                 ).to.be.true;
+                */
 
                 const _head = win.document.head;
                 

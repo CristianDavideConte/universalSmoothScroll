@@ -1,10 +1,14 @@
 /**
  * TODO: 
+ * - use mutation observer + options object to automatically detect new children in SnapScrollBuilder 
  * - improve snap scrolling performances (intersection observers) 
  * - fix snap scrolling triggering too early with trackpads
- * 
+ *
  * - improve touchScrollExtender easing pattern
+ * - touchScrollExtender doens't work well with elasticScroll and SnapScrol (it produces a delayed and slow effect)
  * - make the _handlePointerMoveEvent of SmoothScrollBuilder dependent on the options.onXAxis/onYAxis passed
+ * 
+ * -fix easeElasticScrolling bottom elastic part not working properly onresize
  * 
  * - the width/height of smoothscrollbars should be counted as normal scrollbars' width/height if specified
  * - fix smoothscrollbars not having the correct height/width onpageload sometimes
@@ -172,9 +176,9 @@ export function addSmoothScrolling(
  *                                            Any other value if you want element to be center-aligned on both axes.
  * @param {Number} [options.activationDelay=0] The number of milliseconds that will be waited from the end of the smooth scroll part of this scroll-animation 
  *                                       in order to trigger the beginning of the snap-into-view part.
- * @param {Function} [options.snapEasingX] A valid stepLengthCalculator that will control the easing of the snap-into-view part of this 
+ * @param {Function} [options.easingX] A valid stepLengthCalculator that will control the easing of the snap-into-view part of this 
  *                                         scroll-animation (on the x-axis) of container. 
- * @param {Function} [options.snapEasingY] A valid stepLengthCalculator that will control the easing of the snap-into-view part of this 
+ * @param {Function} [options.easingY] A valid stepLengthCalculator that will control the easing of the snap-into-view part of this 
  *                                         scroll-animation (on the y-axis) of container. 
  *  
  * @returns {SmoothScrollBuilder} The underling SmoothScrollBuilder used for this effect.  
@@ -187,8 +191,8 @@ export function addSnapScrolling(
         callback: () => {},
         activationDelay: 0,
         children: [],
-        snapEasingX: (remaning, ot, t, total) => (total - remaning) / 25 + 1,
-        snapEasingY: (remaning, ot, t, total) => (total - remaning) / 25 + 1,
+        easingX: (remaning, ot, t, total) => (total - remaning) / 25 + 1,
+        easingY: (remaning, ot, t, total) => (total - remaning) / 25 + 1,
     }, 
 ) {
     //Check if the options parameter is a valid Object.
@@ -220,6 +224,7 @@ export function addSnapScrolling(
     }
 
     //Check if the options.children parameter is an array.
+    options.children = options.children || [];
     if(!Array.isArray(options.children)) {
         uss._errorLogger(options.debugString, "the options.children parameter to be an array", options.children);
         return;
@@ -249,8 +254,8 @@ export function addSnapScrolling(
         }
     }
 
-    if(typeof options.snapEasingX !== "function") options.snapEasingX = (remaning, ot, t, total) => (total - remaning) / 25 + 1;
-    if(typeof options.snapEasingY !== "function") options.snapEasingY = (remaning, ot, t, total) => (total - remaning) / 25 + 1;
+    if(typeof options.easingX !== "function") options.easingX = (remaning, ot, t, total) => (total - remaning) / 25 + 1;
+    if(typeof options.easingY !== "function") options.easingY = (remaning, ot, t, total) => (total - remaning) / 25 + 1;
 
     const _builder = new SnapScrollBuilder(container, options);
     _builder.build();
@@ -391,8 +396,9 @@ export function addElasticScrolling(
  * @param {Object} options An Object which containing the scrollbar's preferences/properties listed below.
  * @param {Boolean} [options.onXAxis=false] True if a smooth scrollbar should be added on the x-axis of container, false otherwise.
  * @param {Boolean} [options.onYAxis=true] True if a smooth scrollbar should be added on the y-axis of container, false otherwise.
- * @param {Number} [options.thumbSize=17] The default width of the scrollbar on the y-axis of container and 
+ * @param {Number} [options.thickness=17] The default width of the scrollbar on the y-axis of container and 
  *                                        the default height of the scrollbar on the x-axis of container. 
+ * //TODO
  * @returns {SmoothScrollbarBuilder} The underling SmoothScrollbarBuilder used for this effect.  
  */
 export function addSmoothScrollbar(
@@ -400,7 +406,8 @@ export function addSmoothScrollbar(
     options = {
         onXAxis: false,
         onYAxis: true,
-        thumbSize: 17,
+        thickness: 17,     //Perhaps split into thicknessX and thicknessY ? 
+        length: undefined, //Perhaps split into lengthX and lengthY ? 
     } 
 ) {
     //Check if the options parameter is a valid Object.
@@ -417,10 +424,16 @@ export function addSmoothScrollbar(
         return;
     }
 
-    //Check if the thumb size is a finite number.
-    options.thumbSize = options.thumbSize || 17;
-    if(!Number.isFinite(options.thumbSize)) {
-        uss._errorLogger(options.debugString, "the options.thumbSize to be a finite number", options.thumbSize);
+    //Check if the thumb thickness is a positive number.
+    options.thickness = options.thickness || 17;
+    if(options.thickness <= 0 || (options.thickness && !Number.isFinite(options.thickness))) {
+        uss._errorLogger(options.debugString, "the options.thickness to be a finite number > 0", options.thickness);
+        return;
+    }
+
+    //Check if the thumb length is a positive number.
+    if(options.length <= 0 || (options.length && !Number.isFinite(options.length))) {
+        uss._errorLogger(options.debugString, "the options.length to be a finite number > 0", options.length);
         return;
     }
 
