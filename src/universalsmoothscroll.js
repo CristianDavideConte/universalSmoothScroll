@@ -511,7 +511,9 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
     containerData[K_RCBQ] = []; //Resize callback queue
 
     uss._containersData.set(container, containerData);
-    DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" });
+    
+    //TODO decide what box option to use (border-box or device-pixel-content-box)
+    DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" }); 
     return true;
   }
 
