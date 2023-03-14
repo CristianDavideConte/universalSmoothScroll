@@ -253,39 +253,64 @@ const REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
 const CHECK_INSTANCEOF = (element, classType = Element) => {
   if(element instanceof classType) return true;
 
-  //This part is used for checking iFrames' elements from outside the iFrame.
-  //TODO: doesn't work well withe the fact that it only checks the name of the 
-  /* 
+  /**
+   * Since iFrames have different instances of the same classes
+   * of the outer window, the comparison is done between the element and 
+   * the inner window's classes.
+   *  
+   * e.g. 
+   * classType = Element (formally function Element() { [native code] })
+   * classType.name = "Element"
+   * _window[classType.name] = _window.Element (!== classType)
+   */
   try {
-    let _elementClass = Object.getPrototypeOf(element);
-    const classTypePrototype = classType.prototype;
-    const classTypeString = classTypePrototype.toString();
+    //Find the window associated with the passed element
+    const _window = element.ownerDocument.defaultView; 
 
-    //Traverse the prototype chain up to Object.prototype.
-    while(_elementClass) {
-      //They must have the same prototype and the same type
-      if(
-        _elementClass.toString() === classTypeString && 
-        typeof _elementClass === typeof classTypePrototype
-      ) {
-        let _isInstanceOf = true;
-
-        //Their prototype must have the same properties' names
-        for(const propName in _elementClass) {
-          if(!(propName in classType)) {
-            _isInstanceOf = false;
-            break;
-          }
-        }
-
-        if(_isInstanceOf) return true;
-      }
-      _elementClass = Object.getPrototypeOf(_elementClass);
-    }
+    return element instanceof _window[classType.name];
   } catch(e){}
-  */
 
   return false;
+}
+
+const TO_STRING = (value) => {
+  const _type = typeof value;
+
+  if(
+    value === window || 
+    value === null || 
+    value === undefined ||
+    _type === "boolean" || 
+    _type === "number" ||
+    _type === "bigint" || 
+    _type === "string" || 
+    _type === "symbol"
+  ) {
+    return String(value);
+  }
+  
+  if(_type === "function") {
+    const _name = value.name || value;
+    return String(_name).replace(new RegExp("\n", "g"), "");
+  }
+
+  if(Array.isArray(value)) {
+    return "[" + value.toString() + "]"; 
+  }
+  
+  try {
+    const _id = value.id ? "#" + value.id : "";
+    const _className = value.className ? "." + value.className : "";
+    return value.tagName.toLowerCase() + _id + _className;
+  } catch(illegalInvocation) {}
+
+  try {
+    if("outerHTML" in value) {
+      return value.outerHTML.toString().replace(new RegExp("\n", "g"), "");
+    }
+  } catch(TypeError) {}
+
+  return String(value);
 }
 
 const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
@@ -306,26 +331,18 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
   
   //Convert to a string and eventually trim the receivedValue.
-  const _receivedValueIsString = typeof receivedValue === "string";
-  if(!_receivedValueIsString) {
-    if(receivedValue === null || receivedValue === undefined) receivedValue = String(receivedValue);
-    else if(receivedValue === window) receivedValue = "window";
-    else if(Array.isArray(receivedValue)) receivedValue = "[" + receivedValue.toString() + "]"; 
-    else if(CHECK_INSTANCEOF(receivedValue) || (receivedValue.tagName && (receivedValue.id || receivedValue.className))) {
-      const _id = receivedValue.id ? "#" + receivedValue.id : "";
-      const _className = receivedValue.className ? "." + receivedValue.className : "";
-      receivedValue = receivedValue.tagName.toLowerCase() + _id + _className;
-    } else {
-      receivedValue = receivedValue.name || 
-                      receivedValue.outerHTML ||
-                      receivedValue
-                      .toString()
-                      .replace(new RegExp("\n", "g"), "");
-    } 
-  }
+  const _isString = typeof receivedValue === "string";
+  if(!_isString) receivedValue = TO_STRING(receivedValue);
 
-  if(receivedValue.length > 40) receivedValue = receivedValue.slice(0, 40) + " ...";
-  if(_receivedValueIsString) receivedValue = "\"" + receivedValue + "\"";
+  //Max 40 characters in a error message
+  if(receivedValue.length > 40) {
+    receivedValue = receivedValue.slice(0, 40) + " ...";
+  }
+  
+  //Insert leading and trailing quotes if the received value was a string
+  if(_isString) {
+    receivedValue = "\"" + receivedValue + "\"";
+  }
 
   if(REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
@@ -357,26 +374,18 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   if(REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
 
   //Convert to a string and eventually trim the subject.
-  const _subjectIsString = typeof subject === "string";
-  if(!_subjectIsString) {
-    if(subject === null || subject === undefined) subject = String(subject);
-    else if(subject === window) subject = "window";
-    else if(Array.isArray(subject)) subject = "[" + subject.toString() + "]"; 
-    else if(CHECK_INSTANCEOF(subject) || (subject.tagName && (subject.id || subject.className))) {
-      const _id = subject.id ? "#" + subject.id : "";
-      const _className = subject.className ? "." + subject.className : "";
-      subject = subject.tagName.toLowerCase() + _id + _className;
-    } else {
-      subject = subject.name || 
-                subject.outerHTML ||
-                subject
-                .toString()
-                .replace(new RegExp("\n", "g"), "");
-    }
+  const _isString = typeof subject === "string";
+  if(!_isString) subject = TO_STRING(subject);
+
+  //Max 40 characters in a warning message
+  if(subject.length > 40) {
+    subject = subject.slice(0, 40) + " ...";
   }
 
-  if(subject.length > 40) subject = subject.slice(0, 40) + " ...";
-  if(_subjectIsString && keepQuotesForString) subject = "\"" + subject + "\"";
+  //Insert leading and trailing quotes if the received value was a string
+  if(_isString && keepQuotesForString) {
+    subject = "\"" + subject + "\"";
+  }
 
   if(REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
@@ -435,9 +444,13 @@ var DEFAULT_RESIZE_OBSERVER = {
       return;
     }
 
+    //TODO: vertical resize should not affect horizontal properties and viceversa.
+    
     for(const [container, entry] of DEFAULT_RESIZE_OBSERVER.resizedEntries) { 
       const _containerData = uss._containersData.get(container);
-      
+
+      if(!_containerData) continue;
+
       //Empty the caches
       if(_containerData[K_MSX] !== NO_VAL) _containerData[K_MSX] = NO_VAL; 
       if(_containerData[K_MSY] !== NO_VAL) _containerData[K_MSY] = NO_VAL; 
@@ -466,20 +479,7 @@ var DEFAULT_RESIZE_OBSERVER = {
 }
 
 const INIT_CONTAINER_DATA = (container, containerData = []) => {
-  if(container === window) {
-    //The Window doesn't have any scrollable parent.
-    containerData[K_SSPX] = NO_SP;
-    containerData[K_HSPX] = NO_SP;
-    containerData[K_SSPY] = NO_SP;
-    containerData[K_HSPY] = NO_SP;
-
-    containerData[K_SCX] = () => window.scrollX; //ScrollXCalculator
-    containerData[K_SCY] = () => window.scrollY; //ScrollYCalculator
-    
-    containerData[K_RCBQ] = []; //Resize callback queue
-
-    uss._containersData.set(container, containerData);
-    
+  if(container === window) {  
     //Make the resize callback fire only once per frame like the resize observer.
     let _debounceWindowResize = false;
     window.addEventListener("resize", () => {
@@ -501,19 +501,34 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
       DEFAULT_RESIZE_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
     }, {passive:true});
 
+    //The Window doesn't have any scrollable parent.
+    containerData[K_SSPX] = NO_SP;
+    containerData[K_HSPX] = NO_SP;
+    containerData[K_SSPY] = NO_SP;
+    containerData[K_HSPY] = NO_SP;
+
+    containerData[K_SCX] = () => window.scrollX; //ScrollXCalculator
+    containerData[K_SCY] = () => window.scrollY; //ScrollYCalculator
+    
+    containerData[K_RCBQ] = []; //Resize callback queue
+    uss._containersData.set(container, containerData);
+
     return true;
   }
   
   if(CHECK_INSTANCEOF(container)) {
+    try {
+      //TODO decide what box option to use (border-box or device-pixel-content-box)
+      DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" }); 
+    } catch(unsupportedByResizeObserver) {
+      return false;
+    }
+
     containerData[K_SCX] = () => container.scrollLeft; //ScrollXCalculator
     containerData[K_SCY] = () => container.scrollTop;  //ScrollYCalculator
-
     containerData[K_RCBQ] = []; //Resize callback queue
-
     uss._containersData.set(container, containerData);
-    
-    //TODO decide what box option to use (border-box or device-pixel-content-box)
-    DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" }); 
+
     return true;
   }
 

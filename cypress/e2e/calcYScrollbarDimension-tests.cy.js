@@ -48,12 +48,6 @@ describe("calcYScrollbarDimension", function() {
                 .then(() => {
                     const _maxDim = uss.getScrollbarsMaxDimension();
                     const _pageScroller = win.document.scrollingElement || win.document.body;
-                    /* 
-                    //TODO: add this case to the failingvaluesAll + variants
-                    //this should fail
-                    const _unsupportedTestElement = () => {};
-                    Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
-                    */
 
                     const _head = win.document.head;
                     const _noScrollbarElement = win.document.getElementById("no-scroller");

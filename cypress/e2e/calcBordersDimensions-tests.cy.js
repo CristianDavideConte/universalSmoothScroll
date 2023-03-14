@@ -39,19 +39,7 @@ describe("calcBordersDimensions", function() {
                         )
                 ).to.be.true;
 
-                /* 
-                //TODO: add this case to the failingvaluesAll + variants
-                //this should fail
-                const _unsupportedTestElement = () => {};
-                Object.setPrototypeOf(_unsupportedTestElement, Element.prototype);
-                
-                expect(arraysAreEqual(uss.calcBordersDimensions(_unsupportedTestElement), 
-                                      [0,0,0,0])
-                ).to.be.true;
-                */
-
                 const _head = win.document.head;
-                
                 expect(arraysAreEqual(uss.calcBordersDimensions(_head), [0,0,0,0])).to.be.true;
                 Array.from(_head.children).forEach(el => expect(arraysAreEqual(uss.calcBordersDimensions(el), [0,0,0,0])).to.be.true);
                 
@@ -61,6 +49,7 @@ describe("calcBordersDimensions", function() {
                        ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
+                    console.log(res)
                     expect(res).to.throw(constants.defaultUssException);
                 })
                 .then(() => {

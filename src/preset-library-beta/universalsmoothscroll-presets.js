@@ -8,7 +8,7 @@
  * - touchScrollExtender doens't work well with elasticScroll and SnapScrol (it produces a delayed and slow effect)
  * - make the _handlePointerMoveEvent of SmoothScrollBuilder dependent on the options.onXAxis/onYAxis passed
  * 
- * -fix easeElasticScrolling bottom elastic part not working properly onresize
+ * - fix easeElasticScrolling bottom elastic part not working properly onresize
  * 
  * - the width/height of smoothscrollbars should be counted as normal scrollbars' width/height if specified
  * - fix smoothscrollbars not having the correct height/width onpageload sometimes

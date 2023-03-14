@@ -17,12 +17,12 @@ describe("setYStepLengthCalculator", function() {
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.testFailingValues(uss.setYStepLengthCalculator, {
-                    0: [constants.failingValuesAllNoUndefined,
+                    0: [constants.failingValuesAllNoUnsupportedNoUndefined,
                         [_testElement],
                         [true, false]
                         ],
                     1: [[_testCalculatorValidType1, _testCalculatorValidType2, _testCalculatorValidType3], 
-                        constants.failingValuesAllNoUndefined,
+                        constants.failingValuesAllNoUnsupportedNoUndefined,
                         [true, false]
                         ]
                 }, 

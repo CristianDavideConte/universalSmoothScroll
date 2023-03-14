@@ -16,7 +16,7 @@ describe("setWarningLogger", function() {
             const _originalLogger = uss._warningLogger;
 
             cy.testFailingValues(uss.setWarningLogger, {
-              0: [constants.failingValuesAllNoUndefined]
+              0: [constants.failingValuesAllNoUnsupportedNoUndefined]
             }, 
             (res, v1, v2, v3, v4, v5, v6, v7) => {
               expect(res).to.throw(constants.defaultUssException);
