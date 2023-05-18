@@ -2,15 +2,15 @@
 
 /**
  * Internally used to define the standard behavior of a stepLengthCalculator.
- * The progressEvaluator parameter defines at which % of the total duration the scroll-animation is at.
- * The duration is the total amount in ms the scroll-animation should last.
- * The callback is a function that is executed every time the stepLengthCalculator is invoked.  
+ * The progressEvaluator function defines at which % of the total duration the scroll-animation is at.
+ * The duration is the total amount of milliseconds the scroll-animation should last.
+ * The callback is a function that is executed every time the returned stepLengthCalculator is invoked.  
  */
  const DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) => {
   /**
    * The returned stepLengthCalculator can be used by different containers having
    * different starting positions, _startingPosMap is used to keep track of all of them.
-   * A starting position can be >0 if a scroll-animation has been extended but 
+   * Note that a starting position can be > 0 if a scroll-animation has been extended but 
    * part of it has already been done.
    */
   const _startingPosMap = new Map(); 

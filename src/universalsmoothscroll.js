@@ -229,6 +229,7 @@ const K_SCX = 28;  //Key to get the ScrollXCalculator
 const K_SCY = 29;  //Key to get the ScrollYCalculator
 
 const K_RCBQ = 30;  //Key to get the resize callbacks queue
+const K_MCBQ = 31;  //Key to get the mutation callbacks queue
 
 const NO_VAL = undefined; //No value has been calculated yet
 const NO_SP = null;       //No scrollable parent has been found
@@ -254,23 +255,23 @@ const CHECK_INSTANCEOF = (element, classType = Element) => {
   if(element instanceof classType) return true;
 
   /**
-   * Since iFrames have different instances of the same classes
-   * of the outer window, the comparison is done between the element and 
-   * the inner window's classes.
+   * iFrames' class instances are different from the outer window's ones.
+   * The instance check therefore done between the element and 
+   * the iFrame/inner window's classes.
    *  
    * e.g. 
-   * classType = Element (formally function Element() { [native code] })
+   * classType = Element //outer classType, formally: function Element() { [native code] }
    * classType.name = "Element"
-   * _window[classType.name] = _window.Element (!== classType)
+   * _window[classType.name] = _window.Element //inner classType, !== classType above
    */
   try {
     //Find the window associated with the passed element
     const _window = element.ownerDocument.defaultView; 
-
+    //Check if element is instanceof the iFrame/inner classType
     return element instanceof _window[classType.name];
-  } catch(e){}
-
-  return false;
+  } catch(UnsupportedOperation){
+    return false;
+  }
 }
 
 const TO_STRING = (value) => {
@@ -297,13 +298,15 @@ const TO_STRING = (value) => {
   if(Array.isArray(value)) {
     return "[" + value.toString() + "]"; 
   }
-  
+
+  //Test if element has a tag, a class or an id.
   try {
     const _id = value.id ? "#" + value.id : "";
     const _className = value.className ? "." + value.className : "";
-    return value.tagName.toLowerCase() + _id + _className;
-  } catch(illegalInvocation) {}
+    return value.tagName.toLowerCase() + _id + _className; //e.g. div#myId.myClass
+  } catch(IllegalInvocation) {}
 
+  //Test if element is just some html code.
   try {
     if("outerHTML" in value) {
       return value.outerHTML.toString().replace(new RegExp("\n", "g"), "");
@@ -334,12 +337,12 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   const _isString = typeof receivedValue === "string";
   if(!_isString) receivedValue = TO_STRING(receivedValue);
 
-  //Max 40 characters in a error message
+  //Max 40 characters in a error message.
   if(receivedValue.length > 40) {
     receivedValue = receivedValue.slice(0, 40) + " ...";
   }
   
-  //Insert leading and trailing quotes if the received value was a string
+  //Insert leading and trailing quotes if the received value was a string.
   if(_isString) {
     receivedValue = "\"" + receivedValue + "\"";
   }
@@ -350,6 +353,7 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
     throw "USS fatal error (execution stopped)";
   }
 
+  //TODO: perhaps use the `` to avoid going newline?
   console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 
     console.log("%cUSS ERROR", "font-family:system-ui; font-weight:800; font-size:40px; background:#eb445a; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
@@ -377,12 +381,12 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   const _isString = typeof subject === "string";
   if(!_isString) subject = TO_STRING(subject);
 
-  //Max 40 characters in a warning message
+  //Max 40 characters in a warning message.
   if(subject.length > 40) {
     subject = subject.slice(0, 40) + " ...";
   }
 
-  //Insert leading and trailing quotes if the received value was a string
+  //Insert leading and trailing quotes if the received value was a string.
   if(_isString && keepQuotesForString) {
     subject = "\"" + subject + "\"";
   }
@@ -393,6 +397,7 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
     return;
   }
 
+  //TODO: perhaps use the `` to avoid going newline?
   console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 
     console.log("%cUSS WARNING", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
@@ -408,12 +413,14 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 }
 
+//Todo: make this const
 var DEFAULT_RESIZE_OBSERVER = {
   callbackId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  resizedEntries: new Map(),
+  entries: new Map(), //resized entries
   observer: new ResizeObserver((entries) => {
+    console.log(entries)
     /**
      * Each time a resize event is observed on one of the entries
      * the number of debouced frames is reset.
@@ -422,7 +429,7 @@ var DEFAULT_RESIZE_OBSERVER = {
 
     //Keep only the most up-to-date entry for each target
     for(const entry of entries) {
-      DEFAULT_RESIZE_OBSERVER.resizedEntries.set(entry.target, entry)
+      DEFAULT_RESIZE_OBSERVER.entries.set(entry.target, entry)
     }
 
     if(DEFAULT_RESIZE_OBSERVER.callbackId !== NO_VAL) return;
@@ -445,8 +452,9 @@ var DEFAULT_RESIZE_OBSERVER = {
     }
 
     //TODO: vertical resize should not affect horizontal properties and viceversa.
+    //Problem: this information isn't provided by the resize observer entry
     
-    for(const [container, entry] of DEFAULT_RESIZE_OBSERVER.resizedEntries) { 
+    for(const [container, entry] of DEFAULT_RESIZE_OBSERVER.entries) { 
       const _containerData = uss._containersData.get(container);
 
       if(!_containerData) continue;
@@ -474,27 +482,107 @@ var DEFAULT_RESIZE_OBSERVER = {
     }
 
     DEFAULT_RESIZE_OBSERVER.callbackId = NO_VAL;
-    DEFAULT_RESIZE_OBSERVER.resizedEntries.clear();
+    DEFAULT_RESIZE_OBSERVER.entries.clear();
   }
 }
 
+
+//Todo: make this const
+//TODO: perhaps use this on scrollable parents 
+var DEFAULT_MUTATION_OBSERVER = {
+  callbackId: NO_VAL,
+  debouncedFrames: 0,
+  totalDebounceFrames: 16,
+  entries: new Map(), //mutated entries
+  observer: new MutationObserver((entries, observer) => {
+    console.log(entries, observer)
+
+    /**
+     * Each time a mutation event is observed on one of the entries
+     * the number of debouced frames is reset.
+     */
+    DEFAULT_MUTATION_OBSERVER.debouncedFrames = 0;
+
+    //Keep only the most up-to-date entry for each target
+    for(const entry of entries) {
+      DEFAULT_MUTATION_OBSERVER.entries.set(entry.target, entry)
+    }
+
+    if(DEFAULT_MUTATION_OBSERVER.callbackId !== NO_VAL) return;
+
+    DEFAULT_MUTATION_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
+  }),
+  callback: () => {
+    /**
+     * This check ensures that before doing any work, 
+     * a fixed number of frames has passed. 
+     * Combining this debouncing with the fact that 
+     * the mutation observer only run once per frame, 
+     * allows to clear the caches and execute any resize callback 
+     * just once after the resizing has been completed. 
+     */
+    if(DEFAULT_MUTATION_OBSERVER.debouncedFrames < DEFAULT_MUTATION_OBSERVER.totalDebounceFrames) {
+      DEFAULT_MUTATION_OBSERVER.debouncedFrames++;
+      DEFAULT_MUTATION_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
+      return;
+    }
+
+    //TODO: Not every mutation should erase the caches
+    
+    for(const [container, entry] of DEFAULT_MUTATION_OBSERVER.entries) { 
+      const _containerData = uss._containersData.get(container);
+
+      if(!_containerData) continue;
+
+      //TODO: is there any cached value other than the scrollable parents that could
+      //be reseted on mutation?
+
+      //Empty the caches
+      //if(_containerData[K_MSX] !== NO_VAL) _containerData[K_MSX] = NO_VAL; 
+      //if(_containerData[K_MSY] !== NO_VAL) _containerData[K_MSY] = NO_VAL; 
+      //if(_containerData[K_VSB] !== NO_VAL) _containerData[K_VSB] = NO_VAL; 
+      //if(_containerData[K_HSB] !== NO_VAL) _containerData[K_HSB] = NO_VAL; 
+      //if(_containerData[K_TB] !== NO_VAL) _containerData[K_TB] = NO_VAL; 
+      //if(_containerData[K_RB] !== NO_VAL) _containerData[K_RB] = NO_VAL; 
+      //if(_containerData[K_BB] !== NO_VAL) _containerData[K_BB] = NO_VAL; 
+      //if(_containerData[K_LB] !== NO_VAL) _containerData[K_LB] = NO_VAL; 
+
+      //TODO: specify the right attributes to avoid useless caches erases
+      if(_containerData[K_SSPX] !== NO_VAL) _containerData[K_SSPX] = NO_VAL; 
+      if(_containerData[K_HSPX] !== NO_VAL) _containerData[K_HSPX] = NO_VAL; 
+      if(_containerData[K_SSPY] !== NO_VAL) _containerData[K_SSPY] = NO_VAL; 
+      if(_containerData[K_HSPY] !== NO_VAL) _containerData[K_HSPY] = NO_VAL; 
+
+      //TODO: decide what to pass as the input of callback
+
+      //Execute the mutation callbacks
+      for(const callback of _containerData[K_MCBQ]) callback();
+    }
+
+    DEFAULT_MUTATION_OBSERVER.callbackId = NO_VAL;
+    DEFAULT_MUTATION_OBSERVER.entries.clear();
+  }
+}
+
+
 const INIT_CONTAINER_DATA = (container, containerData = []) => {
   if(container === window) {  
-    //Make the resize callback fire only once per frame like the resize observer.
-    let _debounceWindowResize = false;
+    let _debounceResizeEvent = false;
+
     window.addEventListener("resize", () => {
       //Update the internal Window sizes.
       uss._windowWidth = window.innerWidth;
       uss._windowHeight = window.innerHeight; 
       
-      if(_debounceWindowResize) return;
+      //Make the resize callback fire only once per frame like the resize observer.
+      if(_debounceResizeEvent) return;
 
-      _debounceWindowResize = true;
-      window.requestAnimationFrame(() => _debounceWindowResize = false);
+      _debounceResizeEvent = true;
+      window.requestAnimationFrame(() => _debounceResizeEvent = false);
 
       DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
-      DEFAULT_RESIZE_OBSERVER.resizedEntries.set(window, NO_VAL);  
+      DEFAULT_RESIZE_OBSERVER.entries.set(window, NO_VAL);  
       
       if(DEFAULT_RESIZE_OBSERVER.callbackId !== NO_VAL) return;
       
@@ -509,8 +597,8 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
 
     containerData[K_SCX] = () => window.scrollX; //ScrollXCalculator
     containerData[K_SCY] = () => window.scrollY; //ScrollYCalculator
-    
     containerData[K_RCBQ] = []; //Resize callback queue
+    //containerData[K_MCBQ] = []; //Mutation callback queue //TODO: useless since window is never mutated??
     uss._containersData.set(container, containerData);
 
     return true;
@@ -518,8 +606,12 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
   
   if(CHECK_INSTANCEOF(container)) {
     try {
-      //TODO decide what box option to use (border-box or device-pixel-content-box)
+      //TODO: decide what box option to use (border-box or device-pixel-content-box)
       DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" }); 
+
+      //TODO: add all the necessary filters to the attributeFilter property 
+      //to avoid useless cache-erasing operations
+      DEFAULT_MUTATION_OBSERVER.observer.observe(container, { attributes: true, attributeFilter: ["style"]});
     } catch(unsupportedByResizeObserver) {
       return false;
     }
@@ -527,6 +619,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
     containerData[K_SCX] = () => container.scrollLeft; //ScrollXCalculator
     containerData[K_SCY] = () => container.scrollTop;  //ScrollYCalculator
     containerData[K_RCBQ] = []; //Resize callback queue
+    containerData[K_MCBQ] = []; //Mutation callback queue
     uss._containersData.set(container, containerData);
 
     return true;
@@ -644,6 +737,7 @@ window.uss = {
       const _scrollBox = document.createElement("div");
       _scrollBox.id = "_uss-scrollbox";
       _scrollBoxStyle.appendChild(
+        //TODO: perhaps use the `` to avoid going newline?
         document.createTextNode(
           "#_uss-scrollbox { display:block; width:100px; height:100px; overflow-x:scroll; border:none; padding:0px; scrollbar-height:auto; }" + 
           "#_uss-scrollbox::-webkit-scrollbar { display:block; width:initial; height:initial; }"
@@ -1106,7 +1200,7 @@ window.uss = {
           _containerData[K_RB] = Number.parseFloat(_style.borderRightWidth);
           _containerData[K_BB] = Number.parseFloat(_style.borderBottomWidth);
           _containerData[K_LB] = Number.parseFloat(_style.borderLeftWidth);
-        } catch(e) { 
+        } catch(getComputedStyleNotSupported) { 
           //window.getComputedStyle may not work on the passed container 
           _containerData[K_TB] = 0;
           _containerData[K_RB] = 0;
@@ -2446,7 +2540,7 @@ function ussInit() {
       uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
       uss.stopScrollingAll();
     }, {passive:true});
-  } catch(e) { //Safari < 14
+  } catch(addEventListenerNotSupported) { //Safari < 14
     window.matchMedia("(prefers-reduced-motion)").addListener(() => {
       uss._reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
       uss.stopScrollingAll();
