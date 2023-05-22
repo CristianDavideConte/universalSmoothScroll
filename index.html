@@ -265,7 +265,7 @@
 
   
 
-    //TEMPORARY FIX
+    //TODO: THIS IS A TEMPORARY FIX
     for(const link of document.links) {
       link.addEventListener("pointerdown", e => e.stopPropagation());
     }
@@ -285,16 +285,6 @@
             onXAxis:true,
         }
     )
-
-    addSmoothScrolling(
-      uss.getPageScroller(),
-      {
-        onYAxis: true,
-        onXAxis: true,
-        easingX: EASE_OUT_CUBIC(400), 
-        easingY: EASE_OUT_CUBIC(400),
-      }
-    ); 
 
     const _easeFunctionSelectorListScrollbars = addSmoothScrollbar(
       addElasticScrolling(

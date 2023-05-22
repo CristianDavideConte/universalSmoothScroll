@@ -233,6 +233,7 @@ const K_MCBQ = 31;  //Key to get the mutation callbacks queue
 
 const NO_VAL = undefined; //No value has been calculated yet
 const NO_SP = null;       //No scrollable parent has been found
+const MAX_MSG_LEN = 40;   //The maximum error/warning messages' lengths
 
 const INITIAL_WINDOW_WIDTH  = window.innerWidth;
 const INITIAL_WINDOW_HEIGHT = window.innerHeight;
@@ -241,7 +242,7 @@ const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDO
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;                 //51 frames at 929px of height
 const DEFAULT_FRAME_TIME = 16.6; //in ms
 const HIGHEST_SAFE_SCROLL_POS = 1073741824; //2^30
-//const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame; //To look more into
+//const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame; //TODO: To look more into
 
 const REGEX_LOGGER_DISABLED = /disabled/i;
 const REGEX_LOGGER_LEGACY = /legacy/i;
@@ -337,9 +338,9 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   const _isString = typeof receivedValue === "string";
   if(!_isString) receivedValue = TO_STRING(receivedValue);
 
-  //Max 40 characters in a error message.
-  if(receivedValue.length > 40) {
-    receivedValue = receivedValue.slice(0, 40) + " ...";
+  //Max MAX_MSG_LEN characters in a error message.
+  if(receivedValue.length > MAX_MSG_LEN) {
+    receivedValue = receivedValue.slice(0, MAX_MSG_LEN) + " ...";
   }
   
   //Insert leading and trailing quotes if the received value was a string.
@@ -381,9 +382,9 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   const _isString = typeof subject === "string";
   if(!_isString) subject = TO_STRING(subject);
 
-  //Max 40 characters in a warning message.
-  if(subject.length > 40) {
-    subject = subject.slice(0, 40) + " ...";
+  //Max MAX_MSG_LEN characters in a warning message.
+  if(subject.length > MAX_MSG_LEN) {
+    subject = subject.slice(0, MAX_MSG_LEN) + " ...";
   }
 
   //Insert leading and trailing quotes if the received value was a string.
@@ -415,26 +416,26 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
 
 //Todo: make this const
 var DEFAULT_RESIZE_OBSERVER = {
-  callbackId: NO_VAL,
+  callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  entries: new Map(), //resized entries
+  entries: new Set(), //resized entries
   observer: new ResizeObserver((entries) => {
-    console.log(entries)
     /**
      * Each time a resize event is observed on one of the entries
      * the number of debouced frames is reset.
      */
     DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
-    //Keep only the most up-to-date entry for each target
+    //Keep only the most up-to-date resized-entry for each target.
     for(const entry of entries) {
-      DEFAULT_RESIZE_OBSERVER.entries.set(entry.target, entry)
+      DEFAULT_RESIZE_OBSERVER.entries.add(entry.target);
     }
 
-    if(DEFAULT_RESIZE_OBSERVER.callbackId !== NO_VAL) return;
-
-    DEFAULT_RESIZE_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+    //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
+    if(DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
+      DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+    }
   }),
   callback: () => {
     /**
@@ -447,27 +448,28 @@ var DEFAULT_RESIZE_OBSERVER = {
      */
     if(DEFAULT_RESIZE_OBSERVER.debouncedFrames < DEFAULT_RESIZE_OBSERVER.totalDebounceFrames) {
       DEFAULT_RESIZE_OBSERVER.debouncedFrames++;
-      DEFAULT_RESIZE_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+      DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
       return;
     }
 
     //TODO: vertical resize should not affect horizontal properties and viceversa.
     //Problem: this information isn't provided by the resize observer entry
+    //Perhaps the entry.borderBox (seems to be the same as boundingClientRect) can be cached and used 
     
-    for(const [container, entry] of DEFAULT_RESIZE_OBSERVER.entries) { 
+    for(const container of DEFAULT_RESIZE_OBSERVER.entries) { 
       const _containerData = uss._containersData.get(container);
 
       if(!_containerData) continue;
 
-      //Empty the caches
-      if(_containerData[K_MSX] !== NO_VAL) _containerData[K_MSX] = NO_VAL; 
-      if(_containerData[K_MSY] !== NO_VAL) _containerData[K_MSY] = NO_VAL; 
-      if(_containerData[K_VSB] !== NO_VAL) _containerData[K_VSB] = NO_VAL; 
-      if(_containerData[K_HSB] !== NO_VAL) _containerData[K_HSB] = NO_VAL; 
-      if(_containerData[K_TB] !== NO_VAL) _containerData[K_TB] = NO_VAL; 
-      if(_containerData[K_RB] !== NO_VAL) _containerData[K_RB] = NO_VAL; 
-      if(_containerData[K_BB] !== NO_VAL) _containerData[K_BB] = NO_VAL; 
-      if(_containerData[K_LB] !== NO_VAL) _containerData[K_LB] = NO_VAL; 
+      //Clear the caches.
+      if(_containerData[K_MSX] !== NO_VAL) _containerData[K_MSX] = NO_VAL; //MaxScrollX
+      if(_containerData[K_MSY] !== NO_VAL) _containerData[K_MSY] = NO_VAL; //MaxScrollY
+      if(_containerData[K_VSB] !== NO_VAL) _containerData[K_VSB] = NO_VAL; //VerticalScrollbar
+      if(_containerData[K_HSB] !== NO_VAL) _containerData[K_HSB] = NO_VAL; //HorizontalScrollbar
+      if(_containerData[K_TB] !== NO_VAL) _containerData[K_TB] = NO_VAL;   //TopBorder
+      if(_containerData[K_RB] !== NO_VAL) _containerData[K_RB] = NO_VAL;   //RightBorder
+      if(_containerData[K_BB] !== NO_VAL) _containerData[K_BB] = NO_VAL;   //BottomBorder
+      if(_containerData[K_LB] !== NO_VAL) _containerData[K_LB] = NO_VAL;   //LeftBorder
 
       //TODO: does it make sense to clear the cache for the scrollable parents on resize?
       //if(_containerData[K_SSPX] !== NO_VAL) _containerData[K_SSPX] = NO_VAL; 
@@ -476,12 +478,13 @@ var DEFAULT_RESIZE_OBSERVER = {
       //if(_containerData[K_HSPY] !== NO_VAL) _containerData[K_HSPY] = NO_VAL; 
 
       //TODO: decide what to pass as the input of callback
+      //perhaps the container?
 
       //Execute the resize callbacks
       for(const callback of _containerData[K_RCBQ]) callback();
     }
 
-    DEFAULT_RESIZE_OBSERVER.callbackId = NO_VAL;
+    DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
     DEFAULT_RESIZE_OBSERVER.entries.clear();
   }
 }
@@ -490,13 +493,11 @@ var DEFAULT_RESIZE_OBSERVER = {
 //Todo: make this const
 //TODO: perhaps use this on scrollable parents 
 var DEFAULT_MUTATION_OBSERVER = {
-  callbackId: NO_VAL,
+  callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  entries: new Map(), //mutated entries
+  entries: new Set(), //mutated entries //TODO: make this a set since the entries are not used (just the targets are)
   observer: new MutationObserver((entries, observer) => {
-    console.log(entries, observer)
-
     /**
      * Each time a mutation event is observed on one of the entries
      * the number of debouced frames is reset.
@@ -505,12 +506,13 @@ var DEFAULT_MUTATION_OBSERVER = {
 
     //Keep only the most up-to-date entry for each target
     for(const entry of entries) {
-      DEFAULT_MUTATION_OBSERVER.entries.set(entry.target, entry)
+      DEFAULT_MUTATION_OBSERVER.entries.add(entry.target);
     }
 
-    if(DEFAULT_MUTATION_OBSERVER.callbackId !== NO_VAL) return;
-
-    DEFAULT_MUTATION_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
+    //Schedule the execution of DEFAULT_MUTATION_OBSERVER.callback if needed.
+    if(DEFAULT_MUTATION_OBSERVER.callbackFrameId === NO_VAL) {
+      DEFAULT_MUTATION_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
+    }
   }),
   callback: () => {
     /**
@@ -523,13 +525,13 @@ var DEFAULT_MUTATION_OBSERVER = {
      */
     if(DEFAULT_MUTATION_OBSERVER.debouncedFrames < DEFAULT_MUTATION_OBSERVER.totalDebounceFrames) {
       DEFAULT_MUTATION_OBSERVER.debouncedFrames++;
-      DEFAULT_MUTATION_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
+      DEFAULT_MUTATION_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
       return;
     }
 
     //TODO: Not every mutation should erase the caches
     
-    for(const [container, entry] of DEFAULT_MUTATION_OBSERVER.entries) { 
+    for(const container of DEFAULT_MUTATION_OBSERVER.entries) { 
       const _containerData = uss._containersData.get(container);
 
       if(!_containerData) continue;
@@ -559,7 +561,7 @@ var DEFAULT_MUTATION_OBSERVER = {
       for(const callback of _containerData[K_MCBQ]) callback();
     }
 
-    DEFAULT_MUTATION_OBSERVER.callbackId = NO_VAL;
+    DEFAULT_MUTATION_OBSERVER.callbackFrameId = NO_VAL;
     DEFAULT_MUTATION_OBSERVER.entries.clear();
   }
 }
@@ -580,13 +582,16 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
       _debounceResizeEvent = true;
       window.requestAnimationFrame(() => _debounceResizeEvent = false);
 
+      //Emulate what the DEFAULT_RESIZE_OBSERVER does for all the other containers.
       DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
-      DEFAULT_RESIZE_OBSERVER.entries.set(window, NO_VAL);  
+      //Keep only the most up-to-date resized-entry.
+      DEFAULT_RESIZE_OBSERVER.entries.add(window);  
       
-      if(DEFAULT_RESIZE_OBSERVER.callbackId !== NO_VAL) return;
-      
-      DEFAULT_RESIZE_OBSERVER.callbackId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+      //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
+      if(DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
+        DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+      }
     }, {passive:true});
 
     //The Window doesn't have any scrollable parent.
@@ -2311,8 +2316,9 @@ window.uss = {
         if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
         if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
         if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
-        
+
         if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
+        if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
 
         uss._containersData.set(container, _newData);
       } 
@@ -2355,8 +2361,9 @@ window.uss = {
         if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
         if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
         if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
-        
+
         if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
+        if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
 
         uss._containersData.set(container, _newData);
       } 
@@ -2400,6 +2407,7 @@ window.uss = {
       if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
       
       if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
+      if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
 
       uss._containersData.set(container, _newData);
     } else if(!INIT_CONTAINER_DATA(container)) {
@@ -2440,6 +2448,7 @@ window.uss = {
       if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
       
       if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
+      if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
 
       uss._containersData.set(_container, _newData)
     }
