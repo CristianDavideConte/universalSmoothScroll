@@ -1,40 +1,29 @@
 const { constants } = require("../support/constants");
 
-/*
- * sizeNum = 0 -> returns the total top-borders' size
- * sizeNum = 1 -> returns the total right-borders' size
- * sizeNum = 2 -> returns the total bottom-borders' size
- * sizeNum = 3 -> returns the total left-borders' size
+/**
+ * Returns the relative position of the element wrt the parent.
+ * The position is expressed as an object containing the absolute values of distances
+ * between the sides of the element and the ones of the parent.
  */
-function _getTotalBorderSize(uss, elements, sizeNum) {
-    const _totalBorderSize = elements.reduce(
-        (prev, curr) => {
-            const _borders = uss.calcBordersDimensions(curr, true);
-            prev[0] += _borders[0];
-            prev[1] += _borders[1];
-            prev[2] += _borders[2];
-            prev[3] += _borders[3];
-            return prev;
-        }, [0,0,0,0]
-    )
-    return _totalBorderSize[sizeNum];
-}
-
-/*
- * sizeNum = 0 -> returns the total vertical scrollbar's size (the ones on the right of the passed elements) 
- * sizeNum = 1 -> returns the total vertical scrollbar's size (the ones on the bottom of the passed elements) 
- */
-function _getTotalScrollbarsSize(uss, elements, sizeNum) {
-    const _totalScrollbarsSize = elements.reduce(
-        (prev, curr) => {
-            //forceCalculation = false because of a chrome's bug that moves the container when overflows are hidden.
-            const _scrollbars = uss.calcScrollbarsDimensions(curr, false); 
-            prev[0] += _scrollbars[0];
-            prev[1] += _scrollbars[1];
-            return prev;
-        }, [0,0]
-    )    
-    return _totalScrollbarsSize[sizeNum];
+function getDeltas(uss, win, element, parent) {
+    const _bordersDimensions = uss.calcBordersDimensions(parent);
+    const _scrollbarsDimensions = uss.calcScrollbarsDimensions(parent);
+    
+    const _elPos = element.getBoundingClientRect();
+    const _containerPos = parent !== win ? parent.getBoundingClientRect() :
+                          { top: 0, right: uss.getWindowWidth(), bottom: uss.getWindowHeight(), left: 0 };
+      
+    const _topDelta = _elPos.top - _containerPos.top - _bordersDimensions[0];
+    const _rightDelta = _elPos.right - _containerPos.right + _bordersDimensions[1] + _scrollbarsDimensions[0];
+    const _bottomDelta = _elPos.bottom - _containerPos.bottom + _bordersDimensions[2] + _scrollbarsDimensions[1];
+    const _leftDelta = _elPos.left - _containerPos.left - _bordersDimensions[3];
+    
+    return {
+        topDelta: Math.abs(_topDelta),
+        rightDelta: Math.abs(_rightDelta),
+        bottomDelta: Math.abs(_bottomDelta),
+        leftDelta: Math.abs(_leftDelta),
+    }
 }
 
 /**
@@ -54,6 +43,10 @@ function _getTotalScrollbarsSize(uss, elements, sizeNum) {
  *         (el) => {
  *             expect(el...).to...    
  *         },
+ *         ...
+ *         (el) => {
+ *             callback();
+ *         }
  *     ]
  *    },
  *    {
@@ -68,6 +61,10 @@ function _getTotalScrollbarsSize(uss, elements, sizeNum) {
  *         (el) => {
  *             expect(el...).to...    
  *         },
+ *          ...
+ *         (el) => {
+ *             callback();
+ *         }
  *     ]
  *    }
  * ]
@@ -158,40 +155,30 @@ describe("scrollIntoView-corners-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement;
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement;
+                                                
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(0, 1);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(0 + _parentPos.width, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(0 + _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(0, 1);
-                                            }
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
+                                            
+                                            },
                                         ]
                                     },
                                     {
@@ -202,46 +189,29 @@ describe("scrollIntoView-corners-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement;
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
+                                                el = el.parentElement.parentElement;
                                                 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(0, 1);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(0 + _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
-                                            }
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
+                                            },
                                         ]
                                     },
                                     {
@@ -252,46 +222,29 @@ describe("scrollIntoView-corners-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
+                                                el = el.parentElement; 
                                                 
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1); 
+                                                const _container = el.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
+                                                el = el.parentElement.parentElement; 
                                                 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize - _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(_parentPos.width, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(0, 1);
-                                            }
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
+                                            },
                                         ]
                                     },
                                     {
@@ -302,48 +255,28 @@ describe("scrollIntoView-corners-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
+                                                el = el.parentElement; 
                                                 
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0); 
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1); 
+                                                const _container = el.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement; 
                                                 
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0); 
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
-                                                
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize - _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             }
                                         ]
                                     }
@@ -406,54 +339,29 @@ describe("scrollIntoView-center-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                                
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.center = _elPos.top + _elPos.height * 0.5;
-                                                
-                                                expect(_elPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement;
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
-
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.center = _containerPos.top + _containerPos.height * 0.5;
-
-                                                expect(_containerPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-                                                
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [win], 0);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [win], 2);
-                                                
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
+                                                el = el.parentElement.parentElement;
 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.center = _parentPos.top + _parentPos.height * 0.5;
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                expect(_parentPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(0 + _parentPos.width, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(0, 1);
-                                            }
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
+                                            },
                                         ]
                                     },
                                     {
@@ -464,178 +372,95 @@ describe("scrollIntoView-center-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.center = _elPos.top + _elPos.height * 0.5;
-
-                                                expect(_elPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement; 
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.center = _containerPos.top + _containerPos.height * 0.5;
-
-                                                expect(_containerPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement; 
+                                                
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [win], 0);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [win], 2);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
-                                                                                                
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.center = _parentPos.top + _parentPos.height * 0.5;
-                                                
-                                                expect(_parentPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
-                                            }
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
+                                            },
                                         ]
                                     },
                                     {
                                         el: _testElement121,
                                         alignLeft: null, //center
-                                        alignTop: true, //top
+                                        alignTop: true,  //top
                                         includeHiddenParents: false,
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.center = _elPos.left + _elPos.width * 0.5;
-
-                                                expect(_elPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
+                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
+                                                el = el.parentElement;
                                                 
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
+                                                const _container = el.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.center = _containerPos.left + _containerPos.width * 0.5;
-
-                                                expect(_containerPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
+                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement;
+                                                
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [win], 1);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [win], 3);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
-                                                
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.center = _parentPos.left + _parentPos.width * 0.5;
-                                                
-                                                expect(_parentPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(_totalTopBorder + _parentPos.height, 1);
-                                            }
+                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
+                                            },
                                         ]
                                     },
                                     {
                                         el: _testElement122,
                                         alignLeft: null, //center
-                                        alignTop: false,  //bottom
+                                        alignTop: false, //bottom
                                         includeHiddenParents: false,
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.center = _elPos.left + _elPos.width * 0.5;
-
-                                                expect(_elPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement; 
+                                                
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.center = _containerPos.left + _containerPos.width * 0.5;
-
-                                                expect(_containerPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement; 
+                                                
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [win], 3);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
-
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.center = _parentPos.left + _parentPos.width * 0.5;
-
-                                                expect(_parentPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                            }
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
+                                            },
                                         ]
                                     },
                                     {
@@ -646,61 +471,29 @@ describe("scrollIntoView-center-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.centerY = _elPos.top + _elPos.height * 0.5;
-                                                _elPos.centerX = _elPos.left + _elPos.width * 0.5;
-                                                
-                                                expect(_elPos.centerX).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(_elPos.centerY).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement;
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.centerY = _containerPos.top + _containerPos.height * 0.5;
-                                                _containerPos.centerX = _containerPos.left + _containerPos.width * 0.5;
-                                                
-                                                expect(_containerPos.centerX).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(_containerPos.centerY).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement;
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [win], 3);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.centerY = _parentPos.top + _parentPos.height * 0.5;
-                                                _parentPos.centerX = _parentPos.left + _parentPos.width * 0.5;
-                                                
-                                                expect(_parentPos.centerX).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(_parentPos.centerY).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                            }
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
+                                            },
                                         ]
                                     },
                                 ]
@@ -765,39 +558,29 @@ describe("scrollIntoView-nearest-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement;
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement;
+                                                
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(0, 1);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(0 + _parentPos.width, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(0 + _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(0, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
+                                            
                                             },
                                             (el) => {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-top.
@@ -813,59 +596,33 @@ describe("scrollIntoView-nearest-alignments", function() {
                                     {
                                         el: _testElement121,
                                         alignLeft: "nearest", //center
-                                        alignTop: "nearest", //top
+                                        alignTop: "nearest",  //top
                                         includeHiddenParents: false,
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.center = _elPos.left + _elPos.width * 0.5;
-
-                                                expect(_elPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
+                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
+                                                el = el.parentElement;
                                                 
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
+                                                const _container = el.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.center = _containerPos.left + _containerPos.width * 0.5;
-
-                                                expect(_containerPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
+                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement;
+                                                
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [win], 1);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [win], 3);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
-                                                
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.center = _parentPos.left + _parentPos.width * 0.5;
-                                                
-                                                expect(_parentPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(_totalTopBorder + _parentPos.height, 1);
+                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => {
                                                 //Set up the scroll position to force the "nearest" alignment to be right-top.
@@ -886,45 +643,28 @@ describe("scrollIntoView-nearest-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(_totalTopBorder + _elPos.height, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement;
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(_totalTopBorder, 1);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(_totalTopBorder + _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
+                                                el = el.parentElement.parentElement;
                                                 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(0, 1);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(0 + _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => {
                                                 //Set up the scroll position to force the "nearest" alignment to be left-center.
@@ -945,53 +685,28 @@ describe("scrollIntoView-nearest-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                                
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.center = _elPos.top + _elPos.height * 0.5;
-                                                
-                                                expect(_elPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement;
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
-
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.center = _containerPos.top + _containerPos.height * 0.5;
-
-                                                expect(_containerPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-                                                
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [win], 0);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [win], 2);
-                                                
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
+                                                el = el.parentElement.parentElement;
 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.center = _parentPos.top + _parentPos.height * 0.5;
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                expect(_parentPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(0 + _parentPos.width, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(0, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
                                             (el) => {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-center.
@@ -1012,60 +727,28 @@ describe("scrollIntoView-nearest-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.centerY = _elPos.top + _elPos.height * 0.5;
-                                                _elPos.centerX = _elPos.left + _elPos.width * 0.5;
-                                                
-                                                expect(_elPos.centerX).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(_elPos.centerY).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement;
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.centerY = _containerPos.top + _containerPos.height * 0.5;
-                                                _containerPos.centerX = _containerPos.left + _containerPos.width * 0.5;
-                                                
-                                                expect(_containerPos.centerX).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(_containerPos.centerY).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement;
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [win], 3);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.centerY = _parentPos.top + _parentPos.height * 0.5;
-                                                _parentPos.centerX = _parentPos.left + _parentPos.width * 0.5;
-                                                
-                                                expect(_parentPos.centerX).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(_parentPos.centerY).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
                                             (el) => {
                                                 //Set up the scroll position to force the "nearest" alignment to be right-center.
@@ -1086,56 +769,28 @@ describe("scrollIntoView-nearest-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.center = _elPos.top + _elPos.height * 0.5;
-
-                                                expect(_elPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement; 
+
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [_parent, win], 0);
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.center = _containerPos.top + _containerPos.height * 0.5;
-
-                                                expect(_containerPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement; 
+                                                
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalTopBorder = _getTotalBorderSize(uss, [win], 0);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [win], 2);
-                                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
-                                                                                                
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.center = _parentPos.top + _parentPos.height * 0.5;
-                                                
-                                                expect(_parentPos.center).to.be.closeTo((win.innerHeight - _totalBottomBorder + _totalTopBorder - _totalBottomScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
                                             (el) => {
                                                 //Set up the scroll position to force the "nearest" alignment to be left-bottom.
@@ -1151,50 +806,33 @@ describe("scrollIntoView-nearest-alignments", function() {
                                     {
                                         el: _testElement121,
                                         alignLeft: "nearest", //left
-                                        alignTop: "nearest", //bottom
+                                        alignTop: "nearest",  //bottom
                                         includeHiddenParents: false,
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(_totalLeftBorder + _elPos.width, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
+                                                el = el.parentElement; 
                                                 
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1); 
+                                                const _container = el.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(_totalLeftBorder + _containerPos.width, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(_totalLeftBorder, 1);
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
+                                                el = el.parentElement.parentElement; 
                                                 
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize - _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(_parentPos.width, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(0, 1);
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+
+                                                expect(leftDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-bottom.
@@ -1215,57 +853,28 @@ describe("scrollIntoView-nearest-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 3);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                _elPos.center = _elPos.left + _elPos.width * 0.5;
-
-                                                expect(_elPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
+                                                el = el.parentElement; 
+                                                
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [_parent, win], 3);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1);
-
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                _containerPos.center = _containerPos.left + _containerPos.width * 0.5;
-
-                                                expect(_containerPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement; 
+                                                
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [win], 2);
-                                                const _totalLeftBorder = _getTotalBorderSize(uss, [win], 3);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
-
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                _parentPos.center = _parentPos.left + _parentPos.width * 0.5;
-
-                                                expect(_parentPos.center).to.be.closeTo((win.innerWidth - _totalRightBorder + _totalLeftBorder - _totalRightScrollbarSize) * 0.5, 2);
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => {
                                                 //Set up the scroll position to force the "nearest" alignment to be center-bottom.
@@ -1286,48 +895,28 @@ describe("scrollIntoView-nearest-alignments", function() {
                                         tests: [
                                             (el) => { //Tests the element position
                                                 const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [el, _container, _parent, win], 2);
-                                
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 0);
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [el, _container, _parent, win], 1);
-
-                                                const _elPos = el.getBoundingClientRect();
-                                                expect(Math.round(_elPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _elPos.height, 1);
-                                                expect(Math.round(_elPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_elPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_elPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _elPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
-
-                                                const _totalRightBorder = _getTotalBorderSize(uss, [_parent, win], 1);
-                                                const _totalBottomBorder = _getTotalBorderSize(uss, [_parent, win], 2);
+                                                el = el.parentElement; 
                                                 
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 0); 
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [_parent, win], 1); 
+                                                const _container = el.parentElement;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                const _containerPos = _container.getBoundingClientRect();
-                                                expect(Math.round(_containerPos.top)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize - _containerPos.height, 1);
-                                                expect(Math.round(_containerPos.right)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomBorder - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_containerPos.left)).to.be.closeTo(win.innerWidth - _totalRightBorder - _totalRightScrollbarSize - _containerPos.width, 1);
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
-                                                const _container = el.parentElement;
-                                                const _parent = _container.parentElement;
+                                                el = el.parentElement.parentElement; 
                                                 
-                                                const _totalRightScrollbarSize = _getTotalScrollbarsSize(uss, [win], 0); 
-                                                const _totalBottomScrollbarSize = _getTotalScrollbarsSize(uss, [win], 1);
-                                                
-                                                const _parentPos = _parent.getBoundingClientRect();
-                                                expect(Math.round(_parentPos.top)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize - _parentPos.height, 1);
-                                                expect(Math.round(_parentPos.right)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.bottom)).to.be.closeTo(win.innerHeight - _totalBottomScrollbarSize, 1);
-                                                expect(Math.round(_parentPos.left)).to.be.closeTo(win.innerWidth - _totalRightScrollbarSize - _parentPos.width, 1);
+                                                const _container = win;
+                                                const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+
+                                                expect(rightDelta).to.be.closeTo(0, 1);
+                                                expect(bottomDelta).to.be.closeTo(0, 1);
                                             }
                                         ]
                                     }
