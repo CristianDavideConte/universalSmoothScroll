@@ -407,7 +407,7 @@ describe("scrollIntoView-center-alignments", function() {
                                                 const _container = el.parentElement;
                                                 const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                 expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
@@ -416,7 +416,7 @@ describe("scrollIntoView-center-alignments", function() {
                                                 const _container = el.parentElement;
                                                 const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                 expect(topDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
@@ -425,7 +425,7 @@ describe("scrollIntoView-center-alignments", function() {
                                                 const _container = win;
                                                 const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                 expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                         ]
@@ -587,9 +587,9 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _nextEl = _testElement121;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _container.parentElement;
-                                                uss.scrollTo(uss.getMaxScrollX() / 2, uss.getMaxScrollY());
+                                                uss.scrollTo(uss.getMaxScrollX() / 2,        uss.getMaxScrollY());
                                                 uss.scrollTo(uss.getMaxScrollX(_parent) / 2, 0, _parent);
-                                                uss.scrollTo(uss.getMaxScrollX(_container) / 8, 0, _container);
+                                                uss.scrollTo(_container.scrollWidth / 8,     0, _container);
                                             }
                                         ]
                                     },
@@ -603,7 +603,7 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _container = el.parentElement;
                                                 const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                 expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => { //Tests the container position (element's parentElement)
@@ -612,7 +612,7 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _container = el.parentElement;
                                                 const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                 expect(topDelta).to.be.closeTo(0, 1);
                                             }, 
                                             (el) => { //Tests the parent position (container's parentElement)
@@ -621,7 +621,7 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _container = win;
                                                 const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
 
-                                                expect(rightDelta).to.be.closeTo(leftDelta, 1);
+                                                expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                 expect(topDelta).to.be.closeTo(0, 1);
                                             },
                                             (el) => {
@@ -629,9 +629,9 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _nextEl = _testElement112;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _container.parentElement;
-                                                uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY());
+                                                uss.scrollTo(uss.getMaxScrollX(),        uss.getMaxScrollY());
                                                 uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
-                                                uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
+                                                uss.scrollTo(_container.scrollWidth,     0, _container);
                                             }
                                         ]
                                     },
@@ -672,8 +672,9 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _container.parentElement;
                                                 uss.scrollTo(0, uss.getMaxScrollY() / 2);
-                                                uss.scrollTo(0, uss.getMaxScrollY(_parent) / 8, _parent);
+                                                uss.scrollTo(0, _parent.scrollHeight / 8, _parent);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_container) / 2, _container);
+
                                             }
                                         ]
                                     },
@@ -713,9 +714,9 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _nextEl = _testElement111;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _container.parentElement;
-                                                uss.scrollTo(uss.getMaxScrollX() / 2, uss.getMaxScrollY() / 2);
-                                                uss.scrollTo(uss.getMaxScrollX(_parent) / 2, uss.getMaxScrollY(_parent) / 8, _parent);
-                                                uss.scrollTo(uss.getMaxScrollX(_container) / 8, uss.getMaxScrollY(_container) / 2, _container);
+                                                uss.scrollTo(uss.getMaxScrollX() / 2,        uss.getMaxScrollY() / 2);
+                                                uss.scrollTo(uss.getMaxScrollX(_parent) / 2, _parent.scrollHeight / 8, _parent);
+                                                uss.scrollTo(_container.scrollWidth / 8,     uss.getMaxScrollY(_container) / 2, _container);
                                             }
                                         ]
                                     },
@@ -750,14 +751,14 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                 expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                             },
-                                            (el) => {
+                                            (el) => {                                                
                                                 //Set up the scroll position to force the "nearest" alignment to be right-center.
                                                 const _nextEl = _testElement112;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _container.parentElement;
-                                                uss.scrollTo(uss.getMaxScrollX(), uss.getMaxScrollY() / 2);
-                                                uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent) / 8, _parent);
-                                                uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container) / 2, _container);
+                                                uss.scrollTo(uss.getMaxScrollX(),        uss.getMaxScrollY() / 2);
+                                                uss.scrollTo(uss.getMaxScrollX(_parent), _parent.scrollHeight / 8, _parent);
+                                                uss.scrollTo(_container.scrollWidth,     uss.getMaxScrollY(_container) / 2, _container);
                                             }
                                         ]
                                     },
@@ -798,7 +799,7 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _container.parentElement;
                                                 uss.scrollTo(0, 0);
-                                                uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
+                                                uss.scrollTo(0, _parent.scrollHeight, _parent);
                                                 uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
                                             }
                                         ]
@@ -839,9 +840,9 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _nextEl = _testElement122;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _container.parentElement;
-                                                uss.scrollTo(uss.getMaxScrollX() / 2, 0);
-                                                uss.scrollTo(uss.getMaxScrollX(_parent) / 2, uss.getMaxScrollY(_parent), _parent);
-                                                uss.scrollTo(uss.getMaxScrollX(_container) * 3 / 4, uss.getMaxScrollY(_container), _container);
+                                                uss.scrollTo(uss.getMaxScrollX() / 2,        0);
+                                                uss.scrollTo(uss.getMaxScrollX(_parent) / 2, _parent.scrollHeight, _parent);
+                                                uss.scrollTo(_container.scrollWidth * 5 / 8, uss.getMaxScrollY(_container), _container);
                                             }
                                         ]
                                     },
@@ -881,9 +882,9 @@ describe("scrollIntoView-nearest-alignments", function() {
                                                 const _nextEl = _testElement122;
                                                 const _container = _nextEl.parentElement;
                                                 const _parent = _container.parentElement;
-                                                uss.scrollTo(uss.getMaxScrollX(), 0);
-                                                uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
-                                                uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
+                                                uss.scrollTo(uss.getMaxScrollX(),    0);
+                                                uss.scrollTo(_parent.scrollWidth,    _parent.scrollHeight, _parent);
+                                                uss.scrollTo(_container.scrollWidth, uss.getMaxScrollY(_container), _container);
                                             }
                                         ]
                                     },
