@@ -228,8 +228,10 @@ const K_HSPY = 27; //Key to get the hidden scrollable parent on the y-axis (over
 const K_SCX = 28;  //Key to get the ScrollXCalculator
 const K_SCY = 29;  //Key to get the ScrollYCalculator
 
-const K_RCBQ = 30;  //Key to get the resize callbacks queue
-const K_MCBQ = 31;  //Key to get the mutation callbacks queue
+const K_BRB = 30; //Key to get the border box 
+
+const K_RCBQ = 31;  //Key to get the resize callbacks queue
+const K_MCBQ = 32;  //Key to get the mutation callbacks queue
 
 const NO_VAL = undefined; //No value has been calculated yet
 const NO_SP = null;       //No scrollable parent has been found
@@ -256,14 +258,16 @@ const CHECK_INSTANCEOF = (element, classType = Element) => {
   if(element instanceof classType) return true;
 
   /**
-   * iFrames' class instances are different from the outer window's ones.
-   * The instance check therefore done between the element and 
-   * the iFrame/inner window's classes.
+   * At this point we're either in an iFrame or element is not instanceof classType.
+   * Instances of iFrames' classes are different from the outer window's ones.
+   * The instance check is therefore done between the element and the iFrame's classes.
    *  
    * e.g. 
-   * classType = Element //outer classType, formally: function Element() { [native code] }
-   * classType.name = "Element"
-   * _window[classType.name] = _window.Element //inner classType, !== classType above
+   * window.classType = window.Element
+   * window.classType.name = "Element"
+   * iFrameWindow[window.classType.name] = iFrameWindow.Element 
+   * 
+   * window.Element !== iFrameWindow.Element 
    */
   try {
     //Find the window associated with the passed element
@@ -334,19 +338,16 @@ const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
 const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
   
-  //Convert to a string and eventually trim the receivedValue.
   const _isString = typeof receivedValue === "string";
   if(!_isString) receivedValue = TO_STRING(receivedValue);
 
-  //Max MAX_MSG_LEN characters in a error message.
+  //Trim the received value if needed.
   if(receivedValue.length > MAX_MSG_LEN) {
     receivedValue = receivedValue.slice(0, MAX_MSG_LEN) + " ...";
   }
   
-  //Insert leading and trailing quotes if the received value was a string.
-  if(_isString) {
-    receivedValue = "\"" + receivedValue + "\"";
-  }
+  //Insert leading and trailing quotes if needed.
+  if(_isString) receivedValue = "\"" + receivedValue + "\"";
 
   if(REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
@@ -354,7 +355,6 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
     throw "USS fatal error (execution stopped)";
   }
 
-  //TODO: perhaps use the `` to avoid going newline?
   console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 
     console.log("%cUSS ERROR", "font-family:system-ui; font-weight:800; font-size:40px; background:#eb445a; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
@@ -372,25 +372,23 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
     console.groupEnd("Stack Trace");
 
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+  
   throw "USS fatal error (execution stopped)";
 }
 
 const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) => {
   if(REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
 
-  //Convert to a string and eventually trim the subject.
   const _isString = typeof subject === "string";
   if(!_isString) subject = TO_STRING(subject);
 
-  //Max MAX_MSG_LEN characters in a warning message.
+  //Trim the subject if needed.
   if(subject.length > MAX_MSG_LEN) {
     subject = subject.slice(0, MAX_MSG_LEN) + " ...";
   }
 
-  //Insert leading and trailing quotes if the received value was a string.
-  if(_isString && keepQuotesForString) {
-    subject = "\"" + subject + "\"";
-  }
+  //Insert leading and trailing quotes if needed.
+  if(_isString && keepQuotesForString) subject = "\"" + subject + "\"";
 
   if(REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
@@ -398,7 +396,6 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
     return;
   }
 
-  //TODO: perhaps use the `` to avoid going newline?
   console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 
     console.log("%cUSS WARNING", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
@@ -419,7 +416,7 @@ var DEFAULT_RESIZE_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  entries: new Set(), //resized entries
+  entries: new Map(), //<entry.target, resized entry>
   observer: new ResizeObserver((entries) => {
     /**
      * Each time a resize event is observed on one of the entries
@@ -429,7 +426,7 @@ var DEFAULT_RESIZE_OBSERVER = {
 
     //Keep only the most up-to-date resized-entry for each target.
     for(const entry of entries) {
-      DEFAULT_RESIZE_OBSERVER.entries.add(entry.target);
+      DEFAULT_RESIZE_OBSERVER.entries.set(entry.target, entry);
     }
 
     //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
@@ -443,8 +440,8 @@ var DEFAULT_RESIZE_OBSERVER = {
      * a fixed number of frames has passed. 
      * Combining this debouncing with the fact that 
      * the resize observer only run once per frame, 
-     * allows to clear the caches and execute any resize callback 
-     * just once after the resizing has been completed. 
+     * allows to clear the caches and execute any callback 
+     * once and after the resizing has been completed. 
      */
     if(DEFAULT_RESIZE_OBSERVER.debouncedFrames < DEFAULT_RESIZE_OBSERVER.totalDebounceFrames) {
       DEFAULT_RESIZE_OBSERVER.debouncedFrames++;
@@ -456,7 +453,7 @@ var DEFAULT_RESIZE_OBSERVER = {
     //Problem: this information isn't provided by the resize observer entry
     //Perhaps the entry.borderBox (seems to be the same as boundingClientRect) can be cached and used 
     
-    for(const container of DEFAULT_RESIZE_OBSERVER.entries) { 
+    for(const [container, entry] of DEFAULT_RESIZE_OBSERVER.entries) { 
       const _containerData = uss._containersData.get(container);
 
       if(!_containerData) continue;
@@ -470,6 +467,12 @@ var DEFAULT_RESIZE_OBSERVER = {
       if(_containerData[K_RB] !== NO_VAL) _containerData[K_RB] = NO_VAL;   //RightBorder
       if(_containerData[K_BB] !== NO_VAL) _containerData[K_BB] = NO_VAL;   //BottomBorder
       if(_containerData[K_LB] !== NO_VAL) _containerData[K_LB] = NO_VAL;   //LeftBorder
+
+      //BorderBox 
+      _containerData[K_BRB] = { 
+        width: entry.borderBoxSize[0].inlineSize,
+        height: entry.borderBoxSize[0].blockSize
+      }
 
       //TODO: does it make sense to clear the cache for the scrollable parents on resize?
       //if(_containerData[K_SSPX] !== NO_VAL) _containerData[K_SSPX] = NO_VAL; 
@@ -496,7 +499,7 @@ var DEFAULT_MUTATION_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  entries: new Set(), //mutated entries //TODO: make this a set since the entries are not used (just the targets are)
+  entries: new Set(), //mutated entries
   observer: new MutationObserver((entries, observer) => {
     /**
      * Each time a mutation event is observed on one of the entries
@@ -520,8 +523,8 @@ var DEFAULT_MUTATION_OBSERVER = {
      * a fixed number of frames has passed. 
      * Combining this debouncing with the fact that 
      * the mutation observer only run once per frame, 
-     * allows to clear the caches and execute any resize callback 
-     * just once after the resizing has been completed. 
+     * allows to clear the caches and execute any callback 
+     * once and after all the mutations have been completed. 
      */
     if(DEFAULT_MUTATION_OBSERVER.debouncedFrames < DEFAULT_MUTATION_OBSERVER.totalDebounceFrames) {
       DEFAULT_MUTATION_OBSERVER.debouncedFrames++;
@@ -586,8 +589,18 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
       DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
       //Keep only the most up-to-date resized-entry.
-      DEFAULT_RESIZE_OBSERVER.entries.add(window);  
-      
+      DEFAULT_RESIZE_OBSERVER.entries.set(
+        window, 
+        {
+          borderBoxSize: [
+            {
+              inlineSize: uss._windowWidth,
+              blockSize: uss._windowHeight,
+            }
+          ]
+        }
+      );  
+
       //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
       if(DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
         DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
@@ -1285,6 +1298,29 @@ window.uss = {
     }
 
     return [_containerData[K_MSX], _containerData[K_MSY]];
+  },
+  //TODO: Add cypress tests
+  getBorderBox: (container, options = {debugString: "getBorderBox"}) => {
+    //Check if the borderBox of the passed container has already been calculated. 
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+
+    if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      return;
+    }
+
+    if(_containerData[K_BRB] === NO_VAL) {
+      const _containerRect = container !== window ? container.getBoundingClientRect() : 
+                                                    { width: uss._windowWidth, height: uss._windowHeight };
+
+      _containerData[K_BRB] = {
+        width: _containerRect.width,
+        height: _containerRect.height,
+      }
+    }
+
+    return _containerData[K_BRB];
   },
   getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
@@ -2063,6 +2099,9 @@ window.uss = {
       uss.scrollYBy(deltaY, container, NO_VAL, stillStart, containScroll, options);
       return;
     }
+
+    let _initPhase = true;
+
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the y-axis has finished too or it has been altered.
     const _scrollXCallback = () => {
@@ -2076,7 +2115,6 @@ window.uss = {
       if(!_initPhase && __containerData[K_CBX] !== _scrollXCallback) callback();
     }
 
-    let _initPhase = true;
     uss.scrollXBy(deltaX, container, _scrollXCallback, stillStart, containScroll, options);
     _initPhase = false;
     uss.scrollYBy(deltaY, container, _scrollYCallback, stillStart, containScroll, options);
@@ -2091,8 +2129,8 @@ window.uss = {
       return;
     }
 
-    const _alignToNearestLeft = REGEX_ALIGNMENT_NEAREST.test(alignToLeft);
-    const _alignToNearestTop  = REGEX_ALIGNMENT_NEAREST.test(alignToTop);
+    const _alignToNearestX = REGEX_ALIGNMENT_NEAREST.test(alignToLeft);
+    const _alignToNearestY = REGEX_ALIGNMENT_NEAREST.test(alignToTop);
 
     let _alignToLeft = alignToLeft;
     let _alignToTop  = alignToTop;
@@ -2103,7 +2141,7 @@ window.uss = {
       if(_containerIndex < 1) {
           if(typeof callback === "function") callback();
           return;
-      } 
+      }
       _containerIndex--;
       _currentContainer = _containers[_containerIndex];
       _currentElement   = _containers[_containerIndex - 1] || element;
@@ -2112,61 +2150,72 @@ window.uss = {
 
     _scrollContainer();
 
-    //Execute all the calculations needed for scrolling an element into view.
-    function _scrollContainer() {   
-      //__scrollbarsDimensions[0] = _currentContainer's vertical scrollbar's width
-      //__scrollbarsDimensions[1] = _currentContainer's horizontal scrollbar's height
-      const __scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false, options);
+    function _scrollContainer() {
+      //_scrollbarsDimensions[0] = vertical scrollbar's width
+      //_scrollbarsDimensions[1] = horizontal scrollbar's height
+      const _scrollbarsDimensions = uss.calcScrollbarsDimensions(_currentContainer, false, options);
 
-      //__bordersDimensions[0] = _currentContainer's top border size
-      //__bordersDimensions[1] = _currentContainer's right border size
-      //__bordersDimensions[2] = _currentContainer's bottom border size
-      //__bordersDimensions[3] = _currentContainer's left border size
-      const __bordersDimensions = uss.calcBordersDimensions(_currentContainer, false, options);   
+      //_bordersDimensions[0] = top border size
+      //_bordersDimensions[1] = right border size
+      //_bordersDimensions[2] = bottom border size
+      //_bordersDimensions[3] = left border size
+      const _bordersDimensions = uss.calcBordersDimensions(_currentContainer, false, options);  
 
-      const __containerRect = _currentContainer !== window ? _currentContainer.getBoundingClientRect() : {left: 0, top: 0, width: uss._windowWidth, height: uss._windowHeight};
-      const __containerWidth  = __containerRect.width;
-      const __containerHeight = __containerRect.height;
+      //Current element position relative to the current container.
+      const {top, right, bottom, left} = _currentElement.getBoundingClientRect();
+      const _elementPosition = {top, right, bottom, left};
 
-      const __elementRect = _currentElement.getBoundingClientRect(); //_currentElement can never be the Window
-      const __elementWidth  = __elementRect.width;
-      const __elementHeight = __elementRect.height;
-      const __elementInitialX = __elementRect.left - __containerRect.left; //_currentElement's x-coordinate relative to it's container
-      const __elementInitialY = __elementRect.top  - __containerRect.top;  //_currentElement's y-coordinate relative to it's container
+      if(_currentContainer === window) {
+        _elementPosition.right -= uss._windowWidth;
+        _elementPosition.bottom -= uss._windowHeight;
+      } else {
+        const _containerRect = _currentContainer.getBoundingClientRect();
 
-      //Align to "nearest" is an indirect way to say: Align to "top" / "bottom" / "center".
-      if(_alignToNearestLeft) {
-        const __leftDelta   = __elementInitialX > 0 ? __elementInitialX : -__elementInitialX;  //distance from left border    (container<-element  container)
-        const __rightDelta  = Math.abs(__containerWidth - __elementWidth - __elementInitialX); //distance from right border   (container  element->container)
-        const __centerDelta = Math.abs((__containerWidth - __elementWidth) * 0.5 - __elementInitialX); //distance from center (container->element<-container)
-        _alignToLeft = __leftDelta < __centerDelta ? true : __rightDelta < __centerDelta ? false : NO_VAL;
+        _elementPosition.top -= _containerRect.top;
+        _elementPosition.right -= _containerRect.right;
+        _elementPosition.bottom -= _containerRect.bottom;
+        _elementPosition.left -= _containerRect.left;
       }
 
-      if(_alignToNearestTop) {
-        const __topDelta    = __elementInitialY > 0 ? __elementInitialY : -__elementInitialY;    //distance from top border     (container↑↑element  container)
-        const __bottomDelta = Math.abs(__containerHeight - __elementHeight - __elementInitialY); //distance from bottom border  (container  element↓↓container)
-        const __centerDelta = Math.abs((__containerHeight - __elementHeight) * 0.5 - __elementInitialY); //distance from center (container↓↓element↑↑container)
-        _alignToTop = __topDelta < __centerDelta ? true : __bottomDelta < __centerDelta ? false : NO_VAL;
-      }
-    
-      const __elementFinalX = _alignToLeft === true  ? __bordersDimensions[3] : 
-                              _alignToLeft === false ? __containerWidth  - __elementWidth  - __scrollbarsDimensions[0] - __bordersDimensions[1] : 
-                                                      (__containerWidth  - __elementWidth  - __scrollbarsDimensions[0] - __bordersDimensions[1] + __bordersDimensions[3]) * 0.5;
-      const __elementFinalY = _alignToTop  === true  ? __bordersDimensions[0] : 
-                              _alignToTop  === false ? __containerHeight - __elementHeight - __scrollbarsDimensions[1] - __bordersDimensions[2] : 
-                                                      (__containerHeight - __elementHeight - __scrollbarsDimensions[1] - __bordersDimensions[2] + __bordersDimensions[0]) * 0.5;
-      
-      const __deltaX = Math.round(__elementInitialX - __elementFinalX);
-      const __deltaY = Math.round(__elementInitialY - __elementFinalY);
-      const __scrollContainerX = __deltaX !== 0 && uss.getMaxScrollX(_currentContainer, false, options) >= 1;
-      const __scrollContainerY = __deltaY !== 0 && uss.getMaxScrollY(_currentContainer, false, options) >= 1;
+      const _topDelta = _elementPosition.top - _bordersDimensions[0];
+      const _rightDelta = _elementPosition.right + _bordersDimensions[1] + _scrollbarsDimensions[0];
+      const _bottomDelta = _elementPosition.bottom + _bordersDimensions[2] + _scrollbarsDimensions[1];
+      const _leftDelta = _elementPosition.left - _bordersDimensions[3];
+      const _centerDeltaX = (_leftDelta + _rightDelta) * 0.5;  
+      const _centerDeltaY = (_topDelta + _bottomDelta) * 0.5;  
 
-      if(__scrollContainerX && __scrollContainerY) uss.scrollBy(__deltaX, __deltaY, _currentContainer, _callback, true, true, options);
-      else if(__scrollContainerX) uss.scrollXBy(__deltaX, _currentContainer, _callback, true, true, options);
-      else if(__scrollContainerY) uss.scrollYBy(__deltaY, _currentContainer, _callback, true, true, options);
+      //Align to nearest is an indirect way to say: align to top/bottom/center.
+      if(_alignToNearestX) {
+        _alignToLeft = Math.abs(_leftDelta)  < Math.abs(_centerDeltaX) ? true : 
+                        Math.abs(_rightDelta) < Math.abs(_centerDeltaX) ? false : NO_VAL;
+      }
+
+      if(_alignToNearestY) {
+        _alignToTop = Math.abs(_topDelta)    < Math.abs(_centerDeltaY) ? true : 
+                      Math.abs(_bottomDelta) < Math.abs(_centerDeltaY) ? false : NO_VAL;
+      }
+
+      let _deltaX = _alignToLeft === true  ? _leftDelta :
+                    _alignToLeft === false ? _rightDelta :
+                                              _centerDeltaX;
+      let _deltaY = _alignToTop === true  ? _topDelta :
+                    _alignToTop === false ? _bottomDelta :
+                                            _centerDeltaY;
+
+      _deltaX = _deltaX > 0 ? Math.round(_deltaX) : Math.floor(_deltaX);
+      _deltaY = _deltaY > 0 ? Math.round(_deltaY) : Math.floor(_deltaY);
+
+      const _shouldScrollX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer, false, options) >= 1;
+      const _shouldScrollY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer, false, options) >= 1;
+
+      if(_shouldScrollX && _shouldScrollY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, true, options);
+      else if(_shouldScrollX) uss.scrollXBy(_deltaX, _currentContainer, _callback, true, true, options);
+      else if(_shouldScrollY) uss.scrollYBy(_deltaY, _currentContainer, _callback, true, true, options);
       else _callback();
     }
   },
+
+
   scrollIntoViewIfNeeded: (element, alignToCenter = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoViewIfNeeded"}) => {
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
@@ -2316,6 +2365,7 @@ window.uss = {
         if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
         if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
         if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
+        if(_containerData[K_BRB]) _newData[K_BRB] = _containerData[K_BRB]; //borderBox
 
         if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
         if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
@@ -2361,6 +2411,7 @@ window.uss = {
         if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
         if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
         if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
+        if(_containerData[K_BRB]) _newData[K_BRB] = _containerData[K_BRB]; //borderBox
 
         if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
         if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
@@ -2405,6 +2456,7 @@ window.uss = {
       if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
       if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
       if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
+      if(_containerData[K_BRB]) _newData[K_BRB] = _containerData[K_BRB]; //borderBox
       
       if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
       if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
@@ -2446,6 +2498,7 @@ window.uss = {
       if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
       if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
       if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
+      if(_containerData[K_BRB]) _newData[K_BRB] = _containerData[K_BRB]; //borderBox
       
       if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
       if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
