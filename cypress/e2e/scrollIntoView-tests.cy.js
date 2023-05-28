@@ -177,7 +177,6 @@ describe("scrollIntoView-corners-alignments", function() {
 
                                                 expect(leftDelta).to.be.closeTo(0, 1);
                                                 expect(topDelta).to.be.closeTo(0, 1);
-                                            
                                             },
                                         ]
                                     },
