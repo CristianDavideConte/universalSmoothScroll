@@ -1,14 +1,5 @@
 const { constants } = require("../support/constants");
 
-function arraysAreEqual(arr1, arr2) {
-    if(!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
-    if(arr1.length !== arr2.length) return false;
-    for(let i = 0; i < arr1.length; i++) {
-        if(arr1[i] !== arr2[i]) return false;
-    }
-    return true;
-}
-
 beforeEach(() => {
     cy.visit("calcBordersDimensions-tests.html"); 
 })
@@ -26,22 +17,27 @@ describe("calcBordersDimensions", function() {
 
                 //Test the window's borders. 
                 const _windowBordersDimensions = uss.calcBordersDimensions(win, true);
-                expect(arraysAreEqual(
+                expect(constants.arraysAreEqual(
                         _windowBordersDimensions,
                         uss.calcBordersDimensions(uss.getWindowScroller(true))
                         )
                 ).to.be.true;
 
-                const _windowBordersCachedDimensions = uss._containersData.get(win).slice(20, 24);
-                expect(arraysAreEqual(
+                const _windowBordersCachedDimensions = [
+                    uss._containersData.get(win)[constants.K_TB],
+                    uss._containersData.get(win)[constants.K_RB],
+                    uss._containersData.get(win)[constants.K_BB],
+                    uss._containersData.get(win)[constants.K_LB],
+                ];
+                expect(constants.arraysAreEqual(
                         _windowBordersDimensions,
                         _windowBordersCachedDimensions
                         )
                 ).to.be.true;
 
                 const _head = win.document.head;
-                expect(arraysAreEqual(uss.calcBordersDimensions(_head), [0,0,0,0])).to.be.true;
-                Array.from(_head.children).forEach(el => expect(arraysAreEqual(uss.calcBordersDimensions(el), [0,0,0,0])).to.be.true);
+                expect(constants.arraysAreEqual(uss.calcBordersDimensions(_head), [0,0,0,0])).to.be.true;
+                Array.from(_head.children).forEach(el => expect(constants.arraysAreEqual(uss.calcBordersDimensions(el), [0,0,0,0])).to.be.true);
                 
                 cy.testFailingValues(uss.calcBordersDimensions, {
                     0: [constants.failingValuesAllNoUndefined,
@@ -55,76 +51,76 @@ describe("calcBordersDimensions", function() {
                 .then(() => {
                     const _borderedElement = win.document.getElementById("bordered");   
 
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement), 
                                           [0,0,0,0])
                     ).to.be.true;
 
                     _borderedElement.classList.add("all-border");
 
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
                                           [0,0,0,0])
                     ).to.be.true;
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [_maxDim,_maxDim,_maxDim,_maxDim])
                     ).to.be.true;
 
                     _borderedElement.classList.remove("all-border");
                     _borderedElement.classList.add("top-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
                                           [_maxDim,_maxDim,_maxDim,_maxDim])
                     ).to.be.true;
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [_maxDim,0,0,0])
                     ).to.be.true;
                     
                     _borderedElement.classList.remove("top-border");
                     _borderedElement.classList.add("right-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
                                           [_maxDim,0,0,0])
                     ).to.be.true;
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,_maxDim,0,0])
                     ).to.be.true;
        
                     _borderedElement.classList.remove("right-border");
                     _borderedElement.classList.add("bottom-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
                                           [0,_maxDim,0,0])
                     ).to.be.true;
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,0,_maxDim,0])
                     ).to.be.true;
 
                     _borderedElement.classList.remove("bottom-border");
                     _borderedElement.classList.add("left-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
                                           [0,0,_maxDim,0])
                     ).to.be.true;
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,0,0,_maxDim])
                     ).to.be.true;
                     
                     _borderedElement.classList.remove("left-border");
                     _borderedElement.classList.add("no-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
                                           [0,0,0,_maxDim])
                     ).to.be.true;
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,0,0,0])
                     ).to.be.true;
 
                     _borderedElement.classList.remove("no-border");
                     _borderedElement.classList.add("hidden-border");
                     
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, false), 
                                           [0,0,0,0])
                     ).to.be.true;
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,0,0,0])
                     ).to.be.true;
 
@@ -134,7 +130,7 @@ describe("calcBordersDimensions", function() {
                     uss.stopScrollingY(_borderedElement);
                     uss.stopScrolling(_borderedElement);
                     uss.stopScrollingAll();
-                    expect(arraysAreEqual(uss.calcBordersDimensions(_borderedElement), _dims)).to.be.true;                
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement), _dims)).to.be.true;                
                 });
             });        
     });

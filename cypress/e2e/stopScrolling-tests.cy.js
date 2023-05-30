@@ -154,7 +154,8 @@ describe("stopScrolling-containersData-integrity", function() {
                 .then(() => {
                     uss._containersData = new Map();
 
-                    const _testCalculatorNonTemporary = () => 10;
+                    const _testCallback = () => {};
+                    const _testCalculatorFixed = () => 10;
                     const _testCalculatorTemporary = () => 20;
                     const _maxScrollX = uss.getMaxScrollX(uss.getPageScroller());
                     const _maxScrollY = uss.getMaxScrollY(uss.getPageScroller());
@@ -167,42 +168,68 @@ describe("stopScrolling-containersData-integrity", function() {
                     const _scrollableParentYHidden = uss.getYScrollableParent(uss.getPageScroller(), true);
                     const _scrollXCalculator = uss.getScrollXCalculator(uss.getPageScroller());
                     const _scrollYCalculator = uss.getScrollYCalculator(uss.getPageScroller());
+                    const _resizeCallbacksQueue = [_testCallback];
+                    const _mutationCallbacksQueue = [_testCallback];
 
-                    uss.setXStepLengthCalculator(_testCalculatorNonTemporary, uss.getPageScroller(), false);
+                    uss.setXStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(), false);
                     uss.setXStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
-                    uss.setYStepLengthCalculator(_testCalculatorNonTemporary, uss.getPageScroller(), false);
+                    uss.setYStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(), false);
                     uss.setYStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
 
+                    uss.addResizeCallback(_testCallback, uss.getPageScroller());
+                    uss.addMutationCallback(_testCallback, uss.getPageScroller());
+                    
                     uss.stopScrolling(uss.getPageScroller());
 
                     const _containerData = uss._containersData.get(uss.getPageScroller());
-                    
+                    const _noValKeys = [
+                        constants.K_IDX,
+                        constants.K_IDY,
+                        constants.K_FPX,
+                        constants.K_FPY,
+                        constants.K_SDX,
+                        constants.K_SDY,
+                        constants.K_TSAX,
+                        constants.K_TSAY,
+                        constants.K_OTSX,
+                        constants.K_OTSY,
+                        constants.K_CBX,
+                        constants.K_CBY,
+                    ];
+
                     //Check if the _containerData doesn't contain unecessary leftover values. 
-                    for(let i = 0; i < 12; i++) {
-                        expect(_containerData[i]).to.be.undefined;
+                    for(const key of _noValKeys) {
+                        expect(_containerData[key]).to.equal(constants.NO_VAL);
                     }
                     
                     //Check if the stepLengthCalculators are preserved.
-                    expect(_containerData[12]).to.equal(_testCalculatorNonTemporary); //xStepLengthCalculator non temporary
-                    expect(_containerData[13]).to.equal(_testCalculatorNonTemporary); //yStepLengthCalculator non temporary
-                    expect(_containerData[14]).to.be.undefined;                       //xStepLengthCalculator temporary
-                    expect(_containerData[15]).to.be.undefined;                       //yStepLengthCalculator temporary
+                    expect(_containerData[constants.K_FSCX]).to.equal(_testCalculatorFixed); //fixed xStepLengthCalculator 
+                    expect(_containerData[constants.K_FSCY]).to.equal(_testCalculatorFixed); //fixed yStepLengthCalculator
+                    expect(_containerData[constants.K_TSCX]).to.be.undefined;                       //temporary xStepLengthCalculator 
+                    expect(_containerData[constants.K_TSCY]).to.be.undefined;                       //temporary yStepLengthCalculator
 
                     //Check if the cached values are preserved.
-                    expect(_containerData[16]).to.equal(_maxScrollX);
-                    expect(_containerData[17]).to.equal(_maxScrollY);
-                    expect(_containerData[18]).to.equal(_xScrollbarSize);
-                    expect(_containerData[19]).to.equal(_yScrollbarSize);
-                    expect(_containerData[20]).to.equal(_bordersSizes[0]);
-                    expect(_containerData[21]).to.equal(_bordersSizes[1]);
-                    expect(_containerData[22]).to.equal(_bordersSizes[2]);
-                    expect(_containerData[23]).to.equal(_bordersSizes[3]);
-                    expect(_containerData[24]).to.equal(_scrollableParentXNotHidden);
-                    expect(_containerData[25]).to.equal(_scrollableParentXHidden);
-                    expect(_containerData[26]).to.equal(_scrollableParentYNotHidden);
-                    expect(_containerData[27]).to.equal(_scrollableParentYHidden);
-                    expect(_containerData[28]).to.equal(_scrollXCalculator);
-                    expect(_containerData[29]).to.equal(_scrollYCalculator);
+                    expect(_containerData[constants.K_MSX]).to.equal(_maxScrollX);
+                    expect(_containerData[constants.K_MSY]).to.equal(_maxScrollY);
+
+                    expect(_containerData[constants.K_VSB]).to.equal(_xScrollbarSize);
+                    expect(_containerData[constants.K_HSB]).to.equal(_yScrollbarSize);
+
+                    expect(_containerData[constants.K_TB]).to.equal(_bordersSizes[0]);
+                    expect(_containerData[constants.K_RB]).to.equal(_bordersSizes[1]);
+                    expect(_containerData[constants.K_BB]).to.equal(_bordersSizes[2]);
+                    expect(_containerData[constants.K_LB]).to.equal(_bordersSizes[3]);
+
+                    expect(_containerData[constants.K_SSPX]).to.equal(_scrollableParentXNotHidden);
+                    expect(_containerData[constants.K_HSPX]).to.equal(_scrollableParentXHidden);
+                    expect(_containerData[constants.K_SSPY]).to.equal(_scrollableParentYNotHidden);
+                    expect(_containerData[constants.K_HSPY]).to.equal(_scrollableParentYHidden);
+
+                    expect(_containerData[constants.K_SCX]).to.equal(_scrollXCalculator);
+                    expect(_containerData[constants.K_SCY]).to.equal(_scrollYCalculator);
+
+                    expect(constants.arraysAreEqual(_containerData[constants.K_RCBQ], _resizeCallbacksQueue)).to.be.true;
+                    expect(constants.arraysAreEqual(_containerData[constants.K_MCBQ], _mutationCallbacksQueue)).to.be.true;
                 });
             });         
     });

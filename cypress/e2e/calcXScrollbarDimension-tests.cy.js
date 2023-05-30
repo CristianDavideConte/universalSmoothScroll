@@ -1,14 +1,5 @@
 const { constants } = require("../support/constants");
 
-function arraysAreEqual(arr1, arr2) {
-    if(!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
-    if(arr1.length !== arr2.length) return false;
-    for(let i = 0; i < arr1.length; i++) {
-        if(arr1[i] !== arr2[i]) return false;
-    }
-    return true;
-}
-
 beforeEach(() => {
     cy.visit("calcXScrollbarDimension-tests.html"); 
 })
@@ -34,7 +25,7 @@ describe("calcXScrollbarDimension", function() {
                 const _windowXScrollbarDimension = uss.calcXScrollbarDimension(win, true);
                 expect(_windowXScrollbarDimension).to.equal(uss.calcXScrollbarDimension(uss.getWindowScroller(true)));
 
-                const _windowXScrollbarCachedDimension = uss._containersData.get(win)[18];
+                const _windowXScrollbarCachedDimension = uss._containersData.get(win)[constants.K_VSB];
                 expect(_windowXScrollbarDimension).to.equal(_windowXScrollbarCachedDimension);
 
                 cy.testFailingValues(uss.calcXScrollbarDimension, {
@@ -77,12 +68,12 @@ describe("calcXScrollbarDimension", function() {
                     expect(uss.calcXScrollbarDimension(uss.getWindowScroller())).to.equal(uss.calcXScrollbarDimension(win));
 
                     //Test if the scroll positions have changed due to the measuring (they should not).
-                    expect(arraysAreEqual(_getCurrentScrollPos(win), _windowOriginalPos)).to.be.true;
-                    expect(arraysAreEqual(_getCurrentScrollPos(_pageScroller), _pageScrollerOriginalPos)).to.be.true;
-                    expect(arraysAreEqual(_getCurrentScrollPos(_noScrollbarElement), _noScrollbarElementOriginalScrollPos)).to.be.true;
-                    expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXAxis), _elementWithScrollbarOnTheXAxisOriginalScrollPos)).to.be.true;
-                    expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheYAxis), _elementWithScrollbarOnTheYAxisOriginalScrollPos)).to.be.true;
-                    expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _elementWithScrollbarOnTheXYAxesOriginalScrollPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(win), _windowOriginalPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_pageScroller), _pageScrollerOriginalPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_noScrollbarElement), _noScrollbarElementOriginalScrollPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXAxis), _elementWithScrollbarOnTheXAxisOriginalScrollPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheYAxis), _elementWithScrollbarOnTheYAxisOriginalScrollPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _elementWithScrollbarOnTheXYAxesOriginalScrollPos)).to.be.true;
 
                     //Test if the yielded results are the same as the uss.calcScrollbarsDimensions method
                     expect(uss.calcXScrollbarDimension(_pageScroller)).to.equal(uss.calcScrollbarsDimensions(_pageScroller)[0]);
@@ -143,7 +134,7 @@ describe("calcXScrollbarDimension-webkit-scrollbar-modifiers", function() {
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, false)).to.equal(_maxDim);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], true);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, false)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], false);
-                    expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
 
                     _elementWithScrollbarOnTheXYAxes.classList.add("no-webkit-scrollbars");
                     _originalScrollPos = _getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes);
@@ -152,7 +143,7 @@ describe("calcXScrollbarDimension-webkit-scrollbar-modifiers", function() {
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true)).to.equal(0);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], true);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, false)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], false);
-                    expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
 
                     _elementWithScrollbarOnTheXYAxes.classList.remove("no-webkit-scrollbars");
                     _elementWithScrollbarOnTheXYAxes.classList.add("width-0-scrollbars");
@@ -162,7 +153,7 @@ describe("calcXScrollbarDimension-webkit-scrollbar-modifiers", function() {
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true)).to.equal(0);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], true);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, false)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], false);
-                    expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
                     
                     _elementWithScrollbarOnTheXYAxes.classList.remove("width-0-scrollbars");
                     _elementWithScrollbarOnTheXYAxes.classList.add("height-0-scrollbars");
@@ -172,7 +163,7 @@ describe("calcXScrollbarDimension-webkit-scrollbar-modifiers", function() {
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true)).to.equal(_maxDim);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], true);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, false)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], false);
-                    expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
        
                     _elementWithScrollbarOnTheXYAxes.classList.remove("height-0-scrollbars");
                     _elementWithScrollbarOnTheXYAxes.classList.add("width-0-height-0-scrollbars");
@@ -182,7 +173,7 @@ describe("calcXScrollbarDimension-webkit-scrollbar-modifiers", function() {
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true)).to.equal(0);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, true)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], true);
                     expect(uss.calcXScrollbarDimension(_elementWithScrollbarOnTheXYAxes, false)).to.equal(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes)[0], false);
-                    expect(arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
+                    expect(constants.arraysAreEqual(_getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes), _originalScrollPos)).to.be.true;
                 });
             });        
     });

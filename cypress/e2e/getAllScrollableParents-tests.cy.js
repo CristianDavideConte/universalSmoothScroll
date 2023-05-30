@@ -1,14 +1,5 @@
 const { constants } = require("../support/constants");
 
-function arraysAreEqual(arr1, arr2) {
-    if(!Array.isArray(arr1) || !Array.isArray(arr2)) return false;
-    if(arr1.length !== arr2.length) return false;
-    for(let i = 0; i < arr1.length; i++) {
-        if(arr1[i] !== arr2[i]) return false;
-    }
-    return true;
-}
-
 beforeEach(() => {
         cy.visit("getAllScrollableParents-tests.html"); 
 })
@@ -68,7 +59,7 @@ describe("getAllScrollableParents", function() {
 
                         
                         //test window
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(win), 
                                 []
                                 )
@@ -76,12 +67,12 @@ describe("getAllScrollableParents", function() {
 
 
                         //test html and body
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(win.document.documentElement), 
                                 [_htmlParent]
                                 )
                         ).to.be.true;  
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_body), 
                                 [_bodyParent]
                                 )
@@ -89,7 +80,7 @@ describe("getAllScrollableParents", function() {
                         
 
                         //test element with position:fixed
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_positionFixedElementDirectBodyChild), 
                                 []
                                 )
@@ -97,7 +88,7 @@ describe("getAllScrollableParents", function() {
 
 
                         //test element with position:fixed
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_positionFixedElement), 
                                 []
                                 )
@@ -105,7 +96,7 @@ describe("getAllScrollableParents", function() {
                         
                         
                         //test element with position:absolute which is a direct child of body
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_positionAbsoluteElementDirectBodyChild), 
                                 [_bodyParent]
                                 )
@@ -113,7 +104,7 @@ describe("getAllScrollableParents", function() {
 
 
                         //test element with position:absolute which is a child of a position:absolute parent
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_positionAbsoluteElementA), 
                                 [_genericElementParent00, _body, _bodyParent]
                                 )
@@ -121,7 +112,7 @@ describe("getAllScrollableParents", function() {
                         
 
                         //test element with position:absolute which is a child of a position:static parent
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_positionAbsoluteElementB), 
                                 [_htmlParent]
                                 )
@@ -129,32 +120,32 @@ describe("getAllScrollableParents", function() {
 
 
                         //test elements with no constraint 
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_genericElement1), 
                                 [_genericElementParent11, _genericElementParent12, _body, _bodyParent]
                                 )
                         ).to.be.true;  
                         
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_genericElement2), 
                                 [_genericElementParent21, _genericElementParent22]
                                 )
                         ).to.be.true;  
                         
                         
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_genericElement3), 
                                 [_genericElementParent31, _genericElementParent32, _body, _bodyParent]
                                 )
                         ).to.be.true;  
                         
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_genericElement4), 
                                 [_genericElementParent41, _genericElementParent42, _body, _bodyParent]
                                 )
                         ).to.be.true;  
                 
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_genericElement5), 
                                 [_genericElementParent51, _genericElementParent52, _body, _bodyParent]
                                 )
@@ -162,25 +153,25 @@ describe("getAllScrollableParents", function() {
 
 
                         //test elements that changes their scrollable parent based on the includeHiddenParents parameter
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_genericElement6, false),
                                 [_body, _bodyParent]
                                 )       
                         ).to.be.true;  
 
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_genericElement6, true),
                                 [_genericElementParent61, _body, _bodyParent]
                                 )       
                         ).to.be.true;  
 
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_genericElement7, false),
                                 [_body, _bodyParent]
                                 )       
                         ).to.be.true;  
 
-                        expect(arraysAreEqual(
+                        expect(constants.arraysAreEqual(
                                 uss.getAllScrollableParents(_genericElement7, true),
                                 [_genericElementParent71, _body, _bodyParent]
                                 )       

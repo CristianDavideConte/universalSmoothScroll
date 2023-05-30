@@ -321,6 +321,32 @@ const TO_STRING = (value) => {
   return String(value);
 }
 
+const CLEAR_COMMON_DATA = (containerData) => {
+  //Scroll animations' ids.
+  containerData[K_IDX] = NO_VAL;
+  containerData[K_IDY] = NO_VAL;
+
+  //Final positions.
+  containerData[K_FPX] = NO_VAL;
+  containerData[K_FPY] = NO_VAL;
+
+  //Scroll directions.
+  containerData[K_SDX] = NO_VAL;
+  containerData[K_SDY] = NO_VAL;
+
+  //Total scroll amounts.
+  containerData[K_TSAX] = NO_VAL;
+  containerData[K_TSAY] = NO_VAL;
+
+  //Original timestamps.
+  containerData[K_OTSX] = NO_VAL;
+  containerData[K_OTSY] = NO_VAL;
+
+  //Scroll callbacks.
+  containerData[K_CBX] = NO_VAL;
+  containerData[K_CBY] = NO_VAL;
+}
+
 const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
   const _stepLength = total / uss._minAnimationFrame;
   if(_stepLength < 1) return 1;
@@ -559,6 +585,7 @@ var DEFAULT_MUTATION_OBSERVER = {
       if(_containerData[K_HSPY] !== NO_VAL) _containerData[K_HSPY] = NO_VAL; 
 
       //TODO: decide what to pass as the input of callback
+      //TODO: add a addMutationCallback function
 
       //Execute the mutation callbacks
       for(const callback of _containerData[K_MCBQ]) callback();
@@ -1033,6 +1060,22 @@ window.uss = {
     }
 
     _containerData[K_RCBQ].push(newCallback);
+  },
+  addMutationCallback: (newCallback, container = uss._pageScroller, options = {debugString: "addMutationCallback"}) => {
+    if(typeof newCallback !== "function") {
+      uss._errorLogger(options.debugString, "the newCallback to be a function", newCallback);
+      return;
+    }
+    
+    const _oldData = uss._containersData.get(container);
+    const _containerData = _oldData || [];
+
+    if(container === window || (!_oldData && !INIT_CONTAINER_DATA(container, _containerData))) {
+      uss._errorLogger(options.debugString, "the container to be an Element", container);
+      return;
+    }
+
+    _containerData[K_MCBQ].push(newCallback);
   },
   setDebugMode: (newDebugMode = "", options = {debugString: "setDebugMode"}) => {
     if(typeof newDebugMode === "string") {
@@ -2284,13 +2327,13 @@ window.uss = {
       const _overflowsX = _leftDelta <= 0 && _rightDelta >= 0;
       const _overflowsY = _topDelta <= 0 && _bottomDelta >= 0;
 
-      const _scrollXNeeded = (_isOriginalElement && (alignToCenter || (!_isIntoViewX && !_overflowsX))) ||
-                             (!_isOriginalElement && !_isIntoViewX);
+      let _shouldScrollX = (_isOriginalElement && (alignToCenter || (!_isIntoViewX && !_overflowsX))) ||
+                           (!_isOriginalElement && !_isIntoViewX);
 
-      const _scrollYNeeded = (_isOriginalElement && (alignToCenter || (!_isIntoViewY && !_overflowsY))) ||
-                             (!_isOriginalElement && !_isIntoViewY);
+      let _shouldScrollY = (_isOriginalElement && (alignToCenter || (!_isIntoViewY && !_overflowsY))) ||
+                           (!_isOriginalElement && !_isIntoViewY);
 
-      if(!_scrollXNeeded && !_scrollYNeeded) {
+      if(!_shouldScrollX && !_shouldScrollY) {
         _callback();
         return;
       }
@@ -2301,22 +2344,22 @@ window.uss = {
         _alignToLeft = NO_VAL;
         _alignToTop = NO_VAL;
       } else {
-        if(_scrollXNeeded) {
+        if(_shouldScrollX) {
           _alignToLeft = Math.abs(_leftDelta)  < Math.abs(_centerDeltaX) ? true : 
                          Math.abs(_rightDelta) < Math.abs(_centerDeltaX) ? false : NO_VAL;
         }
 
-        if(_scrollYNeeded) {
+        if(_shouldScrollY) {
           _alignToTop = Math.abs(_topDelta)    < Math.abs(_centerDeltaY) ? true : 
                         Math.abs(_bottomDelta) < Math.abs(_centerDeltaY) ? false : NO_VAL;
         }
       }
 
-      let _deltaX = !_scrollXNeeded ? 0 :
+      let _deltaX = !_shouldScrollX ? 0 :
                     _alignToLeft === true  ? _leftDelta :
                     _alignToLeft === false ? _rightDelta :
                                              _centerDeltaX;
-      let _deltaY = !_scrollYNeeded ? 0 :
+      let _deltaY = !_shouldScrollY ? 0 :
                     _alignToTop === true  ? _topDelta :
                     _alignToTop === false ? _bottomDelta :
                                             _centerDeltaY;
@@ -2324,8 +2367,8 @@ window.uss = {
       _deltaX = _deltaX > 0 ? Math.round(_deltaX) : Math.floor(_deltaX);
       _deltaY = _deltaY > 0 ? Math.round(_deltaY) : Math.floor(_deltaY);
 
-      const _shouldScrollX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer, false, options) >= 1;
-      const _shouldScrollY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer, false, options) >= 1;
+      _shouldScrollX = _deltaX !== 0 && uss.getMaxScrollX(_currentContainer, false, options) >= 1;
+      _shouldScrollY = _deltaY !== 0 && uss.getMaxScrollY(_currentContainer, false, options) >= 1;
 
       if(_shouldScrollX && _shouldScrollY) uss.scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, true, options);
       else if(_shouldScrollX) uss.scrollXBy(_deltaX, _currentContainer, _callback, true, true, options);
@@ -2338,86 +2381,38 @@ window.uss = {
     
     if(_containerData) {
       window.cancelAnimationFrame(_containerData[K_IDX]); 
-      _containerData[K_IDX] = NO_VAL;  //scrollID on x-axis
-      _containerData[K_CBX] = NO_VAL;  //callback on x-axis  
-      _containerData[K_TSCX] = NO_VAL; //temporary StepLengthCalculator on the x-axis
-          
+           
       //No scroll-animation on the y-axis is being performed.
-      if(!_containerData[K_IDY]) { 
-        const _newData = [];
-        
-        if(_containerData[K_FSCX]) _newData[K_FSCX] = _containerData[K_FSCX]; //fixed StepLengthCalculator on the x-axis
-        if(_containerData[K_FSCY]) _newData[K_FSCY] = _containerData[K_FSCY]; //fixed StepLengthCalculator on the y-axis
-        if(_containerData[K_TSCY]) _newData[K_TSCY] = _containerData[K_TSCY]; //temporary StepLengthCalculator on the y-axis
+      if(_containerData[K_IDY] === NO_VAL) {
+        CLEAR_COMMON_DATA(_containerData);
+      } else {
+        _containerData[K_IDX] = NO_VAL;  //Scroll id on x-axis
+        _containerData[K_CBX] = NO_VAL;  //Scroll callback on x-axis  
+      }
 
-        //Cached values.
-        if(_containerData[K_MSX] !== NO_VAL) _newData[K_MSX] = _containerData[K_MSX]; //maxScrollX
-        if(_containerData[K_MSY] !== NO_VAL) _newData[K_MSY] = _containerData[K_MSY]; //maxScrollY
-        if(_containerData[K_VSB] !== NO_VAL) _newData[K_VSB] = _containerData[K_VSB]; //vertical scrollbar's width
-        if(_containerData[K_HSB] !== NO_VAL) _newData[K_HSB] = _containerData[K_HSB]; //horizontal scrollbar's height
-        if(_containerData[K_TB] !== NO_VAL) _newData[K_TB] = _containerData[K_TB]; //top border's height
-        if(_containerData[K_RB] !== NO_VAL) _newData[K_RB] = _containerData[K_RB]; //right border's width
-        if(_containerData[K_BB] !== NO_VAL) _newData[K_BB] = _containerData[K_BB]; //bottom border's height
-        if(_containerData[K_LB] !== NO_VAL) _newData[K_LB] = _containerData[K_LB]; //left border's width
-        if(_containerData[K_SSPX] || _containerData[K_SSPX] === NO_SP) _newData[K_SSPX] = _containerData[K_SSPX]; //next standard scrollable parent on the x-axis
-        if(_containerData[K_HSPX] || _containerData[K_HSPX] === NO_SP) _newData[K_HSPX] = _containerData[K_HSPX]; //next hidden scrollable parent on the x-axis
-        if(_containerData[K_SSPY] || _containerData[K_SSPY] === NO_SP) _newData[K_SSPY] = _containerData[K_SSPY]; //next standard scrollable parent on the y-axis
-        if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
-        if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
-        if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
-        if(_containerData[K_BRB]) _newData[K_BRB] = _containerData[K_BRB]; //borderBox
-
-        if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
-        if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
-
-        uss._containersData.set(container, _newData);
-      } 
+      _containerData[K_TSCX] = NO_VAL; //Temporary StepLengthCalculator on the x-axis
     } else if(!INIT_CONTAINER_DATA(container)) {
       uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
       return;
     }
 
     if(typeof callback === "function") callback();
-  },  
+  },
   stopScrollingY: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingY"}) => {
     const _containerData = uss._containersData.get(container);
     
     if(_containerData) {
-      window.cancelAnimationFrame(_containerData[K_IDY]);
-      _containerData[K_IDY] = NO_VAL;  //scrollID on y-axis
-      _containerData[K_CBY] = NO_VAL;  //callback on y-axis
-      _containerData[K_TSCY] = NO_VAL; //temporary StepLengthCalculator on the y-axis
-          
+      window.cancelAnimationFrame(_containerData[K_IDY]); 
+           
       //No scroll-animation on the x-axis is being performed.
-      if(!_containerData[K_IDX]) { 
-        const _newData = [];
-        
-        if(_containerData[K_FSCX]) _newData[K_FSCX] = _containerData[K_FSCX]; //fixed StepLengthCalculator on the x-axis
-        if(_containerData[K_FSCY]) _newData[K_FSCY] = _containerData[K_FSCY]; //fixed StepLengthCalculator on the y-axis
-        if(_containerData[K_TSCX]) _newData[K_TSCX] = _containerData[K_TSCX]; //temporary StepLengthCalculator on the x-axis
-        
-        //Cached values.
-        if(_containerData[K_MSX] !== NO_VAL) _newData[K_MSX] = _containerData[K_MSX]; //maxScrollX
-        if(_containerData[K_MSY] !== NO_VAL) _newData[K_MSY] = _containerData[K_MSY]; //maxScrollY
-        if(_containerData[K_VSB] !== NO_VAL) _newData[K_VSB] = _containerData[K_VSB]; //vertical scrollbar's width
-        if(_containerData[K_HSB] !== NO_VAL) _newData[K_HSB] = _containerData[K_HSB]; //horizontal scrollbar's height
-        if(_containerData[K_TB] !== NO_VAL) _newData[K_TB] = _containerData[K_TB]; //top border's height
-        if(_containerData[K_RB] !== NO_VAL) _newData[K_RB] = _containerData[K_RB]; //right border's width
-        if(_containerData[K_BB] !== NO_VAL) _newData[K_BB] = _containerData[K_BB]; //bottom border's height
-        if(_containerData[K_LB] !== NO_VAL) _newData[K_LB] = _containerData[K_LB]; //left border's width
-        if(_containerData[K_SSPX] || _containerData[K_SSPX] === NO_SP) _newData[K_SSPX] = _containerData[K_SSPX]; //next standard scrollable parent on the x-axis
-        if(_containerData[K_HSPX] || _containerData[K_HSPX] === NO_SP) _newData[K_HSPX] = _containerData[K_HSPX]; //next hidden scrollable parent on the x-axis
-        if(_containerData[K_SSPY] || _containerData[K_SSPY] === NO_SP) _newData[K_SSPY] = _containerData[K_SSPY]; //next standard scrollable parent on the y-axis
-        if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
-        if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
-        if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
-        if(_containerData[K_BRB]) _newData[K_BRB] = _containerData[K_BRB]; //borderBox
+      if(_containerData[K_IDX] === NO_VAL) {
+        CLEAR_COMMON_DATA(_containerData);
+      } else {
+        _containerData[K_IDY] = NO_VAL;  //Scroll id on y-axis
+        _containerData[K_CBY] = NO_VAL;  //Scroll callback on y-axis  
+      }
 
-        if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
-        if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
-
-        uss._containersData.set(container, _newData);
-      } 
+      _containerData[K_TSCY] = NO_VAL; //Temporary StepLengthCalculator on the y-axis
     } else if(!INIT_CONTAINER_DATA(container)) {
       uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
       return;
@@ -2429,39 +2424,13 @@ window.uss = {
     const _containerData = uss._containersData.get(container);
     
     if(_containerData) {
-      window.cancelAnimationFrame(_containerData[K_IDX]);
-      window.cancelAnimationFrame(_containerData[K_IDY]);
-      _containerData[K_IDX] = NO_VAL; //scrollID on x-axis
-      _containerData[K_IDY] = NO_VAL; //scrollID on y-axis
-      _containerData[K_CBX] = NO_VAL; //callback on x-axis
-      _containerData[K_CBY] = NO_VAL; //callback on y-axis
-          
-      const _newData = [];
-          
-      if(_containerData[K_FSCX]) _newData[K_FSCX] = _containerData[K_FSCX]; //fixed StepLengthCalculator on the x-axis
-      if(_containerData[K_FSCY]) _newData[K_FSCY] = _containerData[K_FSCY]; //fixed StepLengthCalculator on the y-axis
+      window.cancelAnimationFrame(_containerData[K_IDX]); 
+      window.cancelAnimationFrame(_containerData[K_IDY]); 
+           
+      CLEAR_COMMON_DATA(_containerData);
 
-      //Cached values.  
-      if(_containerData[K_MSX] !== NO_VAL) _newData[K_MSX] = _containerData[K_MSX]; //maxScrollX
-      if(_containerData[K_MSY] !== NO_VAL) _newData[K_MSY] = _containerData[K_MSY]; //maxScrollY
-      if(_containerData[K_VSB] !== NO_VAL) _newData[K_VSB] = _containerData[K_VSB]; //vertical scrollbar's width
-      if(_containerData[K_HSB] !== NO_VAL) _newData[K_HSB] = _containerData[K_HSB]; //horizontal scrollbar's height
-      if(_containerData[K_TB] !== NO_VAL) _newData[K_TB] = _containerData[K_TB]; //top border's height
-      if(_containerData[K_RB] !== NO_VAL) _newData[K_RB] = _containerData[K_RB]; //right border's width
-      if(_containerData[K_BB] !== NO_VAL) _newData[K_BB] = _containerData[K_BB]; //bottom border's height
-      if(_containerData[K_LB] !== NO_VAL) _newData[K_LB] = _containerData[K_LB]; //left border's width
-      if(_containerData[K_SSPX] || _containerData[K_SSPX] === NO_SP) _newData[K_SSPX] = _containerData[K_SSPX]; //next standard scrollable parent on the x-axis
-      if(_containerData[K_HSPX] || _containerData[K_HSPX] === NO_SP) _newData[K_HSPX] = _containerData[K_HSPX]; //next hidden scrollable parent on the x-axis
-      if(_containerData[K_SSPY] || _containerData[K_SSPY] === NO_SP) _newData[K_SSPY] = _containerData[K_SSPY]; //next standard scrollable parent on the y-axis
-      if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
-      if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
-      if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
-      if(_containerData[K_BRB]) _newData[K_BRB] = _containerData[K_BRB]; //borderBox
-      
-      if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
-      if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
-
-      uss._containersData.set(container, _newData);
+      _containerData[K_TSCX] = NO_VAL; //Temporary StepLengthCalculator on the x-axis
+      _containerData[K_TSCY] = NO_VAL; //Temporary StepLengthCalculator on the y-axis
     } else if(!INIT_CONTAINER_DATA(container)) {
       uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
       return;
@@ -2471,39 +2440,13 @@ window.uss = {
   },
   stopScrollingAll: (callback) => {
     for(const [_container, _containerData] of uss._containersData.entries()) {
-      window.cancelAnimationFrame(_containerData[K_IDX]);
-      window.cancelAnimationFrame(_containerData[K_IDY]);
-      _containerData[K_IDX] = NO_VAL; //scrollID on x-axis
-      _containerData[K_IDY] = NO_VAL; //scrollID on y-axis
-      _containerData[K_CBX] = NO_VAL; //callback on x-axis
-      _containerData[K_CBY] = NO_VAL; //callback on y-axis
+      window.cancelAnimationFrame(_containerData[K_IDX]); 
+      window.cancelAnimationFrame(_containerData[K_IDY]); 
+          
+      CLEAR_COMMON_DATA(_containerData);
 
-      const _newData = [];
-
-      if(_containerData[K_FSCX]) _newData[K_FSCX] = _containerData[K_FSCX]; //fixed StepLengthCalculator on the x-axis
-      if(_containerData[K_FSCY]) _newData[K_FSCY] = _containerData[K_FSCY]; //fixed StepLengthCalculator on the y-axis
-      
-      //Cached values.
-      if(_containerData[K_MSX] !== NO_VAL) _newData[K_MSX] = _containerData[K_MSX]; //maxScrollX
-      if(_containerData[K_MSY] !== NO_VAL) _newData[K_MSY] = _containerData[K_MSY]; //maxScrollY
-      if(_containerData[K_VSB] !== NO_VAL) _newData[K_VSB] = _containerData[K_VSB]; //vertical scrollbar's width
-      if(_containerData[K_HSB] !== NO_VAL) _newData[K_HSB] = _containerData[K_HSB]; //horizontal scrollbar's height
-      if(_containerData[K_TB] !== NO_VAL) _newData[K_TB] = _containerData[K_TB]; //top border's height
-      if(_containerData[K_RB] !== NO_VAL) _newData[K_RB] = _containerData[K_RB]; //right border's width
-      if(_containerData[K_BB] !== NO_VAL) _newData[K_BB] = _containerData[K_BB]; //bottom border's height
-      if(_containerData[K_LB] !== NO_VAL) _newData[K_LB] = _containerData[K_LB]; //left border's width
-      if(_containerData[K_SSPX] || _containerData[K_SSPX] === NO_SP) _newData[K_SSPX] = _containerData[K_SSPX]; //next standard scrollable parent on the x-axis
-      if(_containerData[K_HSPX] || _containerData[K_HSPX] === NO_SP) _newData[K_HSPX] = _containerData[K_HSPX]; //next hidden scrollable parent on the x-axis
-      if(_containerData[K_SSPY] || _containerData[K_SSPY] === NO_SP) _newData[K_SSPY] = _containerData[K_SSPY]; //next standard scrollable parent on the y-axis
-      if(_containerData[K_HSPY] || _containerData[K_HSPY] === NO_SP) _newData[K_HSPY] = _containerData[K_HSPY]; //next hidden scrollable parent on the y-axis
-      if(_containerData[K_SCX]) _newData[K_SCX] = _containerData[K_SCX]; //scrollXCalculator
-      if(_containerData[K_SCY]) _newData[K_SCY] = _containerData[K_SCY]; //scrollYCalculator
-      if(_containerData[K_BRB]) _newData[K_BRB] = _containerData[K_BRB]; //borderBox
-      
-      if(_containerData[K_RCBQ]) _newData[K_RCBQ] = _containerData[K_RCBQ]; //Resize callback
-      if(_containerData[K_MCBQ]) _newData[K_MCBQ] = _containerData[K_MCBQ]; //Mutation callback
-
-      uss._containersData.set(_container, _newData)
+      _containerData[K_TSCX] = NO_VAL; //Temporary StepLengthCalculator on the x-axis
+      _containerData[K_TSCY] = NO_VAL; //Temporary StepLengthCalculator on the y-axis
     }
 
     if(typeof callback === "function") callback();
