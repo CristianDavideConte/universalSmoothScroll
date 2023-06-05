@@ -18,7 +18,9 @@
  * - fix mobile multitasking freezing scrollbars
  * - smooth scrolling with animation allowed
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
- */
+ * 
+ * - convert to single _ naming scheme for all private variables
+ * */
 
 
 /**

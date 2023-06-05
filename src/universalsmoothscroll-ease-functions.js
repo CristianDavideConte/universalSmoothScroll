@@ -19,10 +19,10 @@
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
-    let __progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
+    let _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
 
-    if(__progress >= 1) return remaning;
-    if(__progress <= 0) {
+    if(_progress >= 1) return remaning;
+    if(_progress <= 0) {
       /**
        * Since the timestamp === originalTimestamp at the beginning of a scroll-animation,
        * the first step length is always 0.
@@ -30,14 +30,14 @@
        * elapsed time considered is actually 0.5 * uss._framesTime.
        */
        _startingPosMap.set(container, 1 - remaning / total);
-      __progress = 0.5 * uss.getFramesTime(true) / duration; 
+      _progress = 0.5 * uss.getFramesTime(true) / duration; 
     }
     
-    const __startingPos = _startingPosMap.get(container);
-    const __nextPos = (progressEvaluator(__progress) * (1 - __startingPos) + __startingPos) * (total - 1);
-    const __delta = remaning - total + __nextPos;
+    const _startingPos = _startingPosMap.get(container);
+    const _nextPos = (progressEvaluator(_progress) * (1 - _startingPos) + _startingPos) * (total - 1);
+    const _delta = remaning - total + _nextPos;
 
-    return __delta > 0 ? Math.ceil(__delta) : Math.floor(__delta);
+    return _delta > 0 ? Math.ceil(_delta) : Math.floor(_delta);
   }
 }  
 
@@ -156,8 +156,8 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
   //Cubic Hermite-Spline definition:
   //p(x) = h00(t) * p_k + h10(t) * (x_k+1 - x_k) * m_k + h01(t) * p_k+1 + h11(t) * (x_k+1 - x_k) * m_k+1 
   function _evalSpline(x) {
-    let __binaryMin = 0; //binary search lower bound
-    let __binaryMax = n; //binary search upper bound
+    let _binaryMin = 0; //binary search lower bound
+    let _binaryMax = n; //binary search upper bound
     let k = nHalf;       //binary search iteration index
     let t; 
     
@@ -168,13 +168,13 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
         break;
       }
       if(xs[k] > x) {
-        __binaryMax = k;
-        k = Math.floor((__binaryMin + k) / 2);
+        _binaryMax = k;
+        k = Math.floor((_binaryMin + k) / 2);
       } else {
-        __binaryMin = k;
-        k = Math.floor((__binaryMax + k) / 2);
+        _binaryMin = k;
+        k = Math.floor((_binaryMax + k) / 2);
       }
-    } while(__binaryMin !== __binaryMax);    
+    } while(_binaryMin !== _binaryMax);    
 
     const h_00 = +2 * t * t * t - 3 * t * t + 1;
     const h_10 =      t * t * t - 2 * t * t + t;
@@ -225,36 +225,36 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
   const nFact = _factorial(n);
   
   function _factorial(num) {
-    let __fact = 1;
-    for (let i = 1; i <= num; i++) __fact *= i;
-    return __fact;
+    let _fact = 1;
+    for (let i = 1; i <= num; i++) _fact *= i;
+    return _fact;
   }
 
   //Returns B'(t): the first derivative of B(t).
   function _derivativeBt(t) {
-    let __derivativeBt = 0;
+    let _derivativeBt = 0;
     for(let i = 0; i <= n; i++) {
-      __derivativeBt += nFact / (_factorial(i) * _factorial(n - i)) * xs[i] * Math.pow(1 - t, n - i - 1) * Math.pow(t, i - 1) * (i - n * t) ;
+      _derivativeBt += nFact / (_factorial(i) * _factorial(n - i)) * xs[i] * Math.pow(1 - t, n - i - 1) * Math.pow(t, i - 1) * (i - n * t) ;
     }
-    return __derivativeBt;
+    return _derivativeBt;
   }
 
   //Returns B(t): the parametric form of a n-th degree bezier curve.
   function _getBt(arr, t) {
-    let __Bt = 0;
+    let _Bt = 0;
     for (let i = 0; i <= n; i++) {
-      __Bt += nFact / (_factorial(i) * _factorial(n - i)) * arr[i] * Math.pow(1 - t, n - i) * Math.pow(t, i);      
+      _Bt += nFact / (_factorial(i) * _factorial(n - i)) * arr[i] * Math.pow(1 - t, n - i) * Math.pow(t, i);      
     }
-    return __Bt;
+    return _Bt;
   }
 
   function _newtonRapson(x) {
-    let __prev;
+    let _prev;
     let t = x;
     do {
-      __prev = t;
+      _prev = t;
       t -= (_getBt(xs, t) - x) / _derivativeBt(t);
-    } while (Math.abs(t - __prev) > 0.001);   //Precision of 1^(-3)
+    } while (Math.abs(t - _prev) > 0.001);   //Precision of 1^(-3)
    
     return _getBt(ys, t);
   }
@@ -277,12 +277,12 @@ export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 5
   const cY = 3 * y1;
   
   function _newtonRapson(x) {
-    let __prev;
+    let _prev;
     let t = x;
     do {
-      __prev = t;
+      _prev = t;
       t -= ((t * (cX + t * (bX + t * aX)) - x) / (cX + t * (2 * bX + 3 * aX * t)));
-    } while (Math.abs(t - __prev) > 0.001);   //Precision of 1^(-3)
+    } while (Math.abs(t - _prev) > 0.001);   //Precision of 1^(-3)
 
     return t * ( cY + t * ( bY + t * aY )); //This is y given t on the bezier curve (0 <= y <= 1 && 0 <= t <= 1)
   }

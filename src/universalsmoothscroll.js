@@ -438,7 +438,7 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
 }
 
 //Todo: make this const
-var DEFAULT_RESIZE_OBSERVER = {
+const DEFAULT_RESIZE_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
@@ -478,21 +478,43 @@ var DEFAULT_RESIZE_OBSERVER = {
     //TODO: vertical resize should not affect horizontal properties and viceversa.
     //Problem: this information isn't provided by the resize observer entry
     //Perhaps the entry.borderBox (seems to be the same as boundingClientRect) can be cached and used 
+
+    //TODO: does it make sense to clear the cache for the scrollable parentxs on resize?
+
+    //TODO: the window caches should be treated differently (e.g. the scrollable parents always NO_SP).
+
+    //TODO: function that use forceCalculation/are cached:
+    // getScrollbarsMaxDimension 
+    // getWindowScroller
+    // getPageScroller
+    // getFrameTimes
+
+    // getX/Y/All/ScrollableParent/s //DONE
+    // calcX/Y/Scrollbar/sDimension/s //DONE
+    // calcBordersDimensions //DONE
+    // getMaxScroll/X/Y/s  //DONE
+    // getBorderBox //DONE
     
     for(const [container, entry] of DEFAULT_RESIZE_OBSERVER.entries) { 
       const _containerData = uss._containersData.get(container);
 
-      if(!_containerData) continue;
-
       //Clear the caches.
-      if(_containerData[K_MSX] !== NO_VAL) _containerData[K_MSX] = NO_VAL; //MaxScrollX
-      if(_containerData[K_MSY] !== NO_VAL) _containerData[K_MSY] = NO_VAL; //MaxScrollY
-      if(_containerData[K_VSB] !== NO_VAL) _containerData[K_VSB] = NO_VAL; //VerticalScrollbar
-      if(_containerData[K_HSB] !== NO_VAL) _containerData[K_HSB] = NO_VAL; //HorizontalScrollbar
-      if(_containerData[K_TB] !== NO_VAL) _containerData[K_TB] = NO_VAL;   //TopBorder
-      if(_containerData[K_RB] !== NO_VAL) _containerData[K_RB] = NO_VAL;   //RightBorder
-      if(_containerData[K_BB] !== NO_VAL) _containerData[K_BB] = NO_VAL;   //BottomBorder
-      if(_containerData[K_LB] !== NO_VAL) _containerData[K_LB] = NO_VAL;   //LeftBorder
+      _containerData[K_MSX] = NO_VAL; //MaxScrollX
+      _containerData[K_MSY] = NO_VAL; //MaxScrollY
+      _containerData[K_VSB] = NO_VAL; //VerticalScrollbar
+      _containerData[K_HSB] = NO_VAL; //HorizontalScrollbar
+      
+      //TODO: perhaps the MUTATION_OBSERVER should be in charge of these caches
+      _containerData[K_TB] = NO_VAL;  //TopBorder
+      _containerData[K_RB] = NO_VAL;  //RightBorder
+      _containerData[K_BB] = NO_VAL;  //BottomBorder
+      _containerData[K_LB] = NO_VAL;  //LeftBorder
+      
+      //TODO: the MUTATION_OBSERVER should be in charge of these caches
+      //_containerData[K_SSPX] = NO_VAL; //Standard Scrollable Parent x-axis
+      //_containerData[K_HSPX] = NO_VAL; //Hidden Scrollable Parent x-axis
+      //_containerData[K_SSPY] = NO_VAL; //Standard Scrollable Parent y-axis
+      //_containerData[K_HSPY] = NO_VAL; //Hidden Scrollable Parent y-axis
 
       //BorderBox 
       _containerData[K_BRB] = { 
@@ -500,14 +522,9 @@ var DEFAULT_RESIZE_OBSERVER = {
         height: entry.borderBoxSize[0].blockSize
       }
 
-      //TODO: does it make sense to clear the cache for the scrollable parents on resize?
-      //if(_containerData[K_SSPX] !== NO_VAL) _containerData[K_SSPX] = NO_VAL; 
-      //if(_containerData[K_HSPX] !== NO_VAL) _containerData[K_HSPX] = NO_VAL; 
-      //if(_containerData[K_SSPY] !== NO_VAL) _containerData[K_SSPY] = NO_VAL; 
-      //if(_containerData[K_HSPY] !== NO_VAL) _containerData[K_HSPY] = NO_VAL; 
-
       //TODO: decide what to pass as the input of callback
-      //perhaps the container?
+      //The container?
+      //The old border box so that the user can understand if it was a horizontal or vertical resize?
 
       //Execute the resize callbacks
       for(const callback of _containerData[K_RCBQ]) callback();
@@ -525,8 +542,11 @@ var DEFAULT_MUTATION_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  entries: new Set(), //mutated entries
+  entries: new Map(), //<entry.target, mutated entry>
   observer: new MutationObserver((entries, observer) => {
+    console.log("MUTATION: ");
+    console.log(entries);
+
     /**
      * Each time a mutation event is observed on one of the entries
      * the number of debouced frames is reset.
@@ -535,7 +555,7 @@ var DEFAULT_MUTATION_OBSERVER = {
 
     //Keep only the most up-to-date entry for each target
     for(const entry of entries) {
-      DEFAULT_MUTATION_OBSERVER.entries.add(entry.target);
+      DEFAULT_MUTATION_OBSERVER.entries.set(entry.target, entry);
     }
 
     //Schedule the execution of DEFAULT_MUTATION_OBSERVER.callback if needed.
@@ -560,32 +580,30 @@ var DEFAULT_MUTATION_OBSERVER = {
 
     //TODO: Not every mutation should erase the caches
     
-    for(const container of DEFAULT_MUTATION_OBSERVER.entries) { 
+    for(const [container, entry] of DEFAULT_MUTATION_OBSERVER.entries) { 
       const _containerData = uss._containersData.get(container);
-
-      if(!_containerData) continue;
 
       //TODO: is there any cached value other than the scrollable parents that could
       //be reseted on mutation?
 
       //Empty the caches
-      //if(_containerData[K_MSX] !== NO_VAL) _containerData[K_MSX] = NO_VAL; 
-      //if(_containerData[K_MSY] !== NO_VAL) _containerData[K_MSY] = NO_VAL; 
-      //if(_containerData[K_VSB] !== NO_VAL) _containerData[K_VSB] = NO_VAL; 
-      //if(_containerData[K_HSB] !== NO_VAL) _containerData[K_HSB] = NO_VAL; 
-      //if(_containerData[K_TB] !== NO_VAL) _containerData[K_TB] = NO_VAL; 
-      //if(_containerData[K_RB] !== NO_VAL) _containerData[K_RB] = NO_VAL; 
-      //if(_containerData[K_BB] !== NO_VAL) _containerData[K_BB] = NO_VAL; 
-      //if(_containerData[K_LB] !== NO_VAL) _containerData[K_LB] = NO_VAL; 
+      //_containerData[K_MSX] = NO_VAL; 
+      //_containerData[K_MSY] = NO_VAL; 
+      //_containerData[K_VSB] = NO_VAL; 
+      //_containerData[K_HSB] = NO_VAL; 
+      //_containerData[K_TB] = NO_VAL; 
+      //_containerData[K_RB] = NO_VAL; 
+      //_containerData[K_BB] = NO_VAL; 
+      //_containerData[K_LB] = NO_VAL; 
 
       //TODO: specify the right attributes to avoid useless caches erases
-      if(_containerData[K_SSPX] !== NO_VAL) _containerData[K_SSPX] = NO_VAL; 
-      if(_containerData[K_HSPX] !== NO_VAL) _containerData[K_HSPX] = NO_VAL; 
-      if(_containerData[K_SSPY] !== NO_VAL) _containerData[K_SSPY] = NO_VAL; 
-      if(_containerData[K_HSPY] !== NO_VAL) _containerData[K_HSPY] = NO_VAL; 
+      _containerData[K_SSPX] = NO_VAL; 
+      _containerData[K_HSPX] = NO_VAL; 
+      _containerData[K_SSPY] = NO_VAL; 
+      _containerData[K_HSPY] = NO_VAL; 
 
       //TODO: decide what to pass as the input of callback
-      //TODO: add a addMutationCallback function
+      //The container?
 
       //Execute the mutation callbacks
       for(const callback of _containerData[K_MCBQ]) callback();
@@ -651,12 +669,19 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
   
   if(CHECK_INSTANCEOF(container)) {
     try {
-      //TODO: decide what box option to use (border-box or device-pixel-content-box)
       DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" }); 
 
       //TODO: add all the necessary filters to the attributeFilter property 
       //to avoid useless cache-erasing operations
-      DEFAULT_MUTATION_OBSERVER.observer.observe(container, { attributes: true, attributeFilter: ["style"]});
+      DEFAULT_MUTATION_OBSERVER.observer.observe(
+        container, 
+        { 
+          attributes: true, 
+          attributeOldValue: true,
+          //attributeFilter: ["style"],
+          childList: true
+        }
+      );
     } catch(unsupportedByResizeObserver) {
       return false;
     }
@@ -1045,6 +1070,7 @@ window.uss = {
     }
     uss._pageScroller = newPageScroller;
   },
+  //TODO: add cypress tests
   addResizeCallback: (newCallback, container = uss._pageScroller, options = {debugString: "addResizeCallback"}) => {
     if(typeof newCallback !== "function") {
       uss._errorLogger(options.debugString, "the newCallback to be a function", newCallback);
@@ -1061,6 +1087,7 @@ window.uss = {
 
     _containerData[K_RCBQ].push(newCallback);
   },
+  //TODO: add cypress tests
   addMutationCallback: (newCallback, container = uss._pageScroller, options = {debugString: "addMutationCallback"}) => {
     if(typeof newCallback !== "function") {
       uss._errorLogger(options.debugString, "the newCallback to be a function", newCallback);
@@ -1377,7 +1404,13 @@ window.uss = {
       return;
     }
     
-    if(element === window) return NO_SP;
+    if(element === window) {
+      _containerData[K_HSPX] = NO_SP;
+      _containerData[K_HSPY] = NO_SP;
+      _containerData[K_SSPY] = NO_SP;
+      _containerData[K_SSPY] = NO_SP;
+      return NO_SP;
+    }
 
     const _body = document.body;
     const _html = document.documentElement;
@@ -1406,39 +1439,39 @@ window.uss = {
       ) {
         if(_container === _windowScroller) _container = window;
 
-        const [__scrollXCalculator, __scrollYCalculator] = uss.getScrollCalculators(_container, options);        
-        const __containerInitialX = __scrollXCalculator();
-        const __containerInitialY = __scrollYCalculator();
+        const [_scrollXCalculator, _scrollYCalculator] = uss.getScrollCalculators(_container, options);        
+        const _containerInitialX = _scrollXCalculator();
+        const _containerInitialY = _scrollYCalculator();
         
-        const __containerData = uss._containersData.get(_container);
-        let __maxScrollX = __containerData[K_MSX] !== NO_VAL ? __containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
+        const _containerData = uss._containersData.get(_container);
+        let _maxScrollX = _containerData[K_MSX] !== NO_VAL ? _containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
         
-        if(__maxScrollX > 0 && __containerInitialX !== __maxScrollX) {
+        if(_maxScrollX > 0 && _containerInitialX !== _maxScrollX) {
           //Try to scroll the element by scrolling the parent.
-          _container.scroll(HIGHEST_SAFE_SCROLL_POS, __containerInitialY);
+          _container.scroll(HIGHEST_SAFE_SCROLL_POS, _containerInitialY);
   
-          __maxScrollX = __scrollXCalculator();
+          _maxScrollX = _scrollXCalculator();
   
           //Cache the maxScrollX.
-          __containerData[K_MSX] = __maxScrollX;
+          _containerData[K_MSX] = _maxScrollX;
         }
 
         //The parent cannot scroll.
-        if(__maxScrollX === 0) return false;
+        if(_maxScrollX === 0) return false;
 
         //The parent was already at its maxScrollX.
-        if(__containerInitialX === __maxScrollX) {
+        if(_containerInitialX === _maxScrollX) {
           //Try to scroll the element by scrolling the parent.
-          _container.scroll(0, __containerInitialY);
+          _container.scroll(0, _containerInitialY);
         }
 
         //Check if the element has moved.
-        const __isXScrollable = _elementInitialX !== element.getBoundingClientRect().left;
+        const _isXScrollable = _elementInitialX !== element.getBoundingClientRect().left;
         
         //Scroll the container back to its initial position.
-        _container.scroll(__containerInitialX, __containerInitialY);
+        _container.scroll(_containerInitialX, _containerInitialY);
 
-        if(__isXScrollable) {
+        if(_isXScrollable) {
           _cacheResult(_container);
           return true;
         }
@@ -1478,7 +1511,13 @@ window.uss = {
       return;
     }
     
-    if(element === window) return NO_SP;
+    if(element === window) {
+      _containerData[K_HSPX] = NO_SP;
+      _containerData[K_HSPY] = NO_SP;
+      _containerData[K_SSPY] = NO_SP;
+      _containerData[K_SSPY] = NO_SP;
+      return NO_SP;
+    }
 
     const _body = document.body;
     const _html = document.documentElement;
@@ -1507,39 +1546,39 @@ window.uss = {
       ) {
         if(_container === _windowScroller) _container = window;
 
-        const [__scrollXCalculator, __scrollYCalculator] = uss.getScrollCalculators(_container, options);        
-        const __containerInitialX = __scrollXCalculator();
-        const __containerInitialY = __scrollYCalculator();
+        const [_scrollXCalculator, _scrollYCalculator] = uss.getScrollCalculators(_container, options);        
+        const _containerInitialX = _scrollXCalculator();
+        const _containerInitialY = _scrollYCalculator();
         
-        const __containerData = uss._containersData.get(_container);
-        let __maxScrollY = __containerData[K_MSY] !== NO_VAL ? __containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
+        const _containerData = uss._containersData.get(_container);
+        let _maxScrollY = _containerData[K_MSY] !== NO_VAL ? _containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
         
-        if(__maxScrollY > 0 && __containerInitialY !== __maxScrollY) {
+        if(_maxScrollY > 0 && _containerInitialY !== _maxScrollY) {
           //Try to scroll the element by scrolling the parent.
-          _container.scroll(__containerInitialX, HIGHEST_SAFE_SCROLL_POS);
+          _container.scroll(_containerInitialX, HIGHEST_SAFE_SCROLL_POS);
 
-          __maxScrollY = __scrollYCalculator();
+          _maxScrollY = _scrollYCalculator();
 
           //Cache the maxScrollY.
-          __containerData[K_MSY] = __maxScrollY;
+          _containerData[K_MSY] = _maxScrollY;
         }
 
         //The parent cannot scroll.
-        if(__maxScrollY === 0) return false;
+        if(_maxScrollY === 0) return false;
 
         //The parent was already at its maxScrollY.
-        if(__containerInitialY === __maxScrollY) {
+        if(_containerInitialY === _maxScrollY) {
           //Try to scroll the element by scrolling the parent.
-          _container.scroll(__containerInitialX, 0);
+          _container.scroll(_containerInitialX, 0);
         }
 
         //Check if the element has moved.
-        const __isYScrollable = _elementInitialY !== element.getBoundingClientRect().top;
+        const _isYScrollable = _elementInitialY !== element.getBoundingClientRect().top;
         
         //Scroll the container back to its initial position.
-        _container.scroll(__containerInitialX, __containerInitialY);
+        _container.scroll(_containerInitialX, _containerInitialY);
 
-        if(__isYScrollable) {
+        if(_isYScrollable) {
           _cacheResult(_container);
           return true;
         }
@@ -1613,7 +1652,13 @@ window.uss = {
       return;
     }
 
-    if(element === window) return NO_SP;
+    if(element === window) {
+      _containerData[K_HSPX] = NO_SP;
+      _containerData[K_HSPY] = NO_SP;
+      _containerData[K_SSPY] = NO_SP;
+      _containerData[K_SSPY] = NO_SP;
+      return NO_SP;
+    }
 
     const _body = document.body;
     const _html = document.documentElement;
@@ -1655,57 +1700,57 @@ window.uss = {
       if(_testScrollX || _testScrollY) {
         if(_container === _windowScroller) _container = window;
 
-        const [__scrollXCalculator, __scrollYCalculator] = uss.getScrollCalculators(_container, options);        
-        const __containerInitialX = __scrollXCalculator();
-        const __containerInitialY = __scrollYCalculator();
+        const [_scrollXCalculator, _scrollYCalculator] = uss.getScrollCalculators(_container, options);        
+        const _containerInitialX = _scrollXCalculator();
+        const _containerInitialY = _scrollYCalculator();
         
-        const __containerData = uss._containersData.get(_container);
-        let __maxScrollX = __containerData[K_MSX] !== NO_VAL ? __containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
-        let __maxScrollY = __containerData[K_MSY] !== NO_VAL ? __containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
+        const _containerData = uss._containersData.get(_container);
+        let _maxScrollX = _containerData[K_MSX] !== NO_VAL ? _containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
+        let _maxScrollY = _containerData[K_MSY] !== NO_VAL ? _containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
         
         if(
-          (__maxScrollX > 0 && __containerInitialX !== __maxScrollX) ||
-          (__maxScrollY > 0 && __containerInitialY !== __maxScrollY)
+          (_maxScrollX > 0 && _containerInitialX !== _maxScrollX) ||
+          (_maxScrollY > 0 && _containerInitialY !== _maxScrollY)
         ) {
           //Try to scroll the element by scrolling the parent.
           _container.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
 
-          __maxScrollX = __scrollXCalculator();
-          __maxScrollY = __scrollYCalculator();
+          _maxScrollX = _scrollXCalculator();
+          _maxScrollY = _scrollYCalculator();
 
           //Cache the maxScrollX/maxScrollY.
-          __containerData[K_MSX] = __maxScrollX;
-          __containerData[K_MSY] = __maxScrollY;
+          _containerData[K_MSX] = _maxScrollX;
+          _containerData[K_MSY] = _maxScrollY;
         }
 
         //The parent cannot scroll.
-        if(__maxScrollX === 0 && __maxScrollY === 0) return false;
+        if(_maxScrollX === 0 && _maxScrollY === 0) return false;
 
         //The parent was already at its maxScrollX/maxScrollY.
-        if(__containerInitialX === __maxScrollX && __containerInitialY === __maxScrollY) {
+        if(_containerInitialX === _maxScrollX && _containerInitialY === _maxScrollY) {
           //Try to scroll the element by scrolling the parent.
           _container.scroll(0,0);
         }
 
         //Check if the element has moved.
-        const __elementPos = element.getBoundingClientRect();
-        const __isXScrollable = _testScrollX && _elementInitialX !== __elementPos.left;
-        const __isYScrollable = _testScrollY && _elementInitialY !== __elementPos.top;
+        const _elementPos = element.getBoundingClientRect();
+        const _isXScrollable = _testScrollX && _elementInitialX !== _elementPos.left;
+        const _isYScrollable = _testScrollY && _elementInitialY !== _elementPos.top;
         
         //Scroll the container back to its initial position.
-        _container.scroll(__containerInitialX, __containerInitialY);
+        _container.scroll(_containerInitialX, _containerInitialY);
 
-        if(__isXScrollable && !__isYScrollable) {
+        if(_isXScrollable && !_isYScrollable) {
           _cacheXResult(_container);
           return true;
         }
   
-        if(!__isXScrollable && __isYScrollable) {
+        if(!_isXScrollable && _isYScrollable) {
           _cacheYResult(_container);
           return true;
         }
         
-        if(__isXScrollable && __isYScrollable) {
+        if(_isXScrollable && _isYScrollable) {
           _cacheXResult(_container);
           _cacheYResult(_container);
           return true;
@@ -1810,12 +1855,12 @@ window.uss = {
     _containerData[K_IDX] = window.requestAnimationFrame(_stepX);
 
     function _stepX(timestamp) {
-      const __finalXPosition = _containerData[K_FPX];
-      const __direction = _containerData[K_SDX];
-      const __currentXPosition = _scrollXCalculator();
-      const __remaningScrollAmount = (__finalXPosition - __currentXPosition) * __direction;
+      const _finalXPosition = _containerData[K_FPX];
+      const _direction = _containerData[K_SDX];
+      const _currentXPosition = _scrollXCalculator();
+      const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _direction;
       
-      if(__remaningScrollAmount < 1) {
+      if(_remaningScrollAmount < 1) {
         uss.stopScrollingX(container, _containerData[K_CBX]);
         return;
       }
@@ -1823,56 +1868,56 @@ window.uss = {
       //There's no originalTimeStamp at the beginning of a scroll-animation.
       if(!_containerData[K_OTSX]) _containerData[K_OTSX] = timestamp;
       
-      const __scrollID = _containerData[K_IDX];  
+      const _scrollID = _containerData[K_IDX];  
       
-      const __stepLengthCalculator = _containerData[K_TSCX] ? _containerData[K_TSCX] :   
+      const _stepLengthCalculator = _containerData[K_TSCX] ? _containerData[K_TSCX] :   
                                      _containerData[K_FSCX] ? _containerData[K_FSCX] :
                                                               DEFAULT_XSTEP_LENGTH_CALCULATOR;
 
-      let __stepLength = __stepLengthCalculator(
-        __remaningScrollAmount, //Remaning scroll amount
+      let _stepLength = _stepLengthCalculator(
+        _remaningScrollAmount, //Remaning scroll amount
         _containerData[K_OTSX], //Original timestamp
         timestamp,              //Current timestamp
         _containerData[K_TSAX], //Total scroll amount
-        __currentXPosition,     //Current position
-        __finalXPosition,       //Final position
+        _currentXPosition,     //Current position
+        _finalXPosition,       //Final position
         container               //Container
       );
       
       //The current scroll-animation has been aborted by the StepLengthCalculator.
-      if(__scrollID !== _containerData[K_IDX]) return; 
+      if(_scrollID !== _containerData[K_IDX]) return; 
 
       //The current scroll-animation has been altered by the StepLengthCalculator.
-      if(__finalXPosition !== _containerData[K_FPX]) {  
+      if(_finalXPosition !== _containerData[K_FPX]) {  
         _containerData[K_IDX] = window.requestAnimationFrame(_stepX); 
         return;
       } 
 
       //The StepLengthCalculator returned an invalid stepLength.
-      if(!Number.isFinite(__stepLength)) {
-        uss._warningLogger(__stepLength, "is not a valid step length", true);
+      if(!Number.isFinite(_stepLength)) {
+        uss._warningLogger(_stepLength, "is not a valid step length", true);
 
-        __stepLength = DEFAULT_XSTEP_LENGTH_CALCULATOR(
-          __remaningScrollAmount, //Remaning scroll amount
+        _stepLength = DEFAULT_XSTEP_LENGTH_CALCULATOR(
+          _remaningScrollAmount, //Remaning scroll amount
           _containerData[K_OTSX], //Original timestamp
           timestamp,              //Current timestamp
           _containerData[K_TSAX], //Total scroll amount
-          __currentXPosition,     //Current position
-          __finalXPosition,       //Final position
+          _currentXPosition,     //Current position
+          _finalXPosition,       //Final position
           container               //Container
         );
       }
 
-      if(__remaningScrollAmount <= __stepLength) {
-        _scroll(__finalXPosition);
+      if(_remaningScrollAmount <= _stepLength) {
+        _scroll(_finalXPosition);
         uss.stopScrollingX(container, _containerData[K_CBX]);
         return;
       }
 
-      _scroll(__currentXPosition + __stepLength * __direction);
+      _scroll(_currentXPosition + _stepLength * _direction);
 
       //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container.
-      if(__stepLength !== 0 && __currentXPosition === _scrollXCalculator()) {
+      if(_stepLength !== 0 && _currentXPosition === _scrollXCalculator()) {
         uss.stopScrollingX(container, _containerData[K_CBX]);
         return;
       }
@@ -1940,12 +1985,12 @@ window.uss = {
     _containerData[K_IDY] = window.requestAnimationFrame(_stepY);
      
     function _stepY(timestamp) {
-      const __finalYPosition = _containerData[K_FPY];
-      const __direction = _containerData[K_SDY];
-      const __currentYPosition = _scrollYCalculator();
-      const __remaningScrollAmount = (__finalYPosition - __currentYPosition) * __direction;
+      const _finalYPosition = _containerData[K_FPY];
+      const _direction = _containerData[K_SDY];
+      const _currentYPosition = _scrollYCalculator();
+      const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _direction;
 
-      if(__remaningScrollAmount < 1) {
+      if(_remaningScrollAmount < 1) {
         uss.stopScrollingY(container, _containerData[K_CBY]);
         return;
       }
@@ -1953,55 +1998,55 @@ window.uss = {
       //There's no originalTimeStamp at the beginning of a scroll-animation.
       if(!_containerData[K_OTSY]) _containerData[K_OTSY] = timestamp;
 
-      const __scrollID = _containerData[K_IDY];
-      const __stepLengthCalculator = _containerData[K_TSCY] ? _containerData[K_TSCY] :   
+      const _scrollID = _containerData[K_IDY];
+      const _stepLengthCalculator = _containerData[K_TSCY] ? _containerData[K_TSCY] :   
                                      _containerData[K_FSCY] ? _containerData[K_FSCY] :
                                                               DEFAULT_YSTEP_LENGTH_CALCULATOR;
 
-      let __stepLength = __stepLengthCalculator(
-        __remaningScrollAmount, //Remaning scroll amount
+      let _stepLength = _stepLengthCalculator(
+        _remaningScrollAmount, //Remaning scroll amount
         _containerData[K_OTSY], //Original timestamp
         timestamp,              //Current timestamp
         _containerData[K_TSAY], //Total scroll amount
-        __currentYPosition,     //Current position
-        __finalYPosition,       //Final position
+        _currentYPosition,     //Current position
+        _finalYPosition,       //Final position
         container               //Container
       );
       
       //The current scroll-animation has been aborted by the StepLengthCalculator.
-      if(__scrollID !== _containerData[K_IDY]) return; 
+      if(_scrollID !== _containerData[K_IDY]) return; 
 
       //The current scroll-animation has been altered by the StepLengthCalculator.
-      if(__finalYPosition !== _containerData[K_FPY]) {  
+      if(_finalYPosition !== _containerData[K_FPY]) {  
         _containerData[K_IDY] = window.requestAnimationFrame(_stepY); 
         return;
       } 
       
       //The StepLengthCalculator returned an invalid stepLength.
-      if(!Number.isFinite(__stepLength)) {
-        uss._warningLogger(__stepLength, "is not a valid step length", true);
+      if(!Number.isFinite(_stepLength)) {
+        uss._warningLogger(_stepLength, "is not a valid step length", true);
 
-        __stepLength = DEFAULT_YSTEP_LENGTH_CALCULATOR(
-          __remaningScrollAmount, //Remaning scroll amount
+        _stepLength = DEFAULT_YSTEP_LENGTH_CALCULATOR(
+          _remaningScrollAmount, //Remaning scroll amount
           _containerData[K_OTSY], //Original timestamp
           timestamp,              //Current timestamp
           _containerData[K_TSAY], //Total scroll amount
-          __currentYPosition,     //Current position
-          __finalYPosition,       //Final position
+          _currentYPosition,     //Current position
+          _finalYPosition,       //Final position
           container               //Container
         );
       }
 
-      if(__remaningScrollAmount <= __stepLength) {
-        _scroll(__finalYPosition);
+      if(_remaningScrollAmount <= _stepLength) {
+        _scroll(_finalYPosition);
         uss.stopScrollingY(container, _containerData[K_CBY]);
         return;
       }
 
-      _scroll(__currentYPosition + __stepLength * __direction);
+      _scroll(_currentYPosition + _stepLength * _direction);
 
       //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container.
-      if(__stepLength !== 0 && __currentYPosition === _scrollYCalculator()) {
+      if(_stepLength !== 0 && _currentYPosition === _scrollYCalculator()) {
         uss.stopScrollingY(container, _containerData[K_CBY]);
         return;
       }
@@ -2121,14 +2166,14 @@ window.uss = {
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the y-axis has finished too or it has been altered.
     const _scrollXCallback = () => {
-      const __containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && __containerData[K_CBY] !== _scrollYCallback) callback();
+      const _containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && _containerData[K_CBY] !== _scrollYCallback) callback();
     }
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the x-axis has finished too or it has been altered.
     const _scrollYCallback = () => {
-      const __containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && __containerData[K_CBX] !== _scrollXCallback) callback();
+      const _containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && _containerData[K_CBX] !== _scrollXCallback) callback();
     }
 
     let _initPhase = true;
@@ -2148,14 +2193,14 @@ window.uss = {
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the y-axis has finished too or it has been altered.
     const _scrollXCallback = () => {
-      const __containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && __containerData[K_CBY] !== _scrollYCallback) callback();
+      const _containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && _containerData[K_CBY] !== _scrollYCallback) callback();
     }
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the x-axis has finished too or it has been altered.
     const _scrollYCallback = () => {
-      const __containerData = uss._containersData.get(container) || [];
-      if(!_initPhase && __containerData[K_CBX] !== _scrollXCallback) callback();
+      const _containerData = uss._containersData.get(container) || [];
+      if(!_initPhase && _containerData[K_CBX] !== _scrollXCallback) callback();
     }
 
     uss.scrollXBy(deltaX, container, _scrollXCallback, stillStart, containScroll, options);
@@ -2467,19 +2512,19 @@ window.uss = {
       //Prevents the browser to jump-to-position,
       //when a user navigates through history.
       function _smoothHistoryNavigation(event) {
-        const __fragment = window.location.hash.slice(1, -1);
+        const _fragment = window.location.hash.slice(1, -1);
         
         //The URL is just "URL/#" or "URL/" 
-        if(!__fragment) {
+        if(!_fragment) {
           if(_init(NO_VAL, uss._pageScroller, event) !== false) {
               uss.scrollTo(0, 0, uss._pageScroller, callback, false, options);
           }
           return;
         } 
 
-        const __elementToReach = document.getElementById(__fragment) || document.querySelector("a[name='" + __fragment + "']");
-        if(__elementToReach && _init(NO_VAL, __elementToReach, event) !== false) {
-          uss.scrollIntoView(__elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents, options);
+        const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
+        if(_elementToReach && _init(NO_VAL, _elementToReach, event) !== false) {
+          uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents, options);
         }
       }
       //Checks if the page initially have a URL containing 
