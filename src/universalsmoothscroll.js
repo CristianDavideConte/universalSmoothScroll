@@ -1392,6 +1392,8 @@ window.uss = {
 
     return _containerData[K_BRB];
   },
+  //TODO: element should be called container
+  //      and _container should be called _parent 
   getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
