@@ -438,11 +438,11 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
 }
 
 //Todo: make this const
-const DEFAULT_RESIZE_OBSERVER = {
+var DEFAULT_RESIZE_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  entries: new Map(), //<entry.target, resized entry>
+  entries: new Map(), //<entry.target, ResizeObserverEntry>
   observer: new ResizeObserver((entries) => {
     /**
      * Each time a resize event is observed on one of the entries
@@ -451,12 +451,12 @@ const DEFAULT_RESIZE_OBSERVER = {
     DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
     //Keep only the most up-to-date resized-entry for each target.
-    for(const entry of entries) {
+    for (const entry of entries) {
       DEFAULT_RESIZE_OBSERVER.entries.set(entry.target, entry);
     }
 
     //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
-    if(DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
+    if (DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
       DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
     }
   }),
@@ -469,7 +469,7 @@ const DEFAULT_RESIZE_OBSERVER = {
      * allows to clear the caches and execute any callback 
      * once and after the resizing has been completed. 
      */
-    if(DEFAULT_RESIZE_OBSERVER.debouncedFrames < DEFAULT_RESIZE_OBSERVER.totalDebounceFrames) {
+    if (DEFAULT_RESIZE_OBSERVER.debouncedFrames < DEFAULT_RESIZE_OBSERVER.totalDebounceFrames) {
       DEFAULT_RESIZE_OBSERVER.debouncedFrames++;
       DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
       return;
@@ -479,7 +479,7 @@ const DEFAULT_RESIZE_OBSERVER = {
     //Problem: this information isn't provided by the resize observer entry
     //Perhaps the entry.borderBox (seems to be the same as boundingClientRect) can be cached and used 
 
-    //TODO: does it make sense to clear the cache for the scrollable parentxs on resize?
+    //TODO: does it make sense to clear the cache for the scrollable parents on resize?
 
     //TODO: the window caches should be treated differently (e.g. the scrollable parents always NO_SP).
 
@@ -494,27 +494,31 @@ const DEFAULT_RESIZE_OBSERVER = {
     // calcBordersDimensions //DONE
     // getMaxScroll/X/Y/s  //DONE
     // getBorderBox //DONE
-    
-    for(const [container, entry] of DEFAULT_RESIZE_OBSERVER.entries) { 
+    for (const [container, entry] of DEFAULT_RESIZE_OBSERVER.entries) {
       const _containerData = uss._containersData.get(container);
 
-      //Clear the caches.
-      _containerData[K_MSX] = NO_VAL; //MaxScrollX
-      _containerData[K_MSY] = NO_VAL; //MaxScrollY
-      _containerData[K_VSB] = NO_VAL; //VerticalScrollbar
-      _containerData[K_HSB] = NO_VAL; //HorizontalScrollbar
-      
-      //TODO: perhaps the MUTATION_OBSERVER should be in charge of these caches
-      _containerData[K_TB] = NO_VAL;  //TopBorder
-      _containerData[K_RB] = NO_VAL;  //RightBorder
-      _containerData[K_BB] = NO_VAL;  //BottomBorder
-      _containerData[K_LB] = NO_VAL;  //LeftBorder
-      
-      //TODO: the MUTATION_OBSERVER should be in charge of these caches
-      //_containerData[K_SSPX] = NO_VAL; //Standard Scrollable Parent x-axis
-      //_containerData[K_HSPX] = NO_VAL; //Hidden Scrollable Parent x-axis
-      //_containerData[K_SSPY] = NO_VAL; //Standard Scrollable Parent y-axis
-      //_containerData[K_HSPY] = NO_VAL; //Hidden Scrollable Parent y-axis
+      /**
+       * Clear the caches.
+       * If the BorderBox has never been calculated, 
+       * this is the initialization and there are no caches.
+       */
+      if (_containerData[K_BRB]) {
+        _containerData[K_MSX] = NO_VAL; //MaxScrollX
+        _containerData[K_MSY] = NO_VAL; //MaxScrollY
+        _containerData[K_VSB] = NO_VAL; //VerticalScrollbar
+        _containerData[K_HSB] = NO_VAL; //HorizontalScrollbar
+        
+        _containerData[K_TB] = NO_VAL;  //TopBorder
+        _containerData[K_RB] = NO_VAL;  //RightBorder
+        _containerData[K_BB] = NO_VAL;  //BottomBorder
+        _containerData[K_LB] = NO_VAL;  //LeftBorder
+        
+        //TODO: the MUTATION_OBSERVER should be in charge of these caches
+        //_containerData[K_SSPX] = NO_VAL; //Standard Scrollable Parent x-axis
+        //_containerData[K_HSPX] = NO_VAL; //Hidden Scrollable Parent x-axis
+        //_containerData[K_SSPY] = NO_VAL; //Standard Scrollable Parent y-axis
+        //_containerData[K_HSPY] = NO_VAL; //Hidden Scrollable Parent y-axis
+      }
 
       //BorderBox 
       _containerData[K_BRB] = { 
@@ -527,7 +531,7 @@ const DEFAULT_RESIZE_OBSERVER = {
       //The old border box so that the user can understand if it was a horizontal or vertical resize?
 
       //Execute the resize callbacks
-      for(const callback of _containerData[K_RCBQ]) callback();
+      for (const callback of _containerData[K_RCBQ]) callback();
     }
 
     DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
@@ -542,11 +546,8 @@ var DEFAULT_MUTATION_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  entries: new Map(), //<entry.target, mutated entry>
+  entries: new Map(), //<entry.target, MutationRecord>
   observer: new MutationObserver((entries, observer) => {
-    console.log("MUTATION: ");
-    console.log(entries);
-
     /**
      * Each time a mutation event is observed on one of the entries
      * the number of debouced frames is reset.
@@ -554,12 +555,12 @@ var DEFAULT_MUTATION_OBSERVER = {
     DEFAULT_MUTATION_OBSERVER.debouncedFrames = 0;
 
     //Keep only the most up-to-date entry for each target
-    for(const entry of entries) {
+    for (const entry of entries) {
       DEFAULT_MUTATION_OBSERVER.entries.set(entry.target, entry);
     }
 
     //Schedule the execution of DEFAULT_MUTATION_OBSERVER.callback if needed.
-    if(DEFAULT_MUTATION_OBSERVER.callbackFrameId === NO_VAL) {
+    if (DEFAULT_MUTATION_OBSERVER.callbackFrameId === NO_VAL) {
       DEFAULT_MUTATION_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
     }
   }),
@@ -572,41 +573,35 @@ var DEFAULT_MUTATION_OBSERVER = {
      * allows to clear the caches and execute any callback 
      * once and after all the mutations have been completed. 
      */
-    if(DEFAULT_MUTATION_OBSERVER.debouncedFrames < DEFAULT_MUTATION_OBSERVER.totalDebounceFrames) {
+    if (DEFAULT_MUTATION_OBSERVER.debouncedFrames < DEFAULT_MUTATION_OBSERVER.totalDebounceFrames) {
       DEFAULT_MUTATION_OBSERVER.debouncedFrames++;
       DEFAULT_MUTATION_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
       return;
     }
 
-    //TODO: Not every mutation should erase the caches
-    
-    for(const [container, entry] of DEFAULT_MUTATION_OBSERVER.entries) { 
+    for (const [container, entry] of DEFAULT_MUTATION_OBSERVER.entries) { 
       const _containerData = uss._containersData.get(container);
 
-      //TODO: is there any cached value other than the scrollable parents that could
-      //be reseted on mutation?
+      //Remove the containerData of the nodes that
+      //have been removed from the document.
+      if (entry.type === "childList") {
+        for (const removedNode of entry.removedNodes) {
+          /**
+           * Currently there's no way to unobserve just the removedNode.
+           * This is not a problem because it's been removed from the document,
+           * so no mutations can be observed anyway.
+           */
+          uss._containersData.delete(removedNode);
 
-      //Empty the caches
-      //_containerData[K_MSX] = NO_VAL; 
-      //_containerData[K_MSY] = NO_VAL; 
-      //_containerData[K_VSB] = NO_VAL; 
-      //_containerData[K_HSB] = NO_VAL; 
-      //_containerData[K_TB] = NO_VAL; 
-      //_containerData[K_RB] = NO_VAL; 
-      //_containerData[K_BB] = NO_VAL; 
-      //_containerData[K_LB] = NO_VAL; 
-
-      //TODO: specify the right attributes to avoid useless caches erases
-      _containerData[K_SSPX] = NO_VAL; 
-      _containerData[K_HSPX] = NO_VAL; 
-      _containerData[K_SSPY] = NO_VAL; 
-      _containerData[K_HSPY] = NO_VAL; 
+          //TODO: explore subtrees to delete cached parents/entries
+        }
+      }
 
       //TODO: decide what to pass as the input of callback
       //The container?
 
       //Execute the mutation callbacks
-      for(const callback of _containerData[K_MCBQ]) callback();
+      for (const callback of _containerData[K_MCBQ]) callback();
     }
 
     DEFAULT_MUTATION_OBSERVER.callbackFrameId = NO_VAL;
@@ -614,18 +609,20 @@ var DEFAULT_MUTATION_OBSERVER = {
   }
 }
 
-
+//TODO: when this function is called the observers are always triggered,
+//this means the caches are immediately cleared. If this function is called
+//by a function that caches some values, the calculations are wasted.   
 const INIT_CONTAINER_DATA = (container, containerData = []) => {
-  if(container === window) {  
+  if (container === window) {
     let _debounceResizeEvent = false;
 
     window.addEventListener("resize", () => {
       //Update the internal Window sizes.
       uss._windowWidth = window.innerWidth;
-      uss._windowHeight = window.innerHeight; 
+      uss._windowHeight = window.innerHeight;
       
       //Make the resize callback fire only once per frame like the resize observer.
-      if(_debounceResizeEvent) return;
+      if (_debounceResizeEvent) return;
 
       _debounceResizeEvent = true;
       window.requestAnimationFrame(() => _debounceResizeEvent = false);
@@ -635,7 +632,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
 
       //Keep only the most up-to-date resized-entry.
       DEFAULT_RESIZE_OBSERVER.entries.set(
-        window, 
+        window,
         {
           borderBoxSize: [
             {
@@ -644,13 +641,13 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
             }
           ]
         }
-      );  
+      );
 
       //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
-      if(DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
+      if (DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
         DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
       }
-    }, {passive:true});
+    }, { passive: true });
 
     //The Window doesn't have any scrollable parent.
     containerData[K_SSPX] = NO_SP;
@@ -676,13 +673,15 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
       DEFAULT_MUTATION_OBSERVER.observer.observe(
         container, 
         { 
-          attributes: true, 
-          attributeOldValue: true,
-          //attributeFilter: ["style"],
-          childList: true
+          // attributes: true,
+          // attributeFilter: ["style"],
+          // attributeOldValue: true,
+
+          //Only the direct children of container are observed.
+          childList: true,
         }
       );
-    } catch(unsupportedByResizeObserver) {
+    } catch (unsupportedByResizeObserver) {
       return false;
     }
 
@@ -2598,15 +2597,15 @@ function ussInit() {
       uss.stopScrollingAll();
     }, {passive:true});
   }
+  
+  //Calculate the _scrollbarsMaxDimension.
+  uss.getScrollbarsMaxDimension();
 
   //Calculate the _windowScroller.
   uss.getWindowScroller();
 
   //Calculate the _pageScroller.
   uss.getPageScroller();
-
-  //Calculate the _scrollbarsMaxDimension.
-  uss.getScrollbarsMaxDimension();
 
   //Calculate the average frames' time of the user's screen. 
   let _currentMeasurementsLeft = 60; //Do 60 measurements to establish the initial value
