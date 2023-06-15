@@ -475,27 +475,13 @@ var DEFAULT_RESIZE_OBSERVER = {
       return;
     }
 
-    //TODO: vertical resize should not affect horizontal properties and viceversa.
-    //Problem: this information isn't provided by the resize observer entry
-    //Perhaps the entry.borderBox (seems to be the same as boundingClientRect) can be cached and used 
-
     //TODO: does it make sense to clear the cache for the scrollable parents on resize?
 
-    //TODO: the window caches should be treated differently (e.g. the scrollable parents always NO_SP).
-
-    //TODO: function that use forceCalculation/are cached:
-    // getScrollbarsMaxDimension 
-    // getWindowScroller
-    // getPageScroller
-    // getFrameTimes
-
-    // getX/Y/All/ScrollableParent/s //DONE
-    // calcX/Y/Scrollbar/sDimension/s //DONE
-    // calcBordersDimensions //DONE
-    // getMaxScroll/X/Y/s  //DONE
-    // getBorderBox //DONE
-    for (const [container, entry] of DEFAULT_RESIZE_OBSERVER.entries) {
-      const _containerData = uss._containersData.get(container);
+    for (const [target, entry] of DEFAULT_RESIZE_OBSERVER.entries) {
+      const _containerData = uss._containersData.get(target);
+      
+      const _newWidth = entry.borderBoxSize[0].inlineSize;
+      const _newHeight = entry.borderBoxSize[0].blockSize;
 
       /**
        * Clear the caches.
@@ -503,32 +489,39 @@ var DEFAULT_RESIZE_OBSERVER = {
        * this is the initialization and there are no caches.
        */
       if (_containerData[K_BRB]) {
-        _containerData[K_MSX] = NO_VAL; //MaxScrollX
-        _containerData[K_MSY] = NO_VAL; //MaxScrollY
-        _containerData[K_VSB] = NO_VAL; //VerticalScrollbar
-        _containerData[K_HSB] = NO_VAL; //HorizontalScrollbar
+        //Horizontal resize.
+        if (_containerData[K_BRB].width !== _newWidth) {       
+          _containerData[K_MSX] = NO_VAL; //MaxScrollX
+          _containerData[K_VSB] = NO_VAL; //VerticalScrollbar
+          _containerData[K_RB] = NO_VAL;  //RightBorder
+          _containerData[K_LB] = NO_VAL;  //LeftBorder
+        }
+
+        //Vertical resize.
+        if (_containerData[K_BRB].height !== _newHeight) {
+          _containerData[K_MSY] = NO_VAL; //MaxScrollY
+          _containerData[K_HSB] = NO_VAL; //HorizontalScrollbar
+          _containerData[K_TB] = NO_VAL;  //TopBorder
+          _containerData[K_BB] = NO_VAL;  //BottomBorder
+        }
         
-        _containerData[K_TB] = NO_VAL;  //TopBorder
-        _containerData[K_RB] = NO_VAL;  //RightBorder
-        _containerData[K_BB] = NO_VAL;  //BottomBorder
-        _containerData[K_LB] = NO_VAL;  //LeftBorder
         
         //TODO: the MUTATION_OBSERVER should be in charge of these caches
-        //_containerData[K_SSPX] = NO_VAL; //Standard Scrollable Parent x-axis
-        //_containerData[K_HSPX] = NO_VAL; //Hidden Scrollable Parent x-axis
-        //_containerData[K_SSPY] = NO_VAL; //Standard Scrollable Parent y-axis
-        //_containerData[K_HSPY] = NO_VAL; //Hidden Scrollable Parent y-axis
+        // if (target !== window) {
+        //   _containerData[K_SSPX] = NO_VAL; //Standard Scrollable Parent x-axis
+        //   _containerData[K_HSPX] = NO_VAL; //Hidden Scrollable Parent x-axis
+        //   _containerData[K_SSPY] = NO_VAL; //Standard Scrollable Parent y-axis
+        //   _containerData[K_HSPY] = NO_VAL; //Hidden Scrollable Parent y-axis
+        // }
       }
 
       //BorderBox 
       _containerData[K_BRB] = { 
-        width: entry.borderBoxSize[0].inlineSize,
-        height: entry.borderBoxSize[0].blockSize
+        width: _newWidth,
+        height: _newHeight
       }
 
-      //TODO: decide what to pass as the input of callback
-      //The container?
-      //The old border box so that the user can understand if it was a horizontal or vertical resize?
+      //TODO: decide what to pass as the input of callback: perhaps the container?
 
       //Execute the resize callbacks
       for (const callback of _containerData[K_RCBQ]) callback();
@@ -579,26 +572,30 @@ var DEFAULT_MUTATION_OBSERVER = {
       return;
     }
 
-    for (const [container, entry] of DEFAULT_MUTATION_OBSERVER.entries) { 
-      const _containerData = uss._containersData.get(container);
+    for (const [target, entry] of DEFAULT_MUTATION_OBSERVER.entries) { 
+      const _containerData = uss._containersData.get(target);
 
-      //Remove the containerData of the nodes that
-      //have been removed from the document.
+      /**
+       * Unobserve and Remove the containerData 
+       * of the nodes that have been removed from the document.
+       */
       if (entry.type === "childList") {
         for (const removedNode of entry.removedNodes) {
-          /**
-           * Currently there's no way to unobserve just the removedNode.
-           * This is not a problem because it's been removed from the document,
-           * so no mutations can be observed anyway.
-           */
-          uss._containersData.delete(removedNode);
-
-          //TODO: explore subtrees to delete cached parents/entries
+          for (const container of uss._containersData.keys()) {
+            /**
+             * Currently there's no mutation observer method 
+             * to unobserve the removedNode.
+             */
+            if (container !== window && removedNode.contains(container)) {
+              DEFAULT_RESIZE_OBSERVER.observer.unobserve(container);
+              DEFAULT_RESIZE_OBSERVER.entries.delete(container);
+              uss._containersData.delete(container);
+            }
+          }
         }
       }
 
-      //TODO: decide what to pass as the input of callback
-      //The container?
+      //TODO: decide what to pass as the input of callback: perhaps the container?
 
       //Execute the mutation callbacks
       for (const callback of _containerData[K_MCBQ]) callback();
@@ -609,9 +606,6 @@ var DEFAULT_MUTATION_OBSERVER = {
   }
 }
 
-//TODO: when this function is called the observers are always triggered,
-//this means the caches are immediately cleared. If this function is called
-//by a function that caches some values, the calculations are wasted.   
 const INIT_CONTAINER_DATA = (container, containerData = []) => {
   if (container === window) {
     let _debounceResizeEvent = false;
@@ -668,8 +662,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
     try {
       DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" }); 
 
-      //TODO: add all the necessary filters to the attributeFilter property 
-      //to avoid useless cache-erasing operations
+      //TODO: add all the necessary filters to the attributeFilter property to avoid useless cache-erasing operations
       DEFAULT_MUTATION_OBSERVER.observer.observe(
         container, 
         { 
@@ -1288,7 +1281,7 @@ window.uss = {
           _containerData[K_BB] = Number.parseFloat(_style.borderBottomWidth);
           _containerData[K_LB] = Number.parseFloat(_style.borderLeftWidth);
         } catch(getComputedStyleNotSupported) { 
-          //window.getComputedStyle may not work on the passed container 
+          //window.getComputedStyle() may not work on the passed container 
           _containerData[K_TB] = 0;
           _containerData[K_RB] = 0;
           _containerData[K_BB] = 0;
@@ -1391,8 +1384,8 @@ window.uss = {
 
     return _containerData[K_BRB];
   },
-  //TODO: element should be called container
-  //      and _container should be called _parent 
+  
+  //TODO: element should be called container and _container should be called _parent
   getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
@@ -1500,6 +1493,8 @@ window.uss = {
     _cacheResult(NO_SP);
     return NO_SP;
   },
+
+  //TODO: element should be called container and _container should be called _parent
   getYScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
@@ -1607,6 +1602,8 @@ window.uss = {
     _cacheResult(NO_SP);
     return NO_SP;
   },
+
+  //TODO: element should be called container and _container should be called _parent
   getScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getScrollableParent"}) => {
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
@@ -1781,6 +1778,8 @@ window.uss = {
     _cacheYResult(NO_SP);
     return NO_SP;
   },
+
+  //TODO: element should be called container
   getAllScrollableParents: (element, includeHiddenParents = false, callback, options = {debugString: "getAllScrollableParents"}) => {
     const _scrollableParents = [];
     const _callback = typeof callback === "function" ? callback : () => {};
