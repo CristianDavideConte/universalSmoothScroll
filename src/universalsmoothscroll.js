@@ -228,13 +228,16 @@ const K_HSPY = 27; //Key to get the hidden scrollable parent on the y-axis (over
 const K_SCX = 28;  //Key to get the ScrollXCalculator
 const K_SCY = 29;  //Key to get the ScrollYCalculator
 
-const K_BRB = 30; //Key to get the border box 
+const K_BRB = 30;  //Key to get the border box 
 
-const K_RCBQ = 31;  //Key to get the resize callbacks queue
-const K_MCBQ = 32;  //Key to get the mutation callbacks queue
+const K_RCBQ = 31; //Key to get the resize callbacks queue
+const K_MCBQ = 32; //Key to get the mutation callbacks queue
+
+const K_FGS = 33; //Key to get the fragment string linked to the container element
 
 const NO_VAL = undefined; //No value has been calculated yet
 const NO_SP = null;       //No scrollable parent has been found
+const NO_FGS = null;      //No valid fragment string associated with the container
 const MAX_MSG_LEN = 40;   //The maximum error/warning messages' lengths
 
 const INITIAL_WINDOW_WIDTH  = window.innerWidth;
@@ -574,7 +577,11 @@ var DEFAULT_MUTATION_OBSERVER = {
 
     for (const [target, entry] of DEFAULT_MUTATION_OBSERVER.entries) { 
       const _containerData = uss._containersData.get(target);
-
+      
+      //TODO: multiple mutations can occur in one frame and they currently override each other
+      //TODO: e.g. a childList mutation followed by an attribute mutation will lead the MUTATION_OBSERVER to see only the attribute mutation
+      console.log("MUTATION")
+      console.log(entry)
       /**
        * Unobserve and Remove the containerData 
        * of the nodes that have been removed from the document.
@@ -593,6 +600,22 @@ var DEFAULT_MUTATION_OBSERVER = {
             }
           }
         }
+      } else if (entry.type === "attributes") {
+        const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
+        const _optionalURL = target.href.split("#")[0];
+        let _fragment = _optionalURL === _pageURL ? target.hash.slice(1) : NO_FGS;
+
+        if (_fragment !== "" && _fragment !== NO_FGS) {
+          //Look for elements with the corresponding id or "name" attribute.
+          const _fragmentElement = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
+          if (!_fragmentElement) {
+            uss._warningLogger("#" + _fragment, "is not a valid anchor's destination", true);
+            _fragment = NO_FGS;
+          }
+        }
+
+        //Cache the fragment for later. 
+        _containerData[K_FGS] = _fragment;
       }
 
       //TODO: decide what to pass as the input of callback: perhaps the container?
@@ -666,8 +689,8 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
       DEFAULT_MUTATION_OBSERVER.observer.observe(
         container, 
         { 
-          // attributes: true,
-          // attributeFilter: ["style"],
+          attributes: true,
+          attributeFilter: ["href"],//["style"],
           // attributeOldValue: true,
 
           //Only the direct children of container are observed.
@@ -2496,92 +2519,144 @@ window.uss = {
 
     if(typeof callback === "function") callback();
   },
-  hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false, options = {debugString: "hrefSetup"}) => {
+  //TODO: add a cypress test for hrefSetup using the concepts of scrollIntoView/IfNeeded tests
+
+  hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false, options = { debugString: "hrefSetup" }) => {
     const _init = typeof init === "function" ? init : (anchor, el, event) => event.stopPropagation();
     const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
-    const _updateHistory = updateHistory && 
-                           !!(window.history && 
-                              window.history.pushState && 
-                              window.history.scrollRestoration); //Check if histoy manipulation is supported
-    
-    if(_updateHistory) {
-      window.history.scrollRestoration = "manual";       
-      window.addEventListener("popstate", _smoothHistoryNavigation, {passive:true}); 
-      window.addEventListener("unload", (event) => event.preventDefault(), {passive:false, once:true});
+    const _updateHistory =
+      updateHistory &&
+      window.history &&
+      window.history.pushState &&
+      window.history.scrollRestoration; //Check if histoy manipulation is supported
 
-      //Prevents the browser to jump-to-position,
-      //when a user navigates through history.
-      function _smoothHistoryNavigation(event) {
-        const _fragment = window.location.hash.slice(1, -1);
-        
-        //The URL is just "URL/#" or "URL/" 
-        if(!_fragment) {
-          if(_init(NO_VAL, uss._pageScroller, event) !== false) {
-              uss.scrollTo(0, 0, uss._pageScroller, callback, false, options);
-          }
-          return;
-        } 
+    const scrollToFragment = (pageLink, fragment, event, updateHistoryIfNeeded) => {
+      //Invalid fragment.
+      if (fragment === NO_FGS) return;
 
-        const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
-        if(_elementToReach && _init(NO_VAL, _elementToReach, event) !== false) {
-          uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents, options);
-        }
-      }
-      //Checks if the page initially have a URL containing 
-      //a valid fragment and scrolls to it if necessary.
-      if(document.readyState === "complete") _smoothHistoryNavigation(new Event("load"));
-      else window.addEventListener("load", _smoothHistoryNavigation, {passive:true, once:true});
-    }
+      //href is "url#" or "url/".
+      if (fragment === "") {
+        //Scroll prevented by user.
+        if (_init(pageLink, uss._pageScroller, event) === false) return;
 
-    for(const _pageLink of document.links) {
-      const _optionalURL = _pageLink.href.split("#")[0]; //_pageLink.href = optionalURL#fragment
-
-      //This pageLink refers to another webpage, 
-      //no need to smooth scroll.
-      if(_optionalURL !== _pageURL) continue;
-      
-      const _fragment = _pageLink.hash.substring(1);
-      
-      //href="#" scrolls the _pageScroller to its top left.
-      if(_fragment === "") { 
-        _pageLink.addEventListener("click", event => {
-          event.preventDefault();
-          
-          //False means the scroll-animation has been prevented by the user.
-          if(_init(_pageLink, uss._pageScroller, event) === false) return; 
-          if(_updateHistory && window.history.state !== "") {
-            window.history.pushState("", "", "#");
-          }
-
-          uss.scrollTo(0, 0, uss._pageScroller, callback, false, options);
-        }, {passive:false});
-        continue;
+        updateHistoryIfNeeded(fragment);
+        uss.scrollTo(0, 0, uss._pageScroller, callback, false, options);
+        return;
       }
 
       //Look for elements with the corresponding id or "name" attribute.
-      const _elementToReach = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
-      if(!_elementToReach) {
-        uss._warningLogger("#" + _fragment, "is not a valid anchor's destination", true);
-        continue;
+      const _fragmentElement = document.getElementById(fragment) || document.querySelector("a[name='" + fragment + "']");
+      
+      //Invalid fragment or scroll prevented by user.
+      if (!_fragmentElement || _init(pageLink, _fragmentElement, event) === false) return;
+
+      updateHistoryIfNeeded(fragment);
+      uss.scrollIntoView(_fragmentElement, alignToLeft, alignToTop, callback, includeHiddenParents, options);
+    }
+
+    /**
+     * Note that:
+     * pageLink.href = optionalURL#fragment
+     * pageLink.hash = #fragment
+     */
+    for (const pageLink of document.links) {
+      const _optionalURL = pageLink.href.split("#")[0];
+
+      //The url points to another website.
+      if (_optionalURL !== _pageURL) continue;
+
+      const _fragment = pageLink.hash.slice(1);
+
+      //href is "optionalURL#fragment".
+      if (_fragment !== "") {
+        //Look for elements with the corresponding id or "name" attribute.
+        const _fragmentElement = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
+        if (!_fragmentElement) {
+          uss._warningLogger("#" + _fragment, "is not a valid anchor's destination", true);
+          continue;
+        }
       }
 
-      //href="#fragment" scrolls the element associated with the fragment into view.
-      _pageLink.addEventListener("click", event => {
-        event.preventDefault();
+      const _oldData = uss._containersData.get(pageLink);
+      const _containerData = _oldData || [];
 
-        //False means the scroll-animation has been prevented by the user.
-        //The extra "." at the end of the fragment is used to prevent Safari from restoring 
-        //the scrol position before the popstate event (it won't recognize the fragment). 
-        if(_init(_pageLink, _elementToReach, event) === false) return; 
-        if(_updateHistory && window.history.state !== _fragment) {
-          window.history.pushState(_fragment, "", "#" + _fragment + ".");
+      //pageLink not supported.
+      if (!_oldData && !INIT_CONTAINER_DATA(pageLink, _containerData)) continue;
+
+      //pageLink already managed.
+      if (_containerData[K_FGS] !== NO_VAL) continue;
+
+      //Cache the fragment for later. 
+      _containerData[K_FGS] = _fragment;
+
+      //TODO: test if Safari is fine with "#." as a fragment 
+      
+      //The extra "." at the end of the fragment is used to prevent Safari from restoring
+      //the scroll position before the popstate event (it won't recognize the fragment). 
+      const _updateHistoryIfNeeded = !_updateHistory ? () => { } :
+        (fragment) => {
+          if (window.history.state !== fragment) {
+            window.history.pushState(fragment, "", "#" + fragment + ".");
+          }
+        };
+
+      //href="#fragment" scrolls the element associated with the fragment into view.
+      pageLink.addEventListener("click", event => {
+        const _containerData = uss._containersData.get(pageLink);
+        const _fragment = _containerData[K_FGS];
+
+        //Check if pageLink points to another page.
+        if (_fragment === NO_FGS) {
+          const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
+          const _optionalURL = pageLink.href.split("#")[0];
+          if(_optionalURL !== _pageURL) return;
         }
 
-        uss.scrollIntoView(_elementToReach, alignToLeft, alignToTop, callback, includeHiddenParents, options);
-      }, {passive:false});
+        event.preventDefault();
+        
+        scrollToFragment(
+          pageLink,
+          _fragment,
+          event,
+          _updateHistoryIfNeeded,
+        )
+      }, { passive: false });
     }
-  }
-}
+
+    /**
+     * Prevents the browser to jump-to-position,
+     * when a user navigates through history.
+     */
+    if (_updateHistory) {
+      const _oldData = uss._containersData.get(window);
+      const _containerData = _oldData || [];
+      if (!_oldData) INIT_CONTAINER_DATA(window, _containerData);
+
+      //history already managed.
+      if (_containerData[K_FGS] !== NO_VAL) return;
+
+      //The window fragment is dynamically calculated every time, 
+      //because it's faster than caching.
+      _containerData[K_FGS] = NO_FGS;
+
+      const _smoothHistoryNavigation = (event) => scrollToFragment(
+        NO_VAL,
+        window.location.hash.slice(1, -1),
+        event,
+        () => { },
+      );
+
+      window.history.scrollRestoration = "manual";
+      window.addEventListener("popstate", _smoothHistoryNavigation, { passive: true });
+      window.addEventListener("unload", (event) => event.preventDefault(), { passive: false, once: true });
+
+      //Checks if the page initially have a URL containing
+      //a valid fragment and scrolls to it if necessary.
+      if (document.readyState === "complete") _smoothHistoryNavigation(new Event("load"));
+      else window.addEventListener("load", _smoothHistoryNavigation, { passive: true, once: true });
+    }
+  },
+} 
 
 function ussInit() {
   //Set the uss._reducedMotion.
