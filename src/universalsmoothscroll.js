@@ -445,7 +445,7 @@ var DEFAULT_RESIZE_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  entries: new Map(), //<entry.target, ResizeObserverEntry>
+  entries: new Map(), //<entry.target, ResizeObject>
   observer: new ResizeObserver((entries) => {
     /**
      * Each time a resize event is observed on one of the entries
@@ -455,7 +455,13 @@ var DEFAULT_RESIZE_OBSERVER = {
 
     //Keep only the most up-to-date resized-entry for each target.
     for (const entry of entries) {
-      DEFAULT_RESIZE_OBSERVER.entries.set(entry.target, entry);
+      const _resizeObject = DEFAULT_RESIZE_OBSERVER.entries.get(entry.target);
+
+      _resizeObject.hasResized = true;
+  
+      //Update the target size.
+      _resizeObject.width = entry.borderBoxSize[0].inlineSize;
+      _resizeObject.height = entry.borderBoxSize[0].blockSize;
     }
 
     //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
@@ -479,12 +485,13 @@ var DEFAULT_RESIZE_OBSERVER = {
     }
 
     //TODO: does it make sense to clear the cache for the scrollable parents on resize?
+    for (const [target, resizeObject] of DEFAULT_RESIZE_OBSERVER.entries) {
+      if (!resizeObject.hasResized) continue;
 
-    for (const [target, entry] of DEFAULT_RESIZE_OBSERVER.entries) {
       const _containerData = uss._containersData.get(target);
       
-      const _newWidth = entry.borderBoxSize[0].inlineSize;
-      const _newHeight = entry.borderBoxSize[0].blockSize;
+      const _newWidth = resizeObject.width;
+      const _newHeight = resizeObject.height;
 
       /**
        * Clear the caches.
@@ -524,6 +531,9 @@ var DEFAULT_RESIZE_OBSERVER = {
         height: _newHeight
       }
 
+      //Clear the resizeObject so that it can be reused.
+      resizeObject.hasResized = false;
+      
       //TODO: decide what to pass as the input of callback: perhaps the container?
 
       //Execute the resize callbacks
@@ -531,20 +541,20 @@ var DEFAULT_RESIZE_OBSERVER = {
     }
 
     DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
-    DEFAULT_RESIZE_OBSERVER.entries.clear();
   }
 }
 
 
-//Todo: make this const
+//TODO: make this const
 //TODO: perhaps use this on scrollable parents 
+//TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
 var DEFAULT_MUTATION_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
-  entries: new Map(), //<entry.target, MutationRecord>
+  entries: new Map(), //<entry.target, MutationsObject> 
   observer: new MutationObserver((entries, observer) => {
-    /**
+    /** 
      * Each time a mutation event is observed on one of the entries
      * the number of debouced frames is reset.
      */
@@ -552,7 +562,20 @@ var DEFAULT_MUTATION_OBSERVER = {
 
     //Keep only the most up-to-date entry for each target
     for (const entry of entries) {
-      DEFAULT_MUTATION_OBSERVER.entries.set(entry.target, entry);
+      //Update the record for the current entry.type.
+      const _mutationObject = DEFAULT_MUTATION_OBSERVER.entries.get(entry.target);
+
+      _mutationObject.hasMutated = true;
+
+      //Update the attributes flag.
+      if (!_mutationObject.modifiedAttributes) {
+        _mutationObject.modifiedAttributes = entry.type === "attributes";
+      }
+
+      //Update the removed nodes.
+      for (const removedNode of entry.removedNodes) {
+        _mutationObject.removedNodes.push(removedNode)
+      }
     }
 
     //Schedule the execution of DEFAULT_MUTATION_OBSERVER.callback if needed.
@@ -575,39 +598,24 @@ var DEFAULT_MUTATION_OBSERVER = {
       return;
     }
 
-    for (const [target, entry] of DEFAULT_MUTATION_OBSERVER.entries) { 
+    for (const [target, mutationObject] of DEFAULT_MUTATION_OBSERVER.entries) { 
+      if (!mutationObject.hasMutated) continue;
+
       const _containerData = uss._containersData.get(target);
-      
-      //TODO: multiple mutations can occur in one frame and they currently override each other
-      //TODO: e.g. a childList mutation followed by an attribute mutation will lead the MUTATION_OBSERVER to see only the attribute mutation
-      console.log("MUTATION")
-      console.log(entry)
+
       /**
-       * Unobserve and Remove the containerData 
-       * of the nodes that have been removed from the document.
+       * Change the element's frangment string if its href attribute has changed. 
        */
-      if (entry.type === "childList") {
-        for (const removedNode of entry.removedNodes) {
-          for (const container of uss._containersData.keys()) {
-            /**
-             * Currently there's no mutation observer method 
-             * to unobserve the removedNode.
-             */
-            if (container !== window && removedNode.contains(container)) {
-              DEFAULT_RESIZE_OBSERVER.observer.unobserve(container);
-              DEFAULT_RESIZE_OBSERVER.entries.delete(container);
-              uss._containersData.delete(container);
-            }
-          }
-        }
-      } else if (entry.type === "attributes") {
+      if (mutationObject.modifiedAttributes) {
         const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
-        const _optionalURL = target.href.split("#")[0];
+        const _optionalURL = target.href ? target.href.split("#")[0] : NO_VAL;
         let _fragment = _optionalURL === _pageURL ? target.hash.slice(1) : NO_FGS;
 
         if (_fragment !== "" && _fragment !== NO_FGS) {
           //Look for elements with the corresponding id or "name" attribute.
-          const _fragmentElement = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
+          const _fragmentElement = document.getElementById(_fragment) ||
+                                   document.querySelector("a[name='" + _fragment + "']");
+
           if (!_fragmentElement) {
             uss._warningLogger("#" + _fragment, "is not a valid anchor's destination", true);
             _fragment = NO_FGS;
@@ -618,6 +626,31 @@ var DEFAULT_MUTATION_OBSERVER = {
         _containerData[K_FGS] = _fragment;
       }
 
+      /**
+       * Unobserve and remove the containerData 
+       * of the nodes that have been removed from the document.
+       */
+      for (const removedNode of mutationObject.removedNodes) {
+        for (const container of uss._containersData.keys()) {
+          /**
+           * Currently there's no mutation observer method 
+           * to unobserve the removedNode.
+           * Note that: elementX.contains(elementX) === true
+           */
+          if (container !== window && removedNode.contains(container)) {
+            DEFAULT_RESIZE_OBSERVER.observer.unobserve(container);
+            DEFAULT_RESIZE_OBSERVER.entries.delete(container);
+            DEFAULT_MUTATION_OBSERVER.entries.delete(container);
+            uss._containersData.delete(container);
+          }
+        }
+      }
+
+      //Clear the mutationObject so that it can be reused.
+      mutationObject.hasMutated = false;
+      mutationObject.removedNodes.length = 0;
+      mutationObject.modifiedAttributes = false;
+
       //TODO: decide what to pass as the input of callback: perhaps the container?
 
       //Execute the mutation callbacks
@@ -625,7 +658,6 @@ var DEFAULT_MUTATION_OBSERVER = {
     }
 
     DEFAULT_MUTATION_OBSERVER.callbackFrameId = NO_VAL;
-    DEFAULT_MUTATION_OBSERVER.entries.clear();
   }
 }
 
@@ -647,24 +679,29 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
       //Emulate what the DEFAULT_RESIZE_OBSERVER does for all the other containers.
       DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
-      //Keep only the most up-to-date resized-entry.
-      DEFAULT_RESIZE_OBSERVER.entries.set(
-        window,
-        {
-          borderBoxSize: [
-            {
-              inlineSize: uss._windowWidth,
-              blockSize: uss._windowHeight,
-            }
-          ]
-        }
-      );
+      const _resizeObject = DEFAULT_RESIZE_OBSERVER.entries.get(window);
+
+      _resizeObject.hasResized = true;
+
+      //Update the target size.
+      _resizeObject.width = uss._windowWidth;
+      _resizeObject.height = uss._windowHeight;
 
       //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
       if (DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
         DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
       }
     }, { passive: true });
+
+    //Set a default resizeObject.
+    DEFAULT_RESIZE_OBSERVER.entries.set(
+      window,
+      {
+        hasResized: false,
+        width: uss._windowWidth,
+        height: uss._windowHeight,
+      }
+    );
 
     //The Window doesn't have any scrollable parent.
     containerData[K_SSPX] = NO_SP;
@@ -683,7 +720,17 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
   
   if(CHECK_INSTANCEOF(container)) {
     try {
-      DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" }); 
+      DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" });
+      
+      //Set a default resizeObject.
+      DEFAULT_RESIZE_OBSERVER.entries.set(
+        container,
+        {
+          hasResized: false,
+          width: NO_VAL,
+          height: NO_VAL,
+        }
+      );
 
       //TODO: add all the necessary filters to the attributeFilter property to avoid useless cache-erasing operations
       DEFAULT_MUTATION_OBSERVER.observer.observe(
@@ -695,6 +742,16 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
 
           //Only the direct children of container are observed.
           childList: true,
+        }
+      );
+
+      //Set a default mutationObject.
+      DEFAULT_MUTATION_OBSERVER.entries.set(
+        container,
+        {
+          hasMutated: false,
+          removedNodes: [],
+          modifiedAttributes: false,
         }
       );
     } catch (unsupportedByResizeObserver) {
@@ -2545,7 +2602,8 @@ window.uss = {
       }
 
       //Look for elements with the corresponding id or "name" attribute.
-      const _fragmentElement = document.getElementById(fragment) || document.querySelector("a[name='" + fragment + "']");
+      const _fragmentElement = document.getElementById(fragment) ||
+                               document.querySelector("a[name='" + fragment + "']");
       
       //Invalid fragment or scroll prevented by user.
       if (!_fragmentElement || _init(pageLink, _fragmentElement, event) === false) return;
@@ -2570,7 +2628,8 @@ window.uss = {
       //href is "optionalURL#fragment".
       if (_fragment !== "") {
         //Look for elements with the corresponding id or "name" attribute.
-        const _fragmentElement = document.getElementById(_fragment) || document.querySelector("a[name='" + _fragment + "']");
+        const _fragmentElement = document.getElementById(_fragment) ||
+                                 document.querySelector("a[name='" + _fragment + "']");
         if (!_fragmentElement) {
           uss._warningLogger("#" + _fragment, "is not a valid anchor's destination", true);
           continue;
@@ -2589,16 +2648,14 @@ window.uss = {
       //Cache the fragment for later. 
       _containerData[K_FGS] = _fragment;
 
-      //TODO: test if Safari is fine with "#." as a fragment 
-      
       //The extra "." at the end of the fragment is used to prevent Safari from restoring
       //the scroll position before the popstate event (it won't recognize the fragment). 
-      const _updateHistoryIfNeeded = !_updateHistory ? () => { } :
+      const _updateHistoryIfNeeded = _updateHistory ?
         (fragment) => {
           if (window.history.state !== fragment) {
             window.history.pushState(fragment, "", "#" + fragment + ".");
           }
-        };
+        } : () => { };
 
       //href="#fragment" scrolls the element associated with the fragment into view.
       pageLink.addEventListener("click", event => {
@@ -2632,7 +2689,7 @@ window.uss = {
       const _containerData = _oldData || [];
       if (!_oldData) INIT_CONTAINER_DATA(window, _containerData);
 
-      //history already managed.
+      //History already managed.
       if (_containerData[K_FGS] !== NO_VAL) return;
 
       //The window fragment is dynamically calculated every time, 
@@ -2641,7 +2698,7 @@ window.uss = {
 
       const _smoothHistoryNavigation = (event) => scrollToFragment(
         NO_VAL,
-        window.location.hash.slice(1, -1),
+        window.location.hash.slice(1, -1), //Remove the extra "." in the fragment
         event,
         () => { },
       );

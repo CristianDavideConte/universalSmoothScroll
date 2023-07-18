@@ -1,3 +1,5 @@
+//TODO: The object check should a function shared across all the API components. 
+
 /**
  * This function tests whether the passed fun is a valid stepLengthCalculator.
  * No actual scroll-animation takes place, so no scroll events are dispatched.
@@ -165,7 +167,7 @@ export async function getBrowserRefreshRate(
         });
     } catch(result) {
         try {
-            uss._errorLogger(options.debugString, "to not throw any exception", result);
+            uss._errorLogger(options.debugString, "to not throw any exception", result); //TODO: improve error message
         } catch(e){} 
         
         return NaN;
