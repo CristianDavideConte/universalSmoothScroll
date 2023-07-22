@@ -240,6 +240,9 @@ const NO_SP = null;       //No scrollable parent has been found
 const NO_FGS = null;      //No valid fragment string associated with the container
 const MAX_MSG_LEN = 40;   //The maximum error/warning messages' lengths
 
+const FRM_TMS_PHASE = -1; //Index of uss._framesTime for the frames' time calculation phase
+const FRM_TMS_SUM = -2;   //Index of uss._framesTime for the frames's time current sum
+  
 const INITIAL_WINDOW_WIDTH  = window.innerWidth;
 const INITIAL_WINDOW_HEIGHT = window.innerHeight;
 const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);                         //16px at 412px of width  && 23px at 1920px of width 
@@ -568,8 +571,8 @@ var DEFAULT_MUTATION_OBSERVER = {
       _mutationObject.hasMutated = true;
 
       //Update the attributes flag.
-      if (!_mutationObject.modifiedAttributes) {
-        _mutationObject.modifiedAttributes = entry.type === "attributes";
+      if (!_mutationObject.hasModifiedAttributes) {
+        _mutationObject.hasModifiedAttributes = entry.type === "attributes";
       }
 
       //Update the removed nodes.
@@ -606,7 +609,7 @@ var DEFAULT_MUTATION_OBSERVER = {
       /**
        * Change the element's frangment string if its href attribute has changed. 
        */
-      if (mutationObject.modifiedAttributes) {
+      if (mutationObject.hasModifiedAttributes) {
         const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
         const _optionalURL = target.href ? target.href.split("#")[0] : NO_VAL;
         let _fragment = _optionalURL === _pageURL ? target.hash.slice(1) : NO_FGS;
@@ -649,7 +652,7 @@ var DEFAULT_MUTATION_OBSERVER = {
       //Clear the mutationObject so that it can be reused.
       mutationObject.hasMutated = false;
       mutationObject.removedNodes.length = 0;
-      mutationObject.modifiedAttributes = false;
+      mutationObject.hasModifiedAttributes = false;
 
       //TODO: decide what to pass as the input of callback: perhaps the container?
 
@@ -751,7 +754,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
         {
           hasMutated: false,
           removedNodes: [],
-          modifiedAttributes: false,
+          hasModifiedAttributes: false,
         }
       );
     } catch (unsupportedByResizeObserver) {
@@ -1026,7 +1029,8 @@ window.uss = {
     return uss._pageScroller;
   },
   getFramesTime: (forceCalculation = false, callback, options = {debugString: "getFramesTime", requestPhase: 0}) => {
-    if(forceCalculation) uss.calcFramesTimes(NO_VAL, NO_VAL, callback, options);
+    if (forceCalculation) uss.calcFramesTimes(NO_VAL, NO_VAL, callback, options);
+    else if (typeof callback === "function") callback();
     return uss._framesTime;
   },
   setXStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setXStepLengthCalculator"}) => {
@@ -1200,25 +1204,25 @@ window.uss = {
     }
     uss._warningLogger = newWarningLogger;
   }, 
-  calcFramesTimes: (previousTimestamp, currentTimestamp, callback, options = {debugString: "calcFramesTimes", requestPhase: 0}) => {
+  calcFramesTimes: (previousTimestamp, currentTimestamp, callback, options = { debugString: "calcFramesTimes", requestPhase: 0 }) => {
     /**
-     * uss._framesTime[-1] contains the status of the previous requested frames' time recalculation.
+     * uss._framesTime[FRM_TMS_PHASE] contains the status of the previous requested frames' time recalculation.
      * options.requestPhase contains the status of the current requested frames' time recalculation.
      * If they don't match, a frames's time recalculation has already been requested but the previous
      * one hasn't been completed yet.
      */
-    if(uss._framesTimes[-1] && uss._framesTimes[-1] !== options.requestPhase) return;
-    
-    if(!Number.isFinite(previousTimestamp) || previousTimestamp < 0) {
+    if (uss._framesTimes[FRM_TMS_PHASE] && uss._framesTimes[FRM_TMS_PHASE] !== options.requestPhase) return;
+
+    if (!Number.isFinite(previousTimestamp) || previousTimestamp < 0) {
       options.requestPhase = 1;
-      uss._framesTimes[-1] = 1;
+      uss._framesTimes[FRM_TMS_PHASE] = 1;
       window.requestAnimationFrame((timestamp) => uss.calcFramesTimes(timestamp, currentTimestamp, callback, options));
       return;
     }
 
-    if(!Number.isFinite(currentTimestamp) || currentTimestamp < 0) {
+    if (!Number.isFinite(currentTimestamp) || currentTimestamp < 0) {
       options.requestPhase = 2;
-      uss._framesTimes[-1] = 2;
+      uss._framesTimes[FRM_TMS_PHASE] = 2;
       window.requestAnimationFrame((timestamp) => uss.calcFramesTimes(previousTimestamp, timestamp, callback, options));
       return;
     }
@@ -1230,16 +1234,19 @@ window.uss = {
      * - array.length
      * - array.unshift
      */
-    uss._framesTimes[-1] = 0;
-    uss._framesTimes.unshift(currentTimestamp - previousTimestamp);
-    if(uss._framesTimes.length > 10) uss._framesTimes.pop();
-    
-    let _framesTimesSum = 0;
-    for(const framesTime of uss._framesTimes) _framesTimesSum += framesTime;
-    
-    uss._framesTime = _framesTimesSum / uss._framesTimes.length;
-    
-    if(typeof callback === "function") callback();
+    const _newFrameTime = currentTimestamp - previousTimestamp;
+    uss._framesTimes[FRM_TMS_PHASE] = 0;
+    uss._framesTimes[FRM_TMS_SUM] = (uss._framesTimes[-2] || 0) + _newFrameTime; //Sum of all frames' time
+
+    // Insert the new frame time into uss._framesTimes.
+    uss._framesTimes.unshift(_newFrameTime);
+    if (uss._framesTimes.length > 10) {
+      uss._framesTimes[FRM_TMS_SUM] -= uss._framesTimes.pop();
+    }
+
+    uss._framesTime = uss._framesTimes[FRM_TMS_SUM] / uss._framesTimes.length;
+
+    if (typeof callback === "function") callback();
   },
   calcXScrollbarDimension: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
     return uss.calcScrollbarsDimensions(container, forceCalculation, options)[0];
