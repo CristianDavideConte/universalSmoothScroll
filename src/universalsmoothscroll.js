@@ -260,6 +260,135 @@ const REGEX_OVERFLOW_HIDDEN = /(auto|scroll|hidden)/;
 const REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
 const REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
 
+const DEFAULT_ERROR_PRIMARY_MSG_1 = "the input to be an Element or the Window";
+const DEFAULT_ERROR_PRIMARY_MSG_2 = "the input to be an Element";
+const DEFAULT_ERROR_PRIMARY_MSG_3 = "the input to be a function";
+const DEFAULT_ERROR_PRIMARY_MSG_4 = "the input to be a positive number";
+const DEFAULT_ERROR_PRIMARY_MSG_5 = "the input to be a number";
+
+const DEFAULT_WARNING_PRIMARY_MSG_1 = "is not a valid anchor's destination";
+const DEFAULT_WARNING_PRIMARY_MSG_2 = "is not a valid step length";
+  
+const DEFAULT_LOG_OPTIONS = new Map([
+  ["isXScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["isYScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["isScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+  ["getScrollXDirection", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["getScrollYDirection", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+  ["getXStepLengthCalculator", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["getYStepLengthCalculator", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  
+  ["setXStepLengthCalculator", [
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 },
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+  ]],
+  ["setYStepLengthCalculator", [
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 },
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+  ]],
+  ["setStepLengthCalculator", [
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 },
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+  ]],
+  
+  ["setXStepLength", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_4 }],
+  ["setYStepLength", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_4 }],
+  ["setStepLength", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_4 }],
+
+  ["setMinAnimationFrame", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_4 }],
+  ["setPageScroller", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  
+  ["addResizeCallback", [
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 },
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+  ]],
+  ["addMutationCallback", [
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_2 },
+    { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+  ]],
+  
+  ["setErrorLogger", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 }],
+  ["setWarningLogger", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 }],
+  
+  ["calcScrollbarsDimensions", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["calcBordersDimensions", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  
+  ["getScrollCalculators", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["getBorderBox", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  
+  ["getXScrollableParent", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["getYScrollableParent", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["getScrollableParent", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  
+  ["scrollXTo", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_5 }],
+  ["scrollYTo", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_5 }],
+  ["scrollXBy", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_5 }],
+  ["scrollYBy", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_5 }],
+  
+  ["stopScrollingX", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["stopScrollingY", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+  ["stopScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+]);
+
+//TODO: use this function everywhere in the uss modules
+/**
+ * Checks if the passed value is an object.
+ * @param {*} value The value to be checked. 
+ * @returns True if value is an object, false, otherwise.
+ */
+const IS_OBJECT = (value) => {
+  return value !== null &&
+    typeof value === "object" &&
+    !Array.isArray(value);
+}
+
+
+/**
+ * Merges two objects into one.
+ * @param {*} obj1 In case of conflicts, this object's properties will have the priority.
+ * @param {*} obj2 In case of conflicts, this object's properties won't have the priority.
+ * @returns An object with all the properties of obj1 and obj2 merged.
+ */
+const MERGE_OBJECTS = (obj1, obj2) => {
+  return IS_OBJECT(obj1) ? Object.assign({}, obj2, obj1) : obj2;
+}
+  
+/**
+ * @param {*} options The options object passed to the calling function.
+ * @param {*} functionName The calling function's name.
+ * @param {*} otherDefaultOptions Non-static default logging options.
+ * @returns A valid logging options object that can be used with the uss loggers.
+ */
+const CREATE_LOG_OPTIONS = (options, functionName, otherDefaultOptions) => {
+  let defaultOptions = DEFAULT_LOG_OPTIONS.get(functionName);
+
+  /**
+   * Multiple log options can be associated with a single function,
+   * choose one specified by the otherDefaultOptions argument. 
+   */
+  if (Array.isArray(defaultOptions)) {
+    defaultOptions = defaultOptions[otherDefaultOptions.idx]
+  }
+
+  /**
+   * Retrieve the function's default static-logging options and
+   * merge them with the non-static ones.
+   */ 
+  defaultOptions = MERGE_OBJECTS(
+    defaultOptions,
+    otherDefaultOptions
+  );
+
+  if (defaultOptions.subject == NO_VAL) {
+    defaultOptions.subject = functionName;
+  }
+
+  return MERGE_OBJECTS(options, defaultOptions);
+}
+  
+  
 const CHECK_INSTANCEOF = (element, classType = Element) => {
   if(element instanceof classType) return true;
 
@@ -366,8 +495,18 @@ const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
   if(_stepLength > uss._yStepLength) return uss._yStepLength;
   return _stepLength;
 }
+  
+/**
+ * @param {*} options A valid logging options object.
+ *            options.subject must be the calling function's name.
+ *            options.primaryMsg must be expected value.
+ *            options.secondaryMsg must be received value.
+ */
+const DEFAULT_ERROR_LOGGER = (options) => {
+  const functionName = options.subject;
+  const expectedValue = options.primaryMsg;
+  let receivedValue = options.secondaryMsg;
 
-const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   if(REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
   
   const _isString = typeof receivedValue === "string";
@@ -408,7 +547,18 @@ const DEFAULT_ERROR_LOGGER = (functionName, expectedValue, receivedValue) => {
   throw "USS fatal error (execution stopped)";
 }
 
-const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) => {
+/**
+ * @param {*} options A valid logging options object.
+ *            options.subject must be the subject of the warning message.
+ *            options.primaryMsg must be the warning message.
+ *            options.secondaryMsg isn't used.
+ *            options.useSubjectQuotes must be true if the subject should be represented as a quoted string, false otherwise.
+ */
+const DEFAULT_WARNING_LOGGER = (options) => {
+  let subject = options.subject;
+  const message = options.primaryMsg;
+  const useSubjectQuotes = options.useSubjectQuotes;
+
   if(REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
 
   const _isString = typeof subject === "string";
@@ -420,7 +570,7 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   }
 
   //Insert leading and trailing quotes if needed.
-  if(_isString && keepQuotesForString) subject = "\"" + subject + "\"";
+  if(_isString && useSubjectQuotes) subject = "\"" + subject + "\"";
 
   if(REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
     console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
@@ -443,8 +593,7 @@ const DEFAULT_WARNING_LOGGER = (subject, message, keepQuotesForString = true) =>
   console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 }
 
-//Todo: make this const
-var DEFAULT_RESIZE_OBSERVER = {
+const DEFAULT_RESIZE_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
@@ -517,15 +666,6 @@ var DEFAULT_RESIZE_OBSERVER = {
           _containerData[K_TB] = NO_VAL;  //TopBorder
           _containerData[K_BB] = NO_VAL;  //BottomBorder
         }
-        
-        
-        //TODO: the MUTATION_OBSERVER should be in charge of these caches
-        // if (target !== window) {
-        //   _containerData[K_SSPX] = NO_VAL; //Standard Scrollable Parent x-axis
-        //   _containerData[K_HSPX] = NO_VAL; //Hidden Scrollable Parent x-axis
-        //   _containerData[K_SSPY] = NO_VAL; //Standard Scrollable Parent y-axis
-        //   _containerData[K_HSPY] = NO_VAL; //Hidden Scrollable Parent y-axis
-        // }
       }
 
       //BorderBox 
@@ -548,10 +688,8 @@ var DEFAULT_RESIZE_OBSERVER = {
 }
 
 
-//TODO: make this const
-//TODO: perhaps use this on scrollable parents 
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
-var DEFAULT_MUTATION_OBSERVER = {
+const DEFAULT_MUTATION_OBSERVER = {
   callbackFrameId: NO_VAL,
   debouncedFrames: 0,
   totalDebounceFrames: 16,
@@ -620,7 +758,13 @@ var DEFAULT_MUTATION_OBSERVER = {
                                    document.querySelector("a[name='" + _fragment + "']");
 
           if (!_fragmentElement) {
-            uss._warningLogger("#" + _fragment, "is not a valid anchor's destination", true);
+            uss._warningLogger(
+              {
+                subject: "#" + _fragment,
+                primaryMsg: DEFAULT_WARNING_PRIMARY_MSG_1,
+                useSubjectQuotes: true
+              }
+            );
             _fragment = NO_FGS;
           }
         }
@@ -715,7 +859,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
     containerData[K_SCX] = () => window.scrollX; //ScrollXCalculator
     containerData[K_SCY] = () => window.scrollY; //ScrollYCalculator
     containerData[K_RCBQ] = []; //Resize callback queue
-    //containerData[K_MCBQ] = []; //Mutation callback queue //TODO: useless since window is never mutated??
+    //containerData[K_MCBQ] = []; //Mutation callback queue
     uss._containersData.set(container, containerData);
 
     return true;
@@ -735,13 +879,13 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
         }
       );
 
-      //TODO: add all the necessary filters to the attributeFilter property to avoid useless cache-erasing operations
+      //TODO: if a new API ever allow to watch for a computedStyle change, 
+      //TODO: use it for invalidating scrollable parents caches
       DEFAULT_MUTATION_OBSERVER.observer.observe(
         container, 
         { 
           attributes: true,
-          attributeFilter: ["href"],//["style"],
-          // attributeOldValue: true,
+          attributeFilter: ["href"],
 
           //Only the direct children of container are observed.
           childList: true,
@@ -796,80 +940,90 @@ window.uss = {
   getWindowHeight: () => uss._windowHeight,
   getReducedMotionState: () => uss._reducedMotion,
   getDebugMode: () => uss._debugMode, 
-  isXScrolling: (container = uss._pageScroller, options = {debugString: "isXScrolling"}) => {
+  isXScrolling: (container = uss._pageScroller, options) => {
     const _containerData = uss._containersData.get(container);
 
     if(_containerData) return !!_containerData[K_IDX];
 
     if(INIT_CONTAINER_DATA(container)) return false;
 
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    uss._errorLogger(CREATE_LOG_OPTIONS(options, "isXScrolling", { secondaryMsg: container }));
   }, 
-  isYScrolling: (container = uss._pageScroller, options = {debugString: "isYScrolling"}) => {
+  isYScrolling: (container = uss._pageScroller, options) => {
     const _containerData = uss._containersData.get(container);
 
     if(_containerData) return !!_containerData[K_IDY];
     
     if(INIT_CONTAINER_DATA(container)) return false;
 
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    uss._errorLogger(CREATE_LOG_OPTIONS(options, "isYScrolling", { secondaryMsg: container }));
   },   
-  isScrolling: (container = uss._pageScroller, options = {debugString: "isScrolling"}) => {
+  isScrolling: (container = uss._pageScroller, options) => {
     const _containerData = uss._containersData.get(container);
 
     if(_containerData) return !!(_containerData[K_IDX] || _containerData[K_IDY]);
 
     if(INIT_CONTAINER_DATA(container)) return false;
-
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    
+    uss._errorLogger(CREATE_LOG_OPTIONS(options, "isScrolling", { secondaryMsg: container }));
   },
-  getFinalXPosition: (container = uss._pageScroller, options = {debugString: "getFinalXPosition"}) => {
+  getFinalXPosition: (container = uss._pageScroller, options) => {
+    options = MERGE_OBJECTS(options, { subject: "getFinalXPosition" });
+
     //If there's no scroll-animation on the x-axis, the current position is returned instead.
     const _containerData = uss._containersData.get(container) || [];
-    return _containerData[K_FPX] === 0 ? 0 : _containerData[K_FPX] || uss.getScrollXCalculator(container, options)();
+
+    if (_containerData[K_FPX] === 0) return 0;
+
+    return _containerData[K_FPX] || uss.getScrollXCalculator(container, options)();
   },
-  getFinalYPosition: (container = uss._pageScroller, options = {debugString: "getFinalYPosition"}) => {
+  getFinalYPosition: (container = uss._pageScroller, options) => {
+    options = MERGE_OBJECTS(options, { subject: "getFinalYPosition" });
+
     //If there's no scroll-animation on the y-axis, the current position is returned instead.
     const _containerData = uss._containersData.get(container) || [];
-    return _containerData[K_FPY] === 0 ? 0 : _containerData[K_FPY] || uss.getScrollYCalculator(container, options)();
+
+    if (_containerData[K_FPY] === 0) return 0;
+
+    return _containerData[K_FPY] || uss.getScrollYCalculator(container, options)();
   },
-  getScrollXDirection: (container = uss._pageScroller, options = {debugString: "getScrollXDirection"}) => {
+  getScrollXDirection: (container = uss._pageScroller, options) => {
     const _containerData = uss._containersData.get(container);
     
     //If there's no scroll-animation, 0 is returned.
     if(_containerData) return _containerData[K_SDX] || 0;
     
     if(INIT_CONTAINER_DATA(container)) return 0;
-
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    
+    uss._errorLogger(CREATE_LOG_OPTIONS(options, "getScrollXDirection", { secondaryMsg: container }));
   },
-  getScrollYDirection: (container = uss._pageScroller, options = {debugString: "getScrollYDirection"}) => {
+  getScrollYDirection: (container = uss._pageScroller, options) => {
     const _containerData = uss._containersData.get(container);
     
     //If there's no scroll-animation, 0 is returned.
     if(_containerData) return _containerData[K_SDY] || 0;
     
-    if(INIT_CONTAINER_DATA(container)) return 0;
-
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+    if (INIT_CONTAINER_DATA(container)) return 0;
+    
+    uss._errorLogger(CREATE_LOG_OPTIONS(options, "getScrollYDirection", { secondaryMsg: container }));
   },
-  getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getXStepLengthCalculator"}) => {
+  getXStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options) => {
     const _containerData = uss._containersData.get(container);
         
     if(_containerData) return getTemporary ? _containerData[K_TSCX] : _containerData[K_FSCX];
 
     if(INIT_CONTAINER_DATA(container)) return;
-
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);    
+    
+    uss._errorLogger(CREATE_LOG_OPTIONS(options, "getXStepLengthCalculator", { secondaryMsg: container }));
   },
-  getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options = {debugString: "getYStepLengthCalculator"}) => {    
+  getYStepLengthCalculator: (container = uss._pageScroller, getTemporary = false, options) => {    
     const _containerData = uss._containersData.get(container);
         
     if(_containerData) return getTemporary ? _containerData[K_TSCY] : _containerData[K_FSCY];
 
     if(INIT_CONTAINER_DATA(container)) return;
 
-    uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);    
+    uss._errorLogger(CREATE_LOG_OPTIONS(options, "getYStepLengthCalculator", { secondaryMsg: container }));
   },
   getScrollbarsMaxDimension: (forceCalculation = false) => {
     /**
@@ -1028,15 +1182,17 @@ window.uss = {
 
     return uss._pageScroller;
   },
-  getFramesTime: (forceCalculation = false, callback, options = {debugString: "getFramesTime", requestPhase: 0}) => {
+  getFramesTime: (forceCalculation = false, callback, options) => {
+    options = MERGE_OBJECTS(options, { subject: "getFramesTime", requestPhase: 0 });
+
     if (forceCalculation) uss.calcFramesTimes(NO_VAL, NO_VAL, callback, options);
     else if (typeof callback === "function") callback();
     return uss._framesTime;
   },
-  setXStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setXStepLengthCalculator"}) => {
+  setXStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
-    if(typeof newCalculator !== "function" && _isSettingOp) {
-      uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
+    if (typeof newCalculator !== "function" && _isSettingOp) {
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator , idx: 1 }));
       return;
     }
 
@@ -1044,7 +1200,7 @@ window.uss = {
     const _containerData = _oldData || [];
     
     if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
       return;
     }
 
@@ -1057,10 +1213,10 @@ window.uss = {
       if(_isSettingOp) _containerData[K_TSCX] = NO_VAL; 
     }  
   },
-  setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setYStepLengthCalculator"}) => {
+  setYStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
-    if(typeof newCalculator !== "function" && _isSettingOp) {
-      uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
+    if (typeof newCalculator !== "function" && _isSettingOp) {
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
       return;
     }
 
@@ -1068,7 +1224,7 @@ window.uss = {
     const _containerData = _oldData || [];
 
     if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
       return;
     }
 
@@ -1081,10 +1237,10 @@ window.uss = {
       if(_isSettingOp) _containerData[K_TSCY] = NO_VAL; 
     }  
   },
-  setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options = {debugString: "setStepLengthCalculator"}) => {
+  setStepLengthCalculator: (newCalculator, container = uss._pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
-    if(typeof newCalculator !== "function" && _isSettingOp) {
-      uss._errorLogger(options.debugString, "the newCalculator to be a function", newCalculator);
+    if (typeof newCalculator !== "function" && _isSettingOp) {
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
       return;
     }
 
@@ -1092,7 +1248,7 @@ window.uss = {
     const _containerData = _oldData || [];
 
     if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
       return;
     }
 
@@ -1110,46 +1266,49 @@ window.uss = {
       } 
     }
   },
-  setXStepLength: (newXStepLength = DEFAULT_XSTEP_LENGTH, options = {debugString: "setXStepLength"}) => {
-    if(!Number.isFinite(newXStepLength) || newXStepLength <= 0) {
-      uss._errorLogger(options.debugString, "the newXStepLength to be a positive number", newXStepLength);
-      return;
-    }
-    uss._xStepLength = newXStepLength;
-  },
-  setYStepLength: (newYStepLength = DEFAULT_YSTEP_LENGTH, options = {debugString: "setYStepLength"}) => {
-    if(!Number.isFinite(newYStepLength) || newYStepLength <= 0) {
-      uss._errorLogger(options.debugString, "the newYStepLength to be a positive number", newYStepLength);
-      return;
-    }
-    uss._yStepLength = newYStepLength;
-  },
-  setStepLength: (newStepLength, options = {debugString: "setStepLength"}) => {
+  setXStepLength: (newStepLength = DEFAULT_XSTEP_LENGTH, options) => {
     if(!Number.isFinite(newStepLength) || newStepLength <= 0) {
-      uss._errorLogger(options.debugString, "the newStepLength to be a positive number", newStepLength);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLength", { secondaryMsg: newStepLength }));
+      return;
+    }
+    uss._xStepLength = newStepLength;
+  },
+  setYStepLength: (newStepLength = DEFAULT_YSTEP_LENGTH, options) => {
+    if(!Number.isFinite(newStepLength) || newStepLength <= 0) {
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLength", { secondaryMsg: newStepLength }));
+      return;
+    }
+    uss._yStepLength = newStepLength;
+  },
+  setStepLength: (newStepLength, options) => {
+    if(!Number.isFinite(newStepLength) || newStepLength <= 0) {
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setStepLength", { secondaryMsg: newStepLength }));
       return;
     }
     uss._xStepLength = newStepLength;
     uss._yStepLength = newStepLength;
   },
-  setMinAnimationFrame: (newMinAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES, options = {debugString: "setMinAnimationFrame"}) => {
+  setMinAnimationFrame: (newMinAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES, options) => {
     if(!Number.isFinite(newMinAnimationFrame) || newMinAnimationFrame <= 0) {
-      uss._errorLogger(options.debugString, "the newMinAnimationFrame to be a positive number", newMinAnimationFrame);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setMinAnimationFrame", { secondaryMsg: newMinAnimationFrame }));
       return;
     }
     uss._minAnimationFrame = newMinAnimationFrame;
   },
-  setPageScroller: (newPageScroller, options = {debugString: "setPageScroller"}) => {
+  setPageScroller: (newPageScroller, options) => {
     if(!uss._containersData.get(newPageScroller) && !INIT_CONTAINER_DATA(newPageScroller)) {
-      uss._errorLogger(options.debugString, "the newPageScroller to be an Element or the Window", newPageScroller);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setPageScroller", { secondaryMsg: newPageScroller }));
       return;
     }
     uss._pageScroller = newPageScroller;
   },
+
+
+
   //TODO: add cypress tests
-  addResizeCallback: (newCallback, container = uss._pageScroller, options = {debugString: "addResizeCallback"}) => {
+  addResizeCallback: (newCallback, container = uss._pageScroller, options) => {
     if(typeof newCallback !== "function") {
-      uss._errorLogger(options.debugString, "the newCallback to be a function", newCallback);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 1}));
       return;
     }
     
@@ -1157,16 +1316,19 @@ window.uss = {
     const _containerData = _oldData || [];
 
     if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 0 }));
       return;
     }
 
     _containerData[K_RCBQ].push(newCallback);
   },
+
+
+
   //TODO: add cypress tests
-  addMutationCallback: (newCallback, container = uss._pageScroller, options = {debugString: "addMutationCallback"}) => {
+  addMutationCallback: (newCallback, container = uss._pageScroller, options) => {
     if(typeof newCallback !== "function") {
-      uss._errorLogger(options.debugString, "the newCallback to be a function", newCallback);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 1 }));
       return;
     }
     
@@ -1174,37 +1336,46 @@ window.uss = {
     const _containerData = _oldData || [];
 
     if(container === window || (!_oldData && !INIT_CONTAINER_DATA(container, _containerData))) {
-      uss._errorLogger(options.debugString, "the container to be an Element", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 0 }));
       return;
     }
 
     _containerData[K_MCBQ].push(newCallback);
   },
-  setDebugMode: (newDebugMode = "", options = {debugString: "setDebugMode"}) => {
+
+
+  //TODO: perhaps use the errorLogger + options instead
+  setDebugMode: (newDebugMode = "") => {
     if(typeof newDebugMode === "string") {
       uss._debugMode = newDebugMode;
       return;
     }
-    console.error("USS ERROR\n", 
-                  options.debugString, 
-                  "was expecting the newDebugMode to be \"disabled\", \"legacy\" or any other string, but received", newDebugMode + "."
+
+    console.error(
+      "USS ERROR\n", 
+      "setDebugMode", 
+      "was expecting the newDebugMode to be \"disabled\", \"legacy\" or any other string, but received", newDebugMode + "."
     );
   },
-  setErrorLogger: (newErrorLogger = DEFAULT_ERROR_LOGGER, options = {debugString: "setErrorLogger"}) => {
+
+
+  setErrorLogger: (newErrorLogger = DEFAULT_ERROR_LOGGER, options) => {
     if(typeof newErrorLogger !== "function") {
-      uss._errorLogger(options.debugString, "the newErrorLogger to be a function", newErrorLogger);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setErrorLogger", { secondaryMsg: newErrorLogger }));
       return;
     }
     uss._errorLogger = newErrorLogger;
   }, 
-  setWarningLogger: (newWarningLogger = DEFAULT_WARNING_LOGGER, options = {debugString: "setWarningLogger"}) => {
+  setWarningLogger: (newWarningLogger = DEFAULT_WARNING_LOGGER, options) => {
     if(typeof newWarningLogger !== "function") {
-      uss._errorLogger(options.debugString, "the newWarningLogger to be a function", newWarningLogger);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "setWarningLogger", { secondaryMsg: newWarningLogger }));
       return;
     }
     uss._warningLogger = newWarningLogger;
   }, 
-  calcFramesTimes: (previousTimestamp, currentTimestamp, callback, options = { debugString: "calcFramesTimes", requestPhase: 0 }) => {
+  calcFramesTimes: (previousTimestamp, currentTimestamp, callback, options) => {
+    options = MERGE_OBJECTS(options, { subject: "calcFramesTimes", requestPhase: 0 });
+
     /**
      * uss._framesTime[FRM_TMS_PHASE] contains the status of the previous requested frames' time recalculation.
      * options.requestPhase contains the status of the current requested frames' time recalculation.
@@ -1248,13 +1419,13 @@ window.uss = {
 
     if (typeof callback === "function") callback();
   },
-  calcXScrollbarDimension: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcXScrollbarDimension"}) => {
-    return uss.calcScrollbarsDimensions(container, forceCalculation, options)[0];
+  calcXScrollbarDimension: (container = uss._pageScroller, forceCalculation = false, options) => {
+    return uss.calcScrollbarsDimensions(container, forceCalculation, MERGE_OBJECTS(options, { subject: "calcXScrollbarDimension" }))[0];
   },
-  calcYScrollbarDimension: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcYScrollbarDimension"}) => {
-    return uss.calcScrollbarsDimensions(container, forceCalculation, options)[1];
+  calcYScrollbarDimension: (container = uss._pageScroller, forceCalculation = false, options) => {
+    return uss.calcScrollbarsDimensions(container, forceCalculation, MERGE_OBJECTS(options, { subject: "calcYScrollbarDimension" }))[1];
   },
-  calcScrollbarsDimensions: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcScrollbarsDimensions"}) => {
+  calcScrollbarsDimensions: (container = uss._pageScroller, forceCalculation = false, options) => {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
     
@@ -1263,7 +1434,7 @@ window.uss = {
      * All the other unsupported implementations are filtered out by the checking style property later.
      */
     if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "calcScrollbarsDimensions", { secondaryMsg: container }));
       return;
     }
     
@@ -1275,7 +1446,11 @@ window.uss = {
       const _windowScroller = uss.getWindowScroller();
 
       if(container === window && window !== _windowScroller) {
-        return uss.calcScrollbarsDimensions(_windowScroller, forceCalculation, options);
+        return uss.calcScrollbarsDimensions(
+          _windowScroller,
+          forceCalculation,
+          options
+        );
       } else if(!container.style || uss.getScrollbarsMaxDimension() === 0) {
         //The element cannot have scrollbars or their size is 0px on this webpage.
         _containerData[K_VSB] = 0;
@@ -1334,13 +1509,13 @@ window.uss = {
       _containerData[K_HSB]  //Horizontal scrollbar's height
     ];
   },
-  calcBordersDimensions: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "calcBordersDimensions"}) => {
+  calcBordersDimensions: (container = uss._pageScroller, forceCalculation = false, options) => {
     //Check if the bordersDimensions of the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
 
     if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "calcBordersDimensions", { secondaryMsg: container }));
       return;
     }
 
@@ -1353,7 +1528,9 @@ window.uss = {
     ) {
       if(container === window) {
         const _windowScroller = uss.getWindowScroller();
-        const _bordersDimensions = _windowScroller === window ? [0,0,0,0] : uss.calcBordersDimensions(_windowScroller, forceCalculation, options);
+        const _bordersDimensions = _windowScroller === window ?
+          [0, 0, 0, 0] :
+          uss.calcBordersDimensions(_windowScroller, forceCalculation, options);
 
         _containerData[K_TB] = _bordersDimensions[0];
         _containerData[K_RB] = _bordersDimensions[1];
@@ -1384,30 +1561,30 @@ window.uss = {
       _containerData[K_LB], //left
     ];
   },
-  getScrollXCalculator: (container = uss._pageScroller, options = {debugString: "getScrollXCalculator"}) => {
-    return uss.getScrollCalculators(container, options)[0];
+  getScrollXCalculator: (container = uss._pageScroller, options) => {
+    return uss.getScrollCalculators(container, MERGE_OBJECTS(options, { subject: "getScrollXCalculator" }))[0];
   },
-  getScrollYCalculator: (container = uss._pageScroller, options = {debugString: "getScrollYCalculator"}) => {
-    return uss.getScrollCalculators(container, options)[1];
+  getScrollYCalculator: (container = uss._pageScroller, options) => {
+    return uss.getScrollCalculators(container, MERGE_OBJECTS(options, { subject: "getScrollYCalculator" }))[1];
   },
-  getScrollCalculators: (container = uss._pageScroller, options = {debugString: "getScrollCalculators"}) => {
+  getScrollCalculators: (container = uss._pageScroller, options) => {
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
 
     if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);     
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "getScrollCalculators", { secondaryMsg: container }));
       return;                                  
     }
 
     return [_containerData[K_SCX], _containerData[K_SCY]];
   },
-  getMaxScrollX: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollX"}) => {
-    return uss.getMaxScrolls(container, forceCalculation, options)[0];
+  getMaxScrollX: (container = uss._pageScroller, forceCalculation = false, options) => {
+    return uss.getMaxScrolls(container, forceCalculation, MERGE_OBJECTS(options, { subject: "getMaxScrollX" }))[0];
   },
-  getMaxScrollY: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrollY"}) => {
-    return uss.getMaxScrolls(container, forceCalculation, options)[1];
+  getMaxScrollY: (container = uss._pageScroller, forceCalculation = false, options) => {
+    return uss.getMaxScrolls(container, forceCalculation, MERGE_OBJECTS(options, { subject: "getMaxScrollY" }))[1];
   },
-  getMaxScrolls: (container = uss._pageScroller, forceCalculation = false, options = {debugString: "getMaxScrolls"}) => {
+  getMaxScrolls: (container = uss._pageScroller, forceCalculation = false, options) => {
     //Check if the maxScrollX/maxScrollY values for the passed container have already been calculated. 
     const _oldData = uss._containersData.get(container) || [];
     if(
@@ -1418,6 +1595,8 @@ window.uss = {
       return [_oldData[K_MSX], _oldData[K_MSY]];
     }
 
+    options = MERGE_OBJECTS(options, { subject: "getMaxScrolls" });
+    
     const [_scrollXCalculator, _scrollYCalculator] = uss.getScrollCalculators(container, options);
     const _initialXPosition = _scrollXCalculator();
     const _initialYPosition = _scrollYCalculator();
@@ -1448,14 +1627,18 @@ window.uss = {
 
     return [_containerData[K_MSX], _containerData[K_MSY]];
   },
+  
+
+    
+    
   //TODO: Add cypress tests
-  getBorderBox: (container, options = {debugString: "getBorderBox"}) => {
+  getBorderBox: (container, options) => {
     //Check if the borderBox of the passed container has already been calculated. 
     const _oldData = uss._containersData.get(container);
     const _containerData = _oldData || [];
 
     if(!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "getBorderBox", { secondaryMsg: container }));
       return;
     }
 
@@ -1473,7 +1656,7 @@ window.uss = {
   },
   
   //TODO: element should be called container and _container should be called _parent
-  getXScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getXScrollableParent"}) => {
+  getXScrollableParent: (element, includeHiddenParents = false, options) => {
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
     const _cachedParent = includeHiddenParents ? _containerData[K_HSPX] : _containerData[K_SSPX];
@@ -1481,7 +1664,7 @@ window.uss = {
     if(_cachedParent !== NO_VAL) return _cachedParent;
     
     if(!_oldData && !INIT_CONTAINER_DATA(element, _containerData)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "getXScrollableParent", { secondaryMsg: element }));
       return;
     }
     
@@ -1492,6 +1675,8 @@ window.uss = {
       _containerData[K_SSPY] = NO_SP;
       return NO_SP;
     }
+
+    options = MERGE_OBJECTS(options, { subject: "getXScrollableParent" });
 
     const _body = document.body;
     const _html = document.documentElement;
@@ -1582,7 +1767,7 @@ window.uss = {
   },
 
   //TODO: element should be called container and _container should be called _parent
-  getYScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getYScrollableParent"}) => {
+  getYScrollableParent: (element, includeHiddenParents = false, options) => {
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
     const _cachedParent = includeHiddenParents ? _containerData[K_HSPY] : _containerData[K_SSPY];
@@ -1590,7 +1775,7 @@ window.uss = {
     if(_cachedParent !== NO_VAL) return _cachedParent;
     
     if(!_oldData && !INIT_CONTAINER_DATA(element, _containerData)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "getYScrollableParent", { secondaryMsg: element }));
       return;
     }
     
@@ -1601,6 +1786,8 @@ window.uss = {
       _containerData[K_SSPY] = NO_SP;
       return NO_SP;
     }
+
+    options = MERGE_OBJECTS(options, { subject: "getYScrollableParent" });
 
     const _body = document.body;
     const _html = document.documentElement;
@@ -1690,8 +1877,14 @@ window.uss = {
     return NO_SP;
   },
 
+
+
+
+
   //TODO: element should be called container and _container should be called _parent
-  getScrollableParent: (element, includeHiddenParents = false, options = {debugString: "getScrollableParent"}) => {
+  getScrollableParent: (element, includeHiddenParents = false, options) => {
+    options = MERGE_OBJECTS(options, { subject: "getScrollableParent" });
+
     const _oldData = uss._containersData.get(element);
     const _containerData = _oldData || [];
     let _cachedXParent, _cachedYParent;
@@ -1733,7 +1926,7 @@ window.uss = {
     }
     
     if(!_oldData && !INIT_CONTAINER_DATA(element, _containerData)) {
-      uss._errorLogger(options.debugString, "the element to be an Element or the Window", element);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "getScrollableParent", { secondaryMsg: element }));
       return;
     }
 
@@ -1866,8 +2059,13 @@ window.uss = {
     return NO_SP;
   },
 
+
+
+
   //TODO: element should be called container
-  getAllScrollableParents: (element, includeHiddenParents = false, callback, options = {debugString: "getAllScrollableParents"}) => {
+  getAllScrollableParents: (element, includeHiddenParents = false, callback, options) => {
+    options = MERGE_OBJECTS(options, { subject: "getAllScrollableParents" });
+
     const _scrollableParents = [];
     const _callback = typeof callback === "function" ? callback : () => {};
     const _scrollableParentFound = (el) => {
@@ -1882,28 +2080,36 @@ window.uss = {
 
     return _scrollableParents;
   },
-  scrollXTo: (finalXPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollXTo"}) => {
-    if(!Number.isFinite(finalXPosition)) {
-      uss._errorLogger(options.debugString, "the finalXPosition to be a number", finalXPosition);
+  scrollXTo: (finalPosition, container = uss._pageScroller, callback, containScroll = false, options) => {
+    if(!Number.isFinite(finalPosition)) {
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "scrollXTo", { secondaryMsg: finalPosition }));
       return;
     }
 
+    options = MERGE_OBJECTS(options, { subject: "scrollXTo" });
+
     //The container cannot be scrolled on the x-axis.
     const _maxScrollX = uss.getMaxScrollX(container, false, options);
-    if(_maxScrollX < 1) {
-      uss._warningLogger(container, "is not scrollable on the x-axis", false);
+    if (_maxScrollX < 1) {
+      uss._warningLogger(
+        {
+          subject: container,
+          primaryMsg: "is not scrollable on the x-axis",
+          useSubjectQuotes: false
+        }
+      );
       uss.stopScrollingX(container, callback);
       return; 
     }
 
     //Limit the final position to the [0, maxScrollX] interval. 
     if(containScroll) {
-      if(finalXPosition < 0) finalXPosition = 0;
-      else if(finalXPosition > _maxScrollX) finalXPosition = _maxScrollX;
+      if(finalPosition < 0) finalPosition = 0;
+      else if(finalPosition > _maxScrollX) finalPosition = _maxScrollX;
     }
 
     const _scrollXCalculator = uss.getScrollXCalculator(container);
-    let _totalScrollAmount = finalXPosition - _scrollXCalculator();
+    let _totalScrollAmount = finalPosition - _scrollXCalculator();
     const _direction = _totalScrollAmount > 0 ? 1 : -1;
     _totalScrollAmount *= _direction;
 
@@ -1918,7 +2124,7 @@ window.uss = {
     //If user prefers reduced motion
     //the API rolls back to the default "jump-to-position" behavior.
     if(uss._reducedMotion) {
-      _scroll(finalXPosition);
+      _scroll(finalPosition);
       uss.stopScrollingX(container, callback);
       return;
     }
@@ -1928,11 +2134,11 @@ window.uss = {
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
     const _containerData = uss._containersData.get(container);
-    _containerData[K_FPX] = finalXPosition;      //finalXPosition
-    _containerData[K_SDX] = _direction;          //direction
-    _containerData[K_TSAX] = _totalScrollAmount; //totalScrollAmount
-    _containerData[K_OTSX] = NO_VAL;             //originalTimestamp
-    _containerData[K_CBX] = callback;            //callback
+    _containerData[K_FPX] = finalPosition;       //Final position
+    _containerData[K_SDX] = _direction;          //Direction
+    _containerData[K_TSAX] = _totalScrollAmount; //Total scroll amount
+    _containerData[K_OTSX] = NO_VAL;             //Original timestamp
+    _containerData[K_CBX] = callback;            //Callback
 
     //A scroll-animation is already being performed and
     //the scroll-animation's informations have already been updated.
@@ -1942,10 +2148,10 @@ window.uss = {
     _containerData[K_IDX] = window.requestAnimationFrame(_stepX);
 
     function _stepX(timestamp) {
-      const _finalXPosition = _containerData[K_FPX];
+      const _finalPosition = _containerData[K_FPX];
       const _direction = _containerData[K_SDX];
-      const _currentXPosition = _scrollXCalculator();
-      const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _direction;
+      const _currentPosition = _scrollXCalculator();
+      const _remaningScrollAmount = (_finalPosition - _currentPosition) * _direction;
       
       if(_remaningScrollAmount < 1) {
         uss.stopScrollingX(container, _containerData[K_CBX]);
@@ -1962,12 +2168,12 @@ window.uss = {
                                                               DEFAULT_XSTEP_LENGTH_CALCULATOR;
 
       let _stepLength = _stepLengthCalculator(
-        _remaningScrollAmount, //Remaning scroll amount
+        _remaningScrollAmount,  //Remaning scroll amount
         _containerData[K_OTSX], //Original timestamp
         timestamp,              //Current timestamp
         _containerData[K_TSAX], //Total scroll amount
-        _currentXPosition,     //Current position
-        _finalXPosition,       //Final position
+        _currentPosition,       //Current position
+        _finalPosition,         //Final position
         container               //Container
       );
       
@@ -1975,36 +2181,42 @@ window.uss = {
       if(_scrollID !== _containerData[K_IDX]) return; 
 
       //The current scroll-animation has been altered by the StepLengthCalculator.
-      if(_finalXPosition !== _containerData[K_FPX]) {  
+      if(_finalPosition !== _containerData[K_FPX]) {  
         _containerData[K_IDX] = window.requestAnimationFrame(_stepX); 
         return;
       } 
 
       //The StepLengthCalculator returned an invalid stepLength.
-      if(!Number.isFinite(_stepLength)) {
-        uss._warningLogger(_stepLength, "is not a valid step length", true);
+      if (!Number.isFinite(_stepLength)) {
+        uss._warningLogger(
+          {
+            subject: _stepLength,
+            primaryMsg: DEFAULT_WARNING_PRIMARY_MSG_2,
+            useSubjectQuotes: true
+          }
+        );
 
         _stepLength = DEFAULT_XSTEP_LENGTH_CALCULATOR(
-          _remaningScrollAmount, //Remaning scroll amount
+          _remaningScrollAmount,  //Remaning scroll amount
           _containerData[K_OTSX], //Original timestamp
           timestamp,              //Current timestamp
           _containerData[K_TSAX], //Total scroll amount
-          _currentXPosition,     //Current position
-          _finalXPosition,       //Final position
+          _currentPosition,       //Current position
+          _finalPosition,         //Final position
           container               //Container
         );
       }
 
       if(_remaningScrollAmount <= _stepLength) {
-        _scroll(_finalXPosition);
+        _scroll(_finalPosition);
         uss.stopScrollingX(container, _containerData[K_CBX]);
         return;
       }
 
-      _scroll(_currentXPosition + _stepLength * _direction);
+      _scroll(_currentPosition + _stepLength * _direction);
 
-      //The API tried to scroll but the finalXPosition was beyond the scroll limit of the container.
-      if(_stepLength !== 0 && _currentXPosition === _scrollXCalculator()) {
+      //The API tried to scroll but the final position was beyond the scroll limit of the container.
+      if(_stepLength !== 0 && _currentPosition === _scrollXCalculator()) {
         uss.stopScrollingX(container, _containerData[K_CBX]);
         return;
       }
@@ -2012,28 +2224,36 @@ window.uss = {
       _containerData[K_IDX] = window.requestAnimationFrame(_stepX);
     }
   },
-  scrollYTo: (finalYPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollYTo"}) => {
-    if(!Number.isFinite(finalYPosition)) {
-      uss._errorLogger(options.debugString, "the finalYPosition to be a number", finalYPosition);
+  scrollYTo: (finalPosition, container = uss._pageScroller, callback, containScroll = false, options) => {
+    if(!Number.isFinite(finalPosition)) {
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "scrollYTo", { secondaryMsg: finalPosition }));
       return;
     }
+    
+    options = MERGE_OBJECTS(options, { subject: "scrollYTo" });
 
     //The container cannot be scrolled on the y-axis.
     const _maxScrollY = uss.getMaxScrollY(container, false, options);
-    if(_maxScrollY < 1) {
-      uss._warningLogger(container, "is not scrollable on the y-axis", false);
+    if (_maxScrollY < 1) {
+      uss._warningLogger(
+        {
+          subject: container,
+          primaryMsg: "is not scrollable on the y-axis",
+          useSubjectQuotes: false
+        }
+      );
       uss.stopScrollingY(container, callback);
       return;
     }
 
     //Limit the final position to the [0, maxScrollY] interval. 
     if(containScroll) {
-      if(finalYPosition < 0) finalYPosition = 0;
-      else if(finalYPosition > _maxScrollY) finalYPosition = _maxScrollY;
+      if(finalPosition < 0) finalPosition = 0;
+      else if(finalPosition > _maxScrollY) finalPosition = _maxScrollY;
     }
 
     const _scrollYCalculator = uss.getScrollYCalculator(container);
-    let _totalScrollAmount = finalYPosition - _scrollYCalculator();
+    let _totalScrollAmount = finalPosition - _scrollYCalculator();
     const _direction = _totalScrollAmount > 0 ? 1 : -1;
     _totalScrollAmount *= _direction;
 
@@ -2048,7 +2268,7 @@ window.uss = {
     //If user prefers reduced motion
     //the API rolls back to the default "jump-to-position" behavior.
     if(uss._reducedMotion) {
-      _scroll(finalYPosition);
+      _scroll(finalPosition);
       uss.stopScrollingY(container, callback);
       return;
     }
@@ -2058,11 +2278,11 @@ window.uss = {
     //  1) A scroll-animation is already being performed and it can be repurposed.
     //  2) No scroll-animations are being performed, no optimization can be done.
     const _containerData = uss._containersData.get(container);
-    _containerData[K_FPY] = finalYPosition;      //finalYPosition
-    _containerData[K_SDY] = _direction;          //direction
-    _containerData[K_TSAY] = _totalScrollAmount; //totalScrollAmount
-    _containerData[K_OTSY] = NO_VAL;             //originalTimestamp
-    _containerData[K_CBY] = callback;            //callback
+    _containerData[K_FPY] = finalPosition;       //Final position
+    _containerData[K_SDY] = _direction;          //Direction
+    _containerData[K_TSAY] = _totalScrollAmount; //Total scroll amount
+    _containerData[K_OTSY] = NO_VAL;             //Original timestamp
+    _containerData[K_CBY] = callback;            //Callback
 
     //A scroll-animation is already being performed and
     //the scroll-animation's informations have already been updated.
@@ -2072,10 +2292,10 @@ window.uss = {
     _containerData[K_IDY] = window.requestAnimationFrame(_stepY);
      
     function _stepY(timestamp) {
-      const _finalYPosition = _containerData[K_FPY];
+      const _finalPosition = _containerData[K_FPY];
       const _direction = _containerData[K_SDY];
-      const _currentYPosition = _scrollYCalculator();
-      const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _direction;
+      const _currentPosition = _scrollYCalculator();
+      const _remaningScrollAmount = (_finalPosition - _currentPosition) * _direction;
 
       if(_remaningScrollAmount < 1) {
         uss.stopScrollingY(container, _containerData[K_CBY]);
@@ -2091,12 +2311,12 @@ window.uss = {
                                                               DEFAULT_YSTEP_LENGTH_CALCULATOR;
 
       let _stepLength = _stepLengthCalculator(
-        _remaningScrollAmount, //Remaning scroll amount
+        _remaningScrollAmount,  //Remaning scroll amount
         _containerData[K_OTSY], //Original timestamp
         timestamp,              //Current timestamp
         _containerData[K_TSAY], //Total scroll amount
-        _currentYPosition,     //Current position
-        _finalYPosition,       //Final position
+        _currentPosition,       //Current position
+        _finalPosition,         //Final position
         container               //Container
       );
       
@@ -2104,36 +2324,42 @@ window.uss = {
       if(_scrollID !== _containerData[K_IDY]) return; 
 
       //The current scroll-animation has been altered by the StepLengthCalculator.
-      if(_finalYPosition !== _containerData[K_FPY]) {  
+      if(_finalPosition !== _containerData[K_FPY]) {  
         _containerData[K_IDY] = window.requestAnimationFrame(_stepY); 
         return;
       } 
       
       //The StepLengthCalculator returned an invalid stepLength.
-      if(!Number.isFinite(_stepLength)) {
-        uss._warningLogger(_stepLength, "is not a valid step length", true);
+      if (!Number.isFinite(_stepLength)) {
+        uss._warningLogger(
+          {
+            subject: _stepLength,
+            primaryMsg: DEFAULT_WARNING_PRIMARY_MSG_2,
+            useSubjectQuotes: true
+          }
+        );
 
         _stepLength = DEFAULT_YSTEP_LENGTH_CALCULATOR(
-          _remaningScrollAmount, //Remaning scroll amount
+          _remaningScrollAmount,  //Remaning scroll amount
           _containerData[K_OTSY], //Original timestamp
           timestamp,              //Current timestamp
           _containerData[K_TSAY], //Total scroll amount
-          _currentYPosition,     //Current position
-          _finalYPosition,       //Final position
+          _currentPosition,       //Current position
+          _finalPosition,         //Final position
           container               //Container
         );
       }
 
       if(_remaningScrollAmount <= _stepLength) {
-        _scroll(_finalYPosition);
+        _scroll(_finalPosition);
         uss.stopScrollingY(container, _containerData[K_CBY]);
         return;
       }
 
-      _scroll(_currentYPosition + _stepLength * _direction);
+      _scroll(_currentPosition + _stepLength * _direction);
 
-      //The API tried to scroll but the finalYPosition was beyond the scroll limit of the container.
-      if(_stepLength !== 0 && _currentYPosition === _scrollYCalculator()) {
+      //The API tried to scroll but the final position was beyond the scroll limit of the container.
+      if(_stepLength !== 0 && _currentPosition === _scrollYCalculator()) {
         uss.stopScrollingY(container, _containerData[K_CBY]);
         return;
       }
@@ -2141,11 +2367,14 @@ window.uss = {
       _containerData[K_IDY] = window.requestAnimationFrame(_stepY);
     }
   },
-  scrollXBy: (deltaX, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollXBy"}) => {
+  //TODO: change deltaX to delta, finalXPosition to finalPosition and maxScrollX to maxScroll
+  scrollXBy: (deltaX, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options) => {
     if(!Number.isFinite(deltaX)) {
-      uss._errorLogger(options.debugString, "the deltaX to be a number", deltaX);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "scrollXBy", { secondaryMsg: deltaX }));
       return;
     }
+
+    options = MERGE_OBJECTS(options, { subject: "scrollXBy" });
 
     const _currentXPosition = uss.getScrollXCalculator(container, options)();
     if(!stillStart) {
@@ -2193,12 +2422,15 @@ window.uss = {
 
     uss.scrollXTo(_currentXPosition + deltaX, container, callback, containScroll, options);
   },
-  scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollYBy"}) => {
+  //TODO: change deltaX to delta, finalXPosition to finalPosition and maxScrollX to maxScroll
+  scrollYBy: (deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options) => {
     if(!Number.isFinite(deltaY)) {
-      uss._errorLogger(options.debugString, "the deltaY to be a number", deltaY);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "scrollYBy", { secondaryMsg: deltaY }));
       return;
     }
 
+    options = MERGE_OBJECTS(options, { subject: "scrollYBy" });
+    
     const _currentYPosition = uss.getScrollYCalculator(container, options)();
     if(!stillStart) {
       const _containerData = uss._containersData.get(container) || [];
@@ -2244,12 +2476,15 @@ window.uss = {
 
     uss.scrollYTo(_currentYPosition + deltaY, container, callback, containScroll, options);
   },
-  scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback, containScroll = false, options = {debugString: "scrollTo"}) => {
+  scrollTo: (finalXPosition, finalYPosition, container = uss._pageScroller, callback, containScroll = false, options) => {
+    options = MERGE_OBJECTS(options, { subject: "scrollTo" });
+
     if(typeof callback !== "function") {
       uss.scrollXTo(finalXPosition, container, NO_VAL, containScroll, options);
       uss.scrollYTo(finalYPosition, container, NO_VAL, containScroll, options);
       return;
     }
+
     //Execute the callback only if the initialization has finished and 
     //the scroll-animation on the y-axis has finished too or it has been altered.
     const _scrollXCallback = () => {
@@ -2268,8 +2503,10 @@ window.uss = {
     _initPhase = false;
     uss.scrollYTo(finalYPosition, container, _scrollYCallback, containScroll, options);
   },
-  scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options = {debugString: "scrollBy"}) => {
-    if(typeof callback !== "function") {
+  scrollBy: (deltaX, deltaY, container = uss._pageScroller, callback, stillStart = true, containScroll = false, options) => {
+    options = MERGE_OBJECTS(options, { subject: "scrollBy" });
+    
+    if (typeof callback !== "function") {
       uss.scrollXBy(deltaX, container, NO_VAL, stillStart, containScroll, options);
       uss.scrollYBy(deltaY, container, NO_VAL, stillStart, containScroll, options);
       return;
@@ -2294,7 +2531,9 @@ window.uss = {
     _initPhase = false;
     uss.scrollYBy(deltaY, container, _scrollYCallback, stillStart, containScroll, options);
   },
-  scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoView"}) => {
+  scrollIntoView: (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options) => {
+    options = MERGE_OBJECTS(options, { subject: "scrollIntoView" });
+
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
     
@@ -2389,7 +2628,9 @@ window.uss = {
       else _callback();
     }
   },
-  scrollIntoViewIfNeeded: (element, alignToCenter = true, callback, includeHiddenParents = false, options = {debugString: "scrollIntoViewIfNeeded"}) => {
+  scrollIntoViewIfNeeded: (element, alignToCenter = true, callback, includeHiddenParents = false, options) => {
+    options = MERGE_OBJECTS(options, { subject: "scrollIntoViewIfNeeded" });
+
     let _containerIndex = -1;
     const _containers = uss.getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
     
@@ -2508,7 +2749,7 @@ window.uss = {
       else _callback();
     }
   },
-  stopScrollingX: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingX"}) => {
+  stopScrollingX: (container = uss._pageScroller, callback, options) => {
     const _containerData = uss._containersData.get(container);
     
     if(_containerData) {
@@ -2524,13 +2765,13 @@ window.uss = {
 
       _containerData[K_TSCX] = NO_VAL; //Temporary StepLengthCalculator on the x-axis
     } else if(!INIT_CONTAINER_DATA(container)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "stopScrollingX", { secondaryMsg: container }));
       return;
     }
 
     if(typeof callback === "function") callback();
   },
-  stopScrollingY: (container = uss._pageScroller, callback, options = {debugString: "stopScrollingY"}) => {
+  stopScrollingY: (container = uss._pageScroller, callback, options) => {
     const _containerData = uss._containersData.get(container);
     
     if(_containerData) {
@@ -2546,13 +2787,13 @@ window.uss = {
 
       _containerData[K_TSCY] = NO_VAL; //Temporary StepLengthCalculator on the y-axis
     } else if(!INIT_CONTAINER_DATA(container)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "stopScrollingY", { secondaryMsg: container }));
       return;
     }
 
     if(typeof callback === "function") callback();
   },
-  stopScrolling: (container = uss._pageScroller, callback, options = {debugString: "stopScrolling"}) => {
+  stopScrolling: (container = uss._pageScroller, callback, options) => {
     const _containerData = uss._containersData.get(container);
     
     if(_containerData) {
@@ -2564,7 +2805,7 @@ window.uss = {
       _containerData[K_TSCX] = NO_VAL; //Temporary StepLengthCalculator on the x-axis
       _containerData[K_TSCY] = NO_VAL; //Temporary StepLengthCalculator on the y-axis
     } else if(!INIT_CONTAINER_DATA(container)) {
-      uss._errorLogger(options.debugString, "the container to be an Element or the Window", container);
+      uss._errorLogger(CREATE_LOG_OPTIONS(options, "stopScrolling", { secondaryMsg: container }));
       return;
     }
 
@@ -2583,9 +2824,14 @@ window.uss = {
 
     if(typeof callback === "function") callback();
   },
-  //TODO: add a cypress test for hrefSetup using the concepts of scrollIntoView/IfNeeded tests
 
-  hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false, options = { debugString: "hrefSetup" }) => {
+
+
+
+  //TODO: add a cypress test for hrefSetup using the concepts of scrollIntoView/IfNeeded tests
+  hrefSetup: (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false, options) => {
+    options = MERGE_OBJECTS(options, { subject: "hrefSetup" });
+
     const _init = typeof init === "function" ? init : (anchor, el, event) => event.stopPropagation();
     const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
     const _updateHistory =
@@ -2638,7 +2884,13 @@ window.uss = {
         const _fragmentElement = document.getElementById(_fragment) ||
                                  document.querySelector("a[name='" + _fragment + "']");
         if (!_fragmentElement) {
-          uss._warningLogger("#" + _fragment, "is not a valid anchor's destination", true);
+          uss._warningLogger(
+            {
+              subject: "#" + _fragment,
+              primaryMsg: DEFAULT_WARNING_PRIMARY_MSG_1,
+              useSubjectQuotes: true
+            }
+          );
           continue;
         }
       }

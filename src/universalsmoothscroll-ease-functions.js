@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * Internally used to define the standard behavior of a stepLengthCalculator.
  * The progressEvaluator function defines at which % of the total duration the scroll-animation is at.
