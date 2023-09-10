@@ -45,6 +45,7 @@
  */
 
 import { SmoothScrollBuilder } from "./uss-builder-smoothscroll.js";
+import * as uss from "./../main/uss.js";
 
 const MANDATORY_SNAP = 2;
 const PROXIMITY_SNAP = 1;

@@ -20,6 +20,7 @@
  * - smooth scrolling for carousels (perhaps leave this implementation to the developer?)
  * 
  * - convert to single _ naming scheme for all private variables
+ * - use the IS_OBJECT of the common module
  * */
 
 
@@ -41,6 +42,7 @@ import { ElasticScrollBuilder } from "./uss-builder-elasticscroll.js";
 import { SmoothScrollBuilder } from "./uss-builder-smoothscroll.js";
 import { SmoothScrollbarBuilder } from "./uss-builder-smoothscrollbar.js";
 import { SnapScrollBuilder } from "./uss-builder-snapscroll.js";
+import * as uss from "./../main/uss.js";
 
 /**
  * This function tests if the passed input is an instance of Object.

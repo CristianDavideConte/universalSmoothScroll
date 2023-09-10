@@ -1,3 +1,5 @@
+import * as uss from "../main/uss.js";
+
 /**
  * Internally used to define the standard behavior of a stepLengthCalculator.
  * The progressEvaluator function defines at which % of the total duration the scroll-animation is at.

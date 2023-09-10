@@ -1,4 +1,5 @@
 import { SmoothScrollBuilder } from "./uss-builder-smoothscroll.js";
+import * as uss from "./../main/uss.js";
 
 export class SmoothScrollbarBuilder extends SmoothScrollBuilder {
 

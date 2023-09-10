@@ -7,14 +7,18 @@
     <link rel = "icon" type = "image/png" href = "./docs/images/favicon.png">
     <link rel = "stylesheet" type = "text/css" href = "./index.css">
     
-    <script async src = "./src/universalsmoothscroll.js"></script>
-    <script async src = "./src/universalsmoothscroll-ease-functions.js" type = "module"></script>
-    <script async src = "./src/universalsmoothscroll-dev-helpers.js" type = "module"></script>
+    <script async src = "./src/main/uss.js" type = "module"></script>
+    <script async src = "./src/extensions/uss-easings.js" type = "module"></script>
+    <script async src = "./src/extensions/uss-dev-helpers.js" type = "module"></script>
 
     <!-- Work in progress -->
     <script async src = "./src/preset-library-beta/universalsmoothscroll-presets.js" type = "module"></script> 
     <!-- Work in progress -->
 
+    <!-- Test -->
+    <script async src = "./src/main/test_import.js" type = "module"></script>
+    <script async src = "./src/main/test_import_2.js" type = "module"></script>
+    <!-- Test -->
   </head>
   <body>
     <div id = "betaBanner"><p>ver. 7.0 beta</p></div>
@@ -118,6 +122,8 @@
 </html>
 
 <script type = "module"> 
+  import * as uss from "./src/main/uss.js";
+
   import {
     CUSTOM_CUBIC_HERMITE_SPLINE,
     CUSTOM_BEZIER_CURVE,
@@ -149,12 +155,12 @@
     EASE_IN_OUT_BOUNCE,
     EASE_ELASTIC_X, //Will be deprecated
     EASE_ELASTIC_Y  //Will be deprecated
-  } from "./src/universalsmoothscroll-ease-functions.js";
+  } from "./src/extensions/uss-easings.js"; 
   
   import {  
     isValidStepLengthCalculator,
     getBrowserRefreshRate
-  } from "./src/universalsmoothscroll-dev-helpers.js";
+  } from "./src/extensions/uss-dev-helpers.js";
 
   import {
     addSmoothScrolling,

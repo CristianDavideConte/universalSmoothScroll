@@ -1,4 +1,8 @@
-//TODO: The object check should a function shared across all the API components. 
+import * as uss from "../main/uss.js";
+
+import {
+    IS_OBJECT
+} from "../main/common.js";
 
 /**
  * This function tests whether the passed fun is a valid stepLengthCalculator.
@@ -22,7 +26,7 @@ export async function isValidStepLengthCalculator(
     }
 ) {
     //Check if the options parameter is a valid object.
-    if (options === null || typeof options !== "object" || Array.isArray(options)) {
+    if (!(IS_OBJECT(options))) {
         uss._errorLogger("isValidStepLengthCalculator", "the options parameter to be an object", options);
         return false;
     }
