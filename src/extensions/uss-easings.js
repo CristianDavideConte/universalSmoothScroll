@@ -1,3 +1,6 @@
+//TODO: use the new error/warning loggers
+//TODO: import only the variables/functions used by this module instead of everything.
+
 import * as uss from "../main/uss.js";
 
 /**

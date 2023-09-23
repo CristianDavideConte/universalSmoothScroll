@@ -1,3 +1,5 @@
+//TODO: move comments above the functions signatures.
+
 import {
     K_IDX,
     K_IDY,

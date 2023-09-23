@@ -1,3 +1,6 @@
+//TODO: use the new error/warning loggers
+//TODO: import only the variables/functions used by this module instead of everything.
+
 import * as uss from "../main/uss.js";
 
 import {
@@ -26,7 +29,7 @@ export async function isValidStepLengthCalculator(
     }
 ) {
     //Check if the options parameter is a valid object.
-    if (!(IS_OBJECT(options))) {
+    if (!IS_OBJECT(options)) {
         uss._errorLogger("isValidStepLengthCalculator", "the options parameter to be an object", options);
         return false;
     }
