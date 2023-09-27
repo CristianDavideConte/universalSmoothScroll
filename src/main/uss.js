@@ -1,4 +1,6 @@
 //TODO: move comments above the functions signatures.
+//TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
+//TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
 
 import {
     K_IDX,
@@ -64,6 +66,9 @@ import {
     DEFAULT_WARNING_PRIMARY_MSG_2
 } from "./common.js"
 
+/**
+ * TODO: write comment
+ */
 const DEFAULT_RESIZE_OBSERVER = {
     callbackFrameId: NO_VAL,
     debouncedFrames: 0,
@@ -158,7 +163,9 @@ const DEFAULT_RESIZE_OBSERVER = {
     }
 }
 
-//TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
+/**
+ * TODO: write comment
+ */
 const DEFAULT_MUTATION_OBSERVER = {
     callbackFrameId: NO_VAL,
     debouncedFrames: 0,
@@ -278,6 +285,9 @@ const DEFAULT_MUTATION_OBSERVER = {
     }
 }
 
+/**
+ * TODO: write comment
+ */
 const INIT_CONTAINER_DATA = (container, containerData = []) => {
     if (container === window) {
         let _debounceResizeEvent = false;
@@ -411,6 +421,13 @@ export const getWindowHeight = () => _windowHeight;
 export const getReducedMotionState = () => _reducedMotion;
 export const getDebugMode = () => _debugMode;
 
+
+/**
+ * Checks whether `container` is being scrolled horizontally.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns `true` if a scroll-animation on the x-axis of `container` is currently being performed, `false` otherwise.
+ */
 export const isXScrolling = (container = _pageScroller, options) => {
     const _containerData = _containersData.get(container);
 
@@ -421,6 +438,13 @@ export const isXScrolling = (container = _pageScroller, options) => {
     _errorLogger(CREATE_LOG_OPTIONS(options, "isXScrolling", { secondaryMsg: container }));
 }
 
+
+/**
+ * Checks whether `container` is being scrolled vertically.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns `true` if a scroll-animation on the y-axis of `container` is currently being performed, `false` otherwise.
+ */
 export const isYScrolling = (container = _pageScroller, options) => {
     const _containerData = _containersData.get(container);
 
@@ -431,6 +455,13 @@ export const isYScrolling = (container = _pageScroller, options) => {
     _errorLogger(CREATE_LOG_OPTIONS(options, "isYScrolling", { secondaryMsg: container }));
 }
 
+
+/**
+ * Checks whether `container` is being scrolled.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns `true` if a scroll-animation is currently being performed on `container`, `false` otherwise.
+ */
 export const isScrolling = (container = _pageScroller, options) => {
     const _containerData = _containersData.get(container);
 
@@ -441,6 +472,13 @@ export const isScrolling = (container = _pageScroller, options) => {
     _errorLogger(CREATE_LOG_OPTIONS(options, "isScrolling", { secondaryMsg: container }));
 }
 
+
+/**
+ * Returns the horizontal pixel position `container` has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns Returns the target `scrollLeft`/`scrollX` pixel position of `container`.
+ */
 export const getFinalXPosition = (container = _pageScroller, options) => {
     options = MERGE_OBJECTS(options, { subject: "getFinalXPosition" });
 
@@ -452,6 +490,13 @@ export const getFinalXPosition = (container = _pageScroller, options) => {
     return _containerData[K_FPX] || getScrollXCalculator(container, options)();
 }
 
+
+/**
+ * Returns the vertical pixel position `container` has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns Returns the target `scrollTop`/`scrollY` pixel position of `container`.
+ */
 export const getFinalYPosition = (container = _pageScroller, options) => {
     options = MERGE_OBJECTS(options, { subject: "getFinalYPosition" });
 
@@ -463,6 +508,13 @@ export const getFinalYPosition = (container = _pageScroller, options) => {
     return _containerData[K_FPY] || getScrollYCalculator(container, options)();
 }
 
+
+/**
+ * Returns the direction of the current scroll-animation on the x-axis of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns `1` if the target `scrollLeft`/`scrollX` is higher than the current one, `-1` it's lower, `0` otherwise.
+ */
 export const getScrollXDirection = (container = _pageScroller, options) => {
     const _containerData = _containersData.get(container);
 
@@ -474,6 +526,13 @@ export const getScrollXDirection = (container = _pageScroller, options) => {
     _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollXDirection", { secondaryMsg: container }));
 }
 
+
+/**
+ * Returns the direction of the current scroll-animation on the y-axis of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns `1` if the target `scrollTop`/`scrollY` is higher than the current one, `-1` it's lower, `0` otherwise.
+ */
 export const getScrollYDirection = (container = _pageScroller, options) => {
     const _containerData = _containersData.get(container);
 
@@ -485,6 +544,14 @@ export const getScrollYDirection = (container = _pageScroller, options) => {
     _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollYDirection", { secondaryMsg: container }));
 }
 
+
+/**
+ * Returns a `StepLengthCalculator` set for `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the x-axis of `container`, otherwise returns the `fixed` one.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The ease function which currently controls the scroll-animations on the x-axis of `container`.
+ */
 export const getXStepLengthCalculator = (container = _pageScroller, getTemporary = false, options) => {
     const _containerData = _containersData.get(container);
 
@@ -495,6 +562,14 @@ export const getXStepLengthCalculator = (container = _pageScroller, getTemporary
     _errorLogger(CREATE_LOG_OPTIONS(options, "getXStepLengthCalculator", { secondaryMsg: container }));
 }
 
+
+/**
+ * Returns a `StepLengthCalculator` set for `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the y-axis of `container`, otherwise returns the `fixed` one.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The ease function which currently controls the scroll-animations on the y-axis of `container`.
+ */
 export const getYStepLengthCalculator = (container = _pageScroller, getTemporary = false, options) => {
     const _containerData = _containersData.get(container);
 

@@ -1,6 +1,6 @@
-//TODO: remove the uss.something calls and import only the needed variables + solve setters for private variables
-//TODO: finish comments
 //TODO: use backticks (``) instead of quotes ("") for properties names in comments.
+//TODO: remove the uss.something calls and import only the needed variables + solve setters for private variables
+//TODO: use the IS_OBJECT function everywhere in the uss modules
 import * as uss from "./uss.js";
 
 /**
@@ -243,12 +243,12 @@ export const REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/
  * A string containing part of an error message.
  * Can be used to build the `options` object for the error logger.   
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_1 = "the input to be an Element or the Window";
+export const DEFAULT_ERROR_PRIMARY_MSG_1 = "the input to be an instance of Element or window";
 /**
  * A string containing part of an error message.
  * Can be used to build the `options` object for the error logger.   
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_2 = "the input to be an Element";
+export const DEFAULT_ERROR_PRIMARY_MSG_2 = "the input to be an instance of Element";
 /**
  * A string containing part of an error message.
  * Can be used to build the `options` object for the error logger.   
@@ -344,7 +344,6 @@ export const DEFAULT_LOG_OPTIONS = new Map([
 ]);
 
 
-//TODO: use this function everywhere in the uss modules
 /**
  * Checks if the passed value is an object.
  * @param {*} value The value to be checked. 
@@ -524,7 +523,7 @@ export const CLEAR_COMMON_DATA = (containerData) => {
  * @param {*} total The total amount of pixels the current scroll-animation needed to scroll.
  * @param {*} currentPos The scrollLeft/scrollX pixel position of the container.
  * @param {*} finalPos The scrollLeft/scrollX pixel position the container has to reach.
- * @param {*} container An instance of Element or the Window.
+ * @param {*} container An instance of `Element` or `window`.
  * @returns The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
  */
 export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
@@ -544,7 +543,7 @@ export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, tim
  * @param {*} total The total amount of pixels the current scroll-animation needed to scroll.
  * @param {*} currentPos The scrollTop/scrollY pixel position of the container.
  * @param {*} finalPos The scrollTop/scrollY pixel position the container has to reach.
- * @param {*} container An instance of Element or the Window.
+ * @param {*} container An instance of `Element` or `window`.
  * @returns The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
  */
 export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
