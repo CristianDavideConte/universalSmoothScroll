@@ -1,6 +1,7 @@
 //TODO: move comments above the functions signatures.
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
 //TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
+//TODO: rename "forceCalculation" to "flushCache"
 
 import {
     K_IDX,
@@ -580,6 +581,12 @@ export const getYStepLengthCalculator = (container = _pageScroller, getTemporary
     _errorLogger(CREATE_LOG_OPTIONS(options, "getYStepLengthCalculator", { secondaryMsg: container }));
 }
 
+
+/**
+ * Returns the highest number of pixels a (browser) scrollbar can occupy. 
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise the value is returned from cache.  
+ * @returns The value of the `_scrollbarsMaxDimension` property.
+ */
 export const getScrollbarsMaxDimension = (forceCalculation = false) => {
     /**
      * Calculate the maximum sizes of scrollbars on the webpage by:
@@ -607,6 +614,12 @@ export const getScrollbarsMaxDimension = (forceCalculation = false) => {
     return _scrollbarsMaxDimension;
 }
 
+
+/**
+ * Returns the element that scrolls `window` when it's scrolled and that (viceversa) is scrolled when `window` is scrolled.
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise the value is returned from cache.  
+ * @returns The value of the `_windowScroller` property.
+ */
 export const getWindowScroller = (forceCalculation = false) => {
     if (forceCalculation || !_windowScroller) {
         const _oldData = _containersData.get(window);
@@ -709,6 +722,13 @@ export const getWindowScroller = (forceCalculation = false) => {
     return _windowScroller;
 }
 
+
+/**
+ * Returns the element that scrolls the document.
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise the value is returned from cache.  
+ * @returns The value of the `_pageScroller` property.
+ */
+//TODO: is the options object needed here?
 export const getPageScroller = (forceCalculation = false) => {
     //Check if the _pageScroller has already been calculated.
     if (forceCalculation || !_pageScroller) {
@@ -740,6 +760,13 @@ export const getPageScroller = (forceCalculation = false) => {
     return _pageScroller;
 }
 
+/**
+ * Returns the time (in ms) between two consecutive browser's frame repaints (e.g. 16.6ms at 60fps).
+ * @param {*} forceCalculation If `true`, `calcFramesTimes` is internally called to initialize a new frames' time calculation, otherwise just acts as a getter.
+ * @param {*} callback A callback function passed to `calcFramesTimes` if `forceCalculation` is `true` (deferred execution), otherwise immediately executed.
+ * @param {*} options `[Private]` The input object used by the uss logger test.
+ * @returns The value of the `_framesTime` property.
+ */
 export const getFramesTime = (forceCalculation = false, callback, options) => {
     options = MERGE_OBJECTS(options, { subject: "getFramesTime", requestPhase: 0 });
 
@@ -748,6 +775,14 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
     return _framesTime;
 }
 
+
+/**
+ * Sets (or unsets if specified) the `StepLengthCalculator` for the x-axis of `container`.
+ * @param {*} newCalculator A `StepLengthCalculator` or `undefined`. 
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
+ * @param {*} options `[Private]` The input object used by the uss logger test.
+ */
 export const setXStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
     if (typeof newCalculator !== "function" && _isSettingOp) {
@@ -773,6 +808,14 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
     }
 }
 
+
+/**
+ * Sets (or unsets if specified) the `StepLengthCalculator` for the y-axis of `container`.
+ * @param {*} newCalculator A `StepLengthCalculator` or `undefined`. 
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
+ * @param {*} options `[Private]` The input object used by the uss logger test.
+ */
 export const setYStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
     if (typeof newCalculator !== "function" && _isSettingOp) {
@@ -798,6 +841,13 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
     }
 }
 
+/**
+ * Sets (or unsets if specified) the `StepLengthCalculator` for the both axes of `container`.
+ * @param {*} newCalculator A `StepLengthCalculator` or `undefined`. 
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
+ * @param {*} options `[Private]` The input object used by the uss logger test.
+ */
 export const setStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
     if (typeof newCalculator !== "function" && _isSettingOp) {
