@@ -740,7 +740,7 @@ export const getPageScroller = (forceCalculation = false) => {
 
         /**
          * The _pageScroller is the element that scrolls the further between _html and _body.
-         * If there's a tie or neither of those can scroll, it's defaulted to the Window.
+         * If there's a tie or neither of those can scroll, it's defaulted to `window`.
          */
         if (
             (_htmlMaxScrollX > _bodyMaxScrollX && _htmlMaxScrollY >= _bodyMaxScrollY) ||
@@ -760,11 +760,12 @@ export const getPageScroller = (forceCalculation = false) => {
     return _pageScroller;
 }
 
+
 /**
  * Returns the time (in ms) between two consecutive browser's frame repaints (e.g. 16.6ms at 60fps).
  * @param {*} forceCalculation If `true`, `calcFramesTimes` is internally called to initialize a new frames' time calculation, otherwise just acts as a getter.
- * @param {*} callback A callback function passed to `calcFramesTimes` if `forceCalculation` is `true` (deferred execution), otherwise immediately executed.
- * @param {*} options `[Private]` The input object used by the uss logger test.
+ * @param {*} callback A callback function passed to `calcFramesTimes` if `forceCalculat ion` is `true` (deferred execution), otherwise immediately executed.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
  * @returns The value of the `_framesTime` property.
  */
 export const getFramesTime = (forceCalculation = false, callback, options) => {
@@ -781,7 +782,7 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
  * @param {*} newCalculator A `StepLengthCalculator` or `undefined`. 
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
- * @param {*} options `[Private]` The input object used by the uss logger test.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
  */
 export const setXStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
@@ -814,7 +815,7 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
  * @param {*} newCalculator A `StepLengthCalculator` or `undefined`. 
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
- * @param {*} options `[Private]` The input object used by the uss logger test.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
  */
 export const setYStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
@@ -841,12 +842,13 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
     }
 }
 
+
 /**
  * Sets (or unsets if specified) the `StepLengthCalculator` for the both axes of `container`.
  * @param {*} newCalculator A `StepLengthCalculator` or `undefined`. 
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
- * @param {*} options `[Private]` The input object used by the uss logger test.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
  */
 export const setStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
@@ -878,6 +880,12 @@ export const setStepLengthCalculator = (newCalculator, container = _pageScroller
     }
 }
 
+
+/**
+ * Sets (or unsets if specified) the default number of pixels scrolled during a single scroll-animation's step (`_xStepLength` property) on the x-axis of all containers. 
+ * @param {*} newStepLength A finite `Number` > 0.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const setXStepLength = (newStepLength = DEFAULT_XSTEP_LENGTH, options) => {
     if (!Number.isFinite(newStepLength) || newStepLength <= 0) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLength", { secondaryMsg: newStepLength }));
@@ -886,6 +894,12 @@ export const setXStepLength = (newStepLength = DEFAULT_XSTEP_LENGTH, options) =>
     _xStepLength = newStepLength;
 }
 
+
+/**
+ * Sets (or unsets if specified) the default number of pixels scrolled during a single scroll-animation's step (`_yStepLength` property) on the y-axis of all containers. 
+ * @param {*} newStepLength A finite `Number` > 0.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) => {
     if (!Number.isFinite(newStepLength) || newStepLength <= 0) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLength", { secondaryMsg: newStepLength }));
@@ -894,7 +908,14 @@ export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) =>
     _yStepLength = newStepLength;
 }
 
+
+/**
+ * Sets the default number of pixels scrolled during a single scroll-animation's step (`_xStepLength` and `_yStepLength` properties) on any axis of all containers. 
+ * @param {*} newStepLength A finite `Number` > 0.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const setStepLength = (newStepLength, options) => {
+    //TODO: use undefined to unset the values as in the setXStepLength and setYStepLength functions + change comments
     if (!Number.isFinite(newStepLength) || newStepLength <= 0) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLength", { secondaryMsg: newStepLength }));
         return;
@@ -903,6 +924,12 @@ export const setStepLength = (newStepLength, options) => {
     _yStepLength = newStepLength;
 }
 
+
+/**
+ * Sets (or unsets if requested) the minimum number of frames any scroll-animation should last by default (`_minAnimationFrame` property).
+ * @param {*} newMinAnimationFrame A finite `Number` > 0.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES, options) => {
     if (!Number.isFinite(newMinAnimationFrame) || newMinAnimationFrame <= 0) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setMinAnimationFrame", { secondaryMsg: newMinAnimationFrame }));
@@ -911,6 +938,12 @@ export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATIO
     _minAnimationFrame = newMinAnimationFrame;
 }
 
+
+/**
+ * Tells the API which Element scrolls the document (`_pageScroller` property). 
+ * @param {*} newPageScroller An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const setPageScroller = (newPageScroller, options) => {
     if (!_containersData.get(newPageScroller) && !INIT_CONTAINER_DATA(newPageScroller)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setPageScroller", { secondaryMsg: newPageScroller }));
