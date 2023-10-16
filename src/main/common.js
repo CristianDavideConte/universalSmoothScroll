@@ -1,4 +1,4 @@
-//TODO: use backticks (``) instead of quotes ("") for properties names in comments.
+//TODO: use backticks (``) for properties names in comments.
 //TODO: remove the uss.something calls and import only the needed variables + solve setters for private variables
 //TODO: use the IS_OBJECT function everywhere in the uss modules
 import * as uss from "./uss.js";

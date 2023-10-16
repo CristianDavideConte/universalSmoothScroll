@@ -584,7 +584,7 @@ export const getYStepLengthCalculator = (container = _pageScroller, getTemporary
 
 /**
  * Returns the highest number of pixels a (browser) scrollbar can occupy. 
- * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise the value is returned from cache.  
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @returns The value of the `_scrollbarsMaxDimension` property.
  */
 export const getScrollbarsMaxDimension = (forceCalculation = false) => {
@@ -617,7 +617,7 @@ export const getScrollbarsMaxDimension = (forceCalculation = false) => {
 
 /**
  * Returns the element that scrolls `window` when it's scrolled and that (viceversa) is scrolled when `window` is scrolled.
- * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise the value is returned from cache.  
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @returns The value of the `_windowScroller` property.
  */
 export const getWindowScroller = (forceCalculation = false) => {
@@ -725,7 +725,7 @@ export const getWindowScroller = (forceCalculation = false) => {
 
 /**
  * Returns the element that scrolls the document.
- * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise the value is returned from cache.  
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @returns The value of the `_pageScroller` property.
  */
 //TODO: is the options object needed here?
@@ -953,7 +953,12 @@ export const setPageScroller = (newPageScroller, options) => {
 }
 
 
-
+/**
+ * Adds a callback function to the resize callback queue of `container`.
+ * @param {*} newCallback A function that will be invoked when `container` is resized.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 //TODO: add cypress tests
 export const addResizeCallback = (newCallback, container = _pageScroller, options) => {
     if (typeof newCallback !== "function") {
@@ -973,7 +978,12 @@ export const addResizeCallback = (newCallback, container = _pageScroller, option
 }
 
 
-
+/**
+ * Adds a callback function to the mutation callback queue of `container`.
+ * @param {*} newCallback A function that will be invoked when `container` is mutated.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 //TODO: add cypress tests
 export const addMutationCallback = (newCallback, container = _pageScroller, options) => {
     if (typeof newCallback !== "function") {
@@ -993,6 +1003,13 @@ export const addMutationCallback = (newCallback, container = _pageScroller, opti
 }
 
 
+/**
+ * Tells the API which mode should the error/warning messages operate in (`_debugMode` property).
+ * @param {*} newDebugMode This property is **case insensitive**:
+ * - `legacy` for unstyled API messages
+ * - `disabled` to completely disable any API message
+ * - Any other string for styled API messages **(default)**
+ */
 //TODO: perhaps use the errorLogger + options instead
 export const setDebugMode = (newDebugMode = "") => {
     if (typeof newDebugMode === "string") {
@@ -1008,22 +1025,42 @@ export const setDebugMode = (newDebugMode = "") => {
 }
 
 
-export const setErrorLogger = (newErrorLogger = DEFAULT_ERROR_LOGGER, options) => {
-    if (typeof newErrorLogger !== "function") {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setErrorLogger", { secondaryMsg: newErrorLogger }));
+/**
+ * Sets the function that will be invoked when the API generates an error (`_errorLogger` property)
+ * @param {*} newLogger A function which will be passed a single argument that contains the log informations: the `options` object.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
+export const setErrorLogger = (newLogger = DEFAULT_ERROR_LOGGER, options) => {
+    if (typeof newLogger !== "function") {
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setErrorLogger", { secondaryMsg: newLogger }));
         return;
     }
-    _errorLogger = newErrorLogger;
+    _errorLogger = newLogger;
 }
 
-export const setWarningLogger = (newWarningLogger = DEFAULT_WARNING_LOGGER, options) => {
-    if (typeof newWarningLogger !== "function") {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setWarningLogger", { secondaryMsg: newWarningLogger }));
+
+/**
+ * Sets the function that will be invoked when the API generates a warning (`_warningLogger` property)
+ * @param {*} newLogger A function which will be passed a single argument that contains the log informations: the `options` object.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
+export const setWarningLogger = (newLogger = DEFAULT_WARNING_LOGGER, options) => {
+    if (typeof newLogger !== "function") {
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setWarningLogger", { secondaryMsg: newLogger }));
         return;
     }
-    _warningLogger = newWarningLogger;
+    _warningLogger = newLogger;
 }
 
+
+/**
+ * Requests a new frames' time measurement and asynchronously inserts the result into the `_framesTimes` array. 
+ * When the calculation is finished, the `_framesTime` property will be updated accordingly.
+ * @param {*} previousTimestamp The timestamp relative to the previous browser repaint.
+ * @param {*} currentTimestamp The timestamp relative to the current browser repaint.
+ * @param {*} callback A function which is invoked when the requested frames' time measurement has been performed.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, options) => {
     options = MERGE_OBJECTS(options, { subject: "calcFramesTimes", requestPhase: 0 });
 
@@ -1071,14 +1108,40 @@ export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, o
     if (typeof callback === "function") callback();
 }
 
+
+/**
+ * Returns the vertical scrollbar's width _(in px)_ of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The width _(in px)_ of the vertical scrollbar of `container` (can be 0px).
+ */
 export const calcXScrollbarDimension = (container = _pageScroller, forceCalculation = false, options) => {
     return calcScrollbarsDimensions(container, forceCalculation, MERGE_OBJECTS(options, { subject: "calcXScrollbarDimension" }))[0];
 }
 
+
+/**
+ * Returns the horizontal scrollbar's height _(in px)_ of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The height _(in px)_ of the horizontal scrollbar of `container` (can be 0px).
+ */
 export const calcYScrollbarDimension = (container = _pageScroller, forceCalculation = false, options) => {
     return calcScrollbarsDimensions(container, forceCalculation, MERGE_OBJECTS(options, { subject: "calcYScrollbarDimension" }))[1];
 }
 
+
+/**
+ * A shorthand for calling `calcXScrollbarDimension` and `calcYScrollbarDimension` and returning the results into an array.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns An array containing: 
+ * - The width _(in px)_ of the vertical scrollbar of `container` (can be 0px).
+ * - The height _(in px)_ of the horizontal scrollbar of `container` (can be 0px).
+ */
 export const calcScrollbarsDimensions = (container = _pageScroller, forceCalculation = false, options) => {
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
@@ -1163,6 +1226,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
         _containerData[K_HSB]  //Horizontal scrollbar's height
     ];
 }
+
 
 export const calcBordersDimensions = (container = _pageScroller, forceCalculation = false, options) => {
     //Check if the bordersDimensions of the passed container have already been calculated. 
