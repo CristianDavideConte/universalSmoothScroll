@@ -1005,7 +1005,7 @@ export const addMutationCallback = (newCallback, container = _pageScroller, opti
 
 /**
  * Tells the API which mode should the error/warning messages operate in (`_debugMode` property).
- * @param {*} newDebugMode This property is **case insensitive**:
+ * @param {*} newDebugMode A **case insensitive** string between:
  * - `legacy` for unstyled API messages
  * - `disabled` to completely disable any API message
  * - Any other string for styled API messages **(default)**
@@ -1110,11 +1110,11 @@ export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, o
 
 
 /**
- * Returns the vertical scrollbar's width _(in px)_ of `container`.
+ * Returns the size of the vertical scrollbar of `container`.
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @param {*} options `[Private]` The input object used by the uss loggers.
- * @returns The width _(in px)_ of the vertical scrollbar of `container` (can be 0px).
+ * @returns The width of the vertical scrollbar of `container`.
  */
 export const calcXScrollbarDimension = (container = _pageScroller, forceCalculation = false, options) => {
     return calcScrollbarsDimensions(container, forceCalculation, MERGE_OBJECTS(options, { subject: "calcXScrollbarDimension" }))[0];
@@ -1122,11 +1122,11 @@ export const calcXScrollbarDimension = (container = _pageScroller, forceCalculat
 
 
 /**
- * Returns the horizontal scrollbar's height _(in px)_ of `container`.
+ * Returns the size of the horizontal scrollbar of `container`.
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @param {*} options `[Private]` The input object used by the uss loggers.
- * @returns The height _(in px)_ of the horizontal scrollbar of `container` (can be 0px).
+ * @returns The height of the horizontal scrollbar of `container`.
  */
 export const calcYScrollbarDimension = (container = _pageScroller, forceCalculation = false, options) => {
     return calcScrollbarsDimensions(container, forceCalculation, MERGE_OBJECTS(options, { subject: "calcYScrollbarDimension" }))[1];
@@ -1134,13 +1134,13 @@ export const calcYScrollbarDimension = (container = _pageScroller, forceCalculat
 
 
 /**
- * A shorthand for calling `calcXScrollbarDimension` and `calcYScrollbarDimension` and returning the results into an array.
+ * Returns an array containing the size of the 2 scrollbars of `container`.
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
  * @param {*} options `[Private]` The input object used by the uss loggers.
  * @returns An array containing: 
- * - The width _(in px)_ of the vertical scrollbar of `container` (can be 0px).
- * - The height _(in px)_ of the horizontal scrollbar of `container` (can be 0px).
+ * - The width of the vertical scrollbar of `container`
+ * - The height of the horizontal scrollbar of `container`
  */
 export const calcScrollbarsDimensions = (container = _pageScroller, forceCalculation = false, options) => {
     const _oldData = _containersData.get(container);
@@ -1228,6 +1228,17 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
 }
 
 
+/**
+ * Returns an array containing the size of the 4 borders of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns An array containing: 
+ * - Top height of the top border of `container`
+ * - Top width of the right border of `container`
+ * - Top height of the bottom border of `container`
+ * - Top width of the left border of `container`
+ */
 export const calcBordersDimensions = (container = _pageScroller, forceCalculation = false, options) => {
     //Check if the bordersDimensions of the passed container have already been calculated. 
     const _oldData = _containersData.get(container);
@@ -1281,14 +1292,37 @@ export const calcBordersDimensions = (container = _pageScroller, forceCalculatio
     ];
 }
 
+
+/**
+ * Returns the `scrollXCalculator` of `container`.  
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns A function that when invoked returns the real-time `scrollLeft` / `scrollX` value of `container`.
+ */
 export const getScrollXCalculator = (container = _pageScroller, options) => {
     return getScrollCalculators(container, MERGE_OBJECTS(options, { subject: "getScrollXCalculator" }))[0];
 }
 
+
+/**
+ * Returns the `scrollYCalculator` of `container`.  
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns A function that when invoked returns the real-time `scrollTop` / `scrollY` value of `container`.  
+ */
 export const getScrollYCalculator = (container = _pageScroller, options) => {
     return getScrollCalculators(container, MERGE_OBJECTS(options, { subject: "getScrollYCalculator" }))[1];
 }
 
+
+/**
+ * Returns an array containing the `scrollXCalculator` and the `scrollYCalculator` of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns An array containing 2 functions that when invoked return respectively: 
+ * - The real-time `scrollLeft` / `scrollX` value of `container`
+ * - The real-time `scrollTop` / `scrollY` value of `container`
+ */
 export const getScrollCalculators = (container = _pageScroller, options) => {
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
@@ -1301,14 +1335,40 @@ export const getScrollCalculators = (container = _pageScroller, options) => {
     return [_containerData[K_SCX], _containerData[K_SCY]];
 }
 
+
+/**
+ * Returns the `maxScrollX` of `container`.  
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The highest reacheable `scrollLeft` / `scrollX` value of `container`.
+ */
 export const getMaxScrollX = (container = _pageScroller, forceCalculation = false, options) => {
     return getMaxScrolls(container, forceCalculation, MERGE_OBJECTS(options, { subject: "getMaxScrollX" }))[0];
 }
 
+
+/**
+ * Returns the `maxScrollY` of `container`.  
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The highest reacheable `scrollTop` / `scrollY` value of `container`.
+ */
 export const getMaxScrollY = (container = _pageScroller, forceCalculation = false, options) => {
     return getMaxScrolls(container, forceCalculation, MERGE_OBJECTS(options, { subject: "getMaxScrollY" }))[1];
 }
 
+
+/**
+ * Returns an array containing the `maxScrollX` and the `maxScrollY` values of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns An array containing: 
+ * - The highest reacheable `scrollLeft` / `scrollX` value of `container`
+ * - The highest reacheable `scrollTop` / `scrollY` value of `container`
+ */
 export const getMaxScrolls = (container = _pageScroller, forceCalculation = false, options) => {
     //Check if the maxScrollX/maxScrollY values for the passed container have already been calculated. 
     const _oldData = _containersData.get(container) || [];
@@ -1354,8 +1414,14 @@ export const getMaxScrolls = (container = _pageScroller, forceCalculation = fals
 }
 
 
-
-
+/**
+ * Returns the `borderBox` of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns An object containing:
+ * - The width of `container` taking into account borders and paddings
+ * - The height of `container` taking into account borders and paddings
+ */
 //TODO: Add cypress tests
 export const getBorderBox = (container, options) => {
     //Check if the borderBox of the passed container has already been calculated. 
@@ -1368,7 +1434,8 @@ export const getBorderBox = (container, options) => {
     }
 
     if (_containerData[K_BRB] === NO_VAL) {
-        const _containerRect = container !== window ? container.getBoundingClientRect() :
+        const _containerRect = container !== window ?
+            container.getBoundingClientRect() :
             { width: _windowWidth, height: _windowHeight };
 
         _containerData[K_BRB] = {
@@ -1379,6 +1446,7 @@ export const getBorderBox = (container, options) => {
 
     return _containerData[K_BRB];
 }
+
 
 //TODO: element should be called container and _container should be called _parent
 export const getXScrollableParent = (element, includeHiddenParents = false, options) => {
@@ -1602,10 +1670,6 @@ export const getYScrollableParent = (element, includeHiddenParents = false, opti
     return NO_SP;
 }
 
-
-
-
-
 //TODO: element should be called container and _container should be called _parent
 export const getScrollableParent = (element, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "getScrollableParent" });
@@ -1783,9 +1847,6 @@ export const getScrollableParent = (element, includeHiddenParents = false, optio
     _cacheYResult(NO_SP);
     return NO_SP;
 }
-
-
-
 
 //TODO: element should be called container
 export const getAllScrollableParents = (element, includeHiddenParents = false, callback, options) => {
@@ -2561,9 +2622,6 @@ export const stopScrollingAll = (callback) => {
 
     if (typeof callback === "function") callback();
 }
-
-
-
 
 //TODO: add a cypress test for hrefSetup using the concepts of scrollIntoView/IfNeeded tests
 export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false, options) => {
