@@ -1448,20 +1448,26 @@ export const getBorderBox = (container, options) => {
 }
 
 
-//TODO: element should be called container and _container should be called _parent
-export const getXScrollableParent = (element, includeHiddenParents = false, options) => {
-    const _oldData = _containersData.get(element);
+/**
+ * Returns the closest `scrollableParent` of `container` on the x-axis.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} includeHiddenParents `true` to include ancestors with `overflow:hidden` or `overflow-x:hidden` in the search, `false` otherwise.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The closest ancestor of `container` which is scrollable on the x-axis or `null` if there's none.
+ */
+export const getXScrollableParent = (container, includeHiddenParents = false, options) => {
+    const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
     const _cachedParent = includeHiddenParents ? _containerData[K_HSPX] : _containerData[K_SSPX];
 
     if (_cachedParent !== NO_VAL) return _cachedParent;
 
-    if (!_oldData && !INIT_CONTAINER_DATA(element, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getXScrollableParent", { secondaryMsg: element }));
+    if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+        _errorLogger(CREATE_LOG_OPTIONS(options, "getXScrollableParent", { secondaryMsg: container }));
         return;
     }
 
-    if (element === window) {
+    if (container === window) {
         _containerData[K_HSPX] = NO_SP;
         _containerData[K_HSPY] = NO_SP;
         _containerData[K_SSPY] = NO_SP;
@@ -1486,28 +1492,28 @@ export const getXScrollableParent = (element, includeHiddenParents = false, opti
         _overflowRegexWithVisible = REGEX_OVERFLOW_WITH_VISIBLE;
     }
 
-    const _elementInitialX = element.getBoundingClientRect().left;
+    const _containerInitialX = container.getBoundingClientRect().left;
     const _windowScroller = getWindowScroller();
-    let _container = element.parentElement;
+    let _parent = container.parentElement;
 
     const _isScrollableParent = (overflowRegex) => {
         //The x-axis should be tested.
         if (
-            _container === window ||
-            overflowRegex.test(window.getComputedStyle(_container).overflowX)
+            _parent === window ||
+            overflowRegex.test(window.getComputedStyle(_parent).overflowX)
         ) {
-            if (_container === _windowScroller) _container = window;
+            if (_parent === _windowScroller) _parent = window;
 
-            const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_container, options);
-            const _containerInitialX = _scrollXCalculator();
-            const _containerInitialY = _scrollYCalculator();
+            const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
+            const _parentInitialX = _scrollXCalculator();
+            const _parentInitialY = _scrollYCalculator();
 
-            const _containerData = _containersData.get(_container);
+            const _containerData = _containersData.get(_parent); //containerData of _parent
             let _maxScrollX = _containerData[K_MSX] !== NO_VAL ? _containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
 
-            if (_maxScrollX > 0 && _containerInitialX !== _maxScrollX) {
-                //Try to scroll the element by scrolling the parent.
-                _container.scroll(HIGHEST_SAFE_SCROLL_POS, _containerInitialY);
+            if (_maxScrollX > 0 && _parentInitialX !== _maxScrollX) {
+                //Try to scroll the container by scrolling the parent.
+                _parent.scroll(HIGHEST_SAFE_SCROLL_POS, _parentInitialY);
 
                 _maxScrollX = _scrollXCalculator();
 
@@ -1519,19 +1525,19 @@ export const getXScrollableParent = (element, includeHiddenParents = false, opti
             if (_maxScrollX === 0) return false;
 
             //The parent was already at its maxScrollX.
-            if (_containerInitialX === _maxScrollX) {
-                //Try to scroll the element by scrolling the parent.
-                _container.scroll(0, _containerInitialY);
+            if (_parentInitialX === _maxScrollX) {
+                //Try to scroll the container by scrolling the parent.
+                _parent.scroll(0, _parentInitialY);
             }
 
-            //Check if the element has moved.
-            const _isXScrollable = _elementInitialX !== element.getBoundingClientRect().left;
+            //Check if the container has moved.
+            const _isXScrollable = _containerInitialX !== container.getBoundingClientRect().left;
 
             //Scroll the container back to its initial position.
-            _container.scroll(_containerInitialX, _containerInitialY);
+            _parent.scroll(_parentInitialX, _parentInitialY);
 
             if (_isXScrollable) {
-                _cacheResult(_container);
+                _cacheResult(_parent);
                 return true;
             }
         }
@@ -1539,40 +1545,47 @@ export const getXScrollableParent = (element, includeHiddenParents = false, opti
         return false;
     }
 
-    //Test if the any parent of the passed element
+    //Test if any parent of the passed container
     //is scrollable on the x-axis.
-    while (_container) {
-        const _regexToUse = _container === _body || _container === _html ? _overflowRegexWithVisible : _overflowRegex;
+    while (_parent) {
+        const _regexToUse = _parent === _body || _parent === _html ? _overflowRegexWithVisible : _overflowRegex;
 
-        if (_isScrollableParent(_regexToUse)) return _container;
+        if (_isScrollableParent(_regexToUse)) return _parent;
 
-        _container = _container.parentElement;
+        _parent = _parent.parentElement;
     }
 
     //Test the Window if necessary.
     if (_windowScroller === window) {
-        _container = window;
-        if (_isScrollableParent()) return _container;
+        _parent = window;
+        if (_isScrollableParent()) return _parent;
     }
 
     _cacheResult(NO_SP);
     return NO_SP;
 }
 
-//TODO: element should be called container and _container should be called _parent
-export const getYScrollableParent = (element, includeHiddenParents = false, options) => {
-    const _oldData = _containersData.get(element);
+
+/**
+ * Returns the closest `scrollableParent` of `container` on the y-axis.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} includeHiddenParents `true` to include ancestors with `overflow:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The closest ancestor of `container` which is scrollable on the y-axis or `null` if there's none.
+ */
+export const getYScrollableParent = (container, includeHiddenParents = false, options) => {
+    const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
     const _cachedParent = includeHiddenParents ? _containerData[K_HSPY] : _containerData[K_SSPY];
 
     if (_cachedParent !== NO_VAL) return _cachedParent;
 
-    if (!_oldData && !INIT_CONTAINER_DATA(element, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getYScrollableParent", { secondaryMsg: element }));
+    if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+        _errorLogger(CREATE_LOG_OPTIONS(options, "getYScrollableParent", { secondaryMsg: container }));
         return;
     }
 
-    if (element === window) {
+    if (container === window) {
         _containerData[K_HSPX] = NO_SP;
         _containerData[K_HSPY] = NO_SP;
         _containerData[K_SSPY] = NO_SP;
@@ -1597,28 +1610,28 @@ export const getYScrollableParent = (element, includeHiddenParents = false, opti
         _overflowRegexWithVisible = REGEX_OVERFLOW_WITH_VISIBLE;
     }
 
-    const _elementInitialY = element.getBoundingClientRect().top;
+    const _containerInitialY = container.getBoundingClientRect().top;
     const _windowScroller = getWindowScroller();
-    let _container = element.parentElement;
+    let _parent = container.parentElement;
 
     const _isScrollableParent = (overflowRegex) => {
         //The y-axis should be tested.
         if (
-            _container === window ||
-            overflowRegex.test(window.getComputedStyle(_container).overflowY)
+            _parent === window ||
+            overflowRegex.test(window.getComputedStyle(_parent).overflowY)
         ) {
-            if (_container === _windowScroller) _container = window;
+            if (_parent === _windowScroller) _parent = window;
 
-            const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_container, options);
-            const _containerInitialX = _scrollXCalculator();
-            const _containerInitialY = _scrollYCalculator();
+            const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
+            const _parentInitialX = _scrollXCalculator();
+            const _parentInitialY = _scrollYCalculator();
 
-            const _containerData = _containersData.get(_container);
+            const _containerData = _containersData.get(_parent); //containerData of _parent
             let _maxScrollY = _containerData[K_MSY] !== NO_VAL ? _containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
 
-            if (_maxScrollY > 0 && _containerInitialY !== _maxScrollY) {
-                //Try to scroll the element by scrolling the parent.
-                _container.scroll(_containerInitialX, HIGHEST_SAFE_SCROLL_POS);
+            if (_maxScrollY > 0 && _parentInitialY !== _maxScrollY) {
+                //Try to scroll the container by scrolling the parent.
+                _parent.scroll(_parentInitialX, HIGHEST_SAFE_SCROLL_POS);
 
                 _maxScrollY = _scrollYCalculator();
 
@@ -1630,19 +1643,19 @@ export const getYScrollableParent = (element, includeHiddenParents = false, opti
             if (_maxScrollY === 0) return false;
 
             //The parent was already at its maxScrollY.
-            if (_containerInitialY === _maxScrollY) {
-                //Try to scroll the element by scrolling the parent.
-                _container.scroll(_containerInitialX, 0);
+            if (_parentInitialY === _maxScrollY) {
+                //Try to scroll the container by scrolling the parent.
+                _parent.scroll(_parentInitialX, 0);
             }
 
-            //Check if the element has moved.
-            const _isYScrollable = _elementInitialY !== element.getBoundingClientRect().top;
+            //Check if the container has moved.
+            const _isYScrollable = _containerInitialY !== container.getBoundingClientRect().top;
 
             //Scroll the container back to its initial position.
-            _container.scroll(_containerInitialX, _containerInitialY);
+            _parent.scroll(_parentInitialX, _parentInitialY);
 
             if (_isYScrollable) {
-                _cacheResult(_container);
+                _cacheResult(_parent);
                 return true;
             }
         }
@@ -1650,31 +1663,38 @@ export const getYScrollableParent = (element, includeHiddenParents = false, opti
         return false;
     }
 
-    //Test if the any parent of the passed element
+    //Test if any parent of the passed container
     //is scrollable on the x-axis.
-    while (_container) {
-        const _regexToUse = _container === _body || _container === _html ? _overflowRegexWithVisible : _overflowRegex;
+    while (_parent) {
+        const _regexToUse = _parent === _body || _parent === _html ? _overflowRegexWithVisible : _overflowRegex;
 
-        if (_isScrollableParent(_regexToUse)) return _container;
+        if (_isScrollableParent(_regexToUse)) return _parent;
 
-        _container = _container.parentElement;
+        _parent = _parent.parentElement;
     }
 
     //Test the Window if necessary.
     if (_windowScroller === window) {
-        _container = window;
-        if (_isScrollableParent()) return _container;
+        _parent = window;
+        if (_isScrollableParent()) return _parent;
     }
 
     _cacheResult(NO_SP);
     return NO_SP;
 }
 
-//TODO: element should be called container and _container should be called _parent
-export const getScrollableParent = (element, includeHiddenParents = false, options) => {
+
+/**
+ * Returns the closest `scrollableParent` of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} includeHiddenParents `true` to include ancestors with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The closest ancestor of `container` which is scrollable or `null` if there's none.
+ */
+export const getScrollableParent = (container, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "getScrollableParent" });
 
-    const _oldData = _containersData.get(element);
+    const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
     let _cachedXParent, _cachedYParent;
 
@@ -1694,9 +1714,9 @@ export const getScrollableParent = (element, includeHiddenParents = false, optio
     const _isYParentCached = _cachedYParent !== NO_VAL;
     if (_isXParentCached || _isYParentCached) {
         if (_isXParentCached && !_isYParentCached) {
-            _cachedYParent = getYScrollableParent(element, includeHiddenParents, options);
+            _cachedYParent = getYScrollableParent(container, includeHiddenParents, options);
         } else if (!_isXParentCached && _isYParentCached) {
-            _cachedXParent = getXScrollableParent(element, includeHiddenParents, options);
+            _cachedXParent = getXScrollableParent(container, includeHiddenParents, options);
         }
 
         /**
@@ -1714,12 +1734,12 @@ export const getScrollableParent = (element, includeHiddenParents = false, optio
         return _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
     }
 
-    if (!_oldData && !INIT_CONTAINER_DATA(element, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollableParent", { secondaryMsg: element }));
+    if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+        _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollableParent", { secondaryMsg: container }));
         return;
     }
 
-    if (element === window) {
+    if (container === window) {
         _containerData[K_HSPX] = NO_SP;
         _containerData[K_HSPY] = NO_SP;
         _containerData[K_SSPY] = NO_SP;
@@ -1744,43 +1764,43 @@ export const getScrollableParent = (element, includeHiddenParents = false, optio
         _overflowRegexWithVisible = REGEX_OVERFLOW_WITH_VISIBLE;
     }
 
-    const _elementInitialPos = element.getBoundingClientRect();
-    const _elementInitialX = _elementInitialPos.left;
-    const _elementInitialY = _elementInitialPos.top;
+    const _containerInitialPos = container.getBoundingClientRect();
+    const _containerInitialX = _containerInitialPos.left;
+    const _containerInitialY = _containerInitialPos.top;
     const _windowScroller = getWindowScroller();
-    let _container = element.parentElement;
+    let _parent = container.parentElement;
 
     const _isScrollableParent = (overflowRegex) => {
         let _testScrollX, _testScrollY;
 
-        if (_container === window) {
+        if (_parent === window) {
             _testScrollX = true;
             _testScrollY = true;
         } else {
             //Check if the overflow conditions are met.
-            const _style = window.getComputedStyle(_container);
+            const _style = window.getComputedStyle(_parent);
             _testScrollX = overflowRegex.test(_style.overflowX);
             _testScrollY = overflowRegex.test(_style.overflowY);
         }
 
         //At least one axis should be tested.
         if (_testScrollX || _testScrollY) {
-            if (_container === _windowScroller) _container = window;
+            if (_parent === _windowScroller) _parent = window;
 
-            const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_container, options);
-            const _containerInitialX = _scrollXCalculator();
-            const _containerInitialY = _scrollYCalculator();
+            const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
+            const _parentInitialX = _scrollXCalculator();
+            const _parentInitialY = _scrollYCalculator();
 
-            const _containerData = _containersData.get(_container);
+            const _containerData = _containersData.get(_parent);  //containerData of _parent
             let _maxScrollX = _containerData[K_MSX] !== NO_VAL ? _containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
             let _maxScrollY = _containerData[K_MSY] !== NO_VAL ? _containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
 
             if (
-                (_maxScrollX > 0 && _containerInitialX !== _maxScrollX) ||
-                (_maxScrollY > 0 && _containerInitialY !== _maxScrollY)
+                (_maxScrollX > 0 && _parentInitialX !== _maxScrollX) ||
+                (_maxScrollY > 0 && _parentInitialY !== _maxScrollY)
             ) {
-                //Try to scroll the element by scrolling the parent.
-                _container.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
+                //Try to scroll the container by scrolling the parent.
+                _parent.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
 
                 _maxScrollX = _scrollXCalculator();
                 _maxScrollY = _scrollYCalculator();
@@ -1794,32 +1814,32 @@ export const getScrollableParent = (element, includeHiddenParents = false, optio
             if (_maxScrollX === 0 && _maxScrollY === 0) return false;
 
             //The parent was already at its maxScrollX/maxScrollY.
-            if (_containerInitialX === _maxScrollX && _containerInitialY === _maxScrollY) {
-                //Try to scroll the element by scrolling the parent.
-                _container.scroll(0, 0);
+            if (_parentInitialX === _maxScrollX && _parentInitialY === _maxScrollY) {
+                //Try to scroll the container by scrolling the parent.
+                _parent.scroll(0, 0);
             }
 
-            //Check if the element has moved.
-            const _elementPos = element.getBoundingClientRect();
-            const _isXScrollable = _testScrollX && _elementInitialX !== _elementPos.left;
-            const _isYScrollable = _testScrollY && _elementInitialY !== _elementPos.top;
+            //Check if the container has moved.
+            const _containerPos = container.getBoundingClientRect();
+            const _isXScrollable = _testScrollX && _containerInitialX !== _containerPos.left;
+            const _isYScrollable = _testScrollY && _containerInitialY !== _containerPos.top;
 
             //Scroll the container back to its initial position.
-            _container.scroll(_containerInitialX, _containerInitialY);
+            _parent.scroll(_parentInitialX, _parentInitialY);
 
             if (_isXScrollable && !_isYScrollable) {
-                _cacheXResult(_container);
+                _cacheXResult(_parent);
                 return true;
             }
 
             if (!_isXScrollable && _isYScrollable) {
-                _cacheYResult(_container);
+                _cacheYResult(_parent);
                 return true;
             }
 
             if (_isXScrollable && _isYScrollable) {
-                _cacheXResult(_container);
-                _cacheYResult(_container);
+                _cacheXResult(_parent);
+                _cacheYResult(_parent);
                 return true;
             }
         }
@@ -1827,20 +1847,20 @@ export const getScrollableParent = (element, includeHiddenParents = false, optio
         return false;
     }
 
-    //Test if the any parent of the passed element
+    //Test if any parent of the passed container
     //is scrollable on either the x or y axis.
-    while (_container) {
-        const _regexToUse = _container === _body || _container === _html ? _overflowRegexWithVisible : _overflowRegex;
+    while (_parent) {
+        const _regexToUse = _parent === _body || _parent === _html ? _overflowRegexWithVisible : _overflowRegex;
 
-        if (_isScrollableParent(_regexToUse)) return _container;
+        if (_isScrollableParent(_regexToUse)) return _parent;
 
-        _container = _container.parentElement;
+        _parent = _parent.parentElement;
     }
 
     //Test the Window if necessary.
     if (_windowScroller === window) {
-        _container = window;
-        if (_isScrollableParent()) return _container;
+        _parent = window;
+        if (_isScrollableParent()) return _parent;
     }
 
     _cacheXResult(NO_SP);
@@ -1848,8 +1868,16 @@ export const getScrollableParent = (element, includeHiddenParents = false, optio
     return NO_SP;
 }
 
-//TODO: element should be called container
-export const getAllScrollableParents = (element, includeHiddenParents = false, callback, options) => {
+
+/**
+ * Returns every `scrollableParent` of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} includeHiddenParents `true` to include ancestors with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
+ * @param {*} callback A function that is invoked every time a `scrollableParent` is found. The input of this function is the just-found `scrollableParent`.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns An array containing all the ancestors of `container` that are scrollable.
+ */
+export const getAllScrollableParents = (container, includeHiddenParents = false, callback, options) => {
     options = MERGE_OBJECTS(options, { subject: "getAllScrollableParents" });
 
     const _scrollableParents = [];
@@ -1860,9 +1888,9 @@ export const getAllScrollableParents = (element, includeHiddenParents = false, c
     }
 
     do {
-        element = getScrollableParent(element, includeHiddenParents, options);
-        if (element) _scrollableParentFound(element);
-    } while (element);
+        container = getScrollableParent(container, includeHiddenParents, options);
+        if (container) _scrollableParentFound(container);
+    } while (container);
 
     return _scrollableParents;
 }
