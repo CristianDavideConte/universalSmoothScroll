@@ -1908,6 +1908,15 @@ export const getAllScrollableParents = (container, includeHiddenParents = false,
     return _scrollableParents;
 }
 
+
+/**
+ * Scrolls the x-axis of `container` to the specified position if possible.
+ * @param {*} finalPosition A finite number indicating the `scrollLeft` / `scrollX` that `container` has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} callback A function that is executed when the scroll-animation has ended.
+ * @param {*} containScroll `true` to clamp `finalPosition` to [`0`...`maxScrollX`], `false` otherwise.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const scrollXTo = (finalPosition, container = _pageScroller, callback, containScroll = false, options) => {
     if (!Number.isFinite(finalPosition)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "scrollXTo", { secondaryMsg: finalPosition }));
@@ -2053,6 +2062,15 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
     }
 }
 
+
+/**
+ * Scrolls the y-axis of `container` to the specified position if possible.
+ * @param {*} finalPosition A finite number indicating the `scrollTop` / `scrollY` that `container` has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} callback A function that is executed when the scroll-animation has ended.
+ * @param {*} containScroll `true` to clamp `finalPosition` to [`0`...`maxScrollY`], `false` otherwise.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const scrollYTo = (finalPosition, container = _pageScroller, callback, containScroll = false, options) => {
     if (!Number.isFinite(finalPosition)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "scrollYTo", { secondaryMsg: finalPosition }));
@@ -2197,6 +2215,17 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
     }
 }
 
+
+/**
+ * Scrolls the x-axis of `container` by the specified amount if possible.
+ * @param {*} deltaX A finite number indicating the amount of pixels that the x-axis of `container` should be scrolled by.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} callback A function that is executed when the scroll-animation has ended.
+ * @param {*} stillStart `true` if any on-going scroll-animation on the x-axis of `container` must be stopped before starting this scroll-animation.
+ *                       `false` if any on-going scroll-animation on the x-axis of `container` should extended by `deltaX` if possible. 
+ * @param {*} containScroll `true` to clamp the `finalPosition` of the scroll-animation to [`0`...`maxScrollX`], `false` otherwise.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 //TODO: change deltaX to delta, finalXPosition to finalPosition and maxScrollX to maxScroll
 export const scrollXBy = (deltaX, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
     if (!Number.isFinite(deltaX)) {
@@ -2253,6 +2282,17 @@ export const scrollXBy = (deltaX, container = _pageScroller, callback, stillStar
     scrollXTo(_currentXPosition + deltaX, container, callback, containScroll, options);
 }
 
+
+/**
+ * Scrolls the y-axis of `container` by the specified amount if possible.
+ * @param {*} deltaY A finite number indicating the amount of pixels that the y-axis of `container` should be scrolled by.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} callback A function that is executed when the scroll-animation has ended.
+ * @param {*} stillStart `true` if any on-going scroll-animation on the y-axis of `container` must be stopped before starting this scroll-animation.
+ *                       `false` if any on-going scroll-animation on the y-axis of `container` should extended by `deltaY` if possible. 
+ * @param {*} containScroll `true` to clamp the `finalPosition` of the scroll-animation to [`0`...`maxScrollY`], `false` otherwise.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 //TODO: change deltaX to delta, finalXPosition to finalPosition and maxScrollX to maxScroll
 export const scrollYBy = (deltaY, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
     if (!Number.isFinite(deltaY)) {
@@ -2308,6 +2348,16 @@ export const scrollYBy = (deltaY, container = _pageScroller, callback, stillStar
     scrollYTo(_currentYPosition + deltaY, container, callback, containScroll, options);
 }
 
+
+/**
+ * Scrolls `container` to the specified positions if possible.
+ * @param {*} finalXPosition A finite number indicating the `scrollLeft` / `scrollX` that `container` has to reach.
+ * @param {*} finalYPosition A finite number indicating the `scrollTop` / `scrollY` that `container` has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} callback A function that is executed when the scroll-animation has ended.
+ * @param {*} containScroll `true` to clamp `finalXPosition` to [`0`...`maxScrollX`] and `finalYPosition` to [`0`...`maxScrollY`], `false` otherwise.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const scrollTo = (finalXPosition, finalYPosition, container = _pageScroller, callback, containScroll = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollTo" });
 
@@ -2336,6 +2386,19 @@ export const scrollTo = (finalXPosition, finalYPosition, container = _pageScroll
     scrollYTo(finalYPosition, container, _scrollYCallback, containScroll, options);
 }
 
+
+/**
+ * Scrolls `container` by the specified amounts if possible.
+ * @param {*} deltaX A finite number indicating the amount of pixels that the x-axis of `container` should be scrolled by.
+ * @param {*} deltaY A finite number indicating the amount of pixels that the y-axis of `container` should be scrolled by.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} callback A function that is executed when the scroll-animation has ended.
+ * @param {*} stillStart `true` if any on-going scroll-animation of `container` must be stopped before starting this scroll-animation.
+ *                       `false` if any on-going scroll-animation of `container` should extended by `deltaX` and `deltaY` if possible. 
+ * @param {*} containScroll `true` to clamp the `finalXPosition` of the scroll-animation to [`0`...`maxScrollX`] and 
+ *                                          the `finalYPosition` of the scroll-animation to [`0`...`maxScrollY`], `false` otherwise.  
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollBy" });
 
