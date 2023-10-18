@@ -478,7 +478,7 @@ export const isScrolling = (container = _pageScroller, options) => {
  * Returns the horizontal pixel position `container` has to reach.
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} options `[Private]` The input object used by the uss loggers.
- * @returns Returns the target `scrollLeft`/`scrollX` pixel position of `container`.
+ * @returns The target `scrollLeft`/`scrollX` pixel position of `container`.
  */
 export const getFinalXPosition = (container = _pageScroller, options) => {
     options = MERGE_OBJECTS(options, { subject: "getFinalXPosition" });
@@ -496,7 +496,7 @@ export const getFinalXPosition = (container = _pageScroller, options) => {
  * Returns the vertical pixel position `container` has to reach.
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} options `[Private]` The input object used by the uss loggers.
- * @returns Returns the target `scrollTop`/`scrollY` pixel position of `container`.
+ * @returns The target `scrollTop`/`scrollY` pixel position of `container`.
  */
 export const getFinalYPosition = (container = _pageScroller, options) => {
     options = MERGE_OBJECTS(options, { subject: "getFinalYPosition" });
@@ -547,7 +547,7 @@ export const getScrollYDirection = (container = _pageScroller, options) => {
 
 
 /**
- * Returns a `StepLengthCalculator` set for `container`.
+ * Returns a `StepLengthCalculator` set for the x-axis of `container`.
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the x-axis of `container`, otherwise returns the `fixed` one.
  * @param {*} options `[Private]` The input object used by the uss loggers.
@@ -565,7 +565,7 @@ export const getXStepLengthCalculator = (container = _pageScroller, getTemporary
 
 
 /**
- * Returns a `StepLengthCalculator` set for `container`.
+ * Returns a `StepLengthCalculator` set for the y-axis of `container`.
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the y-axis of `container`, otherwise returns the `fixed` one.
  * @param {*} options `[Private]` The input object used by the uss loggers.
@@ -583,9 +583,9 @@ export const getYStepLengthCalculator = (container = _pageScroller, getTemporary
 
 
 /**
- * Returns the highest number of pixels a (browser) scrollbar can occupy. 
+ * Returns the value of the `_scrollbarsMaxDimension` property. 
  * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @returns The value of the `_scrollbarsMaxDimension` property.
+ * @returns The highest number of pixels a (browser) scrollbar can occupy.
  */
 export const getScrollbarsMaxDimension = (forceCalculation = false) => {
     /**
@@ -616,9 +616,9 @@ export const getScrollbarsMaxDimension = (forceCalculation = false) => {
 
 
 /**
- * Returns the element that scrolls `window` when it's scrolled and that (viceversa) is scrolled when `window` is scrolled.
+ * Returns the value of the `_windowScroller` property. 
  * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @returns The value of the `_windowScroller` property.
+ * @returns The element that scrolls `window` when it's scrolled and that (viceversa) is scrolled when `window` is scrolled.
  */
 export const getWindowScroller = (forceCalculation = false) => {
     if (forceCalculation || !_windowScroller) {
@@ -724,19 +724,21 @@ export const getWindowScroller = (forceCalculation = false) => {
 
 
 /**
- * Returns the element that scrolls the document.
+ * Returns the value of the `_pageScroller` property.
  * @param {*} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @returns The value of the `_pageScroller` property.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ * @returns The element that scrolls the webpage.
  */
-//TODO: is the options object needed here?
-export const getPageScroller = (forceCalculation = false) => {
+export const getPageScroller = (forceCalculation = false, options) => {
     //Check if the _pageScroller has already been calculated.
     if (forceCalculation || !_pageScroller) {
         const _body = document.body;
         const _html = document.documentElement;
 
-        const [_htmlMaxScrollX, _htmlMaxScrollY] = getMaxScrolls(_html, forceCalculation);
-        const [_bodyMaxScrollX, _bodyMaxScrollY] = getMaxScrolls(_body, forceCalculation);
+        options = MERGE_OBJECTS(options, { subject: "getPageScroller" })
+
+        const [_htmlMaxScrollX, _htmlMaxScrollY] = getMaxScrolls(_html, forceCalculation, options);
+        const [_bodyMaxScrollX, _bodyMaxScrollY] = getMaxScrolls(_body, forceCalculation, options);
 
         /**
          * The _pageScroller is the element that scrolls the further between _html and _body.
@@ -762,11 +764,11 @@ export const getPageScroller = (forceCalculation = false) => {
 
 
 /**
- * Returns the time (in ms) between two consecutive browser's frame repaints (e.g. 16.6ms at 60fps).
+ * Returns the value of the `_framesTime` property.
  * @param {*} forceCalculation If `true`, `calcFramesTimes` is internally called to initialize a new frames' time calculation, otherwise just acts as a getter.
  * @param {*} callback A callback function passed to `calcFramesTimes` if `forceCalculat ion` is `true` (deferred execution), otherwise immediately executed.
  * @param {*} options `[Private]` The input object used by the uss loggers.
- * @returns The value of the `_framesTime` property.
+ * @returns The time (in ms) between two consecutive browser's frame repaints (e.g. 16.6 at 60fps).
  */
 export const getFramesTime = (forceCalculation = false, callback, options) => {
     options = MERGE_OBJECTS(options, { subject: "getFramesTime", requestPhase: 0 });
