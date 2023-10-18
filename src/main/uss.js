@@ -331,7 +331,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
             }
         );
 
-        //The Window doesn't have any scrollable parent.
+        //window doesn't have any scrollable parent.
         containerData[K_SSPX] = NO_SP;
         containerData[K_HSPX] = NO_SP;
         containerData[K_SSPY] = NO_SP;
@@ -663,7 +663,7 @@ export const getWindowScroller = (forceCalculation = false) => {
             (_maxScrollX > 0 && _windowInitialX !== _maxScrollX) ||
             (_maxScrollY > 0 && _windowInitialY !== _maxScrollY)
         ) {
-            //Try to scroll the body/html by scrolling the Window.
+            //Try scrolling the body/html by scrolling window.
             window.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
 
             _maxScrollX = window.scrollX;
@@ -674,15 +674,15 @@ export const getWindowScroller = (forceCalculation = false) => {
             _containerData[K_MSY] = _maxScrollY;
         }
 
-        //The Window cannot scroll.
+        //window cannot scroll.
         if (_maxScrollX === 0 && _maxScrollY === 0) {
             _windowScroller = window;
             return _windowScroller;
         }
 
-        //The Window was already at its maxScrollX/maxScrollY.
+        //window was already at its maxScrollX/maxScrollY.
         if (_windowInitialX === _maxScrollX && _windowInitialY === _maxScrollY) {
-            //Try to scroll the body/html by scrolling the Window.
+            //Try scrolling the body/html by scrolling window.
             window.scroll(0, 0);
         }
 
@@ -707,15 +707,15 @@ export const getWindowScroller = (forceCalculation = false) => {
         }
 
         /**
-         * Scroll the Window back to its initial position.
-         * Note that if the Window scrolls any other element, 
+         * Scroll window back to its initial position.
+         * Note that if window scrolls any other element, 
          * the latter will be scrolled back into place too.
          * Otherwise it was already in the correct scroll position 
          * because the tests didn't affect it. 
          */
         window.scroll(_windowInitialX, _windowInitialY);
 
-        //Fallback to the Window.
+        //Fallback to window.
         if (!_windowScrollerFound) _windowScroller = window;
     }
 
@@ -1208,7 +1208,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
             //After modifying the styles of the container, the scroll position may change.
             container.scroll(_initialXPosition, _initialYPosition);
 
-            //If the container is the windowScroller, cache the values for the window too.
+            //If the container is the windowScroller, cache the values for window too.
             if (container === _windowScroller) {
                 const _windowOldData = _containersData.get(window);
                 const _windowData = _windowOldData || [];
@@ -1396,10 +1396,21 @@ export const getMaxScrolls = (container = _pageScroller, forceCalculation = fals
     container.scroll(_initialXPosition, _initialYPosition);
 
     let _windowScroller = getWindowScroller();
-    _windowScroller = (container !== window && _windowScroller === container) ? window :
-        (container === window && _windowScroller !== window) ? _windowScroller :
-            NO_VAL;
-    //Bidirectionally cache the value for the window/windowScroller too.
+    
+    /**
+     * This is a summary table of the output:
+     *                              _windowScroller
+     *                     window |     !window     | container 
+     * container !window | NO_VAL |      NO_VAL     |  window
+     *            window | NO_VAL | _windowScroller |    /
+     */
+    if (container !== window) {
+        _windowScroller = _windowScroller === container ? window : NO_VAL;    
+    } else if (_windowScroller === window) {
+        _windowScroller = NO_VAL;
+    }
+    
+    //Bidirectionally cache the value for window/_windowScroller too.
     if (_windowScroller) {
         const _windowScrollerOldData = _containersData.get(_windowScroller);
         const _windowScrollerData = _windowScrollerOldData || [];
@@ -1477,8 +1488,6 @@ export const getXScrollableParent = (container, includeHiddenParents = false, op
 
     options = MERGE_OBJECTS(options, { subject: "getXScrollableParent" });
 
-    const _body = document.body;
-    const _html = document.documentElement;
     let _overflowRegex, _overflowRegexWithVisible;
     let _cacheResult;
 
@@ -1512,7 +1521,7 @@ export const getXScrollableParent = (container, includeHiddenParents = false, op
             let _maxScrollX = _containerData[K_MSX] !== NO_VAL ? _containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
 
             if (_maxScrollX > 0 && _parentInitialX !== _maxScrollX) {
-                //Try to scroll the container by scrolling the parent.
+                //Try scrolling the container by scrolling the parent.
                 _parent.scroll(HIGHEST_SAFE_SCROLL_POS, _parentInitialY);
 
                 _maxScrollX = _scrollXCalculator();
@@ -1526,14 +1535,14 @@ export const getXScrollableParent = (container, includeHiddenParents = false, op
 
             //The parent was already at its maxScrollX.
             if (_parentInitialX === _maxScrollX) {
-                //Try to scroll the container by scrolling the parent.
+                //Try scrolling the container by scrolling the parent.
                 _parent.scroll(0, _parentInitialY);
             }
 
             //Check if the container has moved.
             const _isXScrollable = _containerInitialX !== container.getBoundingClientRect().left;
 
-            //Scroll the container back to its initial position.
+            //Scroll the parent back to its initial position.
             _parent.scroll(_parentInitialX, _parentInitialY);
 
             if (_isXScrollable) {
@@ -1545,8 +1554,10 @@ export const getXScrollableParent = (container, includeHiddenParents = false, op
         return false;
     }
 
-    //Test if any parent of the passed container
-    //is scrollable on the x-axis.
+    const _body = document.body;
+    const _html = document.documentElement;
+    
+    //Test if any container's parent is scrollable on the x-axis.
     while (_parent) {
         const _regexToUse = _parent === _body || _parent === _html ? _overflowRegexWithVisible : _overflowRegex;
 
@@ -1555,7 +1566,7 @@ export const getXScrollableParent = (container, includeHiddenParents = false, op
         _parent = _parent.parentElement;
     }
 
-    //Test the Window if necessary.
+    //Test window if necessary.
     if (_windowScroller === window) {
         _parent = window;
         if (_isScrollableParent()) return _parent;
@@ -1595,8 +1606,6 @@ export const getYScrollableParent = (container, includeHiddenParents = false, op
 
     options = MERGE_OBJECTS(options, { subject: "getYScrollableParent" });
 
-    const _body = document.body;
-    const _html = document.documentElement;
     let _overflowRegex, _overflowRegexWithVisible;
     let _cacheResult;
 
@@ -1630,7 +1639,7 @@ export const getYScrollableParent = (container, includeHiddenParents = false, op
             let _maxScrollY = _containerData[K_MSY] !== NO_VAL ? _containerData[K_MSY] : HIGHEST_SAFE_SCROLL_POS;
 
             if (_maxScrollY > 0 && _parentInitialY !== _maxScrollY) {
-                //Try to scroll the container by scrolling the parent.
+                //Try scrolling the container by scrolling the parent.
                 _parent.scroll(_parentInitialX, HIGHEST_SAFE_SCROLL_POS);
 
                 _maxScrollY = _scrollYCalculator();
@@ -1644,14 +1653,14 @@ export const getYScrollableParent = (container, includeHiddenParents = false, op
 
             //The parent was already at its maxScrollY.
             if (_parentInitialY === _maxScrollY) {
-                //Try to scroll the container by scrolling the parent.
+                //Try scrolling the container by scrolling the parent.
                 _parent.scroll(_parentInitialX, 0);
             }
 
             //Check if the container has moved.
             const _isYScrollable = _containerInitialY !== container.getBoundingClientRect().top;
 
-            //Scroll the container back to its initial position.
+            //Scroll the parent back to its initial position.
             _parent.scroll(_parentInitialX, _parentInitialY);
 
             if (_isYScrollable) {
@@ -1663,8 +1672,10 @@ export const getYScrollableParent = (container, includeHiddenParents = false, op
         return false;
     }
 
-    //Test if any parent of the passed container
-    //is scrollable on the x-axis.
+    const _body = document.body;
+    const _html = document.documentElement;
+
+    //Test if any container's parent is scrollable on the y-axis.
     while (_parent) {
         const _regexToUse = _parent === _body || _parent === _html ? _overflowRegexWithVisible : _overflowRegex;
 
@@ -1673,7 +1684,7 @@ export const getYScrollableParent = (container, includeHiddenParents = false, op
         _parent = _parent.parentElement;
     }
 
-    //Test the Window if necessary.
+    //Test window if necessary.
     if (_windowScroller === window) {
         _parent = window;
         if (_isScrollableParent()) return _parent;
@@ -1747,8 +1758,6 @@ export const getScrollableParent = (container, includeHiddenParents = false, opt
         return NO_SP;
     }
 
-    const _body = document.body;
-    const _html = document.documentElement;
     let _overflowRegex, _overflowRegexWithVisible;
     let _cacheXResult, _cacheYResult;
 
@@ -1799,7 +1808,7 @@ export const getScrollableParent = (container, includeHiddenParents = false, opt
                 (_maxScrollX > 0 && _parentInitialX !== _maxScrollX) ||
                 (_maxScrollY > 0 && _parentInitialY !== _maxScrollY)
             ) {
-                //Try to scroll the container by scrolling the parent.
+                //Try scrolling the container by scrolling the parent.
                 _parent.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
 
                 _maxScrollX = _scrollXCalculator();
@@ -1815,7 +1824,7 @@ export const getScrollableParent = (container, includeHiddenParents = false, opt
 
             //The parent was already at its maxScrollX/maxScrollY.
             if (_parentInitialX === _maxScrollX && _parentInitialY === _maxScrollY) {
-                //Try to scroll the container by scrolling the parent.
+                //Try scrolling the container by scrolling the parent.
                 _parent.scroll(0, 0);
             }
 
@@ -1824,7 +1833,7 @@ export const getScrollableParent = (container, includeHiddenParents = false, opt
             const _isXScrollable = _testScrollX && _containerInitialX !== _containerPos.left;
             const _isYScrollable = _testScrollY && _containerInitialY !== _containerPos.top;
 
-            //Scroll the container back to its initial position.
+            //Scroll the parent back to its initial position.
             _parent.scroll(_parentInitialX, _parentInitialY);
 
             if (_isXScrollable && !_isYScrollable) {
@@ -1847,8 +1856,10 @@ export const getScrollableParent = (container, includeHiddenParents = false, opt
         return false;
     }
 
-    //Test if any parent of the passed container
-    //is scrollable on either the x or y axis.
+    const _body = document.body;
+    const _html = document.documentElement;
+
+    //Test if any container's parent is scrollable.
     while (_parent) {
         const _regexToUse = _parent === _body || _parent === _html ? _overflowRegexWithVisible : _overflowRegex;
 
@@ -1857,7 +1868,7 @@ export const getScrollableParent = (container, includeHiddenParents = false, opt
         _parent = _parent.parentElement;
     }
 
-    //Test the Window if necessary.
+    //Test window if necessary.
     if (_windowScroller === window) {
         _parent = window;
         if (_isScrollableParent()) return _parent;
@@ -1889,8 +1900,8 @@ export const getAllScrollableParents = (container, includeHiddenParents = false,
 
     do {
         container = getScrollableParent(container, includeHiddenParents, options);
-        if (container) _scrollableParentFound(container);
-    } while (container);
+        if (container !== NO_SP) _scrollableParentFound(container);
+    } while (container !== NO_SP);
 
     return _scrollableParents;
 }
@@ -2774,7 +2785,7 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
         //History already managed.
         if (_containerData[K_FGS] !== NO_VAL) return;
 
-        //The window fragment is dynamically calculated every time, 
+        //window's fragment is dynamically calculated every time, 
         //because it's faster than caching.
         _containerData[K_FGS] = NO_FGS;
 
