@@ -2002,8 +2002,8 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
         const _scrollID = _containerData[K_IDX];
 
         const _stepLengthCalculator = _containerData[K_TSCX] ? _containerData[K_TSCX] :
-            _containerData[K_FSCX] ? _containerData[K_FSCX] :
-                DEFAULT_XSTEP_LENGTH_CALCULATOR;
+                                      _containerData[K_FSCX] ? _containerData[K_FSCX] :
+                                      DEFAULT_XSTEP_LENGTH_CALCULATOR;
 
         let _stepLength = _stepLengthCalculator(
             _remaningScrollAmount,  //Remaning scroll amount
@@ -2155,8 +2155,8 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
 
         const _scrollID = _containerData[K_IDY];
         const _stepLengthCalculator = _containerData[K_TSCY] ? _containerData[K_TSCY] :
-            _containerData[K_FSCY] ? _containerData[K_FSCY] :
-                DEFAULT_YSTEP_LENGTH_CALCULATOR;
+                                      _containerData[K_FSCY] ? _containerData[K_FSCY] :
+                                      DEFAULT_YSTEP_LENGTH_CALCULATOR;
 
         let _stepLength = _stepLengthCalculator(
             _remaningScrollAmount,  //Remaning scroll amount
@@ -2428,6 +2428,27 @@ export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, st
     scrollYBy(deltaY, container, _scrollYCallback, stillStart, containScroll, options);
 }
 
+
+/**
+ * Finds and scrolls all the `scrollableParents` of `element` in order to make it visible on the screen with the specified alignments.
+ * @param {*} element An instance of `Element` or `window`.
+ * @param {*} alignToLeft This value indicates the alignment (on the x-axis) of `element` and all its `scrollableParents`:
+ * - `true` if the alignment should be to the `left`
+ * - `false` if the alignment should be to the `right`
+ * - `nearest` **(case insensitive)** if the alignment should to the `closest side`:
+ *    the alignment of each container is decided by measuring its position (on the x-axis) relative to its closest scrollable ancestor
+ * - Any other value, if the alignment should be to the `center`
+ * @param {*} alignToTop This value indicates the alignment (on the y-axis) of `element` and all its `scrollableParents`:
+ * - `true` if the alignment should be to the `top`
+ * - `false` if the alignment should be to the `bottom`
+ * - `nearest` **(case insensitive)** if the alignment should to the `closest side`:
+ *    the alignment of each container is decided by measuring its position (on the y-axis) relative to its closest scrollable ancestor
+ * - Any other value, if the alignment should be to the `center`
+ * @param {*} callback A function invoked when `container` is scrolled into view.
+ * @param {*} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
+//TODO: element should be called container and container should be called parent
 export const scrollIntoView = (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollIntoView" });
 
@@ -2526,6 +2547,21 @@ export const scrollIntoView = (element, alignToLeft = true, alignToTop = true, c
     }
 }
 
+
+/**
+ * Finds and scrolls all the `scrollableParents` of `element` in order to make it visible on the screen with the specified alignments only if it's not already visible.
+ * @param {*} element An instance of `Element` or `window`.
+ * @param {*} alignToCenter This value indicates the alignments (on both the x and y axes) of `element`:
+ * - `true` if the alignments should be to the `center` of its closest scrollable ancestor
+ * - Any other value, if the alignments should to the `closest side`:
+ *   the alignments are decided by measuring `container`'s position relative to its closest scrollable ancestor
+ * 
+ * All `container`'s `scrollableParents` are aligned to `nearest`.
+ * @param {*} callback A function invoked when `container` is scrolled into view.
+ * @param {*} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
+//TODO: element should be called container and container should be called parent
 export const scrollIntoViewIfNeeded = (element, alignToCenter = true, callback, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollIntoViewIfNeeded" });
 
@@ -2648,6 +2684,13 @@ export const scrollIntoViewIfNeeded = (element, alignToCenter = true, callback, 
     }
 }
 
+
+/**
+ * Stops the current scroll-animation on the x-axis of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} callback A function invoked when the scroll-animation on the x-axis of `container` has been stopped.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const stopScrollingX = (container = _pageScroller, callback, options) => {
     const _containerData = _containersData.get(container);
 
@@ -2671,6 +2714,13 @@ export const stopScrollingX = (container = _pageScroller, callback, options) => 
     if (typeof callback === "function") callback();
 }
 
+
+/**
+ * Stops the current scroll-animation on the y-axis of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} callback A function invoked when the scroll-animation on the y-axis of `container` has been stopped.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const stopScrollingY = (container = _pageScroller, callback, options) => {
     const _containerData = _containersData.get(container);
 
@@ -2694,6 +2744,13 @@ export const stopScrollingY = (container = _pageScroller, callback, options) => 
     if (typeof callback === "function") callback();
 }
 
+
+/**
+ * Stops all the current scroll-animations of `container`.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {*} callback A function invoked when all the scroll-animations of `container` have been stopped.
+ * @param {*} options `[Private]` The input object used by the uss loggers.
+ */
 export const stopScrolling = (container = _pageScroller, callback, options) => {
     const _containerData = _containersData.get(container);
 
@@ -2713,6 +2770,11 @@ export const stopScrolling = (container = _pageScroller, callback, options) => {
     if (typeof callback === "function") callback();
 }
 
+
+/**
+ * Stops all the current API's scroll-animations.
+ * @param {*} callback A function invoked when all scroll-animations have been stopped.
+ */
 export const stopScrollingAll = (callback) => {
     for (const [_container, _containerData] of _containersData.entries()) {
         window.cancelAnimationFrame(_containerData[K_IDX]);
