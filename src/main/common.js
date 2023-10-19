@@ -1,3 +1,4 @@
+//TODO: instead of {*} specify the type of the arguments in the comment (e.g. {boolean})
 //TODO: use backticks (``) for properties names in comments.
 //TODO: remove the uss.something calls and import only the needed variables + solve setters for private variables
 //TODO: use the IS_OBJECT function everywhere in the uss modules
