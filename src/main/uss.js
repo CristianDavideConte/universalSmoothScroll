@@ -1,4 +1,5 @@
 //TODO: move comments above the functions signatures.
+//TODO: each comment should start with: [Universal Smooth Scroll Docs](https://github.com/CristianDavideConte/universalSmoothScroll)
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
 //TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
 //TODO: rename "forceCalculation" to "flushCache"
@@ -2218,42 +2219,41 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
 
 /**
  * Scrolls the x-axis of `container` by the specified amount if possible.
- * @param {*} deltaX A finite number indicating the amount of pixels that the x-axis of `container` should be scrolled by.
+ * @param {*} delta A finite number indicating the amount of pixels that the x-axis of `container` should be scrolled by.
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} callback A function that is executed when the scroll-animation has ended.
  * @param {*} stillStart `true` if any on-going scroll-animation on the x-axis of `container` must be stopped before starting this scroll-animation.
- *                       `false` if any on-going scroll-animation on the x-axis of `container` should extended by `deltaX` if possible. 
+ *                       `false` if any on-going scroll-animation on the x-axis of `container` should extended by `delta` if possible. 
  * @param {*} containScroll `true` to clamp the `finalPosition` of the scroll-animation to [`0`...`maxScrollX`], `false` otherwise.  
  * @param {*} options `[Private]` The input object used by the uss loggers.
  */
-//TODO: change deltaX to delta, finalXPosition to finalPosition and maxScrollX to maxScroll
-export const scrollXBy = (deltaX, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
-    if (!Number.isFinite(deltaX)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollXBy", { secondaryMsg: deltaX }));
+export const scrollXBy = (delta, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
+    if (!Number.isFinite(delta)) {
+        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollXBy", { secondaryMsg: delta }));
         return;
     }
 
     options = MERGE_OBJECTS(options, { subject: "scrollXBy" });
 
-    const _currentXPosition = getScrollXCalculator(container, options)();
+    const _currentPosition = getScrollXCalculator(container, options)();
     if (!stillStart) {
         const _containerData = _containersData.get(container) || [];
 
         //A scroll-animation on the x-axis is already being performed and can be repurposed.
         if (_containerData[K_IDX]) {
 
-            //An actual scroll has been requested.   
-            if (deltaX !== 0) {
-                let _finalXPosition = _containerData[K_FPX] + deltaX;
+            //An actual scroll-animation has been requested.   
+            if (delta !== 0) {
+                let _finalPosition = _containerData[K_FPX] + delta;
 
-                //Limit the final position to the [0, maxScrollX] interval. 
+                //Limit _finalPosition to [0, maxScrollX]. 
                 if (containScroll) {
                     const _maxScrollX = getMaxScrollX(container, false, options);
-                    if (_finalXPosition < 0) _finalXPosition = 0;
-                    else if (_finalXPosition > _maxScrollX) _finalXPosition = _maxScrollX;
+                    if (_finalPosition < 0) _finalPosition = 0;
+                    else if (_finalPosition > _maxScrollX) _finalPosition = _maxScrollX;
                 }
 
-                const _remaningScrollAmount = (_finalXPosition - _currentXPosition) * _containerData[K_SDX];
+                const _remaningScrollAmount = (_finalPosition - _currentPosition) * _containerData[K_SDX];
 
                 //The scroll-animation has to scroll less than 1px.
                 if (_remaningScrollAmount * _remaningScrollAmount < 1) {
@@ -2261,65 +2261,65 @@ export const scrollXBy = (deltaX, container = _pageScroller, callback, stillStar
                     return;
                 }
 
-                //Thanks to the new deltaX, the current scroll-animation 
-                //has already surpassed the old finalXPosition.
+                //Thanks to the new delta, the current scroll-animation 
+                //has already surpassed the old _finalPosition.
                 if (_remaningScrollAmount < 0) {
-                    scrollXTo(_finalXPosition, container, callback, containScroll, options);
+                    scrollXTo(_finalPosition, container, callback, containScroll, options);
                     return;
                 }
 
-                const _totalScrollAmount = _containerData[K_TSAX] * _containerData[K_SDX] + deltaX;
-                _containerData[K_FPX] = _finalXPosition;                             //finalXPosition
-                _containerData[K_SDX] = _totalScrollAmount > 0 ? 1 : -1;             //direction
-                _containerData[K_TSAX] = _totalScrollAmount * _containerData[K_SDX]; //totalScrollAmount (always positive)
+                const _totalScrollAmount = _containerData[K_TSAX] * _containerData[K_SDX] + delta;
+                _containerData[K_FPX] = _finalPosition;                              
+                _containerData[K_SDX] = _totalScrollAmount > 0 ? 1 : -1; //direction
+                _containerData[K_TSAX] = _totalScrollAmount * _containerData[K_SDX]; 
             }
-            _containerData[K_OTSX] = NO_VAL;  //originalTimestamp
-            _containerData[K_CBX] = callback; //callback
+            _containerData[K_OTSX] = NO_VAL; //originalTimestamp
+            _containerData[K_CBX] = callback;
             return;
         }
     }
 
-    scrollXTo(_currentXPosition + deltaX, container, callback, containScroll, options);
+    scrollXTo(_currentPosition + delta, container, callback, containScroll, options);
 }
 
 
 /**
  * Scrolls the y-axis of `container` by the specified amount if possible.
- * @param {*} deltaY A finite number indicating the amount of pixels that the y-axis of `container` should be scrolled by.
+ * @param {*} delta A finite number indicating the amount of pixels that the y-axis of `container` should be scrolled by.
  * @param {*} container An instance of `Element` or `window`.
  * @param {*} callback A function that is executed when the scroll-animation has ended.
  * @param {*} stillStart `true` if any on-going scroll-animation on the y-axis of `container` must be stopped before starting this scroll-animation.
- *                       `false` if any on-going scroll-animation on the y-axis of `container` should extended by `deltaY` if possible. 
+ *                       `false` if any on-going scroll-animation on the y-axis of `container` should extended by `delta` if possible. 
  * @param {*} containScroll `true` to clamp the `finalPosition` of the scroll-animation to [`0`...`maxScrollY`], `false` otherwise.  
  * @param {*} options `[Private]` The input object used by the uss loggers.
  */
-//TODO: change deltaX to delta, finalXPosition to finalPosition and maxScrollX to maxScroll
-export const scrollYBy = (deltaY, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
-    if (!Number.isFinite(deltaY)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollYBy", { secondaryMsg: deltaY }));
+export const scrollYBy = (delta, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
+    if (!Number.isFinite(delta)) {
+        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollYBy", { secondaryMsg: delta }));
         return;
     }
 
     options = MERGE_OBJECTS(options, { subject: "scrollYBy" });
 
-    const _currentYPosition = getScrollYCalculator(container, options)();
+    const _currentPosition = getScrollYCalculator(container, options)();
     if (!stillStart) {
         const _containerData = _containersData.get(container) || [];
 
         //A scroll-animation on the y-axis is already being performed and can be repurposed.
         if (_containerData[K_IDY]) {
-            //An actual scroll has been requested.   
-            if (deltaY !== 0) {
-                let _finalYPosition = _containerData[K_FPY] + deltaY;
 
-                //Limit the final position to the [0, maxScrollY] interval. 
+            //An actual scroll-animation has been requested.
+            if (delta !== 0) {
+                let _finalPosition = _containerData[K_FPY] + delta;
+
+                //Limit _finalPosition to [0, maxScrollY].
                 if (containScroll) {
                     const _maxScrollY = getMaxScrollY(container, false, options);
-                    if (_finalYPosition < 0) _finalYPosition = 0;
-                    else if (_finalYPosition > _maxScrollY) _finalYPosition = _maxScrollY;
+                    if (_finalPosition < 0) _finalPosition = 0;
+                    else if (_finalPosition > _maxScrollY) _finalPosition = _maxScrollY;
                 }
 
-                const _remaningScrollAmount = (_finalYPosition - _currentYPosition) * _containerData[K_SDY];
+                const _remaningScrollAmount = (_finalPosition - _currentPosition) * _containerData[K_SDY];
 
                 //The scroll-animation has to scroll less than 1px. 
                 if (_remaningScrollAmount * _remaningScrollAmount < 1) {
@@ -2327,25 +2327,25 @@ export const scrollYBy = (deltaY, container = _pageScroller, callback, stillStar
                     return;
                 }
 
-                //Thanks to the new deltaY, the current scroll-animation 
-                //has already surpassed the old finalYPosition. 
+                //Thanks to the new delta, the current scroll-animation 
+                //has already surpassed the old _finalPosition. 
                 if (_remaningScrollAmount < 0) {
-                    scrollYTo(_finalYPosition, container, callback, containScroll, options);
+                    scrollYTo(_finalPosition, container, callback, containScroll, options);
                     return;
                 }
 
-                const _totalScrollAmount = _containerData[K_TSAY] * _containerData[K_SDY] + deltaY;
-                _containerData[K_FPY] = _finalYPosition;                             //finalYPosition
-                _containerData[K_SDY] = _totalScrollAmount > 0 ? 1 : -1;             //direction
-                _containerData[K_TSAY] = _totalScrollAmount * _containerData[K_SDY]; //totalScrollAmount (always positive)
+                const _totalScrollAmount = _containerData[K_TSAY] * _containerData[K_SDY] + delta;
+                _containerData[K_FPY] = _finalPosition;                             
+                _containerData[K_SDY] = _totalScrollAmount > 0 ? 1 : -1; //direction
+                _containerData[K_TSAY] = _totalScrollAmount * _containerData[K_SDY];
             }
-            _containerData[K_OTSY] = NO_VAL;  //originalTimestamp
-            _containerData[K_CBY] = callback; //callback
+            _containerData[K_OTSY] = NO_VAL; //originalTimestamp
+            _containerData[K_CBY] = callback;
             return;
         }
     }
 
-    scrollYTo(_currentYPosition + deltaY, container, callback, containScroll, options);
+    scrollYTo(_currentPosition + delta, container, callback, containScroll, options);
 }
 
 
