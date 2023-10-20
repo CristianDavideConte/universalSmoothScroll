@@ -1,4 +1,5 @@
 //TODO: move comments above the functions signatures.
+//TODO: order the functions in alphabetical order
 //TODO: instead of {*} specify the type of the arguments in the comment (e.g. {boolean})
 //TODO: each comment should start with: [Universal Smooth Scroll Docs](https://github.com/CristianDavideConte/universalSmoothScroll)
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
@@ -417,12 +418,53 @@ export let _debugMode = "";
 export let _errorLogger = DEFAULT_ERROR_LOGGER;
 export let _warningLogger = DEFAULT_WARNING_LOGGER;
 
+
+/**
+ * Returns the value of the `_xStepLength` property. 
+ * @returns {number} The default number of pixels scrolled during a single scroll-animation's step on the x-axis of any container.
+ */
 export const getXStepLength = () => _xStepLength;
+
+
+/**
+ * Returns the value of the `_yStepLength` property. 
+ * @returns {number} The default number of pixels scrolled during a single scroll-animation's step on the y-axis of any container.
+ */
 export const getYStepLength = () => _yStepLength;
+
+
+/**
+ * Returns the value of the `_minAnimationFrame` property. 
+ * @returns {number} The minimum number of frames any scroll-animation should last by default.
+ */
 export const getMinAnimationFrame = () => _minAnimationFrame;
+
+
+/**
+ * Returns the value of the `_windowWidth` property. 
+ * @returns {number} The current `window`'s inner width.
+ */
 export const getWindowWidth = () => _windowWidth;
+
+
+/**
+ * Returns the value of the `_windowHeight` property. 
+ * @returns {number} The current `window`'s inner height.
+ */
 export const getWindowHeight = () => _windowHeight;
+
+
+/**
+ * Returns the value of the `_reducedMotion` property. 
+ * @returns {boolean} `true` if the user has enabled any reduce-motion setting devicewise, `false` otherwise.
+ */
 export const getReducedMotionState = () => _reducedMotion;
+
+
+/**
+ * Returns the value of the `_debugMode` property. 
+ * @returns {string} The mode in which the API's error/warning messages operate in. 
+ */
 export const getDebugMode = () => _debugMode;
 
 
