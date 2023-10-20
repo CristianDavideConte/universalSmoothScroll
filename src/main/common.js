@@ -2,6 +2,7 @@
 //TODO: use backticks (``) for properties names in comments.
 //TODO: remove the uss.something calls and import only the needed variables + solve setters for private variables
 //TODO: use the IS_OBJECT function everywhere in the uss modules
+//TODO: use this as standalone comments to check for type errors: @ts-check
 import * as uss from "./uss.js";
 
 /**
@@ -348,7 +349,7 @@ export const DEFAULT_LOG_OPTIONS = new Map([
 /**
  * Checks if the passed value is an object.
  * @param {*} value The value to be checked. 
- * @returns True if `value` is an object, false otherwise.
+ * @returns {boolean} True if `value` is an object, false otherwise.
  */
 export const IS_OBJECT = (value) => {
     return value !== null &&
@@ -359,9 +360,9 @@ export const IS_OBJECT = (value) => {
 
 /**
  * Merges two objects into one.
- * @param {*} obj1 In case of conflicts, this object's properties will have the priority.
- * @param {*} obj2 In case of conflicts, this object's properties won't have the priority.
- * @returns An object with all the properties of `obj1` and `obj2` merged.
+ * @param {object} obj1 In case of conflicts, this object's properties will have the priority.
+ * @param {object} obj2 In case of conflicts, this object's properties won't have the priority.
+ * @returns {object} An object with all the properties of `obj1` and `obj2` merged.
  */
 export const MERGE_OBJECTS = (obj1, obj2) => {
     return IS_OBJECT(obj1) ? Object.assign({}, obj2, obj1) : obj2;
@@ -370,11 +371,12 @@ export const MERGE_OBJECTS = (obj1, obj2) => {
 
 /**
  * Creates a valid `options` object that can be used as the input of the default loggers. 
- * @param {*} options The options object passed to the calling function.
- * @param {*} functionName The calling function's name.
- * @param {*} otherDefaultOptions Non-static default logging options.
- * @returns A valid logging `options` object that can be used with the uss loggers.
+ * @param {object} options The options object passed to the calling function.
+ * @param {String} functionName The calling function's name.
+ * @param {object} otherDefaultOptions Non-static default logging options.
+ * @returns {object} A valid logging `options` object that can be used with the uss loggers.
  */
+//TODO: add properties of otherDefaultOptions in jsdocs
 export const CREATE_LOG_OPTIONS = (options, functionName, otherDefaultOptions) => {
     let defaultOptions = DEFAULT_LOG_OPTIONS.get(functionName);
 
@@ -408,7 +410,7 @@ export const CREATE_LOG_OPTIONS = (options, functionName, otherDefaultOptions) =
  * Works with iFrames' classes too.
  * @param {*} element The element you want to check, it can be anything.
  * @param {*} classType A js class (e.g. window.Element or simply Element).
- * @returns True if `element` is instance of classType, false otherwise.
+ * @returns {boolean} True if `element` is instance of classType, false otherwise.
  */
 export const CHECK_INSTANCEOF = (element, classType = Element) => {
     if (element instanceof classType) return true;
@@ -439,7 +441,7 @@ export const CHECK_INSTANCEOF = (element, classType = Element) => {
 /**
  * Creates a uss representation of the passed `value`.
  * @param {*} value The value to be converted into a string.
- * @returns The string representing `value`.
+ * @returns {String} The string representing `value`.
  */
 export const TO_STRING = (value) => {
     const _type = typeof value;
@@ -486,7 +488,7 @@ export const TO_STRING = (value) => {
 
 /**
  * Invalidates the temporary values of the passed `containerData`.
- * @param {*} containerData An array, one contained by `_containersData`.
+ * @param {*[]} containerData An array, one contained by `_containersData`.
  */
 export const CLEAR_COMMON_DATA = (containerData) => {
     //Scroll animations' ids.
@@ -518,14 +520,14 @@ export const CLEAR_COMMON_DATA = (containerData) => {
 /**
  * The default StepLengthCalculator for scroll-animations on the x-axis of every container that doesn't have a custom StepLengthCalculator set.
  * Controls how long each animation-step on the x-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
- * @param {*} remaning The remaning amount of pixels to scroll by the current scroll-animation.
- * @param {*} originalTimestamp The timestamp at which the current scroll-animation started.
- * @param {*} timestamp The current timestamp.
- * @param {*} total The total amount of pixels the current scroll-animation needed to scroll.
- * @param {*} currentPos The scrollLeft/scrollX pixel position of the container.
- * @param {*} finalPos The scrollLeft/scrollX pixel position the container has to reach.
+ * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
+ * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
+ * @param {number} timestamp The current timestamp.
+ * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
+ * @param {number} currentPos The scrollLeft/scrollX pixel position of the container.
+ * @param {number} finalPos The scrollLeft/scrollX pixel position the container has to reach.
  * @param {*} container An instance of `Element` or `window`.
- * @returns The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
+ * @returns {number} The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
  */
 export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     const _stepLength = total / uss._minAnimationFrame;
@@ -538,14 +540,14 @@ export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, tim
 /**
  * The default StepLengthCalculator for scroll-animations on the y-axis of every container that doesn't have a custom StepLengthCalculator set.
  * Controls how long each animation-step on the y-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
- * @param {*} remaning The remaning amount of pixels to scroll by the current scroll-animation.
- * @param {*} originalTimestamp The timestamp at which the current scroll-animation started.
- * @param {*} timestamp The current timestamp.
- * @param {*} total The total amount of pixels the current scroll-animation needed to scroll.
- * @param {*} currentPos The scrollTop/scrollY pixel position of the container.
- * @param {*} finalPos The scrollTop/scrollY pixel position the container has to reach.
+ * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
+ * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
+ * @param {number} timestamp The current timestamp.
+ * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
+ * @param {number} currentPos The scrollTop/scrollY pixel position of the container.
+ * @param {number} finalPos The scrollTop/scrollY pixel position the container has to reach.
  * @param {*} container An instance of `Element` or `window`.
- * @returns The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
+ * @returns {number} The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
  */
 export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     const _stepLength = total / uss._minAnimationFrame;
@@ -557,11 +559,12 @@ export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, tim
 
 /**
  * The default value for `_errorLogger`.
- * @param {*} options A valid logging options object.
+ * @param {object} options A valid logging options object.
  *            options.subject must be the calling function's name.
  *            options.primaryMsg must be expected value.
  *            options.secondaryMsg must be received value.
  */
+ //TODO: use the correct js sintax for the properties
 export const DEFAULT_ERROR_LOGGER = (options) => {
     const functionName = options.subject;
     const expectedValue = options.primaryMsg;
@@ -586,23 +589,25 @@ export const DEFAULT_ERROR_LOGGER = (options) => {
         throw "USS fatal error (execution stopped)";
     }
 
-    console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
-
-    console.log("%cUSS ERROR", "font-family:system-ui; font-weight:800; font-size:40px; background:#eb445a; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
-    console.log("%c" + functionName + "%cwas expecting " + expectedValue,
-        "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#2dd36f; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
-        "font-family:system-ui; font-weight:600; font-size:17px; background:#2dd36f; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
-    );
-    console.log("%cBut received%c" + receivedValue,
-        "font-family:system-ui; font-weight:600; font-size:17px; background:#eb445a; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
-        "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#eb445a; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
-    );
-
-    console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
-    console.trace("");
-    console.groupEnd("Stack Trace");
-
-    console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+    {
+        console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+        console.log("%cUSS ERROR", "font-family:system-ui; font-weight:800; font-size:40px; background:#eb445a; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
+        console.log("%c" + functionName + "%cwas expecting " + expectedValue,
+            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#2dd36f; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+            "font-family:system-ui; font-weight:600; font-size:17px; background:#2dd36f; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
+        );
+        console.log("%cBut received%c" + receivedValue,
+            "font-family:system-ui; font-weight:600; font-size:17px; background:#eb445a; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#eb445a; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
+        );
+    
+        {
+            console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
+            console.trace("");
+            console.groupEnd();
+        }
+        console.groupEnd();
+    }
 
     throw "USS fatal error (execution stopped)";
 }
@@ -610,7 +615,7 @@ export const DEFAULT_ERROR_LOGGER = (options) => {
 
 /**
  * The default value for `_warningLogger`.
- * @param {*} options A valid logging options object.
+ * @param {object} options A valid logging options object.
  *            options.subject must be the subject of the warning message.
  *            options.primaryMsg must be the warning message.
  *            options.secondaryMsg isn't used.
@@ -640,18 +645,20 @@ export const DEFAULT_WARNING_LOGGER = (options) => {
         return;
     }
 
-    console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+    {
+        console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 
-    console.log("%cUSS WARNING", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
-    console.log("%c" + subject + "%c" + message,
-        "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#fcca03; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
-        "font-family:system-ui; font-weight:600; font-size:17px; background:#fcca03; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
-    );
-
-    console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
-    console.trace("");
-    console.groupEnd("Stack Trace");
-
-    console.groupEnd("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+        console.log("%cUSS WARNING", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
+        console.log("%c" + subject + "%c" + message,
+            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#fcca03; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+            "font-family:system-ui; font-weight:600; font-size:17px; background:#fcca03; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
+        );
+        {
+            console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
+            console.trace("");
+            console.groupEnd();
+        }
+        console.groupEnd();
+    }
 }
 

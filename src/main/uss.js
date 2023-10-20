@@ -4,6 +4,7 @@
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
 //TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
 //TODO: rename "forceCalculation" to "flushCache"
+//TODO: @ts-check
 
 import {
     K_IDX,
@@ -768,7 +769,7 @@ export const getPageScroller = (forceCalculation = false, options) => {
 /**
  * Returns the value of the `_framesTime` property.
  * @param {boolean} [forceCalculation] If `true`, `calcFramesTimes` is internally called to initialize a new frames' time calculation, otherwise just acts as a getter.
- * @param {function} callback A callback function passed to `calcFramesTimes` if `forceCalculation` is `true` (deferred execution), otherwise immediately executed.
+ * @param {function} [callback] A callback function passed to `calcFramesTimes` if `forceCalculation` is `true` (deferred execution), otherwise immediately executed.
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The time (in ms) between two consecutive browser's frame repaints (e.g. 16.6 at 60fps).
  */
@@ -1060,8 +1061,8 @@ export const setWarningLogger = (newLogger = DEFAULT_WARNING_LOGGER, options) =>
 /**
  * Requests a new frames' time measurement and asynchronously inserts the result into the `_framesTimes` array. 
  * When the calculation is finished, the `_framesTime` property will be updated accordingly.
- * @param {number} previousTimestamp The timestamp relative to the previous browser repaint.
- * @param {number} currentTimestamp The timestamp relative to the current browser repaint.
+ * @param {number} [previousTimestamp] The timestamp relative to the previous browser repaint.
+ * @param {number} [currentTimestamp] The timestamp relative to the current browser repaint.
  * @param {function} [callback] A function which is invoked when the requested frames' time measurement has been performed.
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -1888,7 +1889,7 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
  * Returns every `scrollableParent` of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} includeHiddenParents `true` to include ancestors with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
- * @param {function} callback A function that is invoked every time a `scrollableParent` is found. The input of this function is the just-found `scrollableParent`.
+ * @param {function} [callback] A function that is invoked every time a `scrollableParent` is found. The input of this function is the just-found `scrollableParent`.
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*[]} An array containing all the ancestors of `container` that are scrollable.
  */
@@ -1915,7 +1916,7 @@ export const getAllScrollableParents = (container = _pageScroller, includeHidden
  * Scrolls the x-axis of `container` to the specified position if possible.
  * @param {number} finalPosition A finite number indicating the `scrollLeft` / `scrollX` that `container` has to reach.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {function} callback A function that is executed when the scroll-animation has ended.
+ * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} containScroll `true` to clamp `finalPosition` to [`0`...`maxScrollX`], `false` otherwise.  
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -2069,7 +2070,7 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
  * Scrolls the y-axis of `container` to the specified position if possible.
  * @param {number} finalPosition A finite number indicating the `scrollTop` / `scrollY` that `container` has to reach.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {function} callback A function that is executed when the scroll-animation has ended.
+ * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} containScroll `true` to clamp `finalPosition` to [`0`...`maxScrollY`], `false` otherwise.  
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -2222,7 +2223,7 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
  * Scrolls the x-axis of `container` by the specified amount if possible.
  * @param {number} delta A finite number indicating the amount of pixels that the x-axis of `container` should be scrolled by.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {function} callback A function that is executed when the scroll-animation has ended.
+ * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} stillStart `true` if any on-going scroll-animation on the x-axis of `container` must be stopped before starting this scroll-animation.
  *                             `false` if any on-going scroll-animation on the x-axis of `container` should extended by `delta` if possible. 
  * @param {boolean} containScroll `true` to clamp the `finalPosition` of the scroll-animation to [`0`...`maxScrollX`], `false` otherwise.  
@@ -2288,7 +2289,7 @@ export const scrollXBy = (delta, container = _pageScroller, callback, stillStart
  * Scrolls the y-axis of `container` by the specified amount if possible.
  * @param {number} delta A finite number indicating the amount of pixels that the y-axis of `container` should be scrolled by.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {function} callback A function that is executed when the scroll-animation has ended.
+ * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} stillStart `true` if any on-going scroll-animation on the y-axis of `container` must be stopped before starting this scroll-animation.
  *                             `false` if any on-going scroll-animation on the y-axis of `container` should extended by `delta` if possible. 
  * @param {boolean} containScroll `true` to clamp the `finalPosition` of the scroll-animation to [`0`...`maxScrollY`], `false` otherwise.  
@@ -2355,7 +2356,7 @@ export const scrollYBy = (delta, container = _pageScroller, callback, stillStart
  * @param {number} finalXPosition A finite number indicating the `scrollLeft` / `scrollX` that `container` has to reach.
  * @param {number} finalYPosition A finite number indicating the `scrollTop` / `scrollY` that `container` has to reach.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {function} callback A function that is executed when the scroll-animation has ended.
+ * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} containScroll `true` to clamp `finalXPosition` to [`0`...`maxScrollX`] and `finalYPosition` to [`0`...`maxScrollY`], `false` otherwise.  
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -2393,7 +2394,7 @@ export const scrollTo = (finalXPosition, finalYPosition, container = _pageScroll
  * @param {number} deltaX A finite number indicating the amount of pixels that the x-axis of `container` should be scrolled by.
  * @param {number} deltaY A finite number indicating the amount of pixels that the y-axis of `container` should be scrolled by.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {function} callback A function that is executed when the scroll-animation has ended.
+ * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} stillStart `true` if any on-going scroll-animation of `container` must be stopped before starting this scroll-animation.
  *                             `false` if any on-going scroll-animation of `container` should extended by `deltaX` and `deltaY` if possible. 
  * @param {boolean} containScroll `true` to clamp the `finalXPosition` of the scroll-animation to [`0`...`maxScrollX`] and 
@@ -2833,7 +2834,6 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
     const _updateHistory =
         updateHistory &&
         window.history &&
-        window.history.pushState &&
         window.history.scrollRestoration; //Check if histoy manipulation is supported
 
     const scrollToFragment = (pageLink, fragment, event, updateHistoryIfNeeded) => {
@@ -2982,7 +2982,7 @@ const ussInit = () => {
         window.matchMedia("(prefers-reduced-motion)").addListener(() => {
             _reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
             stopScrollingAll();
-        }, { passive: true });
+        });
     }
 
     //Calculate the _scrollbarsMaxDimension.
