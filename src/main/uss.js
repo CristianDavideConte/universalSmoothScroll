@@ -2474,33 +2474,32 @@ export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, st
 
 
 /**
- * Finds and scrolls all the `scrollableParents` of `element` in order to make it visible on the screen with the specified alignments.
- * @param {*} element An instance of `Element` or `window`.
- * @param {boolean} alignToLeft This value indicates the alignment (on the x-axis) of `element` and all its `scrollableParents`:
+ * Finds and scrolls all the `scrollableParents` of `container` in order to make it visible on the screen with the specified alignments.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {boolean} alignToLeft This value indicates the alignment (on the x-axis) of `container` and all its `scrollableParents`:
  * - `true` if the alignment should be to the `left`
  * - `false` if the alignment should be to the `right`
- * - `nearest` **(case insensitive)** if the alignment should to the `closest side`:
+ * - `nearest` **(case insensitive)** if the alignment should be to the `closest side`:
  *    the alignment of each container is decided by measuring its position (on the x-axis) relative to its closest scrollable ancestor
  * - Any other value, if the alignment should be to the `center`
- * @param {boolean} alignToTop This value indicates the alignment (on the y-axis) of `element` and all its `scrollableParents`:
+ * @param {boolean} alignToTop This value indicates the alignment (on the y-axis) of `container` and all its `scrollableParents`:
  * - `true` if the alignment should be to the `top`
  * - `false` if the alignment should be to the `bottom`
- * - `nearest` **(case insensitive)** if the alignment should to the `closest side`:
+ * - `nearest` **(case insensitive)** if the alignment should be to the `closest side`:
  *    the alignment of each container is decided by measuring its position (on the y-axis) relative to its closest scrollable ancestor
  * - Any other value, if the alignment should be to the `center`
  * @param {function} [callback] A function invoked when `container` is scrolled into view.
  * @param {boolean} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
-//TODO: element should be called container and container should be called parent
-export const scrollIntoView = (element, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options) => {
+export const scrollIntoView = (container, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollIntoView" });
 
-    let _containerIndex = -1;
-    const _containers = getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
+    let _parentIdx = -1;
+    const _parents = getAllScrollableParents(container, includeHiddenParents, () => _parentIdx++, options);
 
-    //The element cannot be scrolled into view.
-    if (_containerIndex < 0) {
+    //The container cannot be scrolled into view.
+    if (_parentIdx < 0) {
         if (typeof callback === "function") callback();
         return;
     }
@@ -2510,92 +2509,92 @@ export const scrollIntoView = (element, alignToLeft = true, alignToTop = true, c
 
     let _alignToLeft = alignToLeft;
     let _alignToTop = alignToTop;
-    let _currentContainer = _containers[_containerIndex];
-    let _currentElement = _containers[_containerIndex - 1] || element;
+    let _parent = _parents[_parentIdx];
+    let _container = _parents[_parentIdx - 1] || container;
 
     const _callback = () => {
-        if (_containerIndex < 1) {
+        if (_parentIdx < 1) {
             if (typeof callback === "function") callback();
             return;
         }
-        _containerIndex--;
-        _currentContainer = _containers[_containerIndex];
-        _currentElement = _containers[_containerIndex - 1] || element;
-        _scrollContainer();
-    };
+        _parentIdx--;
+        _parent = _parents[_parentIdx];
+        _container = _parents[_parentIdx - 1] || container;
+        _scrollParent();
+    }
 
-    _scrollContainer();
+    _scrollParent();
 
-    function _scrollContainer() {
+    function _scrollParent() {
         //_scrollbarsDimensions[0] = vertical scrollbar's width
         //_scrollbarsDimensions[1] = horizontal scrollbar's height
-        const _scrollbarsDimensions = calcScrollbarsDimensions(_currentContainer, false, options);
+        const _scrollbarsDimensions = calcScrollbarsDimensions(_parent, false, options);
 
         //_bordersDimensions[0] = top border size
         //_bordersDimensions[1] = right border size
         //_bordersDimensions[2] = bottom border size
         //_bordersDimensions[3] = left border size
-        const _bordersDimensions = calcBordersDimensions(_currentContainer, false, options);
+        const _bordersDimensions = calcBordersDimensions(_parent, false, options);
 
-        //Current element position relative to the current container.
-        const { top, right, bottom, left } = _currentElement.getBoundingClientRect();
-        const _elementPosition = { top, right, bottom, left };
+        //Current container position relative to the current parent.
+        const { top, right, bottom, left } = _container.getBoundingClientRect();
+        const _containerPos = { top, right, bottom, left };
 
-        if (_currentContainer === window) {
-            _elementPosition.right -= _windowWidth;
-            _elementPosition.bottom -= _windowHeight;
+        if (_parent === window) {
+            _containerPos.right -= _windowWidth;
+            _containerPos.bottom -= _windowHeight;
         } else {
-            const _containerRect = _currentContainer.getBoundingClientRect();
+            const _parentPos = _parent.getBoundingClientRect();
 
-            _elementPosition.top -= _containerRect.top;
-            _elementPosition.right -= _containerRect.right;
-            _elementPosition.bottom -= _containerRect.bottom;
-            _elementPosition.left -= _containerRect.left;
+            _containerPos.top -= _parentPos.top;
+            _containerPos.right -= _parentPos.right;
+            _containerPos.bottom -= _parentPos.bottom;
+            _containerPos.left -= _parentPos.left;
         }
 
-        const _topDelta = _elementPosition.top - _bordersDimensions[0];
-        const _rightDelta = _elementPosition.right + _bordersDimensions[1] + _scrollbarsDimensions[0];
-        const _bottomDelta = _elementPosition.bottom + _bordersDimensions[2] + _scrollbarsDimensions[1];
-        const _leftDelta = _elementPosition.left - _bordersDimensions[3];
+        const _topDelta = _containerPos.top - _bordersDimensions[0];
+        const _rightDelta = _containerPos.right + _bordersDimensions[1] + _scrollbarsDimensions[0];
+        const _bottomDelta = _containerPos.bottom + _bordersDimensions[2] + _scrollbarsDimensions[1];
+        const _leftDelta = _containerPos.left - _bordersDimensions[3];
         const _centerDeltaX = (_leftDelta + _rightDelta) * 0.5;
         const _centerDeltaY = (_topDelta + _bottomDelta) * 0.5;
 
         //Align to nearest is an indirect way to say: align to top/bottom/center.
         if (_alignToNearestX) {
             _alignToLeft = Math.abs(_leftDelta) < Math.abs(_centerDeltaX) ? true :
-                Math.abs(_rightDelta) < Math.abs(_centerDeltaX) ? false : NO_VAL;
+                           Math.abs(_rightDelta) < Math.abs(_centerDeltaX) ? false : NO_VAL;
         }
 
         if (_alignToNearestY) {
             _alignToTop = Math.abs(_topDelta) < Math.abs(_centerDeltaY) ? true :
-                Math.abs(_bottomDelta) < Math.abs(_centerDeltaY) ? false : NO_VAL;
+                          Math.abs(_bottomDelta) < Math.abs(_centerDeltaY) ? false : NO_VAL;
         }
 
         let _deltaX = _alignToLeft === true ? _leftDelta :
-            _alignToLeft === false ? _rightDelta :
-                _centerDeltaX;
+                      _alignToLeft === false ? _rightDelta :
+                      _centerDeltaX;
         let _deltaY = _alignToTop === true ? _topDelta :
-            _alignToTop === false ? _bottomDelta :
-                _centerDeltaY;
+                      _alignToTop === false ? _bottomDelta :
+                      _centerDeltaY;
 
         _deltaX = _deltaX > 0 ? Math.round(_deltaX) : Math.floor(_deltaX);
         _deltaY = _deltaY > 0 ? Math.round(_deltaY) : Math.floor(_deltaY);
 
-        const _shouldScrollX = _deltaX !== 0 && getMaxScrollX(_currentContainer, false, options) >= 1;
-        const _shouldScrollY = _deltaY !== 0 && getMaxScrollY(_currentContainer, false, options) >= 1;
+        const _shouldScrollX = _deltaX !== 0 && getMaxScrollX(_parent, false, options) >= 1;
+        const _shouldScrollY = _deltaY !== 0 && getMaxScrollY(_parent, false, options) >= 1;
 
-        if (_shouldScrollX && _shouldScrollY) scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, true, options);
-        else if (_shouldScrollX) scrollXBy(_deltaX, _currentContainer, _callback, true, true, options);
-        else if (_shouldScrollY) scrollYBy(_deltaY, _currentContainer, _callback, true, true, options);
+        if (_shouldScrollX && _shouldScrollY) scrollBy(_deltaX, _deltaY, _parent, _callback, true, true, options);
+        else if (_shouldScrollX) scrollXBy(_deltaX, _parent, _callback, true, true, options);
+        else if (_shouldScrollY) scrollYBy(_deltaY, _parent, _callback, true, true, options);
         else _callback();
     }
 }
 
 
 /**
- * Finds and scrolls all the `scrollableParents` of `element` in order to make it visible on the screen with the specified alignments only if it's not already visible.
- * @param {*} element An instance of `Element` or `window`.
- * @param {boolean} alignToCenter This value indicates the alignments (on both the x and y axes) of `element`:
+ * Finds and scrolls all the `scrollableParents` of `container` in order to make it visible on the screen with the specified alignments only if it's not already visible.
+ * @param {*} container An instance of `Element` or `window`.
+ * @param {boolean} alignToCenter This value indicates the alignments (on both the x and y axes) of `container`:
  * - `true` if the alignments should be to the `center` of its closest scrollable ancestor
  * - Any other value, if the alignments should to the `closest side`:
  *   the alignments are decided by measuring `container`'s position relative to its closest scrollable ancestor
@@ -2605,84 +2604,83 @@ export const scrollIntoView = (element, alignToLeft = true, alignToTop = true, c
  * @param {boolean} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
-//TODO: element should be called container and container should be called parent
-export const scrollIntoViewIfNeeded = (element, alignToCenter = true, callback, includeHiddenParents = false, options) => {
+export const scrollIntoViewIfNeeded = (container, alignToCenter = true, callback, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollIntoViewIfNeeded" });
 
-    let _containerIndex = -1;
-    const _containers = getAllScrollableParents(element, includeHiddenParents, () => _containerIndex++, options);
+    let _parentIdx = -1;
+    const _parents = getAllScrollableParents(container, includeHiddenParents, () => _parentIdx++, options);
 
-    //The element cannot be scrolled into view.
-    if (_containerIndex < 0) {
+    //The container cannot be scrolled into view.
+    if (_parentIdx < 0) {
         if (typeof callback === "function") callback();
         return;
     }
 
     let _alignToLeft = NO_VAL;
     let _alignToTop = NO_VAL;
-    let _currentContainer = _containers[_containerIndex];
-    let _currentElement = _containers[_containerIndex - 1] || element;
+    let _parent = _parents[_parentIdx];
+    let _container = _parents[_parentIdx - 1] || container;
 
     const _callback = () => {
-        if (_containerIndex < 1) {
+        if (_parentIdx < 1) {
             if (typeof callback === "function") callback();
             return;
         }
-        _containerIndex--;
-        _currentContainer = _containers[_containerIndex];
-        _currentElement = _containers[_containerIndex - 1] || element;
-        _scrollContainer();
+        _parentIdx--;
+        _parent = _parents[_parentIdx];
+        _container = _parents[_parentIdx - 1] || container;
+        _scrollParent();
     };
 
-    _scrollContainer();
+    _scrollParent();
 
-    function _scrollContainer() {
+    function _scrollParent() {
         //_scrollbarsDimensions[0] = vertical scrollbar's width
         //_scrollbarsDimensions[1] = horizontal scrollbar's height
-        const _scrollbarsDimensions = calcScrollbarsDimensions(_currentContainer, false, options);
+        const _scrollbarsDimensions = calcScrollbarsDimensions(_parent, false, options);
 
         //_bordersDimensions[0] = top border size
         //_bordersDimensions[1] = right border size
         //_bordersDimensions[2] = bottom border size
         //_bordersDimensions[3] = left border size
-        const _bordersDimensions = calcBordersDimensions(_currentContainer, false, options);
+        const _bordersDimensions = calcBordersDimensions(_parent, false, options);
 
-        //Current element position relative to the current container.
-        const { top, right, bottom, left } = _currentElement.getBoundingClientRect();
-        const _elementPosition = { top, right, bottom, left };
+        //Current container position relative to the current parent.
+        const { top, right, bottom, left } = _container.getBoundingClientRect();
+        const _containerPos = { top, right, bottom, left };
 
-        if (_currentContainer === window) {
-            _elementPosition.right -= _windowWidth;
-            _elementPosition.bottom -= _windowHeight;
+        if (_parent === window) {
+            _containerPos.right -= _windowWidth;
+            _containerPos.bottom -= _windowHeight;
         } else {
-            const _containerRect = _currentContainer.getBoundingClientRect();
+            const _parentPos = _parent.getBoundingClientRect();
 
-            _elementPosition.top -= _containerRect.top;
-            _elementPosition.right -= _containerRect.right;
-            _elementPosition.bottom -= _containerRect.bottom;
-            _elementPosition.left -= _containerRect.left;
+            _containerPos.top -= _parentPos.top;
+            _containerPos.right -= _parentPos.right;
+            _containerPos.bottom -= _parentPos.bottom;
+            _containerPos.left -= _parentPos.left;
         }
 
-        const _topDelta = _elementPosition.top - _bordersDimensions[0];
-        const _rightDelta = _elementPosition.right + _bordersDimensions[1] + _scrollbarsDimensions[0];
-        const _bottomDelta = _elementPosition.bottom + _bordersDimensions[2] + _scrollbarsDimensions[1];
-        const _leftDelta = _elementPosition.left - _bordersDimensions[3];
+        const _topDelta = _containerPos.top - _bordersDimensions[0];
+        const _rightDelta = _containerPos.right + _bordersDimensions[1] + _scrollbarsDimensions[0];
+        const _bottomDelta = _containerPos.bottom + _bordersDimensions[2] + _scrollbarsDimensions[1];
+        const _leftDelta = _containerPos.left - _bordersDimensions[3];
         const _centerDeltaX = (_leftDelta + _rightDelta) * 0.5;
         const _centerDeltaY = (_topDelta + _bottomDelta) * 0.5;
 
-        //Check if the current element is already visible 
+        //Check if the current container is already visible 
         //or if it's bigger than it's parent.
-        const _isOriginalElement = _currentElement === element;
+        const _isOriginalContainer = _container === container;
         const _isIntoViewX = _leftDelta > -0.5 && _rightDelta < 0.5;
         const _isIntoViewY = _topDelta > -0.5 && _bottomDelta < 0.5;
         const _overflowsX = _leftDelta <= 0 && _rightDelta >= 0;
         const _overflowsY = _topDelta <= 0 && _bottomDelta >= 0;
 
-        let _shouldScrollX = (_isOriginalElement && (alignToCenter || (!_isIntoViewX && !_overflowsX))) ||
-            (!_isOriginalElement && !_isIntoViewX);
+        let _shouldScrollX = (_isOriginalContainer && (alignToCenter || (!_isIntoViewX && !_overflowsX))) ||
+                             (!_isOriginalContainer && !_isIntoViewX);
 
-        let _shouldScrollY = (_isOriginalElement && (alignToCenter || (!_isIntoViewY && !_overflowsY))) ||
-            (!_isOriginalElement && !_isIntoViewY);
+        let _shouldScrollY = (_isOriginalContainer && (alignToCenter || (!_isIntoViewY && !_overflowsY))) ||
+                             (!_isOriginalContainer && !_isIntoViewY);
 
         if (!_shouldScrollX && !_shouldScrollY) {
             _callback();
@@ -2691,39 +2689,39 @@ export const scrollIntoViewIfNeeded = (element, alignToCenter = true, callback, 
 
         //Possible alignments for the original element: center or nearest.
         //Possible alignments for every other container: nearest.
-        if (_isOriginalElement && alignToCenter) {
+        if (_isOriginalContainer && alignToCenter) {
             _alignToLeft = NO_VAL;
             _alignToTop = NO_VAL;
         } else {
             if (_shouldScrollX) {
                 _alignToLeft = Math.abs(_leftDelta) < Math.abs(_centerDeltaX) ? true :
-                    Math.abs(_rightDelta) < Math.abs(_centerDeltaX) ? false : NO_VAL;
+                               Math.abs(_rightDelta) < Math.abs(_centerDeltaX) ? false : NO_VAL;
             }
 
             if (_shouldScrollY) {
                 _alignToTop = Math.abs(_topDelta) < Math.abs(_centerDeltaY) ? true :
-                    Math.abs(_bottomDelta) < Math.abs(_centerDeltaY) ? false : NO_VAL;
+                              Math.abs(_bottomDelta) < Math.abs(_centerDeltaY) ? false : NO_VAL;
             }
         }
 
         let _deltaX = !_shouldScrollX ? 0 :
-            _alignToLeft === true ? _leftDelta :
-                _alignToLeft === false ? _rightDelta :
-                    _centerDeltaX;
+                      _alignToLeft === true ? _leftDelta :
+                      _alignToLeft === false ? _rightDelta :
+                      _centerDeltaX;
         let _deltaY = !_shouldScrollY ? 0 :
-            _alignToTop === true ? _topDelta :
-                _alignToTop === false ? _bottomDelta :
-                    _centerDeltaY;
+                      _alignToTop === true ? _topDelta :
+                      _alignToTop === false ? _bottomDelta :
+                      _centerDeltaY;
 
         _deltaX = _deltaX > 0 ? Math.round(_deltaX) : Math.floor(_deltaX);
         _deltaY = _deltaY > 0 ? Math.round(_deltaY) : Math.floor(_deltaY);
 
-        _shouldScrollX = _deltaX !== 0 && getMaxScrollX(_currentContainer, false, options) >= 1;
-        _shouldScrollY = _deltaY !== 0 && getMaxScrollY(_currentContainer, false, options) >= 1;
+        _shouldScrollX = _deltaX !== 0 && getMaxScrollX(_parent, false, options) >= 1;
+        _shouldScrollY = _deltaY !== 0 && getMaxScrollY(_parent, false, options) >= 1;
 
-        if (_shouldScrollX && _shouldScrollY) scrollBy(_deltaX, _deltaY, _currentContainer, _callback, true, true, options);
-        else if (_shouldScrollX) scrollXBy(_deltaX, _currentContainer, _callback, true, true, options);
-        else if (_shouldScrollY) scrollYBy(_deltaY, _currentContainer, _callback, true, true, options);
+        if (_shouldScrollX && _shouldScrollY) scrollBy(_deltaX, _deltaY, _parent, _callback, true, true, options);
+        else if (_shouldScrollX) scrollXBy(_deltaX, _parent, _callback, true, true, options);
+        else if (_shouldScrollY) scrollYBy(_deltaY, _parent, _callback, true, true, options);
         else _callback();
     }
 }
