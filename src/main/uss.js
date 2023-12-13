@@ -1,6 +1,4 @@
-//TODO: move comments above the functions signatures.
 //TODO: order the functions in alphabetical order
-//TODO: instead of {*} specify the type of the arguments in the comment (e.g. {boolean})
 //TODO: each comment should start with: [Universal Smooth Scroll Docs](https://github.com/CristianDavideConte/universalSmoothScroll)
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
 //TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
@@ -68,7 +66,9 @@ import {
     DEFAULT_WARNING_LOGGER,
     CHECK_INSTANCEOF,
     DEFAULT_WARNING_PRIMARY_MSG_1,
-    DEFAULT_WARNING_PRIMARY_MSG_2
+    DEFAULT_WARNING_PRIMARY_MSG_2,
+    IS_POSITIVE,
+    IS_POSITIVE_OR_0
 } from "./common.js"
 
 /**
@@ -935,7 +935,7 @@ export const setStepLengthCalculator = (newCalculator, container = _pageScroller
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setXStepLength = (newStepLength = DEFAULT_XSTEP_LENGTH, options) => {
-    if (!Number.isFinite(newStepLength) || newStepLength <= 0) {
+    if (!IS_POSITIVE(newStepLength)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLength", { secondaryMsg: newStepLength }));
         return;
     }
@@ -949,7 +949,7 @@ export const setXStepLength = (newStepLength = DEFAULT_XSTEP_LENGTH, options) =>
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) => {
-    if (!Number.isFinite(newStepLength) || newStepLength <= 0) {
+    if (!IS_POSITIVE(newStepLength)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLength", { secondaryMsg: newStepLength }));
         return;
     }
@@ -962,9 +962,9 @@ export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) =>
  * @param {number} newStepLength A finite `Number` > 0.
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
+//TODO: use undefined to unset the values as in the setXStepLength and setYStepLength functions + change comments
 export const setStepLength = (newStepLength, options) => {
-    //TODO: use undefined to unset the values as in the setXStepLength and setYStepLength functions + change comments
-    if (!Number.isFinite(newStepLength) || newStepLength <= 0) {
+    if (!IS_POSITIVE(newStepLength)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLength", { secondaryMsg: newStepLength }));
         return;
     }
@@ -979,7 +979,7 @@ export const setStepLength = (newStepLength, options) => {
  * @param {object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES, options) => {
-    if (!Number.isFinite(newMinAnimationFrame) || newMinAnimationFrame <= 0) {
+    if (!IS_POSITIVE(newMinAnimationFrame)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setMinAnimationFrame", { secondaryMsg: newMinAnimationFrame }));
         return;
     }
@@ -1120,14 +1120,14 @@ export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, o
      */
     if (_framesTimes[FRM_TMS_PHASE] && _framesTimes[FRM_TMS_PHASE] !== options.requestPhase) return;
 
-    if (!Number.isFinite(previousTimestamp) || previousTimestamp < 0) {
+    if (!IS_POSITIVE_OR_0(previousTimestamp)) {
         options.requestPhase = 1;
         _framesTimes[FRM_TMS_PHASE] = 1;
         window.requestAnimationFrame((timestamp) => calcFramesTimes(timestamp, currentTimestamp, callback, options));
         return;
     }
 
-    if (!Number.isFinite(currentTimestamp) || currentTimestamp < 0) {
+    if (!IS_POSITIVE_OR_0(currentTimestamp)) {
         options.requestPhase = 2;
         _framesTimes[FRM_TMS_PHASE] = 2;
         window.requestAnimationFrame((timestamp) => calcFramesTimes(previousTimestamp, timestamp, callback, options));

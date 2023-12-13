@@ -1,9 +1,8 @@
 //TODO: order the functions in alphabetical order
-//TODO: instead of {*} specify the type of the arguments in the comment (e.g. {boolean})
 //TODO: use backticks (``) for properties names in comments.
 //TODO: remove the uss.something calls and import only the needed variables + solve setters for private variables
 //TODO: use the IS_OBJECT function everywhere in the uss modules
-//TODO: use this as standalone comments to check for type errors: @ts-check
+//TODO: use this as standalone comment to check for type errors: //@ts-check
 import * as uss from "./uss.js";
 
 /**
@@ -365,6 +364,15 @@ export const IS_OBJECT = (value) => {
  */
 export const IS_POSITIVE = (value) => {
     return Number.isFinite(value) && value > 0;
+}
+
+/**
+ * Checks if the passed value is a positive number or 0 (i.e. >= 0).
+ * @param {*} value The value to be checked.
+ * @returns {boolean} `true` if `value` is a number >= 0, `false` otherwise.
+ */
+export const IS_POSITIVE_OR_0 = (value) => {
+    return Number.isFinite(value) && value >= 0;
 }
 
 /**
