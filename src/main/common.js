@@ -283,7 +283,7 @@ export const DEFAULT_WARNING_PRIMARY_MSG_2 = "is not a valid step length";
  * Note that these objects (the map entries) are partial and need 
  * to be completed (they only contain known/static log informations). 
  */
-export const DEFAULT_LOG_OPTIONS = new Map([
+const DEFAULT_LOG_OPTIONS = new Map([
     ["isXScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
     ["isYScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
     ["isScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
@@ -350,7 +350,7 @@ export const DEFAULT_LOG_OPTIONS = new Map([
 /**
  * Checks if the passed value is an object.
  * @param {*} value The value to be checked. 
- * @returns {boolean} True if `value` is an object, false otherwise.
+ * @returns {boolean} `true` if `value` is an object, `false` otherwise.
  */
 export const IS_OBJECT = (value) => {
     return value !== null &&
@@ -358,6 +358,14 @@ export const IS_OBJECT = (value) => {
         !Array.isArray(value);
 }
 
+/**
+ * Checks if the passed value is a positive number (i.e. > 0).
+ * @param {*} value The value to be checked.
+ * @returns {boolean} `true` if `value` is a positive number, `false` otherwise.
+ */
+export const IS_POSITIVE = (value) => {
+    return Number.isFinite(value) && value > 0;
+}
 
 /**
  * Merges two objects into one.
@@ -378,8 +386,8 @@ export const MERGE_OBJECTS = (obj1, obj2) => {
  * @returns {object} A valid logging `options` object that can be used with the uss loggers.
  */
 //TODO: add properties of otherDefaultOptions in jsdocs
-export const CREATE_LOG_OPTIONS = (options, functionName, otherDefaultOptions) => {
-    let defaultOptions = DEFAULT_LOG_OPTIONS.get(functionName);
+export const CREATE_LOG_OPTIONS = (options, functionName, otherDefaultOptions, defaultLogOptionsMap=DEFAULT_LOG_OPTIONS) => {
+    let defaultOptions = defaultLogOptionsMap.get(functionName);
 
     /**
      * Multiple log options can be associated with a single function,

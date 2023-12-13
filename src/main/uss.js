@@ -402,6 +402,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
     return false;
 }
 
+//TODO: comment these variables
 export let _containersData = new Map(); //TODO: perhaps const?
 export let _xStepLength = DEFAULT_XSTEP_LENGTH;
 export let _yStepLength = DEFAULT_YSTEP_LENGTH;
@@ -2892,7 +2893,7 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
 
         //Look for elements with the corresponding id or "name" attribute.
         const _fragmentElement = document.getElementById(fragment) ||
-            document.querySelector("a[name='" + fragment + "']");
+                                 document.querySelector("a[name='" + fragment + "']");
 
         //Invalid fragment or scroll prevented by user.
         if (!_fragmentElement || _init(pageLink, _fragmentElement, event) === false) return;
@@ -2918,7 +2919,7 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
         if (_fragment !== "") {
             //Look for elements with the corresponding id or "name" attribute.
             const _fragmentElement = document.getElementById(_fragment) ||
-                document.querySelector("a[name='" + _fragment + "']");
+                                     document.querySelector("a[name='" + _fragment + "']");
             if (!_fragmentElement) {
                 _warningLogger(
                     {
