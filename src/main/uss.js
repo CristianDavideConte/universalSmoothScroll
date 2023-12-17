@@ -1,3 +1,4 @@
+//TODO: follow the same spacing styling of common.js
 //TODO: order the functions in alphabetical order
 //TODO: each comment should start with: [Universal Smooth Scroll Docs](https://github.com/CristianDavideConte/universalSmoothScroll)
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries

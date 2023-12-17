@@ -1,8 +1,8 @@
-//TODO: use this as standalone comment to check for type errors: //@ts-check
-
+//TODO: @ts-check //Use to check for type errors 
 /**
  * CODE STYLING NOTE:
- * Constans, variables and functions are logically grouped in this file.
+ * Constans, variables and functions are logically grouped in this file: this helps
+ * with organizing code and understanding which variables should be initialized first.
  * The groups are separed by new lines.
  * 
  * New line rules:
@@ -15,6 +15,7 @@ import {
     _minAnimationFrame,
     _debugMode,
 } from "./uss.js"
+
 
 
 /**
@@ -226,6 +227,32 @@ export const MAX_MSG_LEN = 40;
 
 
 /**
+ * The initial inner width of the `window`.
+ */
+export const INITIAL_WINDOW_WIDTH = window.innerWidth;
+
+/**
+ * The initial inner height of the `window`.
+ */
+export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
+
+
+
+/**
+ * Default value for the `_xStepLength` variable.
+ * 16px at 412px of window width && 23px at 1920px of window width.
+ */
+export const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);
+
+/**
+ * Default value for the `_yStepLength` variable.
+ * 38px at 789px of window height && 22px at 1920px of window height.
+ */
+export const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789)));
+
+
+
+/**
  * Default value for the `_framesTime` variable (in ms).
  */
 export const DEFAULT_FRAME_TIME = 16.6;
@@ -240,31 +267,9 @@ export const DEFAULT_FRAME_TIME = 16.6;
 export const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;
 
 /**
- * Default value for the `_xStepLength` variable.
- * 16px at 412px of window width && 23px at 1920px of window width.
- */
-export const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);
-
-/**
- * Default value for the `_yStepLength` variable.
- * 38px at 789px of window height && 22px at 1920px of window height.
- */
-export const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789)));
-
-/**
  * The highest `scrollLeft`/`scrollTop` value that can be used by the API before scroll breaks (2^30px).
  */
 export const HIGHEST_SAFE_SCROLL_POS = 1073741824;
-
-/**
- * The initial inner width of the `window`.
- */
-export const INITIAL_WINDOW_WIDTH = window.innerWidth;
-
-/**
- * The initial inner height of the `window`.
- */
-export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
 
 
 
