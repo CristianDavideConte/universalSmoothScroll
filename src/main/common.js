@@ -1,8 +1,12 @@
 //TODO: order the functions in alphabetical order
-//TODO: remove the uss.something calls and import only the needed variables + solve setters for private variables
-//TODO: use the IS_OBJECT function everywhere in the uss modules
 //TODO: use this as standalone comment to check for type errors: //@ts-check
-import * as uss from "./uss.js";
+
+import {
+    _xStepLength,
+    _yStepLength,
+    _minAnimationFrame,
+    _debugMode,
+} from "./uss.js"
 
 /**
  * Key to get the scroll id on the x-axis.
@@ -551,9 +555,9 @@ export const CLEAR_COMMON_DATA = (containerData) => {
  * @returns {number} The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
  */
 export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    const _stepLength = total / uss._minAnimationFrame;
+    const _stepLength = total / _minAnimationFrame;
     if (_stepLength < 1) return 1;
-    if (_stepLength > uss._xStepLength) return uss._xStepLength;
+    if (_stepLength > _xStepLength) return _xStepLength;
     return _stepLength;
 }
 
@@ -571,9 +575,9 @@ export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, tim
  * @returns {number} The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
  */
 export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    const _stepLength = total / uss._minAnimationFrame;
+    const _stepLength = total / _minAnimationFrame;
     if (_stepLength < 1) return 1;
-    if (_stepLength > uss._yStepLength) return uss._yStepLength;
+    if (_stepLength > _yStepLength) return _yStepLength;
     return _stepLength;
 }
 
@@ -590,7 +594,7 @@ export const DEFAULT_ERROR_LOGGER = (options) => {
     const expectedValue = options.primaryMsg;
     let receivedValue = options.secondaryMsg;
 
-    if (REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
+    if (REGEX_LOGGER_DISABLED.test(_debugMode)) return;
 
     const _isString = typeof receivedValue === "string";
     if (!_isString) receivedValue = TO_STRING(receivedValue);
@@ -603,7 +607,7 @@ export const DEFAULT_ERROR_LOGGER = (options) => {
     //Insert leading and trailing quotes if needed.
     if (_isString) receivedValue = "\"" + receivedValue + "\"";
 
-    if (REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
+    if (REGEX_LOGGER_LEGACY.test(_debugMode)) {
         console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
         console.error("USS ERROR\n", functionName, "was expecting", expectedValue + ", but received", receivedValue + ".");
         throw "USS fatal error (execution stopped)";
@@ -646,7 +650,7 @@ export const DEFAULT_WARNING_LOGGER = (options) => {
     const message = options.primaryMsg;
     const useSubjectQuotes = options.useSubjectQuotes;
 
-    if (REGEX_LOGGER_DISABLED.test(uss._debugMode)) return;
+    if (REGEX_LOGGER_DISABLED.test(_debugMode)) return;
 
     const _isString = typeof subject === "string";
     if (!_isString) subject = TO_STRING(subject);
@@ -659,7 +663,7 @@ export const DEFAULT_WARNING_LOGGER = (options) => {
     //Insert leading and trailing quotes if needed.
     if (_isString && useSubjectQuotes) subject = "\"" + subject + "\"";
 
-    if (REGEX_LOGGER_LEGACY.test(uss._debugMode)) {
+    if (REGEX_LOGGER_LEGACY.test(_debugMode)) {
         console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
         console.warn("USS WARNING\n", subject, message + ".");
         return;
