@@ -156,7 +156,7 @@ export async function isValidStepLengthCalculator(
  * This functions tests if both the `_framesTime` and the `_framesTimes` variable 
  * have not been altered and if then calculates the browser's refresh rate.
  * More specifically, it returns the highest number of times that `requestAnimationFrame` can be called per second.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns The number of frames per seconds that the browser is refreshing at.
  */
 export async function getBrowserRefreshRate(options) {

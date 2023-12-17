@@ -472,7 +472,7 @@ export const getDebugMode = () => _debugMode;
 /**
  * Checks whether `container` is being scrolled horizontally.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {boolean} `true` if a scroll-animation on the x-axis of `container` is currently being performed, `false` otherwise.
  */
 export const isXScrolling = (container = _pageScroller, options) => {
@@ -489,7 +489,7 @@ export const isXScrolling = (container = _pageScroller, options) => {
 /**
  * Checks whether `container` is being scrolled vertically.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {boolean} `true` if a scroll-animation on the y-axis of `container` is currently being performed, `false` otherwise.
  */
 export const isYScrolling = (container = _pageScroller, options) => {
@@ -506,7 +506,7 @@ export const isYScrolling = (container = _pageScroller, options) => {
 /**
  * Checks whether `container` is being scrolled.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {boolean} `true` if a scroll-animation is currently being performed on `container`, `false` otherwise.
  */
 export const isScrolling = (container = _pageScroller, options) => {
@@ -523,7 +523,7 @@ export const isScrolling = (container = _pageScroller, options) => {
 /**
  * Returns the horizontal pixel position `container` has to reach.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The target `scrollLeft`/`scrollX` pixel position of `container`.
  */
 export const getFinalXPosition = (container = _pageScroller, options) => {
@@ -541,7 +541,7 @@ export const getFinalXPosition = (container = _pageScroller, options) => {
 /**
  * Returns the vertical pixel position `container` has to reach.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The target `scrollTop`/`scrollY` pixel position of `container`.
  */
 export const getFinalYPosition = (container = _pageScroller, options) => {
@@ -559,7 +559,7 @@ export const getFinalYPosition = (container = _pageScroller, options) => {
 /**
  * Returns the direction of the current scroll-animation on the x-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} `1` if the target `scrollLeft`/`scrollX` is higher than the current one, `-1` it's lower, `0` otherwise.
  */
 export const getScrollXDirection = (container = _pageScroller, options) => {
@@ -577,7 +577,7 @@ export const getScrollXDirection = (container = _pageScroller, options) => {
 /**
  * Returns the direction of the current scroll-animation on the y-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} `1` if the target `scrollTop`/`scrollY` is higher than the current one, `-1` it's lower, `0` otherwise.
  */
 export const getScrollYDirection = (container = _pageScroller, options) => {
@@ -596,7 +596,7 @@ export const getScrollYDirection = (container = _pageScroller, options) => {
  * Returns a `StepLengthCalculator` set for the x-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the x-axis of `container`, otherwise returns the `fixed` one.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function | undefined} The ease function which currently controls the scroll-animations on the x-axis of `container`.
  */
 export const getXStepLengthCalculator = (container = _pageScroller, getTemporary = false, options) => {
@@ -614,7 +614,7 @@ export const getXStepLengthCalculator = (container = _pageScroller, getTemporary
  * Returns a `StepLengthCalculator` set for the y-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the y-axis of `container`, otherwise returns the `fixed` one.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function | undefined} The ease function which currently controls the scroll-animations on the y-axis of `container`.
  */
 export const getYStepLengthCalculator = (container = _pageScroller, getTemporary = false, options) => {
@@ -772,7 +772,7 @@ export const getWindowScroller = (forceCalculation = false) => {
 /**
  * Returns the value of the `_pageScroller` property.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The element that scrolls the webpage.
  */
 export const getPageScroller = (forceCalculation = false, options) => {
@@ -813,7 +813,7 @@ export const getPageScroller = (forceCalculation = false, options) => {
  * Returns the value of the `_framesTime` property.
  * @param {boolean} [forceCalculation] If `true`, `calcFramesTimes` is internally called to initialize a new frames' time calculation, otherwise just acts as a getter.
  * @param {function} [callback] A callback function passed to `calcFramesTimes` if `forceCalculation` is `true` (deferred execution), otherwise immediately executed.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The time (in ms) between two consecutive browser's frame repaints (e.g. 16.6 at 60fps).
  */
 export const getFramesTime = (forceCalculation = false, callback, options) => {
@@ -830,7 +830,7 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setXStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
@@ -863,7 +863,7 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setYStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
@@ -896,7 +896,7 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
@@ -932,7 +932,7 @@ export const setStepLengthCalculator = (newCalculator, container = _pageScroller
 /**
  * Sets (or unsets if specified) the default number of pixels scrolled during a single scroll-animation's step (`_xStepLength` property) on the x-axis of all containers. 
  * @param {number} newStepLength A finite `Number` > 0.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setXStepLength = (newStepLength = DEFAULT_XSTEP_LENGTH, options) => {
     if (!IS_POSITIVE(newStepLength)) {
@@ -946,7 +946,7 @@ export const setXStepLength = (newStepLength = DEFAULT_XSTEP_LENGTH, options) =>
 /**
  * Sets (or unsets if specified) the default number of pixels scrolled during a single scroll-animation's step (`_yStepLength` property) on the y-axis of all containers. 
  * @param {number} newStepLength A finite `Number` > 0.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) => {
     if (!IS_POSITIVE(newStepLength)) {
@@ -960,7 +960,7 @@ export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) =>
 /**
  * Sets the default number of pixels scrolled during a single scroll-animation's step (`_xStepLength` and `_yStepLength` properties) on any axis of all containers. 
  * @param {number} newStepLength A finite `Number` > 0.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 //TODO: use undefined to unset the values as in the setXStepLength and setYStepLength functions + change comments
 export const setStepLength = (newStepLength, options) => {
@@ -976,7 +976,7 @@ export const setStepLength = (newStepLength, options) => {
 /**
  * Sets (or unsets if requested) the minimum number of frames any scroll-animation should last by default (`_minAnimationFrame` property).
  * @param {number} newMinAnimationFrame A finite `Number` > 0.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES, options) => {
     if (!IS_POSITIVE(newMinAnimationFrame)) {
@@ -990,7 +990,7 @@ export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATIO
 /**
  * Tells the API which Element scrolls the document (`_pageScroller` property). 
  * @param {*} newPageScroller An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setPageScroller = (newPageScroller, options) => {
     if (!_containersData.get(newPageScroller) && !INIT_CONTAINER_DATA(newPageScroller)) {
@@ -1005,7 +1005,7 @@ export const setPageScroller = (newPageScroller, options) => {
  * Adds a callback function to the resize callback queue of `container`.
  * @param {function} newCallback A function that will be invoked when `container` is resized.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 //TODO: add cypress tests
 export const addResizeCallback = (newCallback, container = _pageScroller, options) => {
@@ -1030,7 +1030,7 @@ export const addResizeCallback = (newCallback, container = _pageScroller, option
  * Adds a callback function to the mutation callback queue of `container`.
  * @param {function} newCallback A function that will be invoked when `container` is mutated.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 //TODO: add cypress tests
 export const addMutationCallback = (newCallback, container = _pageScroller, options) => {
@@ -1076,7 +1076,7 @@ export const setDebugMode = (newDebugMode = "") => {
 /**
  * Sets the function that will be invoked when the API generates an error (`_errorLogger` property)
  * @param {function} [newLogger] A function which will be passed a single argument that contains the log informations: the `options` object.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setErrorLogger = (newLogger = DEFAULT_ERROR_LOGGER, options) => {
     if (typeof newLogger !== "function") {
@@ -1090,7 +1090,7 @@ export const setErrorLogger = (newLogger = DEFAULT_ERROR_LOGGER, options) => {
 /**
  * Sets the function that will be invoked when the API generates a warning (`_warningLogger` property)
  * @param {function} [newLogger] A function which will be passed a single argument that contains the log informations: the `options` object.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setWarningLogger = (newLogger = DEFAULT_WARNING_LOGGER, options) => {
     if (typeof newLogger !== "function") {
@@ -1107,7 +1107,7 @@ export const setWarningLogger = (newLogger = DEFAULT_WARNING_LOGGER, options) =>
  * @param {number} [previousTimestamp] The timestamp relative to the previous browser repaint.
  * @param {number} [currentTimestamp] The timestamp relative to the current browser repaint.
  * @param {function} [callback] A function which is invoked when the requested frames' time measurement has been performed.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, options) => {
     options = MERGE_OBJECTS(options, { subject: "calcFramesTimes", requestPhase: 0 });
@@ -1161,7 +1161,7 @@ export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, o
  * Returns the size of the vertical scrollbar of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The width of the vertical scrollbar of `container`.
  */
 export const calcXScrollbarDimension = (container = _pageScroller, forceCalculation = false, options) => {
@@ -1173,7 +1173,7 @@ export const calcXScrollbarDimension = (container = _pageScroller, forceCalculat
  * Returns the size of the horizontal scrollbar of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The height of the horizontal scrollbar of `container`.
  */
 export const calcYScrollbarDimension = (container = _pageScroller, forceCalculation = false, options) => {
@@ -1185,7 +1185,7 @@ export const calcYScrollbarDimension = (container = _pageScroller, forceCalculat
  * Returns an array containing the size of the 2 scrollbars of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number[]} An array containing: 
  * - The width of the vertical scrollbar of `container`
  * - The height of the horizontal scrollbar of `container`
@@ -1280,7 +1280,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
  * Returns an array containing the size of the 4 borders of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number[]} An array containing: 
  * - Top height of the top border of `container`
  * - Top width of the right border of `container`
@@ -1344,7 +1344,7 @@ export const calcBordersDimensions = (container = _pageScroller, forceCalculatio
 /**
  * Returns the `scrollXCalculator` of `container`.  
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function} A function that when invoked returns the real-time `scrollLeft` / `scrollX` value of `container`.
  */
 export const getScrollXCalculator = (container = _pageScroller, options) => {
@@ -1355,7 +1355,7 @@ export const getScrollXCalculator = (container = _pageScroller, options) => {
 /**
  * Returns the `scrollYCalculator` of `container`.  
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function} A function that when invoked returns the real-time `scrollTop` / `scrollY` value of `container`.  
  */
 export const getScrollYCalculator = (container = _pageScroller, options) => {
@@ -1366,7 +1366,7 @@ export const getScrollYCalculator = (container = _pageScroller, options) => {
 /**
  * Returns an array containing the `scrollXCalculator` and the `scrollYCalculator` of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function[]} An array containing 2 functions that when invoked return respectively: 
  * - The real-time `scrollLeft` / `scrollX` value of `container`
  * - The real-time `scrollTop` / `scrollY` value of `container`
@@ -1388,7 +1388,7 @@ export const getScrollCalculators = (container = _pageScroller, options) => {
  * Returns the `maxScrollX` of `container`.  
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The highest reacheable `scrollLeft` / `scrollX` value of `container`.
  */
 export const getMaxScrollX = (container = _pageScroller, forceCalculation = false, options) => {
@@ -1400,7 +1400,7 @@ export const getMaxScrollX = (container = _pageScroller, forceCalculation = fals
  * Returns the `maxScrollY` of `container`.  
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The highest reacheable `scrollTop` / `scrollY` value of `container`.
  */
 export const getMaxScrollY = (container = _pageScroller, forceCalculation = false, options) => {
@@ -1412,7 +1412,7 @@ export const getMaxScrollY = (container = _pageScroller, forceCalculation = fals
  * Returns an array containing the `maxScrollX` and the `maxScrollY` values of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number[]} An array containing: 
  * - The highest reacheable `scrollLeft` / `scrollX` value of `container`
  * - The highest reacheable `scrollTop` / `scrollY` value of `container`
@@ -1476,7 +1476,7 @@ export const getMaxScrolls = (container = _pageScroller, forceCalculation = fals
 /**
  * Returns the `borderBox` of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number[]} An object containing:
  * - The width of `container` taking into account borders and paddings
  * - The height of `container` taking into account borders and paddings
@@ -1511,7 +1511,7 @@ export const getBorderBox = (container = _pageScroller, options) => {
  * Returns the closest `scrollableParent` of `container` on the x-axis.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} includeHiddenParents `true` to include ancestors with `overflow:hidden` or `overflow-x:hidden` in the search, `false` otherwise.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the x-axis or `null` if there's none.
  */
 export const getXScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
@@ -1629,7 +1629,7 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
  * Returns the closest `scrollableParent` of `container` on the y-axis.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} includeHiddenParents `true` to include ancestors with `overflow:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the y-axis or `null` if there's none.
  */
 export const getYScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
@@ -1747,7 +1747,7 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
  * Returns the closest `scrollableParent` of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} includeHiddenParents `true` to include ancestors with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable or `null` if there's none.
  */
 export const getScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
@@ -1933,7 +1933,7 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {boolean} includeHiddenParents `true` to include ancestors with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
  * @param {function} [callback] A function that is invoked every time a `scrollableParent` is found. The input of this function is the just-found `scrollableParent`.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*[]} An array containing all the ancestors of `container` that are scrollable.
  */
 export const getAllScrollableParents = (container = _pageScroller, includeHiddenParents = false, callback, options) => {
@@ -1961,7 +1961,7 @@ export const getAllScrollableParents = (container = _pageScroller, includeHidden
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} containScroll `true` to clamp `finalPosition` to [`0`...`maxScrollX`], `false` otherwise.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const scrollXTo = (finalPosition, container = _pageScroller, callback, containScroll = false, options) => {
     if (!Number.isFinite(finalPosition)) {
@@ -2115,7 +2115,7 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} containScroll `true` to clamp `finalPosition` to [`0`...`maxScrollY`], `false` otherwise.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const scrollYTo = (finalPosition, container = _pageScroller, callback, containScroll = false, options) => {
     if (!Number.isFinite(finalPosition)) {
@@ -2270,7 +2270,7 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
  * @param {boolean} stillStart `true` if any on-going scroll-animation on the x-axis of `container` must be stopped before starting this scroll-animation.
  *                             `false` if any on-going scroll-animation on the x-axis of `container` should extended by `delta` if possible. 
  * @param {boolean} containScroll `true` to clamp the `finalPosition` of the scroll-animation to [`0`...`maxScrollX`], `false` otherwise.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const scrollXBy = (delta, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
     if (!Number.isFinite(delta)) {
@@ -2336,7 +2336,7 @@ export const scrollXBy = (delta, container = _pageScroller, callback, stillStart
  * @param {boolean} stillStart `true` if any on-going scroll-animation on the y-axis of `container` must be stopped before starting this scroll-animation.
  *                             `false` if any on-going scroll-animation on the y-axis of `container` should extended by `delta` if possible. 
  * @param {boolean} containScroll `true` to clamp the `finalPosition` of the scroll-animation to [`0`...`maxScrollY`], `false` otherwise.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const scrollYBy = (delta, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
     if (!Number.isFinite(delta)) {
@@ -2401,7 +2401,7 @@ export const scrollYBy = (delta, container = _pageScroller, callback, stillStart
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} containScroll `true` to clamp `finalXPosition` to [`0`...`maxScrollX`] and `finalYPosition` to [`0`...`maxScrollY`], `false` otherwise.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const scrollTo = (finalXPosition, finalYPosition, container = _pageScroller, callback, containScroll = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollTo" });
@@ -2442,7 +2442,7 @@ export const scrollTo = (finalXPosition, finalYPosition, container = _pageScroll
  *                             `false` if any on-going scroll-animation of `container` should extended by `deltaX` and `deltaY` if possible. 
  * @param {boolean} containScroll `true` to clamp the `finalXPosition` of the scroll-animation to [`0`...`maxScrollX`] and 
  *                                                the `finalYPosition` of the scroll-animation to [`0`...`maxScrollY`], `false` otherwise.  
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollBy" });
@@ -2491,7 +2491,7 @@ export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, st
  * - Any other value, if the alignment should be to the `center`
  * @param {function} [callback] A function invoked when `container` is scrolled into view.
  * @param {boolean} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const scrollIntoView = (container, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollIntoView" });
@@ -2603,7 +2603,7 @@ export const scrollIntoView = (container, alignToLeft = true, alignToTop = true,
  * All `container`'s `scrollableParents` are aligned to `nearest`.
  * @param {function} [callback] A function invoked when `container` is scrolled into view.
  * @param {boolean} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const scrollIntoViewIfNeeded = (container, alignToCenter = true, callback, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollIntoViewIfNeeded" });
@@ -2732,7 +2732,7 @@ export const scrollIntoViewIfNeeded = (container, alignToCenter = true, callback
  * Stops the current scroll-animation on the x-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {function} [callback] A function invoked when the scroll-animation on the x-axis of `container` has been stopped.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const stopScrollingX = (container = _pageScroller, callback, options) => {
     const _containerData = _containersData.get(container);
@@ -2762,7 +2762,7 @@ export const stopScrollingX = (container = _pageScroller, callback, options) => 
  * Stops the current scroll-animation on the y-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {function} [callback] A function invoked when the scroll-animation on the y-axis of `container` has been stopped.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const stopScrollingY = (container = _pageScroller, callback, options) => {
     const _containerData = _containersData.get(container);
@@ -2792,7 +2792,7 @@ export const stopScrollingY = (container = _pageScroller, callback, options) => 
  * Stops all the current scroll-animations of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
  * @param {function} [callback] A function invoked when all the scroll-animations of `container` have been stopped.
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const stopScrolling = (container = _pageScroller, callback, options) => {
     const _containerData = _containersData.get(container);
@@ -2864,7 +2864,7 @@ export const stopScrollingAll = (callback) => {
  * @param {function} [callback] A function which is invoked when any valid anchor element is successfully scrolled into view.
  * @param {boolean} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
  * @param {boolean} updateHistory `true` to let the scroll-animations (triggered by the anchor links) update the browser history, `false` otherwise. 
- * @param {object} [options] `[Private]` The input object used by the uss loggers.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 //TODO: add a cypress test for hrefSetup using the concepts of scrollIntoView/IfNeeded tests
 export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false, options) => {

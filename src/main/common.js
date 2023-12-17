@@ -379,9 +379,9 @@ export const IS_POSITIVE_OR_0 = (value) => {
 
 /**
  * Merges two objects into one.
- * @param {object} obj1 In case of conflicts, this object's properties will have the priority.
- * @param {object} obj2 In case of conflicts, this object's properties won't have the priority.
- * @returns {object} An object with all the properties of `obj1` and `obj2` merged.
+ * @param {Object} obj1 In case of conflicts, this object's properties will have the priority.
+ * @param {Object} obj2 In case of conflicts, this object's properties won't have the priority.
+ * @returns {Object} An object with all the properties of `obj1` and `obj2` merged.
  */
 export const MERGE_OBJECTS = (obj1, obj2) => {
     return IS_OBJECT(obj1) ? Object.assign({}, obj2, obj1) : obj2;
@@ -390,14 +390,15 @@ export const MERGE_OBJECTS = (obj1, obj2) => {
 
 /**
  * Creates a valid `options` object that can be used as the input of the default loggers.
- * This method shuld be called inside a function, which here is referred to as `calling function`. 
- * @param {object} options The options object passed to the calling function.
+ * This method should be called inside a function, which is referred to as `calling function`. 
+ * @param {Object} staticOptions The `options` object passed to the calling function.
  * @param {String} functionName The calling function's name.
- * @param {object} otherDefaultOptions Non-static default logging options.
- * @returns {object} A valid logging `options` object that can be used with the uss loggers.
+ * @param {Object} runtimeOptions Logging options that are known at runtime only.
+ * @param {Number} [runtimeOptions.idx] The index of the message inside `defaultLogOptionsMap[functionName]` to use.
+ * @param {Map<String, object>} [defaultLogOptionsMap] A map containing function names and a partial `options` objects.
+ * @returns {Object} A valid logging `options` object that can be used with the uss loggers.
  */
-//TODO: add properties of otherDefaultOptions in jsdocs
-export const CREATE_LOG_OPTIONS = (options, functionName, otherDefaultOptions, defaultLogOptionsMap=DEFAULT_LOG_OPTIONS) => {
+export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, defaultLogOptionsMap=DEFAULT_LOG_OPTIONS) => {
     let defaultOptions = defaultLogOptionsMap.get(functionName);
 
     /**
@@ -405,7 +406,7 @@ export const CREATE_LOG_OPTIONS = (options, functionName, otherDefaultOptions, d
      * choose one specified by the otherDefaultOptions argument. 
      */
     if (Array.isArray(defaultOptions)) {
-        defaultOptions = defaultOptions[otherDefaultOptions.idx]
+        defaultOptions = defaultOptions[runtimeOptions.idx]
     }
 
     /**
@@ -414,14 +415,14 @@ export const CREATE_LOG_OPTIONS = (options, functionName, otherDefaultOptions, d
      */
     defaultOptions = MERGE_OBJECTS(
         defaultOptions,
-        otherDefaultOptions
+        runtimeOptions
     );
 
     if (defaultOptions.subject == NO_VAL) {
         defaultOptions.subject = functionName;
     }
 
-    return MERGE_OBJECTS(options, defaultOptions);
+    return MERGE_OBJECTS(staticOptions, defaultOptions);
 }
 
 
@@ -579,7 +580,7 @@ export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, tim
 
 /**
  * The default value for `_errorLogger`.
- * @param {object} options A valid logging options object.
+ * @param {Object} options A valid logging options object.
  * @param {String} options.subject The calling function's name.
  * @param {String} options.primaryMsg The expected value.
  * @param {String} options.secondaryMsg The received value.
@@ -634,7 +635,7 @@ export const DEFAULT_ERROR_LOGGER = (options) => {
 
 /**
  * The default value for `_warningLogger`.
- * @param {object} options A valid logging options object.
+ * @param {Object} options A valid logging options object.
  * @param {String} options.subject The subject of the warning message.
  * @param {String} options.primaryMsg The warning message.
  * @param {String} options.secondaryMsg Ignored, it's there for compatibility.
