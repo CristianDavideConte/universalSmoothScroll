@@ -1,5 +1,14 @@
 //TODO: use this as standalone comment to check for type errors: //@ts-check
 
+/**
+ * CODE STYLING NOTE:
+ * Constans, variables and functions are logically grouped in this file.
+ * The groups are separed by new lines.
+ * 
+ * New line rules:
+ * - 1 newline for entities in the same logical group
+ * - 3 newlines between a logical group and another
+ */
 import {
     _xStepLength,
     _yStepLength,
@@ -12,134 +21,167 @@ import {
  * Key to get the scroll id on the x-axis.
  */
 export const K_IDX = 0;
+
 /**
  * Key to get the scroll id on the y-axis.
  */  
 export const K_IDY = 1;
+
 /**
  * Key to get the final x position of a container.
  */
 export const K_FPX = 2; 
+
 /**
  * Key to get the final y position of a container.
  */
 export const K_FPY = 3;
+
 /**
  * Key to get the scroll direction on the x-axis of a container.
  */
 export const K_SDX = 4;
+
 /**
  * Key to get the scroll direction on the y-axis of a container.
  */
 export const K_SDY = 5;
+
 /**
  * Key to get the total scroll amount on the x-axis of a container.
  */
 export const K_TSAX = 6;
+
 /**
  * Key to get the total scroll amount on the y-axis of a container.
  */
 export const K_TSAY = 7;
+
 /**
  * Key to get the original timestamp of the scroll animation on the x-axis of a container.
  */
 export const K_OTSX = 8;
+
 /**
  * Key to get the original timestamp of the scroll animation on the y-axis of a container.
  */
 export const K_OTSY = 9;
+
 /**
  * Key to get the callback for the scroll animation on the x-axis of a container.
  */
 export const K_CBX = 10;
+
 /**
  * Key to get the callback for the scroll animation on the y-axis of a container.
  */
 export const K_CBY = 11;
+
 /**
  * Key to get the fixed `StepLengthCalculator` for the scroll animation on the x-axis of a container.
  */
 export const K_FSCX = 12;
+
 /**
  * Key to get the fixed `StepLengthCalculator` for the scroll animation on the y-axis of a container.
  */
 export const K_FSCY = 13;
+
 /**
  * Key to get the temporary `StepLengthCalculator` for the scroll animation on the x-axis of a container.
  */
 export const K_TSCX = 14;
+
 /**
  * Key to get the temporary `StepLengthCalculator` for the scroll animation on the y-axis of a container.
  */
 export const K_TSCY = 15;
+
 /**
  * Key to get the `maxScrollX` value of a container.
  */
 export const K_MSX = 16;
+
 /**
  * Key to get the `maxScrollY` value of a container.
  */
 export const K_MSY = 17;
+
 /**
  * Key to get the vertical scrollbar's width of a container.
  */
 export const K_VSB = 18;
+
 /**
  * Key to get the horizontal scrollbar's height of a container. 
  */
 export const K_HSB = 19;
+
 /**
  * Key to get the top border's height of a container.
  */
 export const K_TB = 20;
+
 /**
  * Key to get the right border's width of a container.
  */
 export const K_RB = 21;
+
 /**
  * Key to get the bottom border's height of a container.
  */
 export const K_BB = 22;
+
 /**
  * Key to get the left border's width of a container.
  */
 export const K_LB = 23;
+
 /**
  * Key to get the standard scrollable parent on the x-axis (overflow !== `hidden`) of a container.
  */
 export const K_SSPX = 24;
+
 /**
  * Key to get the hidden scrollable parent on the x-axis (overflow === `hidden`) of a container.
  */
 export const K_HSPX = 25;
+
 /**
  * Key to get the standard scrollable parent on the y-axis (overflow !== `hidden`) of a container.
  */
 export const K_SSPY = 26;
+
 /**
  * Key to get the hidden scrollable parent on the y-axis (overflow === `hidden`) of a container.
  */
 export const K_HSPY = 27;
+
 /**
  * Key to get the `ScrollXCalculator` of a container.
  */
 export const K_SCX = 28;
+
 /**
  * Key to get the `ScrollYCalculator` of a container.
  */
 export const K_SCY = 29;
+
 /**
  * Key to get the border box of a container.
  */
 export const K_BRB = 30;
+
 /**
  * Key to get the resize callbacks queue of a container.
  */
 export const K_RCBQ = 31;
+
 /**
  * Key to get the mutation callbacks queue of a container.
  */
 export const K_MCBQ = 32;
+
 /**
  * Key to get the fragment string linked to a container.
  */
@@ -151,10 +193,12 @@ export const K_FGS = 33;
  * A constant for indicating that no valid fragment string is associated with a container.
  */
 export const NO_FGS = null;
+
 /**
  * A constant for indicating that no scrollable parent has been found.
  */
 export const NO_SP = null;
+
 /**
  * A constant for a value that hasn't been calculated yet.
  */
@@ -167,11 +211,13 @@ export const NO_VAL = undefined;
  * Use it to get the frames' time calculation phase.
  */
 export const FRM_TMS_PHASE = -1;
+
 /**
  * Index of the `_framesTime` array.
  * Use it to get the current frames' time sum.
  */
 export const FRM_TMS_SUM = -2;
+
 /**
  * The maximum length of an error/warning message.
  */
@@ -183,31 +229,38 @@ export const MAX_MSG_LEN = 40;
  * Default value for the `_framesTime` variable (in ms).
  */
 export const DEFAULT_FRAME_TIME = 16.6;
+
 //TODO: To look more into
 //TODO: const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame;
+
 /**
  * Default value for the `_minAnimationFrame` variable.
  * 51 frames at 929px of window height.
  */
 export const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;
+
 /**
  * Default value for the `_xStepLength` variable.
  * 16px at 412px of window width && 23px at 1920px of window width.
  */
 export const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);
+
 /**
  * Default value for the `_yStepLength` variable.
  * 38px at 789px of window height && 22px at 1920px of window height.
  */
 export const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789)));
+
 /**
  * The highest `scrollLeft`/`scrollTop` value that can be used by the API before scroll breaks (2^30px).
  */
 export const HIGHEST_SAFE_SCROLL_POS = 1073741824;
+
 /**
  * The initial inner width of the `window`.
  */
 export const INITIAL_WINDOW_WIDTH = window.innerWidth;
+
 /**
  * The initial inner height of the `window`.
  */
@@ -220,29 +273,35 @@ export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
  * to test if the passed alignments are set to `nearest` mode. 
  */
 export const REGEX_ALIGNMENT_NEAREST = /nearest/i;
+
 /**
  * The regex used to detect if the uss loggers are disabled.
  */
 export const REGEX_LOGGER_DISABLED = /disabled/i;
+
 /**
  * The regex used to detect if the uss loggers are in `legacy` mode.
  */
 export const REGEX_LOGGER_LEGACY = /legacy/i;
+
 /**
  * The regex used to test if the `overflow` property of an element
  * is set to either `auto` or `scroll`. 
  */
 export const REGEX_OVERFLOW = /(auto|scroll)/;
+
 /**
  * The regex used to test if the `overflow` property of an element
  * is set to either `auto`, `scroll` or `hidden`. 
  */
 export const REGEX_OVERFLOW_HIDDEN = /(auto|scroll|hidden)/;
+
 /**
  * The regex used to test if the `overflow` property of an element
  * is set to either `auto`, `scroll`, `hidden` or `visible`. 
  */
 export const REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
+
 /**
  * The regex used to test if the `overflow` property of an element
  * is set to either `auto`, `scroll` or `visible`. 
@@ -256,31 +315,37 @@ export const REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
  * Can be used to build the `options` object for the error logger.   
  */
 export const DEFAULT_ERROR_PRIMARY_MSG_1 = "the input to be an instance of Element or window";
+
 /**
  * A string containing part of an error message.
  * Can be used to build the `options` object for the error logger.   
  */
 export const DEFAULT_ERROR_PRIMARY_MSG_2 = "the input to be an instance of Element";
+
 /**
  * A string containing part of an error message.
  * Can be used to build the `options` object for the error logger.   
  */
 export const DEFAULT_ERROR_PRIMARY_MSG_3 = "the input to be a function";
+
 /**
  * A string containing part of an error message.
  * Can be used to build the `options` object for the error logger.   
  */
 export const DEFAULT_ERROR_PRIMARY_MSG_4 = "the input to be a positive number";
+
 /**
  * A string containing part of an error message.
  * Can be used to build the `options` object for the error logger.   
  */
 export const DEFAULT_ERROR_PRIMARY_MSG_5 = "the input to be a number";
+
 /**
  * A string containing part of a warning message.
  * Can be used to build the `options` object for the warning logger.   
  */
 export const DEFAULT_WARNING_PRIMARY_MSG_1 = "is not a valid anchor's destination";
+
 /**
  * A string containing part of a warning message.
  * Can be used to build the `options` object for the warning logger.   
@@ -392,7 +457,6 @@ export const CHECK_INSTANCEOF = (value, classType = Element) => {
     }
 }
 
-
 /**
  * Invalidates the temporary values of the passed `containerData`.
  * @param {*[]} containerData An array, one contained by `_containersData`.
@@ -422,7 +486,6 @@ export const CLEAR_COMMON_DATA = (containerData) => {
     containerData[K_CBX] = NO_VAL;
     containerData[K_CBY] = NO_VAL;
 }
-
 
 /**
  * Creates a valid `options` object that can be used as the input of the default loggers.
@@ -460,7 +523,6 @@ export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, 
 
     return MERGE_OBJECTS(staticOptions, defaultOptions);
 }
-
 
 /**
  * The default value for `_errorLogger`.
@@ -516,7 +578,6 @@ export const DEFAULT_ERROR_LOGGER = (options) => {
     throw "USS fatal error (execution stopped)";
 }
 
-
 /**
  * The default value for `_warningLogger`.
  * @param {Object} options A valid logging options object.
@@ -566,7 +627,6 @@ export const DEFAULT_WARNING_LOGGER = (options) => {
     }
 }
 
-
 /**
  * The default `StepLengthCalculator` for scroll-animations on the x-axis of every container that doesn't have a custom `StepLengthCalculator` set.
  * Controls how long each animation-step on the x-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
@@ -585,7 +645,6 @@ export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, tim
     if (_stepLength > _xStepLength) return _xStepLength;
     return _stepLength;
 }
-
 
 /**
  * The default `StepLengthCalculator` for scroll-animations on the y-axis of every container that doesn't have a custom `StepLengthCalculator` set.
@@ -606,7 +665,6 @@ export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, tim
     return _stepLength;
 }
 
-
 /**
  * Checks whether `value` is an object.
  * @param {*} value The value to check. 
@@ -618,7 +676,6 @@ export const IS_OBJECT = (value) => {
         !Array.isArray(value);
 }
 
-
 /**
  * Checks whether `value` is a positive number (i.e. > 0).
  * @param {*} value The value to check.
@@ -627,7 +684,6 @@ export const IS_OBJECT = (value) => {
 export const IS_POSITIVE = (value) => {
     return Number.isFinite(value) && value > 0;
 }
-
 
 /**
  * Checks whether `value` is a positive number or 0 (i.e. >= 0).
@@ -638,7 +694,6 @@ export const IS_POSITIVE_OR_0 = (value) => {
     return Number.isFinite(value) && value >= 0;
 }
 
-
 /**
  * Merges two objects into one.
  * @param {Object} obj1 In case of conflicts, this object's properties will have the priority.
@@ -648,7 +703,6 @@ export const IS_POSITIVE_OR_0 = (value) => {
 export const MERGE_OBJECTS = (obj1, obj2) => {
     return IS_OBJECT(obj1) ? Object.assign({}, obj2, obj1) : obj2;
 }
-
 
 /**
  * Creates a uss-styled string representation of `value`.
