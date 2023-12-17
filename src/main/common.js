@@ -1,4 +1,3 @@
-//TODO: order the functions in alphabetical order
 //TODO: use this as standalone comment to check for type errors: //@ts-check
 
 import {
@@ -7,6 +6,7 @@ import {
     _minAnimationFrame,
     _debugMode,
 } from "./uss.js"
+
 
 /**
  * Key to get the scroll id on the x-axis.
@@ -146,22 +146,22 @@ export const K_MCBQ = 32;
 export const K_FGS = 33;
 
 
-/**
- * A constant for a value that hasn't been calculated yet.
- */
-export const NO_VAL = undefined;
-/**
- * A constant for indicating that no scrollable parent has been found.
- */
-export const NO_SP = null;
+
 /**
  * A constant for indicating that no valid fragment string is associated with a container.
  */
 export const NO_FGS = null;
 /**
- * The maximum length of an error/warning message.
+ * A constant for indicating that no scrollable parent has been found.
  */
-export const MAX_MSG_LEN = 40;
+export const NO_SP = null;
+/**
+ * A constant for a value that hasn't been calculated yet.
+ */
+export const NO_VAL = undefined;
+
+
+
 /**
  * Index of the `_framesTime` array.
  * Use it to get the frames' time calculation phase.
@@ -172,16 +172,24 @@ export const FRM_TMS_PHASE = -1;
  * Use it to get the current frames' time sum.
  */
 export const FRM_TMS_SUM = -2;
+/**
+ * The maximum length of an error/warning message.
+ */
+export const MAX_MSG_LEN = 40;
+
 
 
 /**
- * The initial inner width of the `window`.
+ * Default value for the `_framesTime` variable (in ms).
  */
-export const INITIAL_WINDOW_WIDTH = window.innerWidth;
+export const DEFAULT_FRAME_TIME = 16.6;
+//TODO: To look more into
+//TODO: const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame;
 /**
- * The initial inner height of the `window`.
+ * Default value for the `_minAnimationFrame` variable.
+ * 51 frames at 929px of window height.
  */
-export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
+export const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;
 /**
  * Default value for the `_xStepLength` variable.
  * 16px at 412px of window width && 23px at 1920px of window width.
@@ -193,22 +201,25 @@ export const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412)
  */
 export const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789)));
 /**
- * Default value for the `_minAnimationFrame` variable.
- * 51 frames at 929px of window height.
- */
-export const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;
-/**
- * Default value for the `_framesTime` variable (in ms).
- */
-export const DEFAULT_FRAME_TIME = 16.6;
-/**
  * The highest `scrollLeft`/`scrollTop` value that can be used by the API before scroll breaks (2^30px).
  */
 export const HIGHEST_SAFE_SCROLL_POS = 1073741824;
-//TODO: To look more into
-//const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame;
+/**
+ * The initial inner width of the `window`.
+ */
+export const INITIAL_WINDOW_WIDTH = window.innerWidth;
+/**
+ * The initial inner height of the `window`.
+ */
+export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
 
 
+
+/**
+ * The regex used by the `scrollIntoView` and `scrollIntoViewIfNeeded` functions 
+ * to test if the passed alignments are set to `nearest` mode. 
+ */
+export const REGEX_ALIGNMENT_NEAREST = /nearest/i;
 /**
  * The regex used to detect if the uss loggers are disabled.
  */
@@ -217,11 +228,6 @@ export const REGEX_LOGGER_DISABLED = /disabled/i;
  * The regex used to detect if the uss loggers are in `legacy` mode.
  */
 export const REGEX_LOGGER_LEGACY = /legacy/i;
-/**
- * The regex used by the `scrollIntoView` and `scrollIntoViewIfNeeded` functions 
- * to test if the passed alignments are set to `nearest` mode. 
- */
-export const REGEX_ALIGNMENT_NEAREST = /nearest/i;
 /**
  * The regex used to test if the `overflow` property of an element
  * is set to either `auto` or `scroll`. 
@@ -234,14 +240,15 @@ export const REGEX_OVERFLOW = /(auto|scroll)/;
 export const REGEX_OVERFLOW_HIDDEN = /(auto|scroll|hidden)/;
 /**
  * The regex used to test if the `overflow` property of an element
- * is set to either `auto`, `scroll` or `visible`. 
- */
-export const REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
-/**
- * The regex used to test if the `overflow` property of an element
  * is set to either `auto`, `scroll`, `hidden` or `visible`. 
  */
 export const REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
+/**
+ * The regex used to test if the `overflow` property of an element
+ * is set to either `auto`, `scroll` or `visible`. 
+ */
+export const REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
+
 
 
 /**
@@ -279,6 +286,9 @@ export const DEFAULT_WARNING_PRIMARY_MSG_1 = "is not a valid anchor's destinatio
  * Can be used to build the `options` object for the warning logger.   
  */
 export const DEFAULT_WARNING_PRIMARY_MSG_2 = "is not a valid step length";
+
+
+
 /**
  * A map containing function names and a partial `options` objects that, 
  * can be used with the uss loggers.
@@ -349,86 +359,6 @@ const DEFAULT_LOG_OPTIONS = new Map([
 ]);
 
 
-/**
- * Checks whether `value` is an object.
- * @param {*} value The value to check. 
- * @returns {boolean} `true` if `value` is an object, `false` otherwise.
- */
-export const IS_OBJECT = (value) => {
-    return value !== null &&
-        typeof value === "object" &&
-        !Array.isArray(value);
-}
-
-
-/**
- * Checks whether `value` is a positive number (i.e. > 0).
- * @param {*} value The value to check.
- * @returns {boolean} `true` if `value` is a positive number, `false` otherwise.
- */
-export const IS_POSITIVE = (value) => {
-    return Number.isFinite(value) && value > 0;
-}
-
-
-/**
- * Checks whether `value` is a positive number or 0 (i.e. >= 0).
- * @param {*} value The value to check.
- * @returns {boolean} `true` if `value` is a number >= 0, `false` otherwise.
- */
-export const IS_POSITIVE_OR_0 = (value) => {
-    return Number.isFinite(value) && value >= 0;
-}
-
-
-/**
- * Merges two objects into one.
- * @param {Object} obj1 In case of conflicts, this object's properties will have the priority.
- * @param {Object} obj2 In case of conflicts, this object's properties won't have the priority.
- * @returns {Object} An object with all the properties of `obj1` and `obj2` merged.
- */
-export const MERGE_OBJECTS = (obj1, obj2) => {
-    return IS_OBJECT(obj1) ? Object.assign({}, obj2, obj1) : obj2;
-}
-
-
-/**
- * Creates a valid `options` object that can be used as the input of the default loggers.
- * This method should be called inside a function, which is referred to as `calling function`. 
- * @param {Object} staticOptions The `options` object passed to the calling function.
- * @param {String} functionName The calling function's name.
- * @param {Object} runtimeOptions Logging options that are known at runtime only.
- * @param {Number} [runtimeOptions.idx] The index of the message inside `defaultLogOptionsMap[functionName]` to use.
- * @param {Map<String, object>} [defaultLogOptionsMap] A map containing function names and a partial `options` objects.
- * @returns {Object} A valid logging `options` object that can be used with the uss loggers.
- */
-export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, defaultLogOptionsMap=DEFAULT_LOG_OPTIONS) => {
-    let defaultOptions = defaultLogOptionsMap.get(functionName);
-
-    /**
-     * Multiple log options can be associated with a single function,
-     * choose one specified by the otherDefaultOptions argument. 
-     */
-    if (Array.isArray(defaultOptions)) {
-        defaultOptions = defaultOptions[runtimeOptions.idx]
-    }
-
-    /**
-     * Retrieve the function's default static-logging options and
-     * merge them with the non-static ones.
-     */
-    defaultOptions = MERGE_OBJECTS(
-        defaultOptions,
-        runtimeOptions
-    );
-
-    if (defaultOptions.subject == NO_VAL) {
-        defaultOptions.subject = functionName;
-    }
-
-    return MERGE_OBJECTS(staticOptions, defaultOptions);
-}
-
 
 /**
  * Checks whether `value` is instance of the specified class type.
@@ -464,54 +394,6 @@ export const CHECK_INSTANCEOF = (value, classType = Element) => {
 
 
 /**
- * Creates a uss-styled string representation of `value`.
- * @param {*} value The value to convert to a string.
- * @returns {String} The string representing `value`.
- */
-export const TO_STRING = (value) => {
-    const _type = typeof value;
-
-    if (
-        value === window ||
-        value === null ||
-        value === undefined ||
-        _type === "boolean" ||
-        _type === "number" ||
-        _type === "bigint" ||
-        _type === "string" ||
-        _type === "symbol"
-    ) {
-        return String(value);
-    }
-
-    if (_type === "function") {
-        const _name = value.name || value;
-        return String(_name).replace(new RegExp("\n", "g"), "");
-    }
-
-    if (Array.isArray(value)) {
-        return "[" + value.toString() + "]";
-    }
-
-    //Test if element has a tag, a class or an id.
-    try {
-        const _id = value.id ? "#" + value.id : "";
-        const _className = value.className ? "." + value.className : "";
-        return value.tagName.toLowerCase() + _id + _className; //e.g. div#myId.myClass
-    } catch (IllegalInvocation) { }
-
-    //Test if element is just some html code.
-    try {
-        if ("outerHTML" in value) {
-            return value.outerHTML.toString().replace(new RegExp("\n", "g"), "");
-        }
-    } catch (TypeError) { }
-
-    return String(value);
-}
-
-
-/**
  * Invalidates the temporary values of the passed `containerData`.
  * @param {*[]} containerData An array, one contained by `_containersData`.
  */
@@ -543,42 +425,40 @@ export const CLEAR_COMMON_DATA = (containerData) => {
 
 
 /**
- * The default `StepLengthCalculator` for scroll-animations on the x-axis of every container that doesn't have a custom `StepLengthCalculator` set.
- * Controls how long each animation-step on the x-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
- * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
- * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
- * @param {number} timestamp The current timestamp.
- * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
- * @param {number} currentPos The `scrollLeft`/`scrollX` pixel position of the container.
- * @param {number} finalPos The `scrollLeft`/`scrollX` pixel position the container has to reach.
- * @param {*} container An instance of `Element` or `window`.
- * @returns {number} The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
+ * Creates a valid `options` object that can be used as the input of the default loggers.
+ * This method should be called inside a function, which is referred to as `calling function`. 
+ * @param {Object} staticOptions The `options` object passed to the calling function.
+ * @param {String} functionName The calling function's name.
+ * @param {Object} runtimeOptions Logging options that are known at runtime only.
+ * @param {Number} [runtimeOptions.idx] The index of the message inside `defaultLogOptionsMap[functionName]` to use.
+ * @param {Map<String, object>} [defaultLogOptionsMap] A map containing function names and a partial `options` objects.
+ * @returns {Object} A valid logging `options` object that can be used with the uss loggers.
  */
-export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    const _stepLength = total / _minAnimationFrame;
-    if (_stepLength < 1) return 1;
-    if (_stepLength > _xStepLength) return _xStepLength;
-    return _stepLength;
-}
+export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, defaultLogOptionsMap = DEFAULT_LOG_OPTIONS) => {
+    let defaultOptions = defaultLogOptionsMap.get(functionName);
 
+    /**
+     * Multiple log options can be associated with a single function,
+     * choose one specified by the otherDefaultOptions argument. 
+     */
+    if (Array.isArray(defaultOptions)) {
+        defaultOptions = defaultOptions[runtimeOptions.idx]
+    }
 
-/**
- * The default `StepLengthCalculator` for scroll-animations on the y-axis of every container that doesn't have a custom `StepLengthCalculator` set.
- * Controls how long each animation-step on the y-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
- * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
- * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
- * @param {number} timestamp The current timestamp.
- * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
- * @param {number} currentPos The `scrollTop`/`scrollY` pixel position of the container.
- * @param {number} finalPos The `scrollTop`/`scrollY` pixel position the container has to reach.
- * @param {*} container An instance of `Element` or `window`.
- * @returns {number} The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
- */
-export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    const _stepLength = total / _minAnimationFrame;
-    if (_stepLength < 1) return 1;
-    if (_stepLength > _yStepLength) return _yStepLength;
-    return _stepLength;
+    /**
+     * Retrieve the function's default static-logging options and
+     * merge them with the non-static ones.
+     */
+    defaultOptions = MERGE_OBJECTS(
+        defaultOptions,
+        runtimeOptions
+    );
+
+    if (defaultOptions.subject == NO_VAL) {
+        defaultOptions.subject = functionName;
+    }
+
+    return MERGE_OBJECTS(staticOptions, defaultOptions);
 }
 
 
@@ -624,7 +504,7 @@ export const DEFAULT_ERROR_LOGGER = (options) => {
             "font-family:system-ui; font-weight:600; font-size:17px; background:#eb445a; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
             "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#eb445a; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
         );
-    
+
         {
             console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
             console.trace("");
@@ -686,3 +566,133 @@ export const DEFAULT_WARNING_LOGGER = (options) => {
     }
 }
 
+
+/**
+ * The default `StepLengthCalculator` for scroll-animations on the x-axis of every container that doesn't have a custom `StepLengthCalculator` set.
+ * Controls how long each animation-step on the x-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
+ * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
+ * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
+ * @param {number} timestamp The current timestamp.
+ * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
+ * @param {number} currentPos The `scrollLeft`/`scrollX` pixel position of the container.
+ * @param {number} finalPos The `scrollLeft`/`scrollX` pixel position the container has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @returns {number} The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
+ */
+export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+    const _stepLength = total / _minAnimationFrame;
+    if (_stepLength < 1) return 1;
+    if (_stepLength > _xStepLength) return _xStepLength;
+    return _stepLength;
+}
+
+
+/**
+ * The default `StepLengthCalculator` for scroll-animations on the y-axis of every container that doesn't have a custom `StepLengthCalculator` set.
+ * Controls how long each animation-step on the y-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
+ * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
+ * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
+ * @param {number} timestamp The current timestamp.
+ * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
+ * @param {number} currentPos The `scrollTop`/`scrollY` pixel position of the container.
+ * @param {number} finalPos The `scrollTop`/`scrollY` pixel position the container has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @returns {number} The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
+ */
+export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+    const _stepLength = total / _minAnimationFrame;
+    if (_stepLength < 1) return 1;
+    if (_stepLength > _yStepLength) return _yStepLength;
+    return _stepLength;
+}
+
+
+/**
+ * Checks whether `value` is an object.
+ * @param {*} value The value to check. 
+ * @returns {boolean} `true` if `value` is an object, `false` otherwise.
+ */
+export const IS_OBJECT = (value) => {
+    return value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value);
+}
+
+
+/**
+ * Checks whether `value` is a positive number (i.e. > 0).
+ * @param {*} value The value to check.
+ * @returns {boolean} `true` if `value` is a positive number, `false` otherwise.
+ */
+export const IS_POSITIVE = (value) => {
+    return Number.isFinite(value) && value > 0;
+}
+
+
+/**
+ * Checks whether `value` is a positive number or 0 (i.e. >= 0).
+ * @param {*} value The value to check.
+ * @returns {boolean} `true` if `value` is a number >= 0, `false` otherwise.
+ */
+export const IS_POSITIVE_OR_0 = (value) => {
+    return Number.isFinite(value) && value >= 0;
+}
+
+
+/**
+ * Merges two objects into one.
+ * @param {Object} obj1 In case of conflicts, this object's properties will have the priority.
+ * @param {Object} obj2 In case of conflicts, this object's properties won't have the priority.
+ * @returns {Object} An object with all the properties of `obj1` and `obj2` merged.
+ */
+export const MERGE_OBJECTS = (obj1, obj2) => {
+    return IS_OBJECT(obj1) ? Object.assign({}, obj2, obj1) : obj2;
+}
+
+
+/**
+ * Creates a uss-styled string representation of `value`.
+ * @param {*} value The value to convert to a string.
+ * @returns {String} The string representing `value`.
+ */
+export const TO_STRING = (value) => {
+    const _type = typeof value;
+
+    if (
+        value === window ||
+        value === null ||
+        value === undefined ||
+        _type === "boolean" ||
+        _type === "number" ||
+        _type === "bigint" ||
+        _type === "string" ||
+        _type === "symbol"
+    ) {
+        return String(value);
+    }
+
+    if (_type === "function") {
+        const _name = value.name || value;
+        return String(_name).replace(new RegExp("\n", "g"), "");
+    }
+
+    if (Array.isArray(value)) {
+        return "[" + value.toString() + "]";
+    }
+
+    //Test if element has a tag, a class or an id.
+    try {
+        const _id = value.id ? "#" + value.id : "";
+        const _className = value.className ? "." + value.className : "";
+        return value.tagName.toLowerCase() + _id + _className; //e.g. div#myId.myClass
+    } catch (IllegalInvocation) { }
+
+    //Test if element is just some html code.
+    try {
+        if ("outerHTML" in value) {
+            return value.outerHTML.toString().replace(new RegExp("\n", "g"), "");
+        }
+    } catch (TypeError) { }
+
+    return String(value);
+}
