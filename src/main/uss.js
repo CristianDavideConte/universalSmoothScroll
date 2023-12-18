@@ -1,6 +1,5 @@
 //TODO: follow the same spacing styling of common.js
 //TODO: order the functions in alphabetical order
-//TODO: each comment should start with: [Universal Smooth Scroll Docs](https://github.com/CristianDavideConte/universalSmoothScroll)
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
 //TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
 //TODO: rename "forceCalculation" to "flushCache"
@@ -71,6 +70,103 @@ import {
     IS_POSITIVE,
     IS_POSITIVE_OR_0
 } from "./common.js"
+
+
+
+/**
+ * A Map in which:
+ * - The keys are an instances of `Element` or the `Window` and they're internally called `containers`.
+ * - The values are arrays.
+ */
+export let _containersData = new Map(); //TODO: perhaps const?
+
+/**
+ * If there's no `StepLengthCalculator` set for a container,
+ * this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
+ */
+export let _xStepLength = DEFAULT_XSTEP_LENGTH;
+
+/**
+ * If there's no `StepLengthCalculator` set for a container,
+ * this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
+ */
+export let _yStepLength = DEFAULT_YSTEP_LENGTH;
+
+/**
+ * This represents the lowest number of frames any scroll-animation on a container should last
+ * if no `StepLengthCalculator` is set for it.
+ */
+export let _minAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES;
+
+/**
+ * The current `Window`'s inner width (in px).
+ */
+export let _windowWidth = INITIAL_WINDOW_WIDTH;
+
+/**
+ * The current `Window`'s inner height (in px).
+ */
+export let _windowHeight = INITIAL_WINDOW_HEIGHT;
+
+/**
+ * The highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
+ */
+export let _scrollbarsMaxDimension = NO_VAL;
+
+/**
+ * The time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms). 
+ * It's the average of the values of `_framesTimes`.
+ */
+export let _framesTime = DEFAULT_FRAME_TIME;
+
+/**
+ * Contains at most the last `10` calculated frames' times.
+ */
+export let _framesTimes = []; //TODO: perhaps const?
+
+/**
+ * The container that scrolls the `Window` when it's scrolled and 
+ * that (viceversa) is scrolled when the `Window` is scrolled.
+ */
+export let _windowScroller = NO_VAL;
+
+/**
+ * The container that scrolls the `document`.
+ * It's also the value used when an API method requires the `container` input parameter but nothing is passed.
+ */
+export let _pageScroller = NO_VAL;
+
+/**
+ * `true` if the user has enabled any `reduce-motion` setting devicewise, `false` otherwise.
+ * Internally used by the API to follow the user's accessibility preferences by 
+ * reverting back every scroll-animation to the default jump-to-position behavior.
+ */
+export let _reducedMotion = "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches;
+
+/**
+ * Controls the way the `warning` and `error` messages are logged by the default `warning` and `error` loggers.
+ * 
+ * If it's set to:
+ * - `disabled` (case insensitive) the API `won't show` any warning or error message.
+ * - `legacy` (case insensitive) the API `won't style` any warning or error message.
+ * 
+ * Any other String will make the warning/error messages be displayed with the default API's styling.
+ * 
+ * A custom `_errorLogger` and/or `_warningLogger` should respect this preference.
+ */
+export let _debugMode = "";
+
+/**
+ * Logs the API `error` messages inside the browser's console.
+ */
+export let _errorLogger = DEFAULT_ERROR_LOGGER;
+
+/**
+ * Logs the API `warning` messages inside the browser's console.
+ */
+export let _warningLogger = DEFAULT_WARNING_LOGGER;
+
+
 
 /**
  * TODO: write comment
@@ -403,22 +499,6 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
     return false;
 }
 
-//TODO: comment these variables
-export let _containersData = new Map(); //TODO: perhaps const?
-export let _xStepLength = DEFAULT_XSTEP_LENGTH;
-export let _yStepLength = DEFAULT_YSTEP_LENGTH;
-export let _minAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES;
-export let _windowWidth = INITIAL_WINDOW_WIDTH;
-export let _windowHeight = INITIAL_WINDOW_HEIGHT;
-export let _scrollbarsMaxDimension = NO_VAL;
-export let _framesTime = DEFAULT_FRAME_TIME;
-export let _framesTimes = []; //TODO: perhaps const?
-export let _windowScroller = NO_VAL;
-export let _pageScroller = NO_VAL;
-export let _reducedMotion = "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches;
-export let _debugMode = "";
-export let _errorLogger = DEFAULT_ERROR_LOGGER;
-export let _warningLogger = DEFAULT_WARNING_LOGGER;
 
 
 /**
@@ -427,13 +507,11 @@ export let _warningLogger = DEFAULT_WARNING_LOGGER;
  */
 export const getXStepLength = () => _xStepLength;
 
-
 /**
  * Returns the value of the `_yStepLength` property. 
  * @returns {number} The default number of pixels scrolled during a single scroll-animation's step on the y-axis of any container.
  */
 export const getYStepLength = () => _yStepLength;
-
 
 /**
  * Returns the value of the `_minAnimationFrame` property. 
@@ -441,13 +519,11 @@ export const getYStepLength = () => _yStepLength;
  */
 export const getMinAnimationFrame = () => _minAnimationFrame;
 
-
 /**
  * Returns the value of the `_windowWidth` property. 
  * @returns {number} The current `window`'s inner width.
  */
 export const getWindowWidth = () => _windowWidth;
-
 
 /**
  * Returns the value of the `_windowHeight` property. 
@@ -455,20 +531,17 @@ export const getWindowWidth = () => _windowWidth;
  */
 export const getWindowHeight = () => _windowHeight;
 
-
 /**
  * Returns the value of the `_reducedMotion` property. 
  * @returns {boolean} `true` if the user has enabled any reduce-motion setting devicewise, `false` otherwise.
  */
 export const getReducedMotionState = () => _reducedMotion;
 
-
 /**
  * Returns the value of the `_debugMode` property. 
  * @returns {string} The mode in which the API's error/warning messages operate in. 
  */
 export const getDebugMode = () => _debugMode;
-
 
 /**
  * Checks whether `container` is being scrolled horizontally.
@@ -486,7 +559,6 @@ export const isXScrolling = (container = _pageScroller, options) => {
     _errorLogger(CREATE_LOG_OPTIONS(options, "isXScrolling", { secondaryMsg: container }));
 }
 
-
 /**
  * Checks whether `container` is being scrolled vertically.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -503,7 +575,6 @@ export const isYScrolling = (container = _pageScroller, options) => {
     _errorLogger(CREATE_LOG_OPTIONS(options, "isYScrolling", { secondaryMsg: container }));
 }
 
-
 /**
  * Checks whether `container` is being scrolled.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -519,7 +590,6 @@ export const isScrolling = (container = _pageScroller, options) => {
 
     _errorLogger(CREATE_LOG_OPTIONS(options, "isScrolling", { secondaryMsg: container }));
 }
-
 
 /**
  * Returns the horizontal pixel position `container` has to reach.
@@ -538,7 +608,6 @@ export const getFinalXPosition = (container = _pageScroller, options) => {
     return _containerData[K_FPX] || getScrollXCalculator(container, options)();
 }
 
-
 /**
  * Returns the vertical pixel position `container` has to reach.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -555,7 +624,6 @@ export const getFinalYPosition = (container = _pageScroller, options) => {
 
     return _containerData[K_FPY] || getScrollYCalculator(container, options)();
 }
-
 
 /**
  * Returns the direction of the current scroll-animation on the x-axis of `container`.
@@ -574,7 +642,6 @@ export const getScrollXDirection = (container = _pageScroller, options) => {
     _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollXDirection", { secondaryMsg: container }));
 }
 
-
 /**
  * Returns the direction of the current scroll-animation on the y-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -591,7 +658,6 @@ export const getScrollYDirection = (container = _pageScroller, options) => {
 
     _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollYDirection", { secondaryMsg: container }));
 }
-
 
 /**
  * Returns a `StepLengthCalculator` set for the x-axis of `container`.
@@ -610,7 +676,6 @@ export const getXStepLengthCalculator = (container = _pageScroller, getTemporary
     _errorLogger(CREATE_LOG_OPTIONS(options, "getXStepLengthCalculator", { secondaryMsg: container }));
 }
 
-
 /**
  * Returns a `StepLengthCalculator` set for the y-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -627,7 +692,6 @@ export const getYStepLengthCalculator = (container = _pageScroller, getTemporary
 
     _errorLogger(CREATE_LOG_OPTIONS(options, "getYStepLengthCalculator", { secondaryMsg: container }));
 }
-
 
 /**
  * Returns the value of the `_scrollbarsMaxDimension` property. 
@@ -660,7 +724,6 @@ export const getScrollbarsMaxDimension = (forceCalculation = false) => {
 
     return _scrollbarsMaxDimension;
 }
-
 
 /**
  * Returns the value of the `_windowScroller` property. 
@@ -769,7 +832,6 @@ export const getWindowScroller = (forceCalculation = false) => {
     return _windowScroller;
 }
 
-
 /**
  * Returns the value of the `_pageScroller` property.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
@@ -809,7 +871,6 @@ export const getPageScroller = (forceCalculation = false, options) => {
     return _pageScroller;
 }
 
-
 /**
  * Returns the value of the `_framesTime` property.
  * @param {boolean} [forceCalculation] If `true`, `calcFramesTimes` is internally called to initialize a new frames' time calculation, otherwise just acts as a getter.
@@ -824,7 +885,6 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
     else if (typeof callback === "function") callback();
     return _framesTime;
 }
-
 
 /**
  * Sets (or unsets if specified) the `StepLengthCalculator` for the x-axis of `container`.
@@ -858,7 +918,6 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
     }
 }
 
-
 /**
  * Sets (or unsets if specified) the `StepLengthCalculator` for the y-axis of `container`.
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
@@ -890,7 +949,6 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
         if (_isSettingOp) _containerData[K_TSCY] = NO_VAL;
     }
 }
-
 
 /**
  * Sets (or unsets if specified) the `StepLengthCalculator` for the both axes of `container`.
@@ -929,7 +987,6 @@ export const setStepLengthCalculator = (newCalculator, container = _pageScroller
     }
 }
 
-
 /**
  * Sets (or unsets if specified) the default number of pixels scrolled during a single scroll-animation's step (`_xStepLength` property) on the x-axis of all containers. 
  * @param {number} newStepLength A finite `Number` > 0.
@@ -957,7 +1014,6 @@ export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) =>
     _yStepLength = newStepLength;
 }
 
-
 /**
  * Sets the default number of pixels scrolled during a single scroll-animation's step (`_xStepLength` and `_yStepLength` properties) on any axis of all containers. 
  * @param {number} newStepLength A finite `Number` > 0.
@@ -973,7 +1029,6 @@ export const setStepLength = (newStepLength, options) => {
     _yStepLength = newStepLength;
 }
 
-
 /**
  * Sets (or unsets if requested) the minimum number of frames any scroll-animation should last by default (`_minAnimationFrame` property).
  * @param {number} newMinAnimationFrame A finite `Number` > 0.
@@ -987,7 +1042,6 @@ export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATIO
     _minAnimationFrame = newMinAnimationFrame;
 }
 
-
 /**
  * Tells the API which Element scrolls the document (`_pageScroller` property). 
  * @param {*} newPageScroller An instance of `Element` or `window`.
@@ -1000,7 +1054,6 @@ export const setPageScroller = (newPageScroller, options) => {
     }
     _pageScroller = newPageScroller;
 }
-
 
 /**
  * Adds a callback function to the resize callback queue of `container`.
@@ -1026,7 +1079,6 @@ export const addResizeCallback = (newCallback, container = _pageScroller, option
     _containerData[K_RCBQ].push(newCallback);
 }
 
-
 /**
  * Adds a callback function to the mutation callback queue of `container`.
  * @param {function} newCallback A function that will be invoked when `container` is mutated.
@@ -1051,7 +1103,6 @@ export const addMutationCallback = (newCallback, container = _pageScroller, opti
     _containerData[K_MCBQ].push(newCallback);
 }
 
-
 /**
  * Tells the API which mode should the error/warning messages operate in (`_debugMode` property).
  * @param {string} [newDebugMode] A **case insensitive** string between:
@@ -1073,7 +1124,6 @@ export const setDebugMode = (newDebugMode = "") => {
     );
 }
 
-
 /**
  * Sets the function that will be invoked when the API generates an error (`_errorLogger` property)
  * @param {function} [newLogger] A function which will be passed a single argument that contains the log informations: the `options` object.
@@ -1087,7 +1137,6 @@ export const setErrorLogger = (newLogger = DEFAULT_ERROR_LOGGER, options) => {
     _errorLogger = newLogger;
 }
 
-
 /**
  * Sets the function that will be invoked when the API generates a warning (`_warningLogger` property)
  * @param {function} [newLogger] A function which will be passed a single argument that contains the log informations: the `options` object.
@@ -1100,7 +1149,6 @@ export const setWarningLogger = (newLogger = DEFAULT_WARNING_LOGGER, options) =>
     }
     _warningLogger = newLogger;
 }
-
 
 /**
  * Requests a new frames' time measurement and asynchronously inserts the result into the `_framesTimes` array. 
@@ -1157,7 +1205,6 @@ export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, o
     if (typeof callback === "function") callback();
 }
 
-
 /**
  * Returns the size of the vertical scrollbar of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1169,7 +1216,6 @@ export const calcXScrollbarDimension = (container = _pageScroller, forceCalculat
     return calcScrollbarsDimensions(container, forceCalculation, MERGE_OBJECTS(options, { subject: "calcXScrollbarDimension" }))[0];
 }
 
-
 /**
  * Returns the size of the horizontal scrollbar of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1180,7 +1226,6 @@ export const calcXScrollbarDimension = (container = _pageScroller, forceCalculat
 export const calcYScrollbarDimension = (container = _pageScroller, forceCalculation = false, options) => {
     return calcScrollbarsDimensions(container, forceCalculation, MERGE_OBJECTS(options, { subject: "calcYScrollbarDimension" }))[1];
 }
-
 
 /**
  * Returns an array containing the size of the 2 scrollbars of `container`.
@@ -1276,7 +1321,6 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
     ];
 }
 
-
 /**
  * Returns an array containing the size of the 4 borders of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1341,7 +1385,6 @@ export const calcBordersDimensions = (container = _pageScroller, forceCalculatio
     ];
 }
 
-
 /**
  * Returns the `scrollXCalculator` of `container`.  
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1352,7 +1395,6 @@ export const getScrollXCalculator = (container = _pageScroller, options) => {
     return getScrollCalculators(container, MERGE_OBJECTS(options, { subject: "getScrollXCalculator" }))[0];
 }
 
-
 /**
  * Returns the `scrollYCalculator` of `container`.  
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1362,7 +1404,6 @@ export const getScrollXCalculator = (container = _pageScroller, options) => {
 export const getScrollYCalculator = (container = _pageScroller, options) => {
     return getScrollCalculators(container, MERGE_OBJECTS(options, { subject: "getScrollYCalculator" }))[1];
 }
-
 
 /**
  * Returns an array containing the `scrollXCalculator` and the `scrollYCalculator` of `container`.
@@ -1384,7 +1425,6 @@ export const getScrollCalculators = (container = _pageScroller, options) => {
     return [_containerData[K_SCX], _containerData[K_SCY]];
 }
 
-
 /**
  * Returns the `maxScrollX` of `container`.  
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1396,7 +1436,6 @@ export const getMaxScrollX = (container = _pageScroller, forceCalculation = fals
     return getMaxScrolls(container, forceCalculation, MERGE_OBJECTS(options, { subject: "getMaxScrollX" }))[0];
 }
 
-
 /**
  * Returns the `maxScrollY` of `container`.  
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1407,7 +1446,6 @@ export const getMaxScrollX = (container = _pageScroller, forceCalculation = fals
 export const getMaxScrollY = (container = _pageScroller, forceCalculation = false, options) => {
     return getMaxScrolls(container, forceCalculation, MERGE_OBJECTS(options, { subject: "getMaxScrollY" }))[1];
 }
-
 
 /**
  * Returns an array containing the `maxScrollX` and the `maxScrollY` values of `container`.
@@ -1473,7 +1511,6 @@ export const getMaxScrolls = (container = _pageScroller, forceCalculation = fals
     return [_containerData[K_MSX], _containerData[K_MSY]];
 }
 
-
 /**
  * Returns the `borderBox` of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1506,7 +1543,6 @@ export const getBorderBox = (container = _pageScroller, options) => {
 
     return _containerData[K_BRB];
 }
-
 
 /**
  * Returns the closest `scrollableParent` of `container` on the x-axis.
@@ -1625,7 +1661,6 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
     return NO_SP;
 }
 
-
 /**
  * Returns the closest `scrollableParent` of `container` on the y-axis.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1742,7 +1777,6 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
     _cacheResult(NO_SP);
     return NO_SP;
 }
-
 
 /**
  * Returns the closest `scrollableParent` of `container`.
@@ -1928,7 +1962,6 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
     return NO_SP;
 }
 
-
 /**
  * Returns every `scrollableParent` of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -1954,7 +1987,6 @@ export const getAllScrollableParents = (container = _pageScroller, includeHidden
 
     return _scrollableParents;
 }
-
 
 /**
  * Scrolls the x-axis of `container` to the specified position if possible.
@@ -2109,7 +2141,6 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
     }
 }
 
-
 /**
  * Scrolls the y-axis of `container` to the specified position if possible.
  * @param {number} finalPosition A finite number indicating the `scrollTop` / `scrollY` that `container` has to reach.
@@ -2262,7 +2293,6 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
     }
 }
 
-
 /**
  * Scrolls the x-axis of `container` by the specified amount if possible.
  * @param {number} delta A finite number indicating the amount of pixels that the x-axis of `container` should be scrolled by.
@@ -2327,7 +2357,6 @@ export const scrollXBy = (delta, container = _pageScroller, callback, stillStart
 
     scrollXTo(_currentPosition + delta, container, callback, containScroll, options);
 }
-
 
 /**
  * Scrolls the y-axis of `container` by the specified amount if possible.
@@ -2394,7 +2423,6 @@ export const scrollYBy = (delta, container = _pageScroller, callback, stillStart
     scrollYTo(_currentPosition + delta, container, callback, containScroll, options);
 }
 
-
 /**
  * Scrolls `container` to the specified positions if possible.
  * @param {number} finalXPosition A finite number indicating the `scrollLeft` / `scrollX` that `container` has to reach.
@@ -2431,7 +2459,6 @@ export const scrollTo = (finalXPosition, finalYPosition, container = _pageScroll
     _initPhase = false;
     scrollYTo(finalYPosition, container, _scrollYCallback, containScroll, options);
 }
-
 
 /**
  * Scrolls `container` by the specified amounts if possible.
@@ -2473,7 +2500,6 @@ export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, st
     _initPhase = false;
     scrollYBy(deltaY, container, _scrollYCallback, stillStart, containScroll, options);
 }
-
 
 /**
  * Finds and scrolls all the `scrollableParents` of `container` in order to make it visible on the screen with the specified alignments.
@@ -2591,7 +2617,6 @@ export const scrollIntoView = (container, alignToLeft = true, alignToTop = true,
         else _callback();
     }
 }
-
 
 /**
  * Finds and scrolls all the `scrollableParents` of `container` in order to make it visible on the screen with the specified alignments only if it's not already visible.
@@ -2728,7 +2753,6 @@ export const scrollIntoViewIfNeeded = (container, alignToCenter = true, callback
     }
 }
 
-
 /**
  * Stops the current scroll-animation on the x-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -2757,7 +2781,6 @@ export const stopScrollingX = (container = _pageScroller, callback, options) => 
 
     if (typeof callback === "function") callback();
 }
-
 
 /**
  * Stops the current scroll-animation on the y-axis of `container`.
@@ -2788,7 +2811,6 @@ export const stopScrollingY = (container = _pageScroller, callback, options) => 
     if (typeof callback === "function") callback();
 }
 
-
 /**
  * Stops all the current scroll-animations of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
@@ -2814,7 +2836,6 @@ export const stopScrolling = (container = _pageScroller, callback, options) => {
     if (typeof callback === "function") callback();
 }
 
-
 /**
  * Stops all the current API's scroll-animations.
  * @param {function} [callback] A function invoked when all scroll-animations have been stopped.
@@ -2832,7 +2853,6 @@ export const stopScrollingAll = (callback) => {
 
     if (typeof callback === "function") callback();
 }
-
 
 /**
  * Enables smooth-scrolling for valid anchor links (`<a>` and `<area>` elements) and their `scrollableParents`.
