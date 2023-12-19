@@ -3,7 +3,6 @@
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
 //TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
 //TODO: rename "forceCalculation" to "flushCache"
-//TODO: look more into the uss.js <-> common.js circular dependency
 //TODO: @ts-check
 
 import {
@@ -110,7 +109,7 @@ const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGT
  * @param {String} options.primaryMsg The expected value.
  * @param {String} options.secondaryMsg The received value.
  */
-export const DEFAULT_ERROR_LOGGER = (options) => {
+const DEFAULT_ERROR_LOGGER = (options) => {
     const functionName = options.subject;
     const expectedValue = options.primaryMsg;
     let receivedValue = options.secondaryMsg;
@@ -156,190 +155,6 @@ export const DEFAULT_ERROR_LOGGER = (options) => {
 
     throw "USS fatal error (execution stopped)";
 }
-
-/**
- * The default value for `_warningLogger`.
- * @param {Object} options A valid logging options object.
- * @param {String} options.subject The subject of the warning message.
- * @param {String} options.primaryMsg The warning message.
- * @param {String} options.secondaryMsg Ignored, it's there for compatibility.
- * @param {boolean} options.useSubjectQuotes `true` if `subject` should be represented as a quoted string, `false` otherwise.
- */
-export const DEFAULT_WARNING_LOGGER = (options) => {
-    let subject = options.subject;
-    const message = options.primaryMsg;
-    const useSubjectQuotes = options.useSubjectQuotes;
-
-    if (REGEX_LOGGER_DISABLED.test(_debugMode)) return;
-
-    const _isString = typeof subject === "string";
-    if (!_isString) subject = TO_STRING(subject);
-
-    //Trim the subject if needed.
-    if (subject.length > MAX_MSG_LEN) {
-        subject = subject.slice(0, MAX_MSG_LEN) + " ...";
-    }
-
-    //Insert leading and trailing quotes if needed.
-    if (_isString && useSubjectQuotes) subject = "\"" + subject + "\"";
-
-    if (REGEX_LOGGER_LEGACY.test(_debugMode)) {
-        console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
-        console.warn("USS WARNING\n", subject, message + ".");
-        return;
-    }
-
-    {
-        console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
-
-        console.log("%cUSS WARNING", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
-        console.log("%c" + subject + "%c" + message,
-            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#fcca03; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
-            "font-family:system-ui; font-weight:600; font-size:17px; background:#fcca03; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
-        );
-        {
-            console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
-            console.trace("");
-            console.groupEnd();
-        }
-        console.groupEnd();
-    }
-}
-
-/**
- * The default `StepLengthCalculator` for scroll-animations on the x-axis of every container that doesn't have a custom `StepLengthCalculator` set.
- * Controls how long each animation-step on the x-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
- * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
- * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
- * @param {number} timestamp The current timestamp.
- * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
- * @param {number} currentPos The `scrollLeft`/`scrollX` pixel position of the container.
- * @param {number} finalPos The `scrollLeft`/`scrollX` pixel position the container has to reach.
- * @param {*} container An instance of `Element` or `window`.
- * @returns {number} The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
- */
-export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    const _stepLength = total / _minAnimationFrame;
-    if (_stepLength < 1) return 1;
-    if (_stepLength > _xStepLength) return _xStepLength;
-    return _stepLength;
-}
-
-/**
- * The default `StepLengthCalculator` for scroll-animations on the y-axis of every container that doesn't have a custom `StepLengthCalculator` set.
- * Controls how long each animation-step on the y-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
- * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
- * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
- * @param {number} timestamp The current timestamp.
- * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
- * @param {number} currentPos The `scrollTop`/`scrollY` pixel position of the container.
- * @param {number} finalPos The `scrollTop`/`scrollY` pixel position the container has to reach.
- * @param {*} container An instance of `Element` or `window`.
- * @returns {number} The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
- */
-export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
-    const _stepLength = total / _minAnimationFrame;
-    if (_stepLength < 1) return 1;
-    if (_stepLength > _yStepLength) return _yStepLength;
-    return _stepLength;
-}
-
-
-
-/**
- * A Map in which:
- * - The keys are an instances of `Element` or the `Window` and they're internally called `containers`.
- * - The values are arrays.
- */
-export let _containersData = new Map(); //TODO: perhaps const?
-
-/**
- * If there's no `StepLengthCalculator` set for a container,
- * this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
- */
-export let _xStepLength = DEFAULT_XSTEP_LENGTH;
-
-/**
- * If there's no `StepLengthCalculator` set for a container,
- * this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
- */
-export let _yStepLength = DEFAULT_YSTEP_LENGTH;
-
-/**
- * This represents the lowest number of frames any scroll-animation on a container should last
- * if no `StepLengthCalculator` is set for it.
- */
-export let _minAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES;
-
-/**
- * The current `Window`'s inner width (in px).
- */
-export let _windowWidth = INITIAL_WINDOW_WIDTH;
-
-/**
- * The current `Window`'s inner height (in px).
- */
-export let _windowHeight = INITIAL_WINDOW_HEIGHT;
-
-/**
- * The highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
- */
-export let _scrollbarsMaxDimension = NO_VAL;
-
-/**
- * The time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms). 
- * It's the average of the values of `_framesTimes`.
- */
-export let _framesTime = DEFAULT_FRAME_TIME;
-
-/**
- * Contains at most the last `10` calculated frames' times.
- */
-export let _framesTimes = []; //TODO: perhaps const?
-
-/**
- * The container that scrolls the `Window` when it's scrolled and 
- * that (viceversa) is scrolled when the `Window` is scrolled.
- */
-export let _windowScroller = NO_VAL;
-
-/**
- * The container that scrolls the `document`.
- * It's also the value used when an API method requires the `container` input parameter but nothing is passed.
- */
-export let _pageScroller = NO_VAL;
-
-/**
- * `true` if the user has enabled any `reduce-motion` setting devicewise, `false` otherwise.
- * Internally used by the API to follow the user's accessibility preferences by 
- * reverting back every scroll-animation to the default jump-to-position behavior.
- */
-export let _reducedMotion = "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches;
-
-/**
- * Controls the way the `warning` and `error` messages are logged by the default `warning` and `error` loggers.
- * 
- * If it's set to:
- * - `disabled` (case insensitive) the API `won't show` any warning or error message.
- * - `legacy` (case insensitive) the API `won't style` any warning or error message.
- * 
- * Any other String will make the warning/error messages be displayed with the default API's styling.
- * 
- * A custom `_errorLogger` and/or `_warningLogger` should respect this preference.
- */
-export let _debugMode = "";
-
-/**
- * Logs the API `error` messages inside the browser's console.
- */
-export let _errorLogger = DEFAULT_ERROR_LOGGER;
-
-/**
- * Logs the API `warning` messages inside the browser's console.
- */
-export let _warningLogger = DEFAULT_WARNING_LOGGER;
-
-
 
 /**
  * TODO: write comment
@@ -559,6 +374,190 @@ const DEFAULT_RESIZE_OBSERVER = {
         DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
     }
 }
+
+/**
+ * The default value for `_warningLogger`.
+ * @param {Object} options A valid logging options object.
+ * @param {String} options.subject The subject of the warning message.
+ * @param {String} options.primaryMsg The warning message.
+ * @param {String} options.secondaryMsg Ignored, it's there for compatibility.
+ * @param {boolean} options.useSubjectQuotes `true` if `subject` should be represented as a quoted string, `false` otherwise.
+ */
+const DEFAULT_WARNING_LOGGER = (options) => {
+    let subject = options.subject;
+    const message = options.primaryMsg;
+    const useSubjectQuotes = options.useSubjectQuotes;
+
+    if (REGEX_LOGGER_DISABLED.test(_debugMode)) return;
+
+    const _isString = typeof subject === "string";
+    if (!_isString) subject = TO_STRING(subject);
+
+    //Trim the subject if needed.
+    if (subject.length > MAX_MSG_LEN) {
+        subject = subject.slice(0, MAX_MSG_LEN) + " ...";
+    }
+
+    //Insert leading and trailing quotes if needed.
+    if (_isString && useSubjectQuotes) subject = "\"" + subject + "\"";
+
+    if (REGEX_LOGGER_LEGACY.test(_debugMode)) {
+        console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
+        console.warn("USS WARNING\n", subject, message + ".");
+        return;
+    }
+
+    {
+        console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+
+        console.log("%cUSS WARNING", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
+        console.log("%c" + subject + "%c" + message,
+            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#fcca03; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+            "font-family:system-ui; font-weight:600; font-size:17px; background:#fcca03; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
+        );
+        {
+            console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
+            console.trace("");
+            console.groupEnd();
+        }
+        console.groupEnd();
+    }
+}
+
+/**
+ * The default `StepLengthCalculator` for scroll-animations on the x-axis of every container that doesn't have a custom `StepLengthCalculator` set.
+ * Controls how long each animation-step on the x-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
+ * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
+ * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
+ * @param {number} timestamp The current timestamp.
+ * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
+ * @param {number} currentPos The `scrollLeft`/`scrollX` pixel position of the container.
+ * @param {number} finalPos The `scrollLeft`/`scrollX` pixel position the container has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @returns {number} The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
+ */
+const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+    const _stepLength = total / _minAnimationFrame;
+    if (_stepLength < 1) return 1;
+    if (_stepLength > _xStepLength) return _xStepLength;
+    return _stepLength;
+}
+
+/**
+ * The default `StepLengthCalculator` for scroll-animations on the y-axis of every container that doesn't have a custom `StepLengthCalculator` set.
+ * Controls how long each animation-step on the y-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
+ * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
+ * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
+ * @param {number} timestamp The current timestamp.
+ * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
+ * @param {number} currentPos The `scrollTop`/`scrollY` pixel position of the container.
+ * @param {number} finalPos The `scrollTop`/`scrollY` pixel position the container has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @returns {number} The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
+ */
+const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+    const _stepLength = total / _minAnimationFrame;
+    if (_stepLength < 1) return 1;
+    if (_stepLength > _yStepLength) return _yStepLength;
+    return _stepLength;
+}
+
+
+
+/**
+ * A Map in which:
+ * - The keys are an instances of `Element` or the `Window` and they're internally called `containers`.
+ * - The values are arrays.
+ */
+export let _containersData = new Map(); //TODO: perhaps const?
+
+/**
+ * If there's no `StepLengthCalculator` set for a container,
+ * this represent the number of pixel scrolled during a single scroll-animation's step on the x-axis of that container.
+ */
+export let _xStepLength = DEFAULT_XSTEP_LENGTH;
+
+/**
+ * If there's no `StepLengthCalculator` set for a container,
+ * this represent the number of pixel scrolled during a single scroll-animation's step on the y-axis of that container.
+ */
+export let _yStepLength = DEFAULT_YSTEP_LENGTH;
+
+/**
+ * This represents the lowest number of frames any scroll-animation on a container should last
+ * if no `StepLengthCalculator` is set for it.
+ */
+export let _minAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES;
+
+/**
+ * The current `Window`'s inner width (in px).
+ */
+export let _windowWidth = INITIAL_WINDOW_WIDTH;
+
+/**
+ * The current `Window`'s inner height (in px).
+ */
+export let _windowHeight = INITIAL_WINDOW_HEIGHT;
+
+/**
+ * The highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
+ */
+export let _scrollbarsMaxDimension = NO_VAL;
+
+/**
+ * The time in milliseconds between two consecutive browser's frame repaints (e.g. at 60fps this is 16.6ms). 
+ * It's the average of the values of `_framesTimes`.
+ */
+export let _framesTime = DEFAULT_FRAME_TIME;
+
+/**
+ * Contains at most the last `10` calculated frames' times.
+ */
+export let _framesTimes = []; //TODO: perhaps const?
+
+/**
+ * The container that scrolls the `Window` when it's scrolled and 
+ * that (viceversa) is scrolled when the `Window` is scrolled.
+ */
+export let _windowScroller = NO_VAL;
+
+/**
+ * The container that scrolls the `document`.
+ * It's also the value used when an API method requires the `container` input parameter but nothing is passed.
+ */
+export let _pageScroller = NO_VAL;
+
+/**
+ * `true` if the user has enabled any `reduce-motion` setting devicewise, `false` otherwise.
+ * Internally used by the API to follow the user's accessibility preferences by 
+ * reverting back every scroll-animation to the default jump-to-position behavior.
+ */
+export let _reducedMotion = "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches;
+
+/**
+ * Controls the way the `warning` and `error` messages are logged by the default `warning` and `error` loggers.
+ * 
+ * If it's set to:
+ * - `disabled` (case insensitive) the API `won't show` any warning or error message.
+ * - `legacy` (case insensitive) the API `won't style` any warning or error message.
+ * 
+ * Any other String will make the warning/error messages be displayed with the default API's styling.
+ * 
+ * A custom `_errorLogger` and/or `_warningLogger` should respect this preference.
+ */
+export let _debugMode = "";
+
+/**
+ * Logs the API `error` messages inside the browser's console.
+ */
+export let _errorLogger = DEFAULT_ERROR_LOGGER;
+
+/**
+ * Logs the API `warning` messages inside the browser's console.
+ */
+export let _warningLogger = DEFAULT_WARNING_LOGGER;
+
+
 
 /**
  * TODO: write comment
@@ -1069,7 +1068,7 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
 export const setXStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
     if (typeof newCalculator !== "function" && _isSettingOp) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
         return;
     }
 
@@ -1077,7 +1076,7 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
         return;
     }
 
@@ -1101,7 +1100,7 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
 export const setYStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
     if (typeof newCalculator !== "function" && _isSettingOp) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
         return;
     }
 
@@ -1109,7 +1108,7 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
         return;
     }
 
@@ -1133,7 +1132,7 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
 export const setStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
     if (typeof newCalculator !== "function" && _isSettingOp) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
         return;
     }
 
@@ -1141,7 +1140,7 @@ export const setStepLengthCalculator = (newCalculator, container = _pageScroller
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
         return;
     }
 
@@ -1220,6 +1219,7 @@ export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATIO
  * @param {*} newPageScroller An instance of `Element` or `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
+//TODO: rename newPageScroller to container?
 export const setPageScroller = (newPageScroller, options) => {
     if (!_containersData.get(newPageScroller) && !INIT_CONTAINER_DATA(newPageScroller)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setPageScroller", { secondaryMsg: newPageScroller }));
@@ -1237,7 +1237,7 @@ export const setPageScroller = (newPageScroller, options) => {
 //TODO: add cypress tests
 export const addResizeCallback = (newCallback, container = _pageScroller, options) => {
     if (typeof newCallback !== "function") {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 0 }));
         return;
     }
 
@@ -1245,7 +1245,7 @@ export const addResizeCallback = (newCallback, container = _pageScroller, option
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 1 }));
         return;
     }
 
@@ -1261,7 +1261,7 @@ export const addResizeCallback = (newCallback, container = _pageScroller, option
 //TODO: add cypress tests
 export const addMutationCallback = (newCallback, container = _pageScroller, options) => {
     if (typeof newCallback !== "function") {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 0 }));
         return;
     }
 
@@ -1269,7 +1269,7 @@ export const addMutationCallback = (newCallback, container = _pageScroller, opti
     const _containerData = _oldData || [];
 
     if (container === window || (!_oldData && !INIT_CONTAINER_DATA(container, _containerData))) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 1 }));
         return;
     }
 

@@ -281,115 +281,130 @@ export const REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
 
 /**
  * A string containing part of an error message.
- * Can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.   
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_1 = "the input to be an instance of Element or window";
+export const DEFAULT_ERROR_PRIMARY_MSG_1 = " to be an instance of Element or window";
 
 /**
  * A string containing part of an error message.
- * Can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.   
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_2 = "the input to be an instance of Element";
+export const DEFAULT_ERROR_PRIMARY_MSG_2 = " to be an instance of Element";
 
 /**
  * A string containing part of an error message.
- * Can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.   
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_3 = "the input to be a function";
+export const DEFAULT_ERROR_PRIMARY_MSG_3 = " to be a function";
 
 /**
  * A string containing part of an error message.
- * Can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.   
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_4 = "the input to be a positive number";
+export const DEFAULT_ERROR_PRIMARY_MSG_4 = " to be a positive number";
 
 /**
  * A string containing part of an error message.
- * Can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.   
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_5 = "the input to be a number";
+export const DEFAULT_ERROR_PRIMARY_MSG_5 = " to be a number";
+
+/**
+ * A string containing part of an error message.
+ * It can be used to build the `options` object for the error logger.   
+ */
+export const DEFAULT_ERROR_PRIMARY_MSG_6 = " to be an object";
+
+/**
+ * A string containing part of an error message.
+ * It can be used to build the `options` object for the error logger.   
+ */
+export const DEFAULT_ERROR_PRIMARY_MSG_7 = " to be an array of numbers";
 
 /**
  * A string containing part of a warning message.
- * Can be used to build the `options` object for the warning logger.   
+ * It can be used to build the `options` object for the warning logger.   
  */
 export const DEFAULT_WARNING_PRIMARY_MSG_1 = "is not a valid anchor's destination";
 
 /**
  * A string containing part of a warning message.
- * Can be used to build the `options` object for the warning logger.   
+ * It can be used to build the `options` object for the warning logger.   
  */
 export const DEFAULT_WARNING_PRIMARY_MSG_2 = "is not a valid step length";
 
 
 
 /**
+ * TODO: move this into uss.js and generalize more the error/warning messages
+ * 
  * A map containing function names and a partial `options` objects that, 
  * can be used with the uss loggers.
  * Note that these objects (the map entries) are partial and need 
  * to be completed (they only contain known/static log informations). 
  */
 const DEFAULT_LOG_OPTIONS = new Map([
-    ["isXScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["isYScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["isScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["isXScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["isYScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["isScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
-    ["getScrollXDirection", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getScrollYDirection", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getScrollXDirection", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getScrollYDirection", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
-    ["getXStepLengthCalculator", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getYStepLengthCalculator", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getXStepLengthCalculator", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getYStepLengthCalculator", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
     ["setXStepLengthCalculator", [
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 },
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
     ]],
     ["setYStepLengthCalculator", [
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 },
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
     ]],
     ["setStepLengthCalculator", [
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 },
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
     ]],
 
-    ["setXStepLength", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_4 }],
-    ["setYStepLength", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_4 }],
-    ["setStepLength", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_4 }],
+    ["setXStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
+    ["setYStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
+    ["setStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
 
-    ["setMinAnimationFrame", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_4 }],
-    ["setPageScroller", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["setMinAnimationFrame", { primaryMsg: "newMinAnimationFrame" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
+    //TODO: rename "the input" to container
+    ["setPageScroller", { primaryMsg: "the input" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
     ["addResizeCallback", [
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 },
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "newCallback" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
     ]],
     ["addMutationCallback", [
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_2 },
-        { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "newCallback" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_2 },
     ]],
 
-    ["setErrorLogger", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 }],
-    ["setWarningLogger", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_3 }],
+    ["setErrorLogger", { primaryMsg: "newLogger" + DEFAULT_ERROR_PRIMARY_MSG_3 }],
+    ["setWarningLogger", { primaryMsg: "newLogger" + DEFAULT_ERROR_PRIMARY_MSG_3 }],
 
-    ["calcScrollbarsDimensions", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["calcBordersDimensions", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["calcScrollbarsDimensions", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["calcBordersDimensions", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
-    ["getScrollCalculators", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getBorderBox", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getScrollCalculators", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getBorderBox", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
-    ["getXScrollableParent", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getYScrollableParent", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getScrollableParent", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getXScrollableParent", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getYScrollableParent", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getScrollableParent", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
-    ["scrollXTo", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_5 }],
-    ["scrollYTo", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_5 }],
-    ["scrollXBy", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_5 }],
-    ["scrollYBy", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_5 }],
+    ["scrollXTo", { primaryMsg: "finalPosition" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
+    ["scrollYTo", { primaryMsg: "finalPosition" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
+    ["scrollXBy", { primaryMsg: "delta" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
+    ["scrollYBy", { primaryMsg: "delta" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
 
-    ["stopScrollingX", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["stopScrollingY", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["stopScrolling", { primaryMsg: DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["stopScrollingX", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["stopScrollingY", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["stopScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 ]);
 
 

@@ -17,7 +17,12 @@ import {
     CHECK_INSTANCEOF,
     CREATE_LOG_OPTIONS,
     IS_OBJECT,
-    NO_VAL
+    NO_VAL,
+    DEFAULT_ERROR_PRIMARY_MSG_1,
+    DEFAULT_ERROR_PRIMARY_MSG_3,
+    DEFAULT_ERROR_PRIMARY_MSG_4,
+    DEFAULT_ERROR_PRIMARY_MSG_6,
+    DEFAULT_ERROR_PRIMARY_MSG_7,
 } from "../main/common.js";
 
 import {
@@ -38,18 +43,17 @@ import {
  * to be completed (they only contain known/static log informations). 
  * Also note that this map is used instead of the common.js one.
  */
-//TODO: move some of these messages into common.js 
 const DEFAULT_LOG_OPTIONS = new Map([
     ["isValidStepLengthCalculator", [
-        { primaryMsg: "options to be an object" },
-        { primaryMsg: "fun to be a function" },
-        { primaryMsg: "options.container to be an Element or the Window" },
-        { primaryMsg: "options.totalScrollAmount to be a positive number" },
-        { primaryMsg: "options.timeout to be a positive number" },
-        { primaryMsg: "fun to return a valid stepLength value" }
+        { primaryMsg: "options" + DEFAULT_ERROR_PRIMARY_MSG_6 },
+        { primaryMsg: "fun" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "options.container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
+        { primaryMsg: "options.totalScrollAmount" + DEFAULT_ERROR_PRIMARY_MSG_4 },
+        { primaryMsg: "options.timeout" + DEFAULT_ERROR_PRIMARY_MSG_4 },
+        { primaryMsg: "fun to return a valid step length" }
     ]],
     ["getBrowserRefreshRate", [
-        { primaryMsg: "_framesTimes to be an array of numbers" },
+        { primaryMsg: "_framesTimes" + DEFAULT_ERROR_PRIMARY_MSG_7 },
         { primaryMsg: "to not throw any exception" },  //TODO: improve error message
     ]],
 ]);
