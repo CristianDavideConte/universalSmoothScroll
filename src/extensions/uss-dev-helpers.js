@@ -1,4 +1,4 @@
-//TODO @ts-check //Use to check for type errors 
+//TODO @ts-check //Use to check for type errors
 /**
  * CODE STYLING NOTE:
  * Constans, variables and functions are logically grouped in this file: this helps
@@ -10,10 +10,13 @@
  * - 3 newlines between a logical group and another
  */
 import {
+    IS_POSITIVE,
+} from "../main/math.js"
+
+import {
     CHECK_INSTANCEOF,
     CREATE_LOG_OPTIONS,
     IS_OBJECT,
-    IS_POSITIVE,
     NO_VAL
 } from "../main/common.js";
 

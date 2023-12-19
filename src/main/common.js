@@ -1,4 +1,4 @@
-//TODO: @ts-check //Use to check for type errors 
+//TODO: @ts-check //Use to check for type errors
 /**
  * CODE STYLING NOTE:
  * Constans, variables and functions are logically grouped in this file: this helps
@@ -10,10 +10,14 @@
  * - 3 newlines between a logical group and another
  */
 import {
+    GET_LINE_FROM_P1_P2
+} from "./math.js"
+
+import {
+    _debugMode,
+    _minAnimationFrame,
     _xStepLength,
     _yStepLength,
-    _minAnimationFrame,
-    _debugMode,
 } from "./uss.js"
 
 
@@ -239,16 +243,23 @@ export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
 
 
 /**
- * Default value for the `_xStepLength` variable.
- * 16px at 412px of window width && 23px at 1920px of window width.
+ * Default function used to calculate `DEFAULT_XSTEP_LENGTH` and `DEFAULT_YSTEP_LENGTH`.
  */
-export const DEFAULT_XSTEP_LENGTH = 16 + 7 / 1508 * (INITIAL_WINDOW_WIDTH - 412);
+const DEFAULT_STEP_LENGTH = GET_LINE_FROM_P1_P2(412, 16, 1920, 23)
+
+/**
+ * Default value for the `_xStepLength` variable.
+ * 
+ * 16px at 412px of `_windowWidth` and 23px at 1920px of `_windowWidth`.
+ */
+export const DEFAULT_XSTEP_LENGTH = DEFAULT_STEP_LENGTH(INITIAL_WINDOW_WIDTH);
 
 /**
  * Default value for the `_yStepLength` variable.
- * 38px at 789px of window height && 22px at 1920px of window height.
+ * 
+ * 16px at 412px of `_windowHeight` and 23px at 1920px of `_windowHeight`.
  */
-export const DEFAULT_YSTEP_LENGTH = Math.max(1, Math.abs(38 - 20 / 140 * (INITIAL_WINDOW_HEIGHT - 789)));
+export const DEFAULT_YSTEP_LENGTH = DEFAULT_STEP_LENGTH(INITIAL_WINDOW_HEIGHT);
 
 
 
@@ -498,7 +509,7 @@ export const CLEAR_COMMON_DATA = (containerData) => {
  * @param {Object} staticOptions The `options` object passed to the calling function.
  * @param {String} functionName The calling function's name.
  * @param {Object} runtimeOptions Logging options that are known at runtime only.
- * @param {Number} [runtimeOptions.idx] The index of the message inside `defaultLogOptionsMap[functionName]` to use.
+ * @param {number} [runtimeOptions.idx] The index of the message inside `defaultLogOptionsMap[functionName]` to use.
  * @param {Map<String, object>} [defaultLogOptionsMap] A map containing function names and a partial `options` objects.
  * @returns {Object} A valid logging `options` object that can be used with the uss loggers.
  */
@@ -679,24 +690,6 @@ export const IS_OBJECT = (value) => {
     return value !== null &&
         typeof value === "object" &&
         !Array.isArray(value);
-}
-
-/**
- * Checks whether `value` is a positive number (i.e. > 0).
- * @param {*} value The value to check.
- * @returns {boolean} `true` if `value` is a positive number, `false` otherwise.
- */
-export const IS_POSITIVE = (value) => {
-    return Number.isFinite(value) && value > 0;
-}
-
-/**
- * Checks whether `value` is a positive number or 0 (i.e. >= 0).
- * @param {*} value The value to check.
- * @returns {boolean} `true` if `value` is a number >= 0, `false` otherwise.
- */
-export const IS_POSITIVE_OR_0 = (value) => {
-    return Number.isFinite(value) && value >= 0;
 }
 
 /**

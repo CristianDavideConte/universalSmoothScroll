@@ -3,7 +3,13 @@
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
 //TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
 //TODO: rename "forceCalculation" to "flushCache"
+//TODO: look more into the uss.js <-> common.js circular dependency
 //TODO: @ts-check
+
+import {
+    IS_POSITIVE,
+    IS_POSITIVE_OR_0,
+} from "./math.js"
 
 import {
     K_IDX,
@@ -40,35 +46,33 @@ import {
     K_RCBQ,
     K_MCBQ,
     K_FGS,
-    NO_VAL,
     NO_SP,
     NO_FGS,
+    NO_VAL,
     FRM_TMS_PHASE,
     FRM_TMS_SUM,
     INITIAL_WINDOW_WIDTH,
     INITIAL_WINDOW_HEIGHT,
     DEFAULT_XSTEP_LENGTH,
     DEFAULT_YSTEP_LENGTH,
-    DEFAULT_MIN_ANIMATION_FRAMES,
     DEFAULT_FRAME_TIME,
+    DEFAULT_MIN_ANIMATION_FRAMES,
     HIGHEST_SAFE_SCROLL_POS,
     REGEX_ALIGNMENT_NEAREST,
     REGEX_OVERFLOW,
     REGEX_OVERFLOW_HIDDEN,
-    REGEX_OVERFLOW_WITH_VISIBLE,
     REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE,
-    MERGE_OBJECTS,
-    CREATE_LOG_OPTIONS,
-    CLEAR_COMMON_DATA,
-    DEFAULT_XSTEP_LENGTH_CALCULATOR,
-    DEFAULT_YSTEP_LENGTH_CALCULATOR,
-    DEFAULT_ERROR_LOGGER,
-    DEFAULT_WARNING_LOGGER,
-    CHECK_INSTANCEOF,
+    REGEX_OVERFLOW_WITH_VISIBLE,
     DEFAULT_WARNING_PRIMARY_MSG_1,
     DEFAULT_WARNING_PRIMARY_MSG_2,
-    IS_POSITIVE,
-    IS_POSITIVE_OR_0
+    CHECK_INSTANCEOF,
+    CLEAR_COMMON_DATA,
+    CREATE_LOG_OPTIONS,
+    DEFAULT_ERROR_LOGGER,
+    DEFAULT_WARNING_LOGGER,
+    DEFAULT_XSTEP_LENGTH_CALCULATOR,
+    DEFAULT_YSTEP_LENGTH_CALCULATOR,
+    MERGE_OBJECTS,
 } from "./common.js"
 
 
@@ -167,103 +171,6 @@ export let _errorLogger = DEFAULT_ERROR_LOGGER;
 export let _warningLogger = DEFAULT_WARNING_LOGGER;
 
 
-
-/**
- * TODO: write comment
- */
-const DEFAULT_RESIZE_OBSERVER = {
-    callbackFrameId: NO_VAL,
-    debouncedFrames: 0,
-    totalDebounceFrames: 16,
-    entries: new Map(), //<entry.target, ResizeObject>
-    observer: new ResizeObserver((entries) => {
-        /**
-         * Each time a resize event is observed on one of the entries
-         * the number of debouced frames is reset.
-         */
-        DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
-
-        //Keep only the most up-to-date resized-entry for each target.
-        for (const entry of entries) {
-            const _resizeObject = DEFAULT_RESIZE_OBSERVER.entries.get(entry.target);
-
-            _resizeObject.hasResized = true;
-
-            //Update the target size.
-            _resizeObject.width = entry.borderBoxSize[0].inlineSize;
-            _resizeObject.height = entry.borderBoxSize[0].blockSize;
-        }
-
-        //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
-        if (DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
-            DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
-        }
-    }),
-    callback: () => {
-        /**
-         * This check ensures that before doing any work, 
-         * a fixed number of frames has passed. 
-         * Combining this debouncing with the fact that 
-         * the resize observer only run once per frame, 
-         * allows to clear the caches and execute any callback 
-         * once and after the resizing has been completed. 
-         */
-        if (DEFAULT_RESIZE_OBSERVER.debouncedFrames < DEFAULT_RESIZE_OBSERVER.totalDebounceFrames) {
-            DEFAULT_RESIZE_OBSERVER.debouncedFrames++;
-            DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
-            return;
-        }
-
-        //TODO: does it make sense to clear the cache for the scrollable parents on resize?
-        for (const [target, resizeObject] of DEFAULT_RESIZE_OBSERVER.entries) {
-            if (!resizeObject.hasResized) continue;
-
-            const _containerData = _containersData.get(target);
-
-            const _newWidth = resizeObject.width;
-            const _newHeight = resizeObject.height;
-
-            /**
-             * Clear the caches.
-             * If the BorderBox has never been calculated, 
-             * this is the initialization and there are no caches.
-             */
-            if (_containerData[K_BRB]) {
-                //Horizontal resize.
-                if (_containerData[K_BRB].width !== _newWidth) {
-                    _containerData[K_MSX] = NO_VAL; //MaxScrollX
-                    _containerData[K_VSB] = NO_VAL; //VerticalScrollbar
-                    _containerData[K_RB] = NO_VAL;  //RightBorder
-                    _containerData[K_LB] = NO_VAL;  //LeftBorder
-                }
-
-                //Vertical resize.
-                if (_containerData[K_BRB].height !== _newHeight) {
-                    _containerData[K_MSY] = NO_VAL; //MaxScrollY
-                    _containerData[K_HSB] = NO_VAL; //HorizontalScrollbar
-                    _containerData[K_TB] = NO_VAL;  //TopBorder
-                    _containerData[K_BB] = NO_VAL;  //BottomBorder
-                }
-            }
-
-            //BorderBox 
-            _containerData[K_BRB] = {
-                width: _newWidth,
-                height: _newHeight
-            }
-
-            //Clear the resizeObject so that it can be reused.
-            resizeObject.hasResized = false;
-
-            //TODO: decide what to pass as the input of callback: perhaps the container?
-
-            //Execute the resize callbacks
-            for (const callback of _containerData[K_RCBQ]) callback();
-        }
-
-        DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
-    }
-}
 
 /**
  * TODO: write comment
@@ -384,6 +291,103 @@ const DEFAULT_MUTATION_OBSERVER = {
         }
 
         DEFAULT_MUTATION_OBSERVER.callbackFrameId = NO_VAL;
+    }
+}
+
+/**
+ * TODO: write comment
+ */
+const DEFAULT_RESIZE_OBSERVER = {
+    callbackFrameId: NO_VAL,
+    debouncedFrames: 0,
+    totalDebounceFrames: 16,
+    entries: new Map(), //<entry.target, ResizeObject>
+    observer: new ResizeObserver((entries) => {
+        /**
+         * Each time a resize event is observed on one of the entries
+         * the number of debouced frames is reset.
+         */
+        DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
+
+        //Keep only the most up-to-date resized-entry for each target.
+        for (const entry of entries) {
+            const _resizeObject = DEFAULT_RESIZE_OBSERVER.entries.get(entry.target);
+
+            _resizeObject.hasResized = true;
+
+            //Update the target size.
+            _resizeObject.width = entry.borderBoxSize[0].inlineSize;
+            _resizeObject.height = entry.borderBoxSize[0].blockSize;
+        }
+
+        //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
+        if (DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
+            DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+        }
+    }),
+    callback: () => {
+        /**
+         * This check ensures that before doing any work, 
+         * a fixed number of frames has passed. 
+         * Combining this debouncing with the fact that 
+         * the resize observer only run once per frame, 
+         * allows to clear the caches and execute any callback 
+         * once and after the resizing has been completed. 
+         */
+        if (DEFAULT_RESIZE_OBSERVER.debouncedFrames < DEFAULT_RESIZE_OBSERVER.totalDebounceFrames) {
+            DEFAULT_RESIZE_OBSERVER.debouncedFrames++;
+            DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+            return;
+        }
+
+        //TODO: does it make sense to clear the cache for the scrollable parents on resize?
+        for (const [target, resizeObject] of DEFAULT_RESIZE_OBSERVER.entries) {
+            if (!resizeObject.hasResized) continue;
+
+            const _containerData = _containersData.get(target);
+
+            const _newWidth = resizeObject.width;
+            const _newHeight = resizeObject.height;
+
+            /**
+             * Clear the caches.
+             * If the BorderBox has never been calculated, 
+             * this is the initialization and there are no caches.
+             */
+            if (_containerData[K_BRB]) {
+                //Horizontal resize.
+                if (_containerData[K_BRB].width !== _newWidth) {
+                    _containerData[K_MSX] = NO_VAL; //MaxScrollX
+                    _containerData[K_VSB] = NO_VAL; //VerticalScrollbar
+                    _containerData[K_RB] = NO_VAL;  //RightBorder
+                    _containerData[K_LB] = NO_VAL;  //LeftBorder
+                }
+
+                //Vertical resize.
+                if (_containerData[K_BRB].height !== _newHeight) {
+                    _containerData[K_MSY] = NO_VAL; //MaxScrollY
+                    _containerData[K_HSB] = NO_VAL; //HorizontalScrollbar
+                    _containerData[K_TB] = NO_VAL;  //TopBorder
+                    _containerData[K_BB] = NO_VAL;  //BottomBorder
+                }
+            }
+
+            //BorderBox 
+            _containerData[K_BRB] = {
+                width: _newWidth,
+                height: _newHeight
+            }
+
+            //Clear the resizeObject so that it can be reused.
+            resizeObject.hasResized = false;
+
+            //TODO: decide what to pass as the input of callback: perhaps the container?
+
+            //Execute the resize callbacks
+            for (const callback of _containerData[K_RCBQ]) callback();
+        }
+
+        DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
     }
 }
 
