@@ -38,6 +38,7 @@ import {
  * to be completed (they only contain known/static log informations). 
  * Also note that this map is used instead of the common.js one.
  */
+//TODO: move some of these messages into common.js 
 const DEFAULT_LOG_OPTIONS = new Map([
     ["isValidStepLengthCalculator", [
         { primaryMsg: "options to be an object" },

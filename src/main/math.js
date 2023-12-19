@@ -1,3 +1,4 @@
+//TODO: @ts-check //Use to check for type errors
 /**
  * CODE STYLING NOTE:
  * Constans, variables and functions are logically grouped in this file: this helps

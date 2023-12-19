@@ -1,4 +1,5 @@
 //TODO: use the new error/warning loggers
+//TODO: use the math.js library to group some math patterns
 //TODO: import only the variables/functions used by this module instead of everything.
 
 import * as uss from "../main/uss.js";

@@ -9,6 +9,7 @@
 import {
     IS_POSITIVE,
     IS_POSITIVE_OR_0,
+    GET_LINE_FROM_P1_P2,
 } from "./math.js"
 
 import {
@@ -53,10 +54,6 @@ import {
     FRM_TMS_SUM,
     INITIAL_WINDOW_WIDTH,
     INITIAL_WINDOW_HEIGHT,
-    DEFAULT_XSTEP_LENGTH,
-    DEFAULT_YSTEP_LENGTH,
-    DEFAULT_FRAME_TIME,
-    DEFAULT_MIN_ANIMATION_FRAMES,
     HIGHEST_SAFE_SCROLL_POS,
     REGEX_ALIGNMENT_NEAREST,
     REGEX_OVERFLOW,
@@ -68,12 +65,184 @@ import {
     CHECK_INSTANCEOF,
     CLEAR_COMMON_DATA,
     CREATE_LOG_OPTIONS,
-    DEFAULT_ERROR_LOGGER,
-    DEFAULT_WARNING_LOGGER,
-    DEFAULT_XSTEP_LENGTH_CALCULATOR,
-    DEFAULT_YSTEP_LENGTH_CALCULATOR,
     MERGE_OBJECTS,
 } from "./common.js"
+
+
+
+/**
+ * Default function used to calculate `DEFAULT_XSTEP_LENGTH` and `DEFAULT_YSTEP_LENGTH`.
+ */
+const GET_DEFAULT_STEP_LENGTH = GET_LINE_FROM_P1_P2(412, 16, 1920, 23)
+
+/**
+ * Default value for the `_xStepLength` variable.
+ * 
+ * 16px at 412px of `_windowWidth` and 23px at 1920px of `_windowWidth`.
+ */
+const DEFAULT_XSTEP_LENGTH = GET_DEFAULT_STEP_LENGTH(INITIAL_WINDOW_WIDTH);
+
+/**
+ * Default value for the `_yStepLength` variable.
+ * 
+ * 16px at 412px of `_windowHeight` and 23px at 1920px of `_windowHeight`.
+ */
+const DEFAULT_YSTEP_LENGTH = GET_DEFAULT_STEP_LENGTH(INITIAL_WINDOW_HEIGHT);
+
+/**
+ * Default value for the `_framesTime` variable (in ms).
+ */
+const DEFAULT_FRAME_TIME = 16.6;
+
+//TODO: To look more into
+//TODO: const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame;
+
+/**
+ * Default value for the `_minAnimationFrame` variable.
+ * 51 frames at 929px of window height.
+ */
+const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;
+
+/**
+ * The default value for `_errorLogger`.
+ * @param {Object} options A valid logging options object.
+ * @param {String} options.subject The calling function's name.
+ * @param {String} options.primaryMsg The expected value.
+ * @param {String} options.secondaryMsg The received value.
+ */
+export const DEFAULT_ERROR_LOGGER = (options) => {
+    const functionName = options.subject;
+    const expectedValue = options.primaryMsg;
+    let receivedValue = options.secondaryMsg;
+
+    if (REGEX_LOGGER_DISABLED.test(_debugMode)) return;
+
+    const _isString = typeof receivedValue === "string";
+    if (!_isString) receivedValue = TO_STRING(receivedValue);
+
+    //Trim the received value if needed.
+    if (receivedValue.length > MAX_MSG_LEN) {
+        receivedValue = receivedValue.slice(0, MAX_MSG_LEN) + " ...";
+    }
+
+    //Insert leading and trailing quotes if needed.
+    if (_isString) receivedValue = "\"" + receivedValue + "\"";
+
+    if (REGEX_LOGGER_LEGACY.test(_debugMode)) {
+        console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
+        console.error("USS ERROR\n", functionName, "was expecting", expectedValue + ", but received", receivedValue + ".");
+        throw "USS fatal error (execution stopped)";
+    }
+
+    {
+        console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+        console.log("%cUSS ERROR", "font-family:system-ui; font-weight:800; font-size:40px; background:#eb445a; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
+        console.log("%c" + functionName + "%cwas expecting " + expectedValue,
+            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#2dd36f; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+            "font-family:system-ui; font-weight:600; font-size:17px; background:#2dd36f; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
+        );
+        console.log("%cBut received%c" + receivedValue,
+            "font-family:system-ui; font-weight:600; font-size:17px; background:#eb445a; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#eb445a; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
+        );
+
+        {
+            console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
+            console.trace("");
+            console.groupEnd();
+        }
+        console.groupEnd();
+    }
+
+    throw "USS fatal error (execution stopped)";
+}
+
+/**
+ * The default value for `_warningLogger`.
+ * @param {Object} options A valid logging options object.
+ * @param {String} options.subject The subject of the warning message.
+ * @param {String} options.primaryMsg The warning message.
+ * @param {String} options.secondaryMsg Ignored, it's there for compatibility.
+ * @param {boolean} options.useSubjectQuotes `true` if `subject` should be represented as a quoted string, `false` otherwise.
+ */
+export const DEFAULT_WARNING_LOGGER = (options) => {
+    let subject = options.subject;
+    const message = options.primaryMsg;
+    const useSubjectQuotes = options.useSubjectQuotes;
+
+    if (REGEX_LOGGER_DISABLED.test(_debugMode)) return;
+
+    const _isString = typeof subject === "string";
+    if (!_isString) subject = TO_STRING(subject);
+
+    //Trim the subject if needed.
+    if (subject.length > MAX_MSG_LEN) {
+        subject = subject.slice(0, MAX_MSG_LEN) + " ...";
+    }
+
+    //Insert leading and trailing quotes if needed.
+    if (_isString && useSubjectQuotes) subject = "\"" + subject + "\"";
+
+    if (REGEX_LOGGER_LEGACY.test(_debugMode)) {
+        console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
+        console.warn("USS WARNING\n", subject, message + ".");
+        return;
+    }
+
+    {
+        console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+
+        console.log("%cUSS WARNING", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
+        console.log("%c" + subject + "%c" + message,
+            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#fcca03; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+            "font-family:system-ui; font-weight:600; font-size:17px; background:#fcca03; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
+        );
+        {
+            console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
+            console.trace("");
+            console.groupEnd();
+        }
+        console.groupEnd();
+    }
+}
+
+/**
+ * The default `StepLengthCalculator` for scroll-animations on the x-axis of every container that doesn't have a custom `StepLengthCalculator` set.
+ * Controls how long each animation-step on the x-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
+ * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
+ * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
+ * @param {number} timestamp The current timestamp.
+ * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
+ * @param {number} currentPos The `scrollLeft`/`scrollX` pixel position of the container.
+ * @param {number} finalPos The `scrollLeft`/`scrollX` pixel position the container has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @returns {number} The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
+ */
+export const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+    const _stepLength = total / _minAnimationFrame;
+    if (_stepLength < 1) return 1;
+    if (_stepLength > _xStepLength) return _xStepLength;
+    return _stepLength;
+}
+
+/**
+ * The default `StepLengthCalculator` for scroll-animations on the y-axis of every container that doesn't have a custom `StepLengthCalculator` set.
+ * Controls how long each animation-step on the y-axis must be (in px) in order to target the `_minAnimationFrame` property value. 
+ * @param {number} remaning The remaning amount of pixels to scroll by the current scroll-animation.
+ * @param {number} originalTimestamp The timestamp at which the current scroll-animation started.
+ * @param {number} timestamp The current timestamp.
+ * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
+ * @param {number} currentPos The `scrollTop`/`scrollY` pixel position of the container.
+ * @param {number} finalPos The `scrollTop`/`scrollY` pixel position the container has to reach.
+ * @param {*} container An instance of `Element` or `window`.
+ * @returns {number} The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
+ */
+export const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
+    const _stepLength = total / _minAnimationFrame;
+    if (_stepLength < 1) return 1;
+    if (_stepLength > _yStepLength) return _yStepLength;
+    return _stepLength;
+}
 
 
 
