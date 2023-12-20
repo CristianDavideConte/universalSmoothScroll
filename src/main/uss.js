@@ -1,4 +1,5 @@
 //TODO: follow the same spacing styling of common.js
+//TODO: write missing comments
 //TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
