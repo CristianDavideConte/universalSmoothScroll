@@ -1,4 +1,5 @@
 //TODO: follow the same spacing styling of common.js
+//TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
 //TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
@@ -512,7 +513,7 @@ export let _scrollbarsMaxDimension = NO_VAL;
 export let _framesTime = DEFAULT_FRAME_TIME;
 
 /**
- * Contains at most the last `10` calculated frames' times.
+ * Contains up to the last `10` calculated frames' times.
  */
 export let _framesTimes = []; //TODO: perhaps const?
 

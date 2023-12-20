@@ -22,6 +22,7 @@ import {
     DEFAULT_ERROR_PRIMARY_MSG_1,
     DEFAULT_ERROR_PRIMARY_MSG_3,
     DEFAULT_ERROR_PRIMARY_MSG_4,
+    DEFAULT_ERROR_PRIMARY_MSG_5,
     DEFAULT_ERROR_PRIMARY_MSG_6,
     DEFAULT_ERROR_PRIMARY_MSG_7,
 } from "../main/common.js";
@@ -42,20 +43,20 @@ import {
  * can be used with the uss loggers.
  * Note that these objects (the map entries) are partial and need 
  * to be completed (they only contain known/static log informations). 
- * Also note that this map is used instead of the common.js one.
+ * Also note that this map is used instead of the common.js one. //TODO: remove this line
  */
 const DEFAULT_LOG_OPTIONS = new Map([
+    ["getBrowserRefreshRate", [
+        { primaryMsg: "_framesTimes" + DEFAULT_ERROR_PRIMARY_MSG_7 },
+        { primaryMsg: "to not throw any exception" },
+    ]],
     ["isValidStepLengthCalculator", [
         { primaryMsg: "options" + DEFAULT_ERROR_PRIMARY_MSG_6 },
         { primaryMsg: "fun" + DEFAULT_ERROR_PRIMARY_MSG_3 },
         { primaryMsg: "options.container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
         { primaryMsg: "options.totalScrollAmount" + DEFAULT_ERROR_PRIMARY_MSG_4 },
         { primaryMsg: "options.timeout" + DEFAULT_ERROR_PRIMARY_MSG_4 },
-        { primaryMsg: "fun to return a valid step length" }
-    ]],
-    ["getBrowserRefreshRate", [
-        { primaryMsg: "_framesTimes" + DEFAULT_ERROR_PRIMARY_MSG_7 },
-        { primaryMsg: "to not throw any exception" },  //TODO: improve error message
+        { primaryMsg: "the return value of fun" + DEFAULT_ERROR_PRIMARY_MSG_5 }
     ]],
 ]);
 
