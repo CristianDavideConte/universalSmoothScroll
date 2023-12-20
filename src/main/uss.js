@@ -50,12 +50,12 @@ import {
     NO_SP,
     NO_FGS,
     NO_VAL,
-    FRM_TMS_PHASE,
-    FRM_TMS_SUM,
     INITIAL_WINDOW_WIDTH,
     INITIAL_WINDOW_HEIGHT,
     HIGHEST_SAFE_SCROLL_POS,
     REGEX_ALIGNMENT_NEAREST,
+    REGEX_LOGGER_DISABLED,
+    REGEX_LOGGER_LEGACY,
     REGEX_OVERFLOW,
     REGEX_OVERFLOW_HIDDEN,
     REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE,
@@ -67,7 +67,87 @@ import {
     CREATE_LOG_OPTIONS,
     IS_FUNCTION,
     MERGE_OBJECTS,
+    DEFAULT_ERROR_PRIMARY_MSG_1,
+    DEFAULT_ERROR_PRIMARY_MSG_2,
+    DEFAULT_ERROR_PRIMARY_MSG_3,
+    DEFAULT_ERROR_PRIMARY_MSG_4,
+    DEFAULT_ERROR_PRIMARY_MSG_5,
+    TO_STRING,
 } from "./common.js"
+
+
+
+/**
+ * TODO: move this into uss.js and generalize more the error/warning messages
+ * 
+ * A map containing function names and a partial `options` objects that, 
+ * can be used with the uss loggers.
+ * Note that these objects (the map entries) are partial and need 
+ * to be completed (they only contain known/static log informations). 
+ */
+const DEFAULT_LOG_OPTIONS = new Map([
+    ["isXScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["isYScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["isScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+    ["getScrollXDirection", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getScrollYDirection", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+    ["getXStepLengthCalculator", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getYStepLengthCalculator", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+    ["setXStepLengthCalculator", [
+        { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
+    ]],
+    ["setYStepLengthCalculator", [
+        { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
+    ]],
+    ["setStepLengthCalculator", [
+        { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
+    ]],
+
+    ["setXStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
+    ["setYStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
+    ["setStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
+
+    ["setMinAnimationFrame", { primaryMsg: "newMinAnimationFrame" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
+    //TODO: rename "the input" to container
+    ["setPageScroller", { primaryMsg: "the input" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+    ["addResizeCallback", [
+        { primaryMsg: "newCallback" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
+    ]],
+    ["addMutationCallback", [
+        { primaryMsg: "newCallback" + DEFAULT_ERROR_PRIMARY_MSG_3 },
+        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_2 },
+    ]],
+
+    ["setErrorLogger", { primaryMsg: "newLogger" + DEFAULT_ERROR_PRIMARY_MSG_3 }],
+    ["setWarningLogger", { primaryMsg: "newLogger" + DEFAULT_ERROR_PRIMARY_MSG_3 }],
+
+    ["calcScrollbarsDimensions", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["calcBordersDimensions", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+    ["getScrollCalculators", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getBorderBox", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+    ["getXScrollableParent", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getYScrollableParent", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getScrollableParent", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+    ["scrollXTo", { primaryMsg: "finalPosition" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
+    ["scrollYTo", { primaryMsg: "finalPosition" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
+    ["scrollXBy", { primaryMsg: "delta" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
+    ["scrollYBy", { primaryMsg: "delta" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
+
+    ["stopScrollingX", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["stopScrollingY", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["stopScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+]);
 
 
 
@@ -103,6 +183,23 @@ const DEFAULT_FRAME_TIME = 16.6;
  * 51 frames at 929px of window height.
  */
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;
+
+/**
+ * Index of the `_framesTime` array.
+ * Use it to get the frames' time calculation phase.
+ */
+const FRM_TMS_PHASE = -1;
+
+/**
+ * Index of the `_framesTime` array.
+ * Use it to get the current frames' time sum.
+ */
+const FRM_TMS_SUM = -2;
+
+/**
+ * The maximum length of an error/warning message.
+ */
+const MAX_MSG_LEN = 40;
 
 /**
  * The default value for `_errorLogger`.
@@ -730,7 +827,7 @@ export const isXScrolling = (container = _pageScroller, options) => {
 
     if (INIT_CONTAINER_DATA(container)) return false;
 
-    _errorLogger(CREATE_LOG_OPTIONS(options, "isXScrolling", { secondaryMsg: container }));
+    _errorLogger(CREATE_LOG_OPTIONS(options, "isXScrolling", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
 }
 
 /**
@@ -746,7 +843,7 @@ export const isYScrolling = (container = _pageScroller, options) => {
 
     if (INIT_CONTAINER_DATA(container)) return false;
 
-    _errorLogger(CREATE_LOG_OPTIONS(options, "isYScrolling", { secondaryMsg: container }));
+    _errorLogger(CREATE_LOG_OPTIONS(options, "isYScrolling", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
 }
 
 /**
@@ -762,7 +859,7 @@ export const isScrolling = (container = _pageScroller, options) => {
 
     if (INIT_CONTAINER_DATA(container)) return false;
 
-    _errorLogger(CREATE_LOG_OPTIONS(options, "isScrolling", { secondaryMsg: container }));
+    _errorLogger(CREATE_LOG_OPTIONS(options, "isScrolling", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
 }
 
 /**
@@ -813,7 +910,7 @@ export const getScrollXDirection = (container = _pageScroller, options) => {
 
     if (INIT_CONTAINER_DATA(container)) return 0;
 
-    _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollXDirection", { secondaryMsg: container }));
+    _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollXDirection", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
 }
 
 /**
@@ -830,7 +927,7 @@ export const getScrollYDirection = (container = _pageScroller, options) => {
 
     if (INIT_CONTAINER_DATA(container)) return 0;
 
-    _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollYDirection", { secondaryMsg: container }));
+    _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollYDirection", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
 }
 
 /**
@@ -847,7 +944,7 @@ export const getXStepLengthCalculator = (container = _pageScroller, getTemporary
 
     if (INIT_CONTAINER_DATA(container)) return;
 
-    _errorLogger(CREATE_LOG_OPTIONS(options, "getXStepLengthCalculator", { secondaryMsg: container }));
+    _errorLogger(CREATE_LOG_OPTIONS(options, "getXStepLengthCalculator", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
 }
 
 /**
@@ -864,7 +961,7 @@ export const getYStepLengthCalculator = (container = _pageScroller, getTemporary
 
     if (INIT_CONTAINER_DATA(container)) return;
 
-    _errorLogger(CREATE_LOG_OPTIONS(options, "getYStepLengthCalculator", { secondaryMsg: container }));
+    _errorLogger(CREATE_LOG_OPTIONS(options, "getYStepLengthCalculator", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
 }
 
 /**
@@ -1070,7 +1167,7 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
 export const setXStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
     if (!IS_FUNCTION(newCalculator) && _isSettingOp) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1078,7 +1175,7 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1102,7 +1199,7 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
 export const setYStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
     if (!IS_FUNCTION(newCalculator) && _isSettingOp) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1110,7 +1207,7 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1134,7 +1231,7 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
 export const setStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
     if (!IS_FUNCTION(newCalculator) && _isSettingOp) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1142,7 +1239,7 @@ export const setStepLengthCalculator = (newCalculator, container = _pageScroller
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 1 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1168,7 +1265,7 @@ export const setStepLengthCalculator = (newCalculator, container = _pageScroller
  */
 export const setXStepLength = (newStepLength = DEFAULT_XSTEP_LENGTH, options) => {
     if (!IS_POSITIVE(newStepLength)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLength", { secondaryMsg: newStepLength }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLength", { secondaryMsg: newStepLength }, DEFAULT_LOG_OPTIONS));
         return;
     }
     _xStepLength = newStepLength;
@@ -1182,7 +1279,7 @@ export const setXStepLength = (newStepLength = DEFAULT_XSTEP_LENGTH, options) =>
  */
 export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) => {
     if (!IS_POSITIVE(newStepLength)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLength", { secondaryMsg: newStepLength }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLength", { secondaryMsg: newStepLength }, DEFAULT_LOG_OPTIONS));
         return;
     }
     _yStepLength = newStepLength;
@@ -1196,7 +1293,7 @@ export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) =>
 //TODO: use undefined to unset the values as in the setXStepLength and setYStepLength functions + change comments
 export const setStepLength = (newStepLength, options) => {
     if (!IS_POSITIVE(newStepLength)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLength", { secondaryMsg: newStepLength }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLength", { secondaryMsg: newStepLength }, DEFAULT_LOG_OPTIONS));
         return;
     }
     _xStepLength = newStepLength;
@@ -1210,7 +1307,7 @@ export const setStepLength = (newStepLength, options) => {
  */
 export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES, options) => {
     if (!IS_POSITIVE(newMinAnimationFrame)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setMinAnimationFrame", { secondaryMsg: newMinAnimationFrame }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setMinAnimationFrame", { secondaryMsg: newMinAnimationFrame }, DEFAULT_LOG_OPTIONS));
         return;
     }
     _minAnimationFrame = newMinAnimationFrame;
@@ -1224,7 +1321,7 @@ export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATIO
 //TODO: rename newPageScroller to container?
 export const setPageScroller = (newPageScroller, options) => {
     if (!_containersData.get(newPageScroller) && !INIT_CONTAINER_DATA(newPageScroller)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setPageScroller", { secondaryMsg: newPageScroller }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setPageScroller", { secondaryMsg: newPageScroller }, DEFAULT_LOG_OPTIONS));
         return;
     }
     _pageScroller = newPageScroller;
@@ -1239,7 +1336,7 @@ export const setPageScroller = (newPageScroller, options) => {
 //TODO: add cypress tests
 export const addResizeCallback = (newCallback, container = _pageScroller, options) => {
     if (!IS_FUNCTION(newCallback)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 0 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1247,7 +1344,7 @@ export const addResizeCallback = (newCallback, container = _pageScroller, option
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 1 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1263,7 +1360,7 @@ export const addResizeCallback = (newCallback, container = _pageScroller, option
 //TODO: add cypress tests
 export const addMutationCallback = (newCallback, container = _pageScroller, options) => {
     if (!IS_FUNCTION(newCallback)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 0 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 0 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1271,7 +1368,7 @@ export const addMutationCallback = (newCallback, container = _pageScroller, opti
     const _containerData = _oldData || [];
 
     if (container === window || (!_oldData && !INIT_CONTAINER_DATA(container, _containerData))) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 1 }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 1 }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1306,7 +1403,7 @@ export const setDebugMode = (newDebugMode = "") => {
  */
 export const setErrorLogger = (newLogger = DEFAULT_ERROR_LOGGER, options) => {
     if (!IS_FUNCTION(newLogger)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setErrorLogger", { secondaryMsg: newLogger }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setErrorLogger", { secondaryMsg: newLogger }, DEFAULT_LOG_OPTIONS));
         return;
     }
     _errorLogger = newLogger;
@@ -1319,7 +1416,7 @@ export const setErrorLogger = (newLogger = DEFAULT_ERROR_LOGGER, options) => {
  */
 export const setWarningLogger = (newLogger = DEFAULT_WARNING_LOGGER, options) => {
     if (!IS_FUNCTION(newLogger)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setWarningLogger", { secondaryMsg: newLogger }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setWarningLogger", { secondaryMsg: newLogger }, DEFAULT_LOG_OPTIONS));
         return;
     }
     _warningLogger = newLogger;
@@ -1420,7 +1517,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
      * All the other unsupported implementations are filtered out by the checking style property later.
      */
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "calcScrollbarsDimensions", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "calcScrollbarsDimensions", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1513,7 +1610,7 @@ export const calcBordersDimensions = (container = _pageScroller, forceCalculatio
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "calcBordersDimensions", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "calcBordersDimensions", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1593,7 +1690,7 @@ export const getScrollCalculators = (container = _pageScroller, options) => {
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollCalculators", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollCalculators", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1701,7 +1798,7 @@ export const getBorderBox = (container = _pageScroller, options) => {
     const _containerData = _oldData || [];
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getBorderBox", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "getBorderBox", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1734,7 +1831,7 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
     if (_cachedParent !== NO_VAL) return _cachedParent;
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getXScrollableParent", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "getXScrollableParent", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -1851,7 +1948,7 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
     if (_cachedParent !== NO_VAL) return _cachedParent;
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getYScrollableParent", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "getYScrollableParent", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -2004,7 +2101,7 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
     }
 
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollableParent", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "getScrollableParent", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -2173,7 +2270,7 @@ export const getAllScrollableParents = (container = _pageScroller, includeHidden
  */
 export const scrollXTo = (finalPosition, container = _pageScroller, callback, containScroll = false, options) => {
     if (!Number.isFinite(finalPosition)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollXTo", { secondaryMsg: finalPosition }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollXTo", { secondaryMsg: finalPosition }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -2326,7 +2423,7 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
  */
 export const scrollYTo = (finalPosition, container = _pageScroller, callback, containScroll = false, options) => {
     if (!Number.isFinite(finalPosition)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollYTo", { secondaryMsg: finalPosition }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollYTo", { secondaryMsg: finalPosition }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -2480,7 +2577,7 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
  */
 export const scrollXBy = (delta, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
     if (!Number.isFinite(delta)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollXBy", { secondaryMsg: delta }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollXBy", { secondaryMsg: delta }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -2545,7 +2642,7 @@ export const scrollXBy = (delta, container = _pageScroller, callback, stillStart
  */
 export const scrollYBy = (delta, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
     if (!Number.isFinite(delta)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollYBy", { secondaryMsg: delta }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "scrollYBy", { secondaryMsg: delta }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -2950,7 +3047,7 @@ export const stopScrollingX = (container = _pageScroller, callback, options) => 
 
         _containerData[K_TSCX] = NO_VAL; //Temporary StepLengthCalculator on the x-axis
     } else if (!INIT_CONTAINER_DATA(container)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "stopScrollingX", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "stopScrollingX", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -2979,7 +3076,7 @@ export const stopScrollingY = (container = _pageScroller, callback, options) => 
 
         _containerData[K_TSCY] = NO_VAL; //Temporary StepLengthCalculator on the y-axis
     } else if (!INIT_CONTAINER_DATA(container)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "stopScrollingY", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "stopScrollingY", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
@@ -3004,7 +3101,7 @@ export const stopScrolling = (container = _pageScroller, callback, options) => {
         _containerData[K_TSCX] = NO_VAL; //Temporary StepLengthCalculator on the x-axis
         _containerData[K_TSCY] = NO_VAL; //Temporary StepLengthCalculator on the y-axis
     } else if (!INIT_CONTAINER_DATA(container)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "stopScrolling", { secondaryMsg: container }));
+        _errorLogger(CREATE_LOG_OPTIONS(options, "stopScrolling", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 

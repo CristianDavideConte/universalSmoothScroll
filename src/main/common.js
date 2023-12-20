@@ -202,25 +202,6 @@ export const NO_VAL = undefined;
 
 
 /**
- * Index of the `_framesTime` array.
- * Use it to get the frames' time calculation phase.
- */
-export const FRM_TMS_PHASE = -1;
-
-/**
- * Index of the `_framesTime` array.
- * Use it to get the current frames' time sum.
- */
-export const FRM_TMS_SUM = -2;
-
-/**
- * The maximum length of an error/warning message.
- */
-export const MAX_MSG_LEN = 40;
-
-
-
-/**
  * The initial inner width of the `window`.
  */
 export const INITIAL_WINDOW_WIDTH = window.innerWidth;
@@ -336,80 +317,6 @@ export const DEFAULT_WARNING_PRIMARY_MSG_2 = "is not a valid step length";
 
 
 /**
- * TODO: move this into uss.js and generalize more the error/warning messages
- * 
- * A map containing function names and a partial `options` objects that, 
- * can be used with the uss loggers.
- * Note that these objects (the map entries) are partial and need 
- * to be completed (they only contain known/static log informations). 
- */
-const DEFAULT_LOG_OPTIONS = new Map([
-    ["isXScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["isYScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["isScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-
-    ["getScrollXDirection", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getScrollYDirection", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-
-    ["getXStepLengthCalculator", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getYStepLengthCalculator", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-
-    ["setXStepLengthCalculator", [
-        { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
-        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
-    ]],
-    ["setYStepLengthCalculator", [
-        { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
-        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
-    ]],
-    ["setStepLengthCalculator", [
-        { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
-        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
-    ]],
-
-    ["setXStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
-    ["setYStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
-    ["setStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
-
-    ["setMinAnimationFrame", { primaryMsg: "newMinAnimationFrame" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
-    //TODO: rename "the input" to container
-    ["setPageScroller", { primaryMsg: "the input" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-
-    ["addResizeCallback", [
-        { primaryMsg: "newCallback" + DEFAULT_ERROR_PRIMARY_MSG_3 },
-        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
-    ]],
-    ["addMutationCallback", [
-        { primaryMsg: "newCallback" + DEFAULT_ERROR_PRIMARY_MSG_3 },
-        { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_2 },
-    ]],
-
-    ["setErrorLogger", { primaryMsg: "newLogger" + DEFAULT_ERROR_PRIMARY_MSG_3 }],
-    ["setWarningLogger", { primaryMsg: "newLogger" + DEFAULT_ERROR_PRIMARY_MSG_3 }],
-
-    ["calcScrollbarsDimensions", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["calcBordersDimensions", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-
-    ["getScrollCalculators", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getBorderBox", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-
-    ["getXScrollableParent", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getYScrollableParent", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["getScrollableParent", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-
-    ["scrollXTo", { primaryMsg: "finalPosition" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
-    ["scrollYTo", { primaryMsg: "finalPosition" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
-    ["scrollXBy", { primaryMsg: "delta" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
-    ["scrollYBy", { primaryMsg: "delta" + DEFAULT_ERROR_PRIMARY_MSG_5 }],
-
-    ["stopScrollingX", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["stopScrollingY", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-    ["stopScrolling", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
-]);
-
-
-
-/**
  * Checks whether `value` is instance of the specified class type.
  * Works with iFrames' classes too.
  * @param {*} value The value to check.
@@ -478,11 +385,11 @@ export const CLEAR_COMMON_DATA = (containerData) => {
  * @param {String} functionName The calling function's name.
  * @param {Object} runtimeOptions Logging options that are known at runtime only.
  * @param {number} [runtimeOptions.idx] The index of the message inside `defaultLogOptionsMap[functionName]` to use.
- * @param {Map<String, object>} [defaultLogOptionsMap] A map containing function names and a partial `options` objects.
+ * @param {Map<String, object>} logOptionsMap A map containing function names and a partial `options` objects.
  * @returns {Object} A valid logging `options` object that can be used with the uss loggers.
  */
-export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, defaultLogOptionsMap = DEFAULT_LOG_OPTIONS) => {
-    let defaultOptions = defaultLogOptionsMap.get(functionName);
+export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, logOptionsMap) => {
+    let defaultOptions = logOptionsMap.get(functionName);
 
     /**
      * Multiple log options can be associated with a single function,
