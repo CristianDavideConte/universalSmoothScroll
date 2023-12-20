@@ -16,6 +16,7 @@ import {
 import {
     CHECK_INSTANCEOF,
     CREATE_LOG_OPTIONS,
+    IS_FUNCTION,
     IS_OBJECT,
     NO_VAL,
     DEFAULT_ERROR_PRIMARY_MSG_1,
@@ -147,7 +148,7 @@ export async function isValidStepLengthCalculator(
     }
 
     //Check if the passed stepLengthCalculator is a function.
-    if (typeof fun !== "function") {
+    if (!IS_FUNCTION(fun)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: fun, idx: 1 }, DEFAULT_LOG_OPTIONS));
         return false;
     }

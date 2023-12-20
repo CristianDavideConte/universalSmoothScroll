@@ -64,6 +64,7 @@ import {
     CHECK_INSTANCEOF,
     CLEAR_COMMON_DATA,
     CREATE_LOG_OPTIONS,
+    IS_FUNCTION,
     MERGE_OBJECTS,
 } from "./common.js"
 
@@ -1054,7 +1055,7 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
     options = MERGE_OBJECTS(options, { subject: "getFramesTime", requestPhase: 0 });
 
     if (forceCalculation) calcFramesTimes(NO_VAL, NO_VAL, callback, options);
-    else if (typeof callback === "function") callback();
+    else if (IS_FUNCTION(callback)) callback();
     return _framesTime;
 }
 
@@ -1067,7 +1068,7 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
  */
 export const setXStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
-    if (typeof newCalculator !== "function" && _isSettingOp) {
+    if (!IS_FUNCTION(newCalculator) && _isSettingOp) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setXStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
         return;
     }
@@ -1099,7 +1100,7 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
  */
 export const setYStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
-    if (typeof newCalculator !== "function" && _isSettingOp) {
+    if (!IS_FUNCTION(newCalculator) && _isSettingOp) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setYStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
         return;
     }
@@ -1131,7 +1132,7 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
  */
 export const setStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
     const _isSettingOp = newCalculator !== undefined;
-    if (typeof newCalculator !== "function" && _isSettingOp) {
+    if (!IS_FUNCTION(newCalculator) && _isSettingOp) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLengthCalculator", { secondaryMsg: newCalculator, idx: 0 }));
         return;
     }
@@ -1236,7 +1237,7 @@ export const setPageScroller = (newPageScroller, options) => {
  */
 //TODO: add cypress tests
 export const addResizeCallback = (newCallback, container = _pageScroller, options) => {
-    if (typeof newCallback !== "function") {
+    if (!IS_FUNCTION(newCallback)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "addResizeCallback", { secondaryMsg: newCallback, idx: 0 }));
         return;
     }
@@ -1260,7 +1261,7 @@ export const addResizeCallback = (newCallback, container = _pageScroller, option
  */
 //TODO: add cypress tests
 export const addMutationCallback = (newCallback, container = _pageScroller, options) => {
-    if (typeof newCallback !== "function") {
+    if (!IS_FUNCTION(newCallback)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 0 }));
         return;
     }
@@ -1303,7 +1304,7 @@ export const setDebugMode = (newDebugMode = "") => {
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setErrorLogger = (newLogger = DEFAULT_ERROR_LOGGER, options) => {
-    if (typeof newLogger !== "function") {
+    if (!IS_FUNCTION(newLogger)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setErrorLogger", { secondaryMsg: newLogger }));
         return;
     }
@@ -1316,7 +1317,7 @@ export const setErrorLogger = (newLogger = DEFAULT_ERROR_LOGGER, options) => {
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setWarningLogger = (newLogger = DEFAULT_WARNING_LOGGER, options) => {
-    if (typeof newLogger !== "function") {
+    if (!IS_FUNCTION(newLogger)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setWarningLogger", { secondaryMsg: newLogger }));
         return;
     }
@@ -1375,7 +1376,7 @@ export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, o
 
     _framesTime = _framesTimes[FRM_TMS_SUM] / _framesTimes.length;
 
-    if (typeof callback === "function") callback();
+    if (IS_FUNCTION(callback)) callback();
 }
 
 /**
@@ -2147,7 +2148,7 @@ export const getAllScrollableParents = (container = _pageScroller, includeHidden
     options = MERGE_OBJECTS(options, { subject: "getAllScrollableParents" });
 
     const _scrollableParents = [];
-    const _callback = typeof callback === "function" ? callback : () => { };
+    const _callback = IS_FUNCTION(callback) ? callback : () => { };
     const _scrollableParentFound = (el) => {
         _scrollableParents.push(el);
         _callback(el);
@@ -2608,7 +2609,7 @@ export const scrollYBy = (delta, container = _pageScroller, callback, stillStart
 export const scrollTo = (finalXPosition, finalYPosition, container = _pageScroller, callback, containScroll = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollTo" });
 
-    if (typeof callback !== "function") {
+    if (!IS_FUNCTION(callback)) {
         scrollXTo(finalXPosition, container, NO_VAL, containScroll, options);
         scrollYTo(finalYPosition, container, NO_VAL, containScroll, options);
         return;
@@ -2648,7 +2649,7 @@ export const scrollTo = (finalXPosition, finalYPosition, container = _pageScroll
 export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, stillStart = true, containScroll = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollBy" });
 
-    if (typeof callback !== "function") {
+    if (!IS_FUNCTION(callback)) {
         scrollXBy(deltaX, container, NO_VAL, stillStart, containScroll, options);
         scrollYBy(deltaY, container, NO_VAL, stillStart, containScroll, options);
         return;
@@ -2701,7 +2702,7 @@ export const scrollIntoView = (container, alignToLeft = true, alignToTop = true,
 
     //The container cannot be scrolled into view.
     if (_parentIdx < 0) {
-        if (typeof callback === "function") callback();
+        if (IS_FUNCTION(callback)) callback();
         return;
     }
 
@@ -2715,7 +2716,7 @@ export const scrollIntoView = (container, alignToLeft = true, alignToTop = true,
 
     const _callback = () => {
         if (_parentIdx < 1) {
-            if (typeof callback === "function") callback();
+            if (IS_FUNCTION(callback)) callback();
             return;
         }
         _parentIdx--;
@@ -2812,7 +2813,7 @@ export const scrollIntoViewIfNeeded = (container, alignToCenter = true, callback
 
     //The container cannot be scrolled into view.
     if (_parentIdx < 0) {
-        if (typeof callback === "function") callback();
+        if (IS_FUNCTION(callback)) callback();
         return;
     }
 
@@ -2823,7 +2824,7 @@ export const scrollIntoViewIfNeeded = (container, alignToCenter = true, callback
 
     const _callback = () => {
         if (_parentIdx < 1) {
-            if (typeof callback === "function") callback();
+            if (IS_FUNCTION(callback)) callback();
             return;
         }
         _parentIdx--;
@@ -2952,7 +2953,7 @@ export const stopScrollingX = (container = _pageScroller, callback, options) => 
         return;
     }
 
-    if (typeof callback === "function") callback();
+    if (IS_FUNCTION(callback)) callback();
 }
 
 /**
@@ -2981,7 +2982,7 @@ export const stopScrollingY = (container = _pageScroller, callback, options) => 
         return;
     }
 
-    if (typeof callback === "function") callback();
+    if (IS_FUNCTION(callback)) callback();
 }
 
 /**
@@ -3006,7 +3007,7 @@ export const stopScrolling = (container = _pageScroller, callback, options) => {
         return;
     }
 
-    if (typeof callback === "function") callback();
+    if (IS_FUNCTION(callback)) callback();
 }
 
 /**
@@ -3024,7 +3025,7 @@ export const stopScrollingAll = (callback) => {
         _containerData[K_TSCY] = NO_VAL; //Temporary StepLengthCalculator on the y-axis
     }
 
-    if (typeof callback === "function") callback();
+    if (IS_FUNCTION(callback)) callback();
 }
 
 /**
@@ -3064,7 +3065,7 @@ export const stopScrollingAll = (callback) => {
 export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback, includeHiddenParents = false, updateHistory = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "hrefSetup" });
 
-    const _init = typeof init === "function" ? init : (anchor, el, event) => event.stopPropagation();
+    const _init = IS_FUNCTION(init) ? init : (anchor, el, event) => event.stopPropagation();
     const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
     const _updateHistory =
         updateHistory &&

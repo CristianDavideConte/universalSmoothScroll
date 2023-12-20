@@ -509,14 +509,23 @@ export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, 
 }
 
 /**
+ * Checks whether `value` is a function.
+ * @param {*} value The value to check. 
+ * @returns {boolean} `true` if `value` is a function, `false` otherwise.
+ */
+export const IS_FUNCTION = (value) => {
+    return typeof value === "function"; 
+}
+
+/**
  * Checks whether `value` is an object.
  * @param {*} value The value to check. 
  * @returns {boolean} `true` if `value` is an object, `false` otherwise.
  */
 export const IS_OBJECT = (value) => {
     return value !== null &&
-        typeof value === "object" &&
-        !Array.isArray(value);
+           typeof value === "object" &&
+           !Array.isArray(value);
 }
 
 /**
