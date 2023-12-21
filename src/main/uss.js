@@ -661,7 +661,7 @@ export let _warningLogger = DEFAULT_WARNING_LOGGER;
  * - fills the passed `containerData` with the known informations of `container`
  * - starts to observe the `resize` and `mutation` events of `container` so that the API can react to them
  * @param {*} container The value to check.
- * @param {*} containerData An array that will be filled with the known informations of `container`.
+ * @param {Array} containerData An array that will be filled with the known informations of `container`.
  * @returns `true` if the initialization was successful, `false` otherwise.
  */
 const INIT_CONTAINER_DATA = (container, containerData = []) => {
