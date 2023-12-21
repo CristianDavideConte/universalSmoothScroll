@@ -40,8 +40,8 @@ export const constants = {
     K_CBX:10,  //Key to get the callback for the scroll animation on the x-axis
     K_CBY:11,  //Key to get the callback for the scroll animation on the y-axis
 
-    K_FSCX:12, //Key to get the fixed StepLengthCalculator for the scroll animation on the x-axis
-    K_FSCY:13, //Key to get the fixed StepLengthCalculator for the scroll animation on the y-axis
+    K_PSCX: 12, //Key to get the permanent StepLengthCalculator for the scroll animation on the x-axis
+    K_PSCY: 13, //Key to get the permanent StepLengthCalculator for the scroll animation on the y-axis
 
     K_TSCX:14, //Key to get the temporary StepLengthCalculator for the scroll animation on the x-axis
     K_TSCY:15, //Key to get the temporary StepLengthCalculator for the scroll animation on the y-axis

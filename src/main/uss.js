@@ -3,7 +3,6 @@
 //TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
-//TODO: rename the "fixed" StepLengthCalculator to "permanent" StepLengthCalculator
 //TODO: rename "forceCalculation" to "flushCache"
 //TODO: @ts-check
 
@@ -26,8 +25,8 @@ import {
     K_OTSY,
     K_CBX,
     K_CBY,
-    K_FSCX,
-    K_FSCY,
+    K_PSCX,
+    K_PSCY,
     K_TSCX,
     K_TSCY,
     K_MSX,
@@ -79,8 +78,6 @@ import {
 
 
 /**
- * TODO: move this into uss.js and generalize more the error/warning messages
- * 
  * A map containing function names and a partial `options` objects that, 
  * can be used with the uss loggers.
  * Note that these objects (the map entries) are partial and need 
@@ -934,14 +931,14 @@ export const getScrollYDirection = (container = _pageScroller, options) => {
 /**
  * Returns a `StepLengthCalculator` set for the x-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {boolean} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the x-axis of `container`, otherwise returns the `fixed` one.
+ * @param {boolean} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the x-axis of `container`, otherwise returns the `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function | undefined} The ease function which currently controls the scroll-animations on the x-axis of `container`.
  */
 export const getXStepLengthCalculator = (container = _pageScroller, getTemporary = false, options) => {
     const _containerData = _containersData.get(container);
 
-    if (_containerData) return getTemporary ? _containerData[K_TSCX] : _containerData[K_FSCX];
+    if (_containerData) return getTemporary ? _containerData[K_TSCX] : _containerData[K_PSCX];
 
     if (INIT_CONTAINER_DATA(container)) return;
 
@@ -951,14 +948,14 @@ export const getXStepLengthCalculator = (container = _pageScroller, getTemporary
 /**
  * Returns a `StepLengthCalculator` set for the y-axis of `container`.
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {boolean} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the y-axis of `container`, otherwise returns the `fixed` one.
+ * @param {boolean} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the y-axis of `container`, otherwise returns the `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function | undefined} The ease function which currently controls the scroll-animations on the y-axis of `container`.
  */
 export const getYStepLengthCalculator = (container = _pageScroller, getTemporary = false, options) => {
     const _containerData = _containersData.get(container);
 
-    if (_containerData) return getTemporary ? _containerData[K_TSCY] : _containerData[K_FSCY];
+    if (_containerData) return getTemporary ? _containerData[K_TSCY] : _containerData[K_PSCY];
 
     if (INIT_CONTAINER_DATA(container)) return;
 
@@ -1162,7 +1159,7 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
  * Sets (or unsets if specified) the `StepLengthCalculator` for the x-axis of `container`.
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
+ * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setXStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
@@ -1183,9 +1180,9 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
     if (isTemporary) {
         _containerData[K_TSCX] = newCalculator;
     } else {
-        _containerData[K_FSCX] = newCalculator;
+        _containerData[K_PSCX] = newCalculator;
 
-        //Setting a fixed StepLengthCalculator will unset the temporary one.
+        //Setting a permanent StepLengthCalculator will unset the temporary one.
         if (_isSettingOp) _containerData[K_TSCX] = NO_VAL;
     }
 }
@@ -1194,7 +1191,7 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
  * Sets (or unsets if specified) the `StepLengthCalculator` for the y-axis of `container`.
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
+ * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setYStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
@@ -1215,9 +1212,9 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
     if (isTemporary) {
         _containerData[K_TSCY] = newCalculator;
     } else {
-        _containerData[K_FSCY] = newCalculator;
+        _containerData[K_PSCY] = newCalculator;
 
-        //Setting a fixed StepLengthCalculator will unset the temporary one.
+        //Setting a permanent StepLengthCalculator will unset the temporary one.
         if (_isSettingOp) _containerData[K_TSCY] = NO_VAL;
     }
 }
@@ -1226,7 +1223,7 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
  * Sets (or unsets if specified) the `StepLengthCalculator` for the both axes of `container`.
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
  * @param {*} [container] An instance of `Element` or `window`.
- * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `fixed` one.
+ * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setStepLengthCalculator = (newCalculator, container = _pageScroller, isTemporary = false, options) => {
@@ -1248,10 +1245,10 @@ export const setStepLengthCalculator = (newCalculator, container = _pageScroller
         _containerData[K_TSCX] = newCalculator;
         _containerData[K_TSCY] = newCalculator;
     } else {
-        _containerData[K_FSCX] = newCalculator;
-        _containerData[K_FSCY] = newCalculator;
+        _containerData[K_PSCX] = newCalculator;
+        _containerData[K_PSCY] = newCalculator;
 
-        //Setting a fixed StepLengthCalculator will unset the temporary one.
+        //Setting a permanent StepLengthCalculator will unset the temporary one.
         if (_isSettingOp) {
             _containerData[K_TSCX] = NO_VAL;
             _containerData[K_TSCY] = NO_VAL;
@@ -1316,16 +1313,15 @@ export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATIO
 
 /**
  * Tells the API which Element scrolls the document (`_pageScroller` property). 
- * @param {*} newPageScroller An instance of `Element` or `window`.
+ * @param {*} container An instance of `Element` or `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
-//TODO: rename newPageScroller to container?
-export const setPageScroller = (newPageScroller, options) => {
-    if (!_containersData.get(newPageScroller) && !INIT_CONTAINER_DATA(newPageScroller)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "setPageScroller", { secondaryMsg: newPageScroller }, DEFAULT_LOG_OPTIONS));
+export const setPageScroller = (container, options) => {
+    if (!_containersData.get(container) && !INIT_CONTAINER_DATA(container)) {
+        _errorLogger(CREATE_LOG_OPTIONS(options, "setPageScroller", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
-    _pageScroller = newPageScroller;
+    _pageScroller = container;
 }
 
 /**
@@ -2353,7 +2349,7 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
         const _scrollID = _containerData[K_IDX];
 
         const _stepLengthCalculator = _containerData[K_TSCX] ? _containerData[K_TSCX] :
-                                      _containerData[K_FSCX] ? _containerData[K_FSCX] :
+                                      _containerData[K_PSCX] ? _containerData[K_PSCX] :
                                       DEFAULT_XSTEP_LENGTH_CALCULATOR;
 
         let _stepLength = _stepLengthCalculator(
@@ -2505,7 +2501,7 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
 
         const _scrollID = _containerData[K_IDY];
         const _stepLengthCalculator = _containerData[K_TSCY] ? _containerData[K_TSCY] :
-                                      _containerData[K_FSCY] ? _containerData[K_FSCY] :
+                                      _containerData[K_PSCY] ? _containerData[K_PSCY] :
                                       DEFAULT_YSTEP_LENGTH_CALCULATOR;
 
         let _stepLength = _stepLengthCalculator(

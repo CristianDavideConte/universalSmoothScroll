@@ -190,8 +190,8 @@ describe("stopScrollingX-containersData-integrity", function() {
                     }
                     
                     //Check if the stepLengthCalculators are preserved.
-                    expect(_containerData[constants.K_FSCX]).to.equal(_testCalculatorFixed); //fixed xStepLengthCalculator
-                    expect(_containerData[constants.K_FSCY]).to.equal(_testCalculatorFixed); //fixed yStepLengthCalculator
+                    expect(_containerData[constants.K_PSCX]).to.equal(_testCalculatorFixed); //fixed xStepLengthCalculator
+                    expect(_containerData[constants.K_PSCY]).to.equal(_testCalculatorFixed); //fixed yStepLengthCalculator
                     expect(_containerData[constants.K_TSCX]).to.be.undefined;                       //temporary xStepLengthCalculator
                     expect(_containerData[constants.K_TSCY]).to.equal(_testCalculatorTemporary);    //temporary yStepLengthCalculator
 
@@ -296,8 +296,8 @@ describe("stopScrollingX-containersData-integrity-with-scroll-on-y-axis", functi
                     }
                     
                     //Check if the stepLengthCalculators are preserved.
-                    expect(_containerData[constants.K_FSCX]).to.equal(_testCalculatorFixed); //fixed xStepLengthCalculator
-                    expect(_containerData[constants.K_FSCY]).to.equal(_testCalculatorFixed); //fixed yStepLengthCalculator
+                    expect(_containerData[constants.K_PSCX]).to.equal(_testCalculatorFixed); //fixed xStepLengthCalculator
+                    expect(_containerData[constants.K_PSCY]).to.equal(_testCalculatorFixed); //fixed yStepLengthCalculator
                     expect(_containerData[constants.K_TSCX]).to.be.undefined;                       //temporary xStepLengthCalculator
                     expect(_containerData[constants.K_TSCY]).to.equal(_testCalculatorTemporary);    //temporary yStepLengthCalculator
 

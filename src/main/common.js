@@ -73,14 +73,14 @@ export const K_CBX = 10;
 export const K_CBY = 11;
 
 /**
- * Key to get the fixed `StepLengthCalculator` for the scroll animation on the x-axis of a container.
+ * Key to get the permanent `StepLengthCalculator` for the scroll animation on the x-axis of a container.
  */
-export const K_FSCX = 12;
+export const K_PSCX = 12;
 
 /**
- * Key to get the fixed `StepLengthCalculator` for the scroll animation on the y-axis of a container.
+ * Key to get the permanent `StepLengthCalculator` for the scroll animation on the y-axis of a container.
  */
-export const K_FSCY = 13;
+export const K_PSCY = 13;
 
 /**
  * Key to get the temporary `StepLengthCalculator` for the scroll animation on the x-axis of a container.
