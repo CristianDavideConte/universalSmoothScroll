@@ -1,7 +1,15 @@
 //TODO: use the new error/warning loggers
-//TODO: use the DEFAULT_LOG_OPTIONS map to store the errors and warnings 
+//TODO: add comments above the functions
+//TODO: use the DEFAULT_LOG_OPTIONS map to store the errors and warnings
 //TODO: use the math.js library to group some math patterns
+//TODO: deprecate EASE_ELASTIC_X and EASE_ELASTIC_Y in favor of the preset-library
+//TODO: create a default error message for numbers in [0..1] in the common.js file
 //TODO: import only the variables/functions used by this module instead of everything.
+
+import {
+  IS_POSITIVE,
+  IS_IN_0_1,
+} from "../main/math.js"
 
 import * as uss from "../main/uss.js";
 
@@ -10,6 +18,8 @@ import * as uss from "../main/uss.js";
  * The progressEvaluator function defines at which % of the total duration the scroll-animation is at.
  * The duration is the total amount of milliseconds the scroll-animation should last.
  * The callback is a function that is executed every time the returned stepLengthCalculator is invoked.  
+ * 
+ * TODO: add parameters related comments
  */
  const DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) => {
   /**
@@ -47,6 +57,7 @@ import * as uss from "../main/uss.js";
 }  
 
 /**
+ * TODO: separate into 3 comments
  * All the constants below are internally used by DEFAULT_BOUNCE_CUSTOMIZER. 
  * CALC_BOUNCEX: defines the pattern of the x-coordinates of the control points (same for bounces(mins) and peaks(maxes))
  * CALC_BOUNCEY: defines the pattern of the y-coordinates of the bounce(mins) control points
@@ -57,7 +68,16 @@ const CALC_BOUNCEY = x => x * 0.005 + 0.995; //almost constant pattern very clos
 const CALC_PEAKY   = x => x < 0.6234 ? x * (2 - x) : x * 0.35 + 0.64; //ease-out-sine then linear patter (they meet at 0.6234)
 const CONTROL_POINTS_INIT_NUM = 10;
 
-//Internally used to setup the control points' arrays for bounce-type StepLengthCalculators.
+/**
+ * Internally used to setup the control points' arrays for bounce-type `StepLengthCalculators`.
+ * 
+ * TODO: finish this
+ * @param {*} xs 
+ * @param {*} ys 
+ * @param {*} arrInserter 
+ * @param {*} startBouncesNumber 
+ * @param {*} endBouncesNumber 
+ */
 const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumber) => {
   const _deltaX = 1 / endBouncesNumber; //the non-eased deltaX between two control points
   const _deltaXHalf = _deltaX * 0.5; 
@@ -128,7 +148,7 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
   if(!Array.isArray(xs)) {uss._errorLogger(options.debugString, "xs to be an array", xs); return;}
   if(!Array.isArray(ys)) {uss._errorLogger(options.debugString, "ys to be an array", ys); return;}
   if(xs.length !== ys.length) {uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
+  if(!IS_POSITIVE(duration)) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
   
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
@@ -136,8 +156,15 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
   const _xsLen = xs.length;
 
   for(let i = 0; i < _xsLen; i++) {
-    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
-    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {uss._errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
+    if (!IS_IN_0_1(xs[i])) {
+      uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]);
+      return;
+    }
+
+    if (!IS_IN_0_1(ys[i])) {
+      uss._errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]);
+      return;
+    }
     
     //Checks if the passed points are sorted.
     if(!_xsCurrMax || _xsCurrMax < xs[i]) {
@@ -209,16 +236,24 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
   if(!Array.isArray(xs)) {uss._errorLogger(options.debugString, "xs to be an array", xs); return;}
   if(!Array.isArray(ys)) {uss._errorLogger(options.debugString, "ys to be an array", ys); return;}
   if(xs.length !== ys.length) {uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
+  if(!IS_POSITIVE(duration)) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
 
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
   const _xsLen = xs.length;
 
   for(let i = 0; i < _xsLen; i++) {
-    if(!Number.isFinite(xs[i]) || xs[i] < 0 || xs[i] > 1) {uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]); return;}
-    if(!Number.isFinite(ys[i]) || ys[i] < 0 || ys[i] > 1) {uss._errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]); return;}
-    if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
+    if (!IS_IN_0_1(xs[i])) {
+      uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]);
+      return;
+    }
+
+    if (!IS_IN_0_1(ys[i])) {
+      uss._errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]);
+      return;
+    }
+    
+    if (!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
     if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
   }
 
@@ -229,6 +264,7 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
   const n = xs.length - 1;
   const nFact = _factorial(n);
   
+  //TODO: perhaps move this into math.js
   function _factorial(num) {
     let _fact = 1;
     for (let i = 1; i <= num; i++) _fact *= i;
@@ -268,11 +304,11 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
 }
 
 export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, options = {debugString: "CUSTOM_CUBIC_BEZIER"}) => {
-  if(!Number.isFinite(x1) || x1 < 0 || x1 > 1) {uss._errorLogger(options.debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
-  if(!Number.isFinite(y1) || y1 < 0 || y1 > 1) {uss._errorLogger(options.debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
-  if(!Number.isFinite(x2) || x2 < 0 || x2 > 1) {uss._errorLogger(options.debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
-  if(!Number.isFinite(y2) || y2 < 0 || y2 > 1) {uss._errorLogger(options.debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
-  if(!Number.isFinite(duration) || duration <= 0) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
+  if (!IS_IN_0_1(x1)) {uss._errorLogger(options.debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
+  if (!IS_IN_0_1(y1)) {uss._errorLogger(options.debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
+  if (!IS_IN_0_1(x2)) {uss._errorLogger(options.debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
+  if (!IS_IN_0_1(y2)) {uss._errorLogger(options.debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
+  if (!IS_POSITIVE(duration)) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
 
   const aX = 1 + 3 * (x1 - x2);
   const aY = 1 + 3 * (y1 - y2);
@@ -322,7 +358,10 @@ export const EASE_IN_OUT_EXPO  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.8
 export const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, duration, callback, {debugString: "EASE_IN_OUT_CIRC"});
 
 export const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
-  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {uss._errorLogger("EASE_IN_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}
+  if (!IS_POSITIVE(bouncesNumber)) {
+    uss._errorLogger("EASE_IN_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber);
+    return;
+  }
   
   const _xs = [];
   const _ys = [];
@@ -334,7 +373,10 @@ export const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
 }
 
 export const EASE_OUT_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
-  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 0) {uss._errorLogger("EASE_OUT_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber); return;}
+  if (!IS_POSITIVE(bouncesNumber)) {
+    uss._errorLogger("EASE_OUT_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber);
+    return;
+  }
 
   const _xs = [];
   const _ys = [];

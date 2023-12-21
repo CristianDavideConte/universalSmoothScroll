@@ -31,6 +31,15 @@ export const IS_POSITIVE_OR_0 = (value) => {
 }
 
 /**
+ * Checks whether `value` is a number in `[0..1]` (i.e. 0 <= number <= 1).
+ * @param {*} value The value to check.
+ * @returns {boolean} `true` if value is in `[0..1]`, `false` otherwise.
+ */
+export const IS_IN_0_1 = (value) => {
+    return Number.isFinite(value) && value >= 0 && value <= 1;
+}
+
+/**
  * Finds the line passing between a point `P1` and a point `P2`.
  * @param {number} x0 `x` coordinate of `P1`. 
  * @param {number} y0 `y` coordinate of `P1`.
