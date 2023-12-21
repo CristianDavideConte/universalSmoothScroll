@@ -185,34 +185,34 @@ export const K_FGS = 33;
 
 
 /**
- * A constant for indicating that no valid fragment string is associated with a container.
+ * A constant for indicating that `no valid fragment string` is associated with a container.
  */
 export const NO_FGS = null;
 
 /**
- * A constant for indicating that no scrollable parent has been found.
+ * A constant for indicating that `no scrollable parent` has been found.
  */
 export const NO_SP = null;
 
 /**
- * A constant for a value that hasn't been calculated yet.
+ * A `placeholder` for a value that hasn't been calculated yet.
  */
 export const NO_VAL = undefined;
 
 
 
 /**
- * The initial inner width of the `window`.
+ * The initial inner `width` of the `window`.
  */
 export const INITIAL_WINDOW_WIDTH = window.innerWidth;
 
 /**
- * The initial inner height of the `window`.
+ * The initial inner `height` of the `window`.
  */
 export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
 
 /**
- * The highest `scrollLeft`/`scrollTop` value that can be used by the API before scroll breaks (2^30px).
+ * The `highest scrollLeft / scrollTop` value that can be used by the API before scroll breaks (2^30px).
  */
 export const HIGHEST_SAFE_SCROLL_POS = 1073741824;
 

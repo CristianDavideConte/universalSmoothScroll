@@ -1,5 +1,5 @@
-//TODO: follow the same spacing styling of common.js
 //TODO: write missing comments
+//TODO: follow the same spacing styling of common.js
 //TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries
@@ -657,7 +657,12 @@ export let _warningLogger = DEFAULT_WARNING_LOGGER;
 
 
 /**
- * TODO: write comment
+ * Checks whether `container` is either the `window` of an instance of `Element` and if so:
+ * - fills the passed `containerData` with the known informations of `container`
+ * - starts to observe the `resize` and `mutation` events of `container` so that the API can react to them
+ * @param {*} container The value to check.
+ * @param {*} containerData An array that will be filled with the known informations of `container`.
+ * @returns `true` if the initialization was successful, `false` otherwise.
  */
 const INIT_CONTAINER_DATA = (container, containerData = []) => {
     if (container === window) {
@@ -1288,7 +1293,6 @@ export const setYStepLength = (newStepLength = DEFAULT_YSTEP_LENGTH, options) =>
  * @param {number} newStepLength A finite `Number` > 0.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
-//TODO: use undefined to unset the values as in the setXStepLength and setYStepLength functions + change comments
 export const setStepLength = (newStepLength, options) => {
     if (!IS_POSITIVE(newStepLength)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setStepLength", { secondaryMsg: newStepLength }, DEFAULT_LOG_OPTIONS));
