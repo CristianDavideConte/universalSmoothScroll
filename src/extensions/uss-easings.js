@@ -144,16 +144,15 @@ const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endB
   arrInserter(ys, 1, _arrIndex, _arrLen);    
 }
 
+//TODO: add a check for tension parameter
 export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, options = {debugString: "CUSTOM_CUBIC_HERMITE_SPLINE"}) => {
-  if(!Array.isArray(xs)) {uss._errorLogger(options.debugString, "xs to be an array", xs); return;}
-  if(!Array.isArray(ys)) {uss._errorLogger(options.debugString, "ys to be an array", ys); return;}
-  if(xs.length !== ys.length) {uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!IS_POSITIVE(duration)) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
-  
-  let _isXDefinedIn0 = false;
-  let _isXDefinedIn1 = false;
-  let _xsCurrMax = null;
   const _xsLen = xs.length;
+
+  if (!Array.isArray(xs)) { uss._errorLogger(options.debugString, "xs to be an array", xs); return; }
+  if (!Array.isArray(ys)) { uss._errorLogger(options.debugString, "ys to be an array", ys); return; }
+  if (_xsLen !== ys.length) { uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + _xsLen + " and ys.length = " + ys.length); return; }
+  if (!IS_POSITIVE(duration)) { uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return; }
+  
 
   for(let i = 0; i < _xsLen; i++) {
     if (!IS_IN_0_1(xs[i])) {
@@ -167,19 +166,24 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
     }
     
     //Checks if the passed points are sorted.
-    if(!_xsCurrMax || _xsCurrMax < xs[i]) {
-      _xsCurrMax = xs[i]; 
-    } else {
-      uss._errorLogger(options.debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) +  " (xs[" + (i - 1) + "])"); 
+    if (i > 0 && xs[i] <= xs[i - 1]) {
+      //TODO: change error msg to "sorted and composed of unique elements"
+      uss._errorLogger(options.debugString, "the xs array to be sorted", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) + " (xs[" + (i - 1) + "])");
       return;
-    } 
-    if(!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
-    if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
+    }
   } 
 
-  //The control points must be defined at x = 0 and x = 1.
-  if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
-  if(!_isXDefinedIn1) {xs.push(1);    ys.push(1);}
+  //The control points must be defined at x === 0.
+  if (xs[0] !== 0) {
+    xs.unshift(0);
+    ys.unshift(0);
+  }
+
+  //The control points must be defined at x === 1.
+  if (xs[_xsLen - 1] !== 1) {
+    xs.push(1);
+    ys.push(1);
+  }
 
   const c = 1 - tension;
   const n = xs.length - 1;
@@ -199,7 +203,7 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
         t = (x - xs[k]) / (xs[k + 1] - xs[k]); //t of the given x
         break;
       }
-      if(xs[k] > x) {
+      if (xs[k] > x) {
         _binaryMax = k;
         k = Math.floor((_binaryMin + k) / 2);
       } else {
@@ -208,6 +212,7 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
       }
     } while(_binaryMin !== _binaryMax);    
 
+    //TODO: save t*t*t and t*t into variables
     const h_00 = +2 * t * t * t - 3 * t * t + 1;
     const h_10 =      t * t * t - 2 * t * t + t;
     const h_01 = -2 * t * t * t + 3 * t * t;
@@ -226,21 +231,24 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
     const m_k0 = c * (p_k2 - p_k0) / (x_k2 - x_k0); 
     const m_k1 = c * (p_k3 - p_k1) / (x_k3 - x_k1); 
 
-    return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1; //The y of the Cubic Hermite-Spline at the given x
+    //The y of the Cubic Hermite-Spline at the given x
+    return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1; 
   }
 
   return DEFAULT_STEP_LENGTH_CALCULATOR(_evalSpline, duration, callback);
 }
 
+//TODO: xs is now allowed to be unsorted, verify is this is wanted behavior
 export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = {debugString: "CUSTOM_BEZIER_CURVE"}) => {
-  if(!Array.isArray(xs)) {uss._errorLogger(options.debugString, "xs to be an array", xs); return;}
-  if(!Array.isArray(ys)) {uss._errorLogger(options.debugString, "ys to be an array", ys); return;}
-  if(xs.length !== ys.length) {uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + xs.length + " and ys.length = " + ys.length); return;}
-  if(!IS_POSITIVE(duration)) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
+  const _xsLen = xs.length;
+
+  if (!Array.isArray(xs)) { uss._errorLogger(options.debugString, "xs to be an array", xs); return; }
+  if (!Array.isArray(ys)) { uss._errorLogger(options.debugString, "ys to be an array", ys); return; }
+  if (_xsLen !== ys.length) { uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + _xsLen + " and ys.length = " + ys.length); return; }
+  if (!IS_POSITIVE(duration)) { uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return; }
 
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
-  const _xsLen = xs.length;
 
   for(let i = 0; i < _xsLen; i++) {
     if (!IS_IN_0_1(xs[i])) {
