@@ -8,6 +8,7 @@
 //TODO: use the new variable naming convention
 
 import {
+  FACTORIAL,
   IS_POSITIVE,
   IS_IN_0_1,
 } from "../main/math.js"
@@ -327,22 +328,15 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
     xs.push(1);
     ys.push(1);
   }
-  
+
   const n = xs.length - 1;
-  const nFact = _factorial(n);
-  
-  //TODO: perhaps move this into math.js
-  function _factorial(num) {
-    let _fact = 1;
-    for (let i = 1; i <= num; i++) _fact *= i;
-    return _fact;
-  }
+  const nFact = FACTORIAL(n);
 
   //Returns B'(t): the first derivative of B(t).
   function _derivativeBt(t) {
     let _derivativeBt = 0;
     for(let i = 0; i <= n; i++) {
-      _derivativeBt += nFact / (_factorial(i) * _factorial(n - i)) * xs[i] * Math.pow(1 - t, n - i - 1) * Math.pow(t, i - 1) * (i - n * t) ;
+      _derivativeBt += nFact / (FACTORIAL(i) * FACTORIAL(n - i)) * xs[i] * Math.pow(1 - t, n - i - 1) * Math.pow(t, i - 1) * (i - n * t) ;
     }
     return _derivativeBt;
   }
@@ -351,7 +345,7 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
   function _getBt(arr, t) {
     let _Bt = 0;
     for (let i = 0; i <= n; i++) {
-      _Bt += nFact / (_factorial(i) * _factorial(n - i)) * arr[i] * Math.pow(1 - t, n - i) * Math.pow(t, i);      
+      _Bt += nFact / (FACTORIAL(i) * FACTORIAL(n - i)) * arr[i] * Math.pow(1 - t, n - i) * Math.pow(t, i);      
     }
     return _Bt;
   }
