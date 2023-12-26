@@ -146,6 +146,7 @@ const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endB
   arrInserter(ys, 1, _arrIndex, _arrLen);    
 }
 
+//TODO: in the docs, specify that this is a cubic hermite "cardinal" spline (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
 export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, options = {debugString: "CUSTOM_CUBIC_HERMITE_SPLINE"}) => {
   //Check if xs is an array.
   if (!Array.isArray(xs)) {
@@ -209,10 +210,9 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
     ys.push(1);
   }
 
-  //TODO: this is not c is 1-c, rename it
-  const c = 1 - tension;
+  const tan_coeff = 1 - tension; // (1 - c)
   const n = xs.length - 1;
-  const nHalf = Math.round(0.5 * n);
+  const nHalf = Math.round(n * 0.5);
   
   /**
    * Cubic Hermite-Spline definition:
@@ -261,8 +261,9 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
     const x_k2 = xs[k + 1];
     const x_k3 = xs[k + 2] || xs[n];
     
-    const m_k0 = c * (p_k2 - p_k0) / (x_k2 - x_k0); 
-    const m_k1 = c * (p_k3 - p_k1) / (x_k3 - x_k1); 
+    // Use the Cardinal Spline m_ks.
+    const m_k0 = tan_coeff * (p_k2 - p_k0) / (x_k2 - x_k0); 
+    const m_k1 = tan_coeff * (p_k3 - p_k1) / (x_k3 - x_k1); 
 
     //The y of the Cubic Hermite-Spline at the given x
     return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1; 
