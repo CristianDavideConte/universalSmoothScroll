@@ -23,31 +23,31 @@ import * as uss from "../main/uss.js";
  * TODO: add parameters related comments
  */
 //TODO: instead of (total - 1) Math.round and Math.floor could be used depending on the initial value of total
- const DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) => {
+const DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) => {
   /**
    * The returned stepLengthCalculator can be used by different containers having
    * different starting positions, _startingPosMap is used to keep track of all of them.
    * Note that a starting position can be > 0 if a scroll-animation has been extended but 
    * part of it has already been done.
    */
-  const _startingPosMap = new Map(); 
-  const _callback = typeof callback === "function" ? callback : () => {};
+  const _startingPosMap = new Map();
+  const _callback = typeof callback === "function" ? callback : () => { };
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
 
     let _progress = (timestamp - originalTimestamp) / duration; //elapsed / duration
 
-    if(_progress >= 1) return remaning;
-    if(_progress <= 0) {
+    if (_progress >= 1) return remaning;
+    if (_progress <= 0) {
       /**
        * Since the timestamp === originalTimestamp at the beginning of a scroll-animation,
        * the first step length is always 0.
        * This breaks the scroll-animations on touchpad enabled devices, so the first 
        * elapsed time considered is actually 0.5 * uss._framesTime.
        */
-       _startingPosMap.set(container, 1 - remaning / total);
-      _progress = 0.5 * uss.getFramesTime(true) / duration; 
+      _startingPosMap.set(container, 1 - remaning / total);
+      _progress = 0.5 * uss.getFramesTime(true) / duration;
     }
     
     const _startingPos = _startingPosMap.get(container);
@@ -56,7 +56,7 @@ import * as uss from "../main/uss.js";
 
     return _delta > 0 ? Math.ceil(_delta) : Math.floor(_delta);
   }
-}  
+}
 
 /**
  * TODO: separate into 3 comments
@@ -179,7 +179,7 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
     return;
   }
   
-  //Check if the elements of xs and ys are in [0..1] and sorted. 
+  //Check if the elements of xs and ys are in [0..1], sorted and unique. 
   for(let i = 0; i < _xsLen; i++) {
     if (!IS_IN_0_1(xs[i])) {
       uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]);
@@ -191,7 +191,6 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
       return;
     }
     
-    //Checks if the passed points are sorted.
     if (i > 0 && xs[i] <= xs[i - 1]) {
       uss._errorLogger(options.debugString, "the numbers in xs to be sorted and unique", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) + " (xs[" + (i - 1) + "])");
       return;
@@ -272,22 +271,27 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
   return DEFAULT_STEP_LENGTH_CALCULATOR(_evalSpline, duration, callback);
 }
 
-//TODO: xs is now allowed to be unsorted, verify is this is wanted behavior
 export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = {debugString: "CUSTOM_BEZIER_CURVE"}) => {
+  //Check if xs is an array.
   if (!Array.isArray(xs)) {
     uss._errorLogger(options.debugString, "xs to be an array", xs);
     return;
   }
+
+  //Check if ys is an array.
   if (!Array.isArray(ys)) {
     uss._errorLogger(options.debugString, "ys to be an array", ys);
     return;
   }
 
+  //Check if xs and ys have the same number of elements.
   const _xsLen = xs.length;
   if (_xsLen !== ys.length) {
     uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + _xsLen + " and ys.length = " + ys.length);
     return;
   }
+
+  //Check if the duration is a positive number.
   if (!IS_POSITIVE(duration)) {
     uss._errorLogger(options.debugString, "the duration to be a positive number", duration);
     return;
@@ -296,7 +300,8 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
   let _isXDefinedIn0 = false;
   let _isXDefinedIn1 = false;
 
-  for(let i = 0; i < _xsLen; i++) {
+  //Check if the elements of xs and ys are in [0..1]. 
+  for (let i = 0; i < _xsLen; i++) {
     if (!IS_IN_0_1(xs[i])) {
       uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]);
       return;
@@ -308,12 +313,20 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
     }
     
     if (!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
-    if(!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1; 
+    if (!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1;
   }
 
-  //The control points must be defined at x = 0 and x = 1.
-  if(!_isXDefinedIn0) {xs.unshift(0); ys.unshift(0);}
-  if(!_isXDefinedIn1) {xs.push(1);    ys.push(1);}
+  //The control points must be defined at x === 0.
+  if (!_isXDefinedIn0) {
+    xs.unshift(0);
+    ys.unshift(0);
+  }
+
+  //The control points must be defined at x === 1.
+  if (!_isXDefinedIn1) {
+    xs.push(1);
+    ys.push(1);
+  }
   
   const n = xs.length - 1;
   const nFact = _factorial(n);
