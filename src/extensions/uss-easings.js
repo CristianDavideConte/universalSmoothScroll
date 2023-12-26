@@ -356,7 +356,7 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
     do {
       _prev = t;
       t -= (_getBt(xs, t) - x) / _derivativeBt(t);
-    } while (Math.abs(t - _prev) > 0.001);   //Precision of 1^(-3)
+    } while (Math.abs(t - _prev) > 0.001); //Precision of 1^(-3)
    
     return _getBt(ys, t);
   }
@@ -384,9 +384,10 @@ export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 5
     do {
       _prev = t;
       t -= ((t * (cX + t * (bX + t * aX)) - x) / (cX + t * (2 * bX + 3 * aX * t)));
-    } while (Math.abs(t - _prev) > 0.001);   //Precision of 1^(-3)
+    } while (Math.abs(t - _prev) > 0.001); //Precision of 1^(-3)
 
-    return t * ( cY + t * ( bY + t * aY )); //This is y given t on the bezier curve (0 <= y <= 1 && 0 <= t <= 1)
+    //The y given t on the bezier curve (0 <= y <= 1 && 0 <= t <= 1)
+    return t * ( cY + t * ( bY + t * aY )); 
   }
 
   return DEFAULT_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
