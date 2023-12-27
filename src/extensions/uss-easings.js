@@ -7,7 +7,6 @@
 //TODO: import only the variables/functions used by this module instead of everything.
 //TODO: use the new variable naming convention
 
-import { NO_VAL } from "../main/common.js";
 import {
   FACTORIAL,
   IS_POSITIVE,
@@ -332,12 +331,18 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
 
   const n = xs.length - 1;
   const nFact = FACTORIAL(n);
+  const binomialCoeff = [];
+  
+  //Precalculate the binomial coefficients used in B(t) and B'(t).
+  for (let i = 0; i <= n; i++) {
+    binomialCoeff[i] = nFact / (FACTORIAL(i) * FACTORIAL(n - i));
+  }
 
-  //Returns B'(t): the first derivative of B(t).
+  //Returns B'(t): the 1st-order derivative of B(t).
   function _derivativeBt(t) {
     let _derivativeBt = 0;
     for(let i = 0; i <= n; i++) {
-      _derivativeBt += nFact / (FACTORIAL(i) * FACTORIAL(n - i)) * xs[i] * Math.pow(1 - t, n - i - 1) * Math.pow(t, i - 1) * (i - n * t) ;
+      _derivativeBt += binomialCoeff[i] * xs[i] * Math.pow(1 - t, n - i - 1) * Math.pow(t, i - 1) * (i - n * t) ;
     }
     return _derivativeBt;
   }
@@ -346,19 +351,27 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
   function _getBt(arr, t) {
     let _Bt = 0;
     for (let i = 0; i <= n; i++) {
-      _Bt += nFact / (FACTORIAL(i) * FACTORIAL(n - i)) * arr[i] * Math.pow(1 - t, n - i) * Math.pow(t, i);      
+      _Bt += binomialCoeff[i] * arr[i] * Math.pow(1 - t, n - i) * Math.pow(t, i);
     }
     return _Bt;
   }
 
+  /**
+   * Given a B(t) (Bernstein Polynomial) and a value of t, a point (x,y) on the bezier curve can be obtained.
+   * In this case, only the x is given, so the t must be calculated and then used to get the y of the bezier curve.
+   * @param {number} x The `x` coordinate of a point on the bezier curve. 
+   * @returns The `y` corresponding to the given `x` on the bezier curve.
+   */
+  let _prev = 1;
   function _newtonRapson(x) {
-    let _prev;
-    let t = x;
+    let t = x < _prev ? x : _prev;
+
     do {
       _prev = t;
       t -= (_getBt(xs, t) - x) / _derivativeBt(t);
     } while (Math.abs(t - _prev) > 0.001); //Precision of 1^(-3)
-   
+
+    //The y given t on the bezier curve.
     return _getBt(ys, t);
   }
 
@@ -393,7 +406,7 @@ export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 5
     do {
       _prev = t;
       t -= ((t * (cX + t * (bX + t * aX)) - x) / (cX + t * (2 * bX + 3 * aX * t)));
-    } while (Math.abs(t - _prev) > 0.001); //Precision of 1^(-3)
+    } while (Math.abs(t - _prev) > 0.001); //Precision of 1e-3
 
     //The y given t on the bezier curve.
     return t * (cY + t * (bY + t * aY));
