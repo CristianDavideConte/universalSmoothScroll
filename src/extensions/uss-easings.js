@@ -7,6 +7,7 @@
 //TODO: import only the variables/functions used by this module instead of everything.
 //TODO: use the new variable naming convention
 
+import { NO_VAL } from "../main/common.js";
 import {
   FACTORIAL,
   IS_POSITIVE,
@@ -298,8 +299,8 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
     return;
   }
 
-  let _isXDefinedIn0 = false;
-  let _isXDefinedIn1 = false;
+  let _isXDefinedAt0 = false;
+  let _isXDefinedAt1 = false;
 
   //Check if the elements of xs and ys are in [0..1]. 
   for (let i = 0; i < _xsLen; i++) {
@@ -313,18 +314,18 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
       return;
     }
     
-    if (!_isXDefinedIn0) _isXDefinedIn0 = xs[i] === 0; 
-    if (!_isXDefinedIn1) _isXDefinedIn1 = xs[i] === 1;
+    if (!_isXDefinedAt0) _isXDefinedAt0 = xs[i] === 0;
+    if (!_isXDefinedAt1) _isXDefinedAt1 = xs[i] === 1;
   }
 
   //The control points must be defined at x === 0.
-  if (!_isXDefinedIn0) {
+  if (!_isXDefinedAt0) {
     xs.unshift(0);
     ys.unshift(0);
   }
 
   //The control points must be defined at x === 1.
-  if (!_isXDefinedIn1) {
+  if (!_isXDefinedAt1) {
     xs.push(1);
     ys.push(1);
   }
@@ -378,16 +379,24 @@ export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 5
   const cX = 3 * x1;
   const cY = 3 * y1;
   
+  /**
+   * Given a B(t) (Bernstein Polynomial) and a value of t, a point (x,y) on the bezier curve can be obtained.
+   * In this case, only the x is given, so the t must be calculated and then used to get the y of the bezier curve.
+   * @param {number} x The `x` coordinate of a point on the bezier curve. 
+   * @returns The `y` corresponding to the given `x` on the bezier curve.
+   */
+  let _prev = 1;
   function _newtonRapson(x) {
-    let _prev;
-    let t = x;
+    let t = x < _prev ? x : _prev;
+
+    // 1-5 iterations needed on average.
     do {
       _prev = t;
       t -= ((t * (cX + t * (bX + t * aX)) - x) / (cX + t * (2 * bX + 3 * aX * t)));
     } while (Math.abs(t - _prev) > 0.001); //Precision of 1^(-3)
 
-    //The y given t on the bezier curve (0 <= y <= 1 && 0 <= t <= 1)
-    return t * ( cY + t * ( bY + t * aY )); 
+    //The y given t on the bezier curve.
+    return t * (cY + t * (bY + t * aY));
   }
 
   return DEFAULT_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
