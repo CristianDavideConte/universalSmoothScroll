@@ -364,7 +364,7 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
    */
   let _prev = 1;
   function _newtonRapson(x) {
-    let t = x < _prev ? x : _prev;
+    let t = _prev < x ? _prev : x;
 
     do {
       _prev = t;
@@ -400,7 +400,7 @@ export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 5
    */
   let _prev = 1;
   function _newtonRapson(x) {
-    let t = x < _prev ? x : _prev;
+    let t = _prev < x ? _prev : x;
 
     // 1-5 iterations needed on average.
     do {
