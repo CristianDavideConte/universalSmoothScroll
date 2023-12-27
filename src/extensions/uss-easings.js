@@ -503,6 +503,7 @@ export const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6)
   //Remove the duplicate definitions of the control points at (1,1).
   _xs.pop(); _xs.pop();
   _ys.pop(); _ys.pop();
+  
   return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, {debugString: "EASE_IN_OUT_BOUNCE"});
 }
 
