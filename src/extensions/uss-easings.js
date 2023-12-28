@@ -148,7 +148,7 @@ const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endB
 }
 
 //TODO: in the docs, specify that this is a cubic hermite "cardinal" spline (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
-export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, options = {debugString: "CUSTOM_CUBIC_HERMITE_SPLINE"}) => {
+export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, options = { debugString: "CUSTOM_CUBIC_HERMITE_SPLINE" }) => {
   //Check if xs is an array.
   if (!Array.isArray(xs)) {
     uss._errorLogger(options.debugString, "xs to be an array", xs);
@@ -181,7 +181,7 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
   }
   
   //Check if the elements of xs and ys are in [0..1], sorted and unique. 
-  for(let i = 0; i < _xsLen; i++) {
+  for (let i = 0; i < _xsLen; i++) {
     if (!IS_IN_0_1(xs[i])) {
       uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]);
       return;
@@ -196,7 +196,7 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
       uss._errorLogger(options.debugString, "the numbers in xs to be sorted and unique", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) + " (xs[" + (i - 1) + "])");
       return;
     }
-  } 
+  }
 
   //The control points must be defined at x === 0.
   if (xs[0] !== 0) {
@@ -212,25 +212,30 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
 
   const tan_coeff = 1 - tension; // (1 - c)
   const n = xs.length - 1;
-  const nHalf = Math.round(n * 0.5);
-  
+  let k = 0; //binary search iteration index
+
   /**
    * Cubic Hermite-Spline definition:
    * p(x) = h00(t) * p_k   + h10(t) * (x_k+1 - x_k) * m_k + 
    *        h01(t) * p_k+1 + h11(t) * (x_k+1 - x_k) * m_k+1
    * 
+   * t = (x - x_k) / (x_k+1 - x_k) on an arbitrary interval (x_k, x_k+1)
+   * 
+   * Note that consecutive iterations will have similar k, that's why
+   * it's defined outside of this function. 
+   * 
    * @param {number} x A number in [0..1] indicating the progress of the animation. 
-   * @returns 
+   * @returns The `y` corresponding to the given `x` on the hermite spline.
    */
   function _evalSpline(x) {
     let _binaryMin = 0; //binary search lower bound
     let _binaryMax = n; //binary search upper bound
-    let k = nHalf;      //binary search iteration index
-    let t; 
-    
+    let t;
+
     //Find t corresponding to the given x (binary search).
+    //1-6 iterations needed on average.
     do {
-      if(x >= xs[k] && x <= xs[k + 1]) {
+      if (x >= xs[k] && x <= xs[k + 1]) {
         t = (x - xs[k]) / (xs[k + 1] - xs[k]); //t of the given x
         break;
       }
@@ -241,15 +246,15 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
         _binaryMin = k;
         k = Math.floor((_binaryMax + k) / 2);
       }
-    } while(_binaryMin !== _binaryMax);    
+    } while (_binaryMin !== _binaryMax);
 
     const t_2 = t * t;
     const t_3 = t_2 * t;
 
-    const h_00 =  2 * t_3 - 3 * t_2 +    1;
-    const h_10 =      t_3 - 2 * t_2 + t;
+    const h_00 = 2 * t_3 - 3 * t_2 + 1;
+    const h_10 = t_3 - 2 * t_2 + t;
     const h_01 = -2 * t_3 + 3 * t_2;
-    const h_11 =      t_3 -     t_2;
+    const h_11 = t_3 - t_2;
 
     const p_k0 = ys[k - 1] || ys[0];
     const p_k1 = ys[k];
@@ -262,11 +267,11 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
     const x_k3 = xs[k + 2] || xs[n];
     
     // Use the Cardinal Spline m_ks.
-    const m_k0 = tan_coeff * (p_k2 - p_k0) / (x_k2 - x_k0); 
-    const m_k1 = tan_coeff * (p_k3 - p_k1) / (x_k3 - x_k1); 
+    const m_k0 = tan_coeff * (p_k2 - p_k0) / (x_k2 - x_k0);
+    const m_k1 = tan_coeff * (p_k3 - p_k1) / (x_k3 - x_k1);
 
     //The y of the Cubic Hermite-Spline at the given x
-    return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1; 
+    return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1;
   }
 
   return DEFAULT_STEP_LENGTH_CALCULATOR(_evalSpline, duration, callback);
@@ -359,6 +364,10 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
   /**
    * Given a B(t) (Bernstein Polynomial) and a value of t, a point (x,y) on the bezier curve can be obtained.
    * In this case, only the x is given, so the t must be calculated and then used to get the y of the bezier curve.
+   * 
+   * Note that consecutive iterations will have similar t, that's why
+   * _prev is defined outside of this function.
+   * 
    * @param {number} x The `x` coordinate of a point on the bezier curve. 
    * @returns The `y` corresponding to the given `x` on the bezier curve.
    */
@@ -378,12 +387,12 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
   return DEFAULT_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
 }
 
-export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, options = {debugString: "CUSTOM_CUBIC_BEZIER"}) => {
-  if (!IS_IN_0_1(x1)) {uss._errorLogger(options.debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return;}
-  if (!IS_IN_0_1(y1)) {uss._errorLogger(options.debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return;}
-  if (!IS_IN_0_1(x2)) {uss._errorLogger(options.debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return;}
-  if (!IS_IN_0_1(y2)) {uss._errorLogger(options.debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return;}
-  if (!IS_POSITIVE(duration)) {uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return;}
+export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, options = { debugString: "CUSTOM_CUBIC_BEZIER" }) => {
+  if (!IS_IN_0_1(x1)) { uss._errorLogger(options.debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return; }
+  if (!IS_IN_0_1(y1)) { uss._errorLogger(options.debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return; }
+  if (!IS_IN_0_1(x2)) { uss._errorLogger(options.debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return; }
+  if (!IS_IN_0_1(y2)) { uss._errorLogger(options.debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return; }
+  if (!IS_POSITIVE(duration)) { uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return; }
 
   const aX = 1 + 3 * (x1 - x2);
   const aY = 1 + 3 * (y1 - y2);
@@ -395,6 +404,10 @@ export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 5
   /**
    * Given a B(t) (Bernstein Polynomial) and a value of t, a point (x,y) on the bezier curve can be obtained.
    * In this case, only the x is given, so the t must be calculated and then used to get the y of the bezier curve.
+   * 
+   * Note that consecutive iterations will have similar t, that's why
+   * _prev is defined outside of this function.
+   *  
    * @param {number} x The `x` coordinate of a point on the bezier curve. 
    * @returns The `y` corresponding to the given `x` on the bezier curve.
    */
