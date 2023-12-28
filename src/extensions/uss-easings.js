@@ -1,10 +1,7 @@
 //TODO: use the new error/warning loggers
 //TODO: add comments above the functions
 //TODO: use the DEFAULT_LOG_OPTIONS map to store the errors and warnings
-//TODO: use the math.js library to group some math patterns
 //TODO: deprecate EASE_ELASTIC_X and EASE_ELASTIC_Y in favor of the preset-library
-//TODO: create a default error message for numbers in [0..1] in the common.js file
-//TODO: import only the variables/functions used by this module instead of everything.
 //TODO: use the new variable naming convention
 
 import {
@@ -13,7 +10,14 @@ import {
   IS_IN_0_1,
 } from "../main/math.js"
 
-import * as uss from "../main/uss.js";
+import {
+  IS_FUNCTION,
+} from "../main/common.js"
+
+import {
+  getFramesTime,
+  _errorLogger
+} from "../main/uss.js"
 
 /**
  * Internally used to define the standard behavior of a stepLengthCalculator.
@@ -32,7 +36,7 @@ const DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) =
    * part of it has already been done.
    */
   const _startingPosMap = new Map();
-  const _callback = typeof callback === "function" ? callback : () => { };
+  const _callback = IS_FUNCTION(callback) ? callback : () => { };
 
   return (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
     _callback(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
@@ -45,10 +49,10 @@ const DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) =
        * Since the timestamp === originalTimestamp at the beginning of a scroll-animation,
        * the first step length is always 0.
        * This breaks the scroll-animations on touchpad enabled devices, so the first 
-       * elapsed time considered is actually 0.5 * uss._framesTime.
+       * elapsed time considered is actually 0.5 * _framesTime.
        */
       _startingPosMap.set(container, 1 - remaning / total);
-      _progress = 0.5 * uss.getFramesTime(true) / duration;
+      _progress = 0.5 * getFramesTime(true) / duration;
     }
     
     const _startingPos = _startingPosMap.get(container);
@@ -82,14 +86,14 @@ const CONTROL_POINTS_INIT_NUM = 10;
  * @param {*} endBouncesNumber 
  */
 const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumber) => {
-  const _deltaX = 1 / endBouncesNumber; //the non-eased deltaX between two control points
-  const _deltaXHalf = _deltaX * 0.5; 
-  const _deltaXShift = _deltaX * 0.0005; //an infinitesimal shift from the non-eased deltaX
+  const _deltaX = 1 / endBouncesNumber; //The non-eased deltaX between two control points
+  const _deltaXHalf = _deltaX * 0.5;
+  const _deltaXShift = _deltaX * 0.0005; //An infinitesimal shift from the non-eased deltaX
   
-  const _arrLen = CONTROL_POINTS_INIT_NUM + (endBouncesNumber - 1) * 5 + 1 
+  const _arrLen = CONTROL_POINTS_INIT_NUM + (endBouncesNumber - 1) * 5 + 1
   let _arrIndex = 0;
 
-  if(startBouncesNumber !== 1) {
+  if (startBouncesNumber !== 1) {
     _arrIndex = CONTROL_POINTS_INIT_NUM + (startBouncesNumber - 1) * 5;
   } else {
     const _deltaXInit = (_deltaX - _deltaXShift) / CONTROL_POINTS_INIT_NUM; //deltaX for the init phase
@@ -100,7 +104,7 @@ const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endB
     _arrIndex++;
 
     //From _deltaXInit to _deltaX, CONTROL_POINTS_NUM_INIT control points are inserted with an ease-in pattern.   
-    for(let i = startBouncesNumber; i < CONTROL_POINTS_INIT_NUM; i++) {
+    for (let i = startBouncesNumber; i < CONTROL_POINTS_INIT_NUM; i++) {
       const _bounceXNoEasing = _deltaXInit * i;
 
       arrInserter(xs, CALC_BOUNCEX(_bounceXNoEasing), _arrIndex, _arrLen); //ease-out-sine pattern
@@ -110,14 +114,14 @@ const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endB
   }
 
   //Defines the control points of the spline between the first and the last bounce.
-  for(let i = startBouncesNumber; i < endBouncesNumber; i++) {
+  for (let i = startBouncesNumber; i < endBouncesNumber; i++) {
     const _bounceXNoEasing = _deltaX * i; //_bounceX without the _calcBounceX easing 
 
     const _bounceX = CALC_BOUNCEX(_bounceXNoEasing);
     const _bounceY = CALC_BOUNCEY(_bounceX);
-    const _peakX   = CALC_BOUNCEX(_bounceXNoEasing + _deltaXHalf);
-    const _peakY   = CALC_PEAKY(_peakX);
-    const _slopeY  = _peakY * 0.65 + _bounceY * 0.35; //the y of a point between the bounce and the peak 
+    const _peakX = CALC_BOUNCEX(_bounceXNoEasing + _deltaXHalf);
+    const _peakY = CALC_PEAKY(_peakX);
+    const _slopeY = _peakY * 0.65 + _bounceY * 0.35; //The y of a point between the bounce and the peak 
 
     //Insert a bounce control point.
     arrInserter(xs, _bounceX, _arrIndex, _arrLen);
@@ -125,7 +129,7 @@ const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endB
 
     //Insert a control point very close to the bounce one just inserted (hermite spline approximation purposes).
     arrInserter(xs, CALC_BOUNCEX(_bounceXNoEasing + _deltaXShift), _arrIndex + 1, _arrLen);
-    arrInserter(ys, _bounceY, _arrIndex + 1, _arrLen); 
+    arrInserter(ys, _bounceY, _arrIndex + 1, _arrLen);
 
     //Insert a control point slighly before the next peak control point (hermite spline approximation purposes).
     arrInserter(xs, CALC_BOUNCEX(_bounceXNoEasing + _deltaXHalf * 0.35), _arrIndex + 2, _arrLen);
@@ -143,57 +147,57 @@ const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endB
   }
 
   //Control points at the end of the spline (1,1).
-  arrInserter(xs, 1, _arrIndex, _arrLen);      
-  arrInserter(ys, 1, _arrIndex, _arrLen);    
+  arrInserter(xs, 1, _arrIndex, _arrLen);
+  arrInserter(ys, 1, _arrIndex, _arrLen);
 }
 
 //TODO: in the docs, specify that this is a cubic hermite "cardinal" spline (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
 export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, options = { debugString: "CUSTOM_CUBIC_HERMITE_SPLINE" }) => {
   //Check if xs is an array.
   if (!Array.isArray(xs)) {
-    uss._errorLogger(options.debugString, "xs to be an array", xs);
+    _errorLogger(options.debugString, "xs to be an array", xs);
     return;
   }
 
   //Check if ys is an array.
   if (!Array.isArray(ys)) {
-    uss._errorLogger(options.debugString, "ys to be an array", ys);
+    _errorLogger(options.debugString, "ys to be an array", ys);
     return;
   }
 
   //Check if xs and ys have the same number of elements.
   const _xsLen = xs.length;
   if (_xsLen !== ys.length) {
-    uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + _xsLen + " and ys.length = " + ys.length);
+    _errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + _xsLen + " and ys.length = " + ys.length);
     return;
   }
   
   //Check if the tension is a number in [0..1].
   if (!IS_IN_0_1(tension)) {
-    uss._errorLogger(options.debugString, "tension to be a number between 0 and 1 (inclusive)", tension);
+    _errorLogger(options.debugString, "tension to be a number between 0 and 1 (inclusive)", tension);
     return;
   }
 
   //Check if the duration is a positive number.
   if (!IS_POSITIVE(duration)) {
-    uss._errorLogger(options.debugString, "the duration to be a positive number", duration);
+    _errorLogger(options.debugString, "the duration to be a positive number", duration);
     return;
   }
   
   //Check if the elements of xs and ys are in [0..1], sorted and unique. 
   for (let i = 0; i < _xsLen; i++) {
     if (!IS_IN_0_1(xs[i])) {
-      uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]);
+      _errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]);
       return;
     }
 
     if (!IS_IN_0_1(ys[i])) {
-      uss._errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]);
+      _errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]);
       return;
     }
     
     if (i > 0 && xs[i] <= xs[i - 1]) {
-      uss._errorLogger(options.debugString, "the numbers in xs to be sorted and unique", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) + " (xs[" + (i - 1) + "])");
+      _errorLogger(options.debugString, "the numbers in xs to be sorted and unique", xs[i].toFixed(2) + " (xs[" + i + "]) after " + xs[i - 1].toFixed(2) + " (xs[" + (i - 1) + "])");
       return;
     }
   }
@@ -280,26 +284,26 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
 export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = {debugString: "CUSTOM_BEZIER_CURVE"}) => {
   //Check if xs is an array.
   if (!Array.isArray(xs)) {
-    uss._errorLogger(options.debugString, "xs to be an array", xs);
+    _errorLogger(options.debugString, "xs to be an array", xs);
     return;
   }
 
   //Check if ys is an array.
   if (!Array.isArray(ys)) {
-    uss._errorLogger(options.debugString, "ys to be an array", ys);
+    _errorLogger(options.debugString, "ys to be an array", ys);
     return;
   }
 
   //Check if xs and ys have the same number of elements.
   const _xsLen = xs.length;
   if (_xsLen !== ys.length) {
-    uss._errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + _xsLen + " and ys.length = " + ys.length);
+    _errorLogger(options.debugString, "xs and ys to have the same length", "xs.length = " + _xsLen + " and ys.length = " + ys.length);
     return;
   }
 
   //Check if the duration is a positive number.
   if (!IS_POSITIVE(duration)) {
-    uss._errorLogger(options.debugString, "the duration to be a positive number", duration);
+    _errorLogger(options.debugString, "the duration to be a positive number", duration);
     return;
   }
 
@@ -309,12 +313,12 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
   //Check if the elements of xs and ys are in [0..1]. 
   for (let i = 0; i < _xsLen; i++) {
     if (!IS_IN_0_1(xs[i])) {
-      uss._errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]);
+      _errorLogger(options.debugString, "xs[" + i + "] to be a number between 0 and 1 (inclusive)", xs[i]);
       return;
     }
 
     if (!IS_IN_0_1(ys[i])) {
-      uss._errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]);
+      _errorLogger(options.debugString, "ys[" + i + "] to be a number between 0 and 1 (inclusive)", ys[i]);
       return;
     }
     
@@ -388,11 +392,11 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options = 
 }
 
 export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, options = { debugString: "CUSTOM_CUBIC_BEZIER" }) => {
-  if (!IS_IN_0_1(x1)) { uss._errorLogger(options.debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return; }
-  if (!IS_IN_0_1(y1)) { uss._errorLogger(options.debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return; }
-  if (!IS_IN_0_1(x2)) { uss._errorLogger(options.debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return; }
-  if (!IS_IN_0_1(y2)) { uss._errorLogger(options.debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return; }
-  if (!IS_POSITIVE(duration)) { uss._errorLogger(options.debugString, "the duration to be a positive number", duration); return; }
+  if (!IS_IN_0_1(x1)) { _errorLogger(options.debugString, "x1 to be a number between 0 and 1 (inclusive)", x1); return; }
+  if (!IS_IN_0_1(y1)) { _errorLogger(options.debugString, "y1 to be a number between 0 and 1 (inclusive)", y1); return; }
+  if (!IS_IN_0_1(x2)) { _errorLogger(options.debugString, "x2 to be a number between 0 and 1 (inclusive)", x2); return; }
+  if (!IS_IN_0_1(y2)) { _errorLogger(options.debugString, "y2 to be a number between 0 and 1 (inclusive)", y2); return; }
+  if (!IS_POSITIVE(duration)) { _errorLogger(options.debugString, "the duration to be a positive number", duration); return; }
 
   const aX = 1 + 3 * (x1 - x2);
   const aY = 1 + 3 * (y1 - y2);
@@ -456,7 +460,7 @@ export const EASE_IN_OUT_CIRC  = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.8
 
 export const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
   if (!IS_POSITIVE(bouncesNumber)) {
-    uss._errorLogger("EASE_IN_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber);
+    _errorLogger("EASE_IN_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber);
     return;
   }
   
@@ -471,7 +475,7 @@ export const EASE_IN_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
 
 export const EASE_OUT_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => {
   if (!IS_POSITIVE(bouncesNumber)) {
-    uss._errorLogger("EASE_OUT_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber);
+    _errorLogger("EASE_OUT_BOUNCE", "bouncesNumber to be a positive number", bouncesNumber);
     return;
   }
 
@@ -485,7 +489,7 @@ export const EASE_OUT_BOUNCE = (duration = 900, callback, bouncesNumber = 3) => 
 }
 
 export const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6) => {
-  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 1) {uss._errorLogger("EASE_IN_OUT_BOUNCE", "bouncesNumber to be a number >= 2", bouncesNumber); return;}
+  if(!Number.isFinite(bouncesNumber) || bouncesNumber <= 1) {_errorLogger("EASE_IN_OUT_BOUNCE", "bouncesNumber to be a number >= 2", bouncesNumber); return;}
   if(bouncesNumber === 2) {
     return CUSTOM_CUBIC_HERMITE_SPLINE(
       [0, 0.04, 0.14, 0.24, 0.3000, 0.3001, 0.40, 0.60, 0.7000, 0.7001, 0.76, 0.86, 0.96, 1], 
@@ -530,12 +534,13 @@ export const EASE_IN_OUT_BOUNCE = (duration = 1200, callback, bouncesNumber = 6)
 
 
 
-
+//TODO: decide what to do with these
+/**
 export const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalculator = () => 50, debounceTime = 0) => {
-  if(typeof forwardEasing  !== "function") {uss._errorLogger("EASE_ELASTIC_X", "the forwardEasing to be a function", forwardEasing);  return;}
-  if(typeof backwardEasing !== "function") {uss._errorLogger("EASE_ELASTIC_X", "the backwardEasing to be a function", backwardEasing); return;}
-  if(typeof elasticPointCalculator !== "function") {uss._errorLogger("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
-  if(!Number.isFinite(debounceTime)) {uss._errorLogger("EASE_ELASTIC_X", "the debounceTime to be a number", debounceTime); return;}
+  if(typeof forwardEasing  !== "function") {_errorLogger("EASE_ELASTIC_X", "the forwardEasing to be a function", forwardEasing);  return;}
+  if(typeof backwardEasing !== "function") {_errorLogger("EASE_ELASTIC_X", "the backwardEasing to be a function", backwardEasing); return;}
+  if(typeof elasticPointCalculator !== "function") {_errorLogger("EASE_ELASTIC_X", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
+  if(!Number.isFinite(debounceTime)) {_errorLogger("EASE_ELASTIC_X", "the debounceTime to be a number", debounceTime); return;}
 
   let _finalXPositionBackwardPhase = null;
   let _scrollCalculator;
@@ -589,10 +594,10 @@ export const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalcul
 }
 
 export const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalculator = () => 50, debounceTime = 0) => {
-  if(typeof forwardEasing  !== "function") {uss._errorLogger("EASE_ELASTIC_Y", "the forwardEasing to be a function", forwardEasing);  return;}
-  if(typeof backwardEasing !== "function") {uss._errorLogger("EASE_ELASTIC_Y", "the backwardEasing to be a function", backwardEasing); return;}
-  if(typeof elasticPointCalculator !== "function") {uss._errorLogger("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
-  if(!Number.isFinite(debounceTime)) {uss._errorLogger("EASE_ELASTIC_Y", "the debounceTime to be a number", debounceTime); return;}
+  if(typeof forwardEasing  !== "function") {_errorLogger("EASE_ELASTIC_Y", "the forwardEasing to be a function", forwardEasing);  return;}
+  if(typeof backwardEasing !== "function") {_errorLogger("EASE_ELASTIC_Y", "the backwardEasing to be a function", backwardEasing); return;}
+  if(typeof elasticPointCalculator !== "function") {_errorLogger("EASE_ELASTIC_Y", "the elasticPointCalculator to be a function", elasticPointCalculator); return;}
+  if(!Number.isFinite(debounceTime)) {_errorLogger("EASE_ELASTIC_Y", "the debounceTime to be a number", debounceTime); return;}
 
   let _finalYPositionBackwardPhase = null;
   let _scrollCalculator;
@@ -644,3 +649,5 @@ export const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalcul
     return _scrollCalculator(remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container);
   }
 }
+
+*/
