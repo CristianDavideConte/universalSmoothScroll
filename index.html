@@ -153,8 +153,8 @@
     EASE_IN_OUT_EXPO,
     EASE_IN_OUT_CIRC,
     EASE_IN_OUT_BOUNCE,
-    EASE_ELASTIC_X, //Will be deprecated
-    EASE_ELASTIC_Y  //Will be deprecated
+    //EASE_ELASTIC_X, //Will be deprecated
+    //EASE_ELASTIC_Y  //Will be deprecated
   } from "./src/extensions/uss-easings.js"; 
   
   import {  
@@ -169,7 +169,18 @@
     addSmoothScrollbar,
   } from "./src/preset-library-beta/universalsmoothscroll-presets.js"
 
+  import {
+    test1
+  } from "./src/main/test_import.js"
+
+  import {
+    test2
+  } from "./src/main/test_import_2.js"
+
   window.addEventListener("load", () => {
+    test1();
+    test2();
+
     const yScrollerSection = document.getElementById("yScrollerSection");
     const yScrollerUpButton = document.getElementById("yScrollerUp");
     const yScrollerDownButton = document.getElementById("yScrollerDown");
@@ -248,9 +259,6 @@
     
     
 
-
-    
-
     const NUM_CHILDREN_TEST = 0;
     for(let i = 0; i < NUM_CHILDREN_TEST; i++) {
       const div = document.createElement("div");
@@ -300,7 +308,7 @@
           //onXAxis: true, 
           overscrollX: true,
           //elasticResistance: 50,
-          callback: () => console.log("end of elastic")
+          //callback: () => console.log("end of elastic")
         }
       ),
       {
@@ -370,7 +378,7 @@
       {
         element:__xChildren[0],
         alignX: "start",
-        easingX: EASE_OUT_BOUNCE(900, null, 6),
+        easingX: EASE_OUT_BOUNCE(900, 6),
       },
       {
         element:__xChildren[1],
@@ -383,7 +391,7 @@
       {
         element:__xChildren[3],
         alignX: "end",
-        easingX: EASE_OUT_BOUNCE(1200, null, 3),
+        easingX: EASE_OUT_BOUNCE(1200, 3),
       }
   ];
 
@@ -418,7 +426,7 @@
           onXAxis: "mandatory", 
           children: _xChildren,
           easingX: EASE_OUT_QUAD(400),
-          callback: () => console.log("end of snap")
+          //callback: () => console.log("end of snap")
         }
       ), 
       {
