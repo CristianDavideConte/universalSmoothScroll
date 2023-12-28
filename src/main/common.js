@@ -303,6 +303,12 @@ export const DEFAULT_ERROR_PRIMARY_MSG_6 = " to be an object";
 export const DEFAULT_ERROR_PRIMARY_MSG_7 = " to be an array of numbers";
 
 /**
+ * A string containing part of an error message.
+ * It can be used to build the `options` object for the error logger.   
+ */
+export const DEFAULT_ERROR_PRIMARY_MSG_8 = " to be a number in [0..1]";
+
+/**
  * A string containing part of a warning message.
  * It can be used to build the `options` object for the warning logger.   
  */

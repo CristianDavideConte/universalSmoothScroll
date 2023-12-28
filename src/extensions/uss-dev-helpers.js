@@ -43,7 +43,6 @@ import {
  * can be used with the uss loggers.
  * Note that these objects (the map entries) are partial and need 
  * to be completed (they only contain known/static log informations). 
- * Also note that this map is used instead of the common.js one. //TODO: remove this line
  */
 const DEFAULT_LOG_OPTIONS = new Map([
     ["getBrowserRefreshRate", [
