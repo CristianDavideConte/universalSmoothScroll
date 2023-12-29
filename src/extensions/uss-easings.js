@@ -1,5 +1,4 @@
 //TODO: add comments above the functions
-//TODO: use the DEFAULT_LOG_OPTIONS map to store the errors and warnings
 //TODO: deprecate EASE_ELASTIC_X and EASE_ELASTIC_Y in favor of the preset-library
 //TODO: use the new variable naming convention
 
@@ -22,6 +21,7 @@ import {
   getFramesTime,
   _errorLogger
 } from "../main/uss.js"
+
 
 
 /**
@@ -56,15 +56,14 @@ const DEFAULT_LOG_OPTIONS = new Map([
 ]);
 
 
+
 /**
- * Internally used to define the standard behavior of a stepLengthCalculator.
- * The progressEvaluator function defines at which % of the total duration the scroll-animation is at.
- * The duration is the total amount of milliseconds the scroll-animation should last.
- * The callback is a function that is executed every time the returned stepLengthCalculator is invoked.  
- * 
- * TODO: add parameters related comments
+ * Internally used to define and build the standard behavior of a `StepLengthCalculator`.
+ * @param {function} easing The `easing pattern` of the scroll-animation. Both its input and output are in [0..1].
+ * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
+ * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  */
-const DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) => {
+const GET_STEP_LENGTH_CALCULATOR = (easing, duration, callback) => {
   /**
    * The returned stepLengthCalculator can be used by different containers having
    * different starting positions, _startingPosMap is used to keep track of all of them.
@@ -96,7 +95,7 @@ const DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) =
      * is strictly followed. Using total instead of (total - 1) will result in shorter durations. 
      */
     const _startingPos = _startingPosMap.get(container);
-    const _nextPos = (progressEvaluator(_progress) * (1 - _startingPos) + _startingPos) * (total - 1);
+    const _nextPos = (easing(_progress) * (1 - _startingPos) + _startingPos) * (total - 1);
     const _delta = remaning - total + _nextPos;
 
     return _delta > 0 ? Math.ceil(_delta) : Math.floor(_delta);
@@ -106,26 +105,42 @@ const DEFAULT_STEP_LENGTH_CALCULATOR = (progressEvaluator, duration, callback) =
 
 
 /**
- * TODO: separate into 3 comments
- * All the constants below are internally used by DEFAULT_BOUNCE_CUSTOMIZER. 
- * CALC_BOUNCEX: defines the pattern of the x-coordinates of the control points (same for bounces(mins) and peaks(maxes))
- * CALC_BOUNCEY: defines the pattern of the y-coordinates of the bounce(mins) control points
- * CALC_PEAKY: defines the pattern of the y-coordinates of the peaks(maxes) control points
+ * Internally used by DEFAULT_BOUNCE_CUSTOMIZER.
+ * Defines the distribution pattern of the x-coordinates of the control points (same for bounces(mins) and peaks(maxes)).
+ * @param {number} x A x-coordinate of a bounce or peak.
+ * @returns {number} The eased-version of `x`.
  */
-const CALC_BOUNCEX = x => 1 - Math.pow(1 - x, 1.6); //ease-out-sine pattern
-const CALC_BOUNCEY = x => x * 0.005 + 0.995; //almost constant pattern very close to 1
-const CALC_PEAKY   = x => x < 0.6234 ? x * (2 - x) : x * 0.35 + 0.64; //ease-out-sine then linear patter (they meet at x = 0.6234)
+const CALC_BOUNCEX = x => 1 - Math.pow(1 - x, 1.6); //Ease-out-sine pattern
+
+/**
+ * Internally used by DEFAULT_BOUNCE_CUSTOMIZER.
+ * Defines the distribution pattern of the y-coordinates of the bounce-control-points (mins).
+ * @param {number} y A y-coordinate of a bounce.
+ * @returns {number} The eased-version of `y`.
+ */
+const CALC_BOUNCEY = y => y * 0.005 + 0.995; //Almost constant pattern very close to 1
+
+/**
+ * Internally used by DEFAULT_BOUNCE_CUSTOMIZER.
+ * Defines the distribution pattern of the y-coordinates of the peaks-control-points (maxes).
+ * @param {number} y A y-coordinate of a peak.
+ * @returns {number} The eased-version of `y`.
+ */
+const CALC_PEAKY = y => y < 0.6234 ? y * (2 - y) : y * 0.35 + 0.64; //ease-out-sine + linear pattern (from y = 0.6234)
+
+/**
+ * Internally used by DEFAULT_BOUNCE_CUSTOMIZER.
+ * Number of control points needed for the initial phase of a bounce-type `StepLengthCalculators`.
+ */
 const CONTROL_POINTS_INIT_NUM = 10;
 
 /**
  * Internally used to setup the control points' arrays for bounce-type `StepLengthCalculators`.
- * 
- * TODO: finish this
- * @param {*} xs 
- * @param {*} ys 
- * @param {*} arrInserter 
- * @param {*} startBouncesNumber 
- * @param {*} endBouncesNumber 
+ * @param {number[]} xs An array containing the `x-coordinates` of the `control points`.
+ * @param {number[]} ys An array containing the `y-coordinates` of the `control points`.
+ * @param {function} arrInserter A function that will insert the passed value into the passed array at the passed index. 
+ * @param {number} startBouncesNumber From which bounce should this function start the setup.
+ * @param {number} endBouncesNumber At which bounce should this function end the setup.
  */
 const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endBouncesNumber) => {
   const _deltaX = 1 / endBouncesNumber; //The non-eased deltaX between two control points
@@ -195,7 +210,18 @@ const DEFAULT_BOUNCE_CUSTOMIZER = (xs, ys, arrInserter, startBouncesNumber, endB
 
 
 
-//TODO: in the docs, specify that this is a cubic hermite "cardinal" spline (https://en.wikipedia.org/wiki/Cubic_Hermite_spline).
+/**
+ * Creates a `StepLengthCalculator` from the specified [`Cardinal Cubic Hermite Spline`](https://en.wikipedia.org/wiki/Cubic_Hermite_spline) parameters.
+ * @param {number[]} xs An ordered array containing the unique `x-coordinates` of the `control points` of the hermite spline.
+ * @param {number[]} ys An array containing the `y-coordinates` of the `control points` of the hermite spline.
+ * @param {number} tension A number in `[0..1]` which represent the 
+ * [`tension`](https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline) of a `Cardinal Cubic Hermite Spline`.
+ * The lesser the `tension` value is, the softer the spline will be.
+ * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
+ * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
+ * @returns A valid `StepLengthCalculator` with the specified easing pattern.
+ */
 export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500, callback, options) => {
   //Check if xs is an array.
   if (!Array.isArray(xs)) {
@@ -348,9 +374,19 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
     return h_00 * p_k1 + h_10 * (x_k2 - x_k1) * m_k0 + h_01 * p_k2 + h_11 * (x_k2 - x_k1) * m_k1;
   }
 
-  return DEFAULT_STEP_LENGTH_CALCULATOR(_evalSpline, duration, callback);
+  return GET_STEP_LENGTH_CALCULATOR(_evalSpline, duration, callback);
 }
 
+
+/**
+ * Creates a `StepLengthCalculator` from the specified [`Bezier Curve`](https://en.wikipedia.org/wiki/B%C3%A9zier_curve) parameters.
+ * @param {number[]} xs An array containing the `x-coordinates` of the `control points` of the bezier curve.
+ * @param {number[]} ys An array containing the `y-coordinates` of the `control points` of the bezier curve.
+ * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
+ * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
+ * @returns A valid `StepLengthCalculator` with the specified easing pattern.
+ */
 export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options) => {
   //Check if xs is an array.
   if (!Array.isArray(xs)) {
@@ -477,9 +513,22 @@ export const CUSTOM_BEZIER_CURVE = (xs, ys, duration = 500, callback, options) =
     return _getBt(ys, t);
   }
 
-  return DEFAULT_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
+  return GET_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
 }
 
+/**
+ * Creates a `StepLengthCalculator` from the specified [`Cubic Bezier Curve`](https://en.wikipedia.org/wiki/B%C3%A9zier_curve#Cubic_B%C3%A9zier_curves) parameters.
+ * 
+ * Note that the first and last control point of this curve are fixed at `(0,0)` and `(1,1)`.
+ * @param {number} x1 The `x-coordinate` of the `second control point` of the bezier curve.
+ * @param {number} y1 The `y-coordinate` of the `second control point` of the bezier curve.
+ * @param {number} x2 The `x-coordinate` of the `third control point` of the bezier curve.
+ * @param {number} y2 The `y-coordinate` of the `third control point` of the bezier curve.
+ * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
+ * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
+ * @returns A valid `StepLengthCalculator` with the specified easing pattern.
+ */
 export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 500, callback, options) => {
   //Check if x1 is a number in [0..1].
   if (!IS_IN_0_1(x1)) {
@@ -542,7 +591,7 @@ export const CUSTOM_CUBIC_BEZIER = (x1 = 0, y1 = 0, x2 = 1, y2 = 1, duration = 5
     return t * (cY + t * (bY + t * aY));
   }
 
-  return DEFAULT_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
+  return GET_STEP_LENGTH_CALCULATOR(_newtonRapson, duration, callback);
 }
 
 
