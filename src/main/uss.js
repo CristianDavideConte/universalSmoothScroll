@@ -1,9 +1,11 @@
 //TODO: write missing comments
 //TODO: follow the same spacing styling of common.js
+//TODO: fix cypress tests
 //TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries into a single common list
 //TODO: rename "forceCalculation" to "flushCache"
+//TODO: add styling comment
 //TODO: @ts-check //Use to check for type errors
 
 import {

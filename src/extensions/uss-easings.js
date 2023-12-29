@@ -1,6 +1,18 @@
 //TODO: create a website for testing the easing functions + add the links of the easings visualizations into the comments below
 //TODO: deprecate EASE_ELASTIC_X and EASE_ELASTIC_Y in favor of the preset-library
-
+//TODO: follow the same spacing styling of common.js
+//TODO: order the functions in alphabetical order
+//TODO: @ts-check //Use to check for type errors
+/**
+ * CODE STYLING NOTE:
+ * Constans, variables and functions are logically grouped in this file: this helps
+ * with organizing code and understanding which variables should be initialized first.
+ * The groups are separed by new lines.
+ * 
+ * New line rules:
+ * - 1 newline for entities in the same logical group
+ * - 3 newlines between a logical group and another
+ */
 import {
   FACTORIAL,
   IS_POSITIVE,
