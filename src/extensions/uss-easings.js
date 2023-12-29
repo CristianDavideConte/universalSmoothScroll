@@ -1,5 +1,4 @@
 //TODO: create a website for testing the easing functions + add the links of the easings visualizations into the comments below
-//TODO: add comments above the functions
 //TODO: deprecate EASE_ELASTIC_X and EASE_ELASTIC_Y in favor of the preset-library
 
 import {
@@ -607,7 +606,7 @@ export const EASE_LINEAR = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0, 1, 
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-sine pattern`]().
+ * and that follows an [`ease-in-sine pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-sine pattern`.
@@ -616,7 +615,7 @@ export const EASE_IN_SINE = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.12, 0,
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-quad pattern`]().
+ * and that follows an [`ease-in-quad pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-quad pattern`.
@@ -625,7 +624,7 @@ export const EASE_IN_QUAD = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.11, 0,
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-cubic pattern`]().
+ * and that follows an [`ease-in-cubic pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-cubic pattern`.
@@ -634,7 +633,7 @@ export const EASE_IN_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.32, 0
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-quart pattern`]().
+ * and that follows an [`ease-in-quart pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-quart pattern`.
@@ -643,7 +642,7 @@ export const EASE_IN_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5, 0,
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-quint pattern`]().
+ * and that follows an [`ease-in-quint pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-quint pattern`.
@@ -652,7 +651,7 @@ export const EASE_IN_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.64, 0
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-expo pattern`]().
+ * and that follows an [`ease-in-expo pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-expo pattern`.
@@ -662,7 +661,7 @@ export const EASE_IN_EXPO = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.7, 0, 
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-circ pattern`]().
+ * and that follows an [`ease-in-circ pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-circ pattern`.
@@ -671,7 +670,7 @@ export const EASE_IN_CIRC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.55, 0,
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-out-sine pattern`]().
+ * and that follows an [`ease-out-sine pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-out-sine pattern`.
@@ -680,7 +679,7 @@ export const EASE_OUT_SINE = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.61, 1
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-out-quad pattern`]().
+ * and that follows an [`ease-out-quad pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-out-quad pattern`.
@@ -689,7 +688,7 @@ export const EASE_OUT_QUAD = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.5, 1,
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-out-cubic pattern`]().
+ * and that follows an [`ease-out-cubic pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-out-cubic pattern`.
@@ -698,7 +697,7 @@ export const EASE_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.33, 
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-out-quart pattern`]().
+ * and that follows an [`ease-out-quart pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-out-quart pattern`.
@@ -707,7 +706,7 @@ export const EASE_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.25, 
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-out-quint pattern`]().
+ * and that follows an [`ease-out-quint pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-out-quint pattern`.
@@ -716,7 +715,7 @@ export const EASE_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.22, 
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-out-expo pattern`]().
+ * and that follows an [`ease-out-expo pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-out-expo pattern`.
@@ -725,7 +724,7 @@ export const EASE_OUT_EXPO = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.16, 1
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-out-circ pattern`]().
+ * and that follows an [`ease-out-circ pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-out-circ pattern`.
@@ -734,7 +733,7 @@ export const EASE_OUT_CIRC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0, 0.55
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-out-sine pattern`]().
+ * and that follows an [`ease-in-out-sine pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-out-sine pattern`.
@@ -743,7 +742,7 @@ export const EASE_IN_OUT_SINE = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.37
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-out-quad pattern`]().
+ * and that follows an [`ease-in-out-quad pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-out-quad pattern`.
@@ -752,7 +751,7 @@ export const EASE_IN_OUT_QUAD = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.45
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-out-cubic pattern`]().
+ * and that follows an [`ease-in-out-cubic pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-out-cubic pattern`.
@@ -761,7 +760,7 @@ export const EASE_IN_OUT_CUBIC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.6
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-out-quart pattern`]().
+ * and that follows an [`ease-in-out-quart pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-out-quart pattern`.
@@ -770,7 +769,7 @@ export const EASE_IN_OUT_QUART = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.7
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-out-quint pattern`]().
+ * and that follows an [`ease-in-out-quint pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-out-quint pattern`.
@@ -779,7 +778,7 @@ export const EASE_IN_OUT_QUINT = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.8
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-out-expo pattern`]().
+ * and that follows an [`ease-in-out-expo pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-out-expo pattern`.
@@ -788,13 +787,21 @@ export const EASE_IN_OUT_EXPO = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.87
 
 /**
  * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
- * and that follows a [`ease-in-out-circ pattern`]().
+ * and that follows an [`ease-in-out-circ pattern`]().
  * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
  * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
  * @returns A valid `StepLengthCalculator` with an `ease-in-out-circ pattern`.
  */
 export const EASE_IN_OUT_CIRC = (duration, callback) => CUSTOM_CUBIC_BEZIER(0.85, 0, 0.15, 1, duration, callback, { subject: "EASE_IN_OUT_CIRC" });
 
+/**
+ * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
+ * and that follows an [`ease-in-bounce pattern`]().
+ * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
+ * @param {number} bouncesNumber The number of `bounces` at the start of the scroll-animation.
+ * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
+ * @returns A valid `StepLengthCalculator` with an `ease-in-bounce pattern`.
+ */
 export const EASE_IN_BOUNCE = (duration = 900, bouncesNumber = 3, callback) => {
   //Check if the bouncesNumber is a positive number.
   if (!IS_POSITIVE(bouncesNumber)) {
@@ -817,6 +824,14 @@ export const EASE_IN_BOUNCE = (duration = 900, bouncesNumber = 3, callback) => {
   return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, { subject: "EASE_IN_BOUNCE" });
 }
 
+/**
+ * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
+ * and that follows an [`ease-out-bounce pattern`]().
+ * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
+ * @param {number} bouncesNumber The number of `bounces` at the end of the scroll-animation.
+ * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
+ * @returns A valid `StepLengthCalculator` with an `ease-out-bounce pattern`.
+ */
 export const EASE_OUT_BOUNCE = (duration = 900, bouncesNumber = 3, callback) => {
   //Check if the bouncesNumber is a positive number.
   if (!IS_POSITIVE(bouncesNumber)) {
@@ -839,6 +854,14 @@ export const EASE_OUT_BOUNCE = (duration = 900, bouncesNumber = 3, callback) => 
   return CUSTOM_CUBIC_HERMITE_SPLINE(_xs, _ys, 0, duration, callback, { subject: "EASE_OUT_BOUNCE" });
 }
 
+/**
+ * Creates a `StepLengthCalculator` with that makes the scroll-animation last `duration` ms 
+ * and that follows an [`ease-in-out-bounce pattern`]().
+ * @param {number} duration The total amount of `milliseconds` the scroll-animation should last.
+ * @param {number} bouncesNumber The total number of `bounces` both at start and end of the scroll-animation.
+ * @param {function} callback A `function` that is executed every time the returned `StepLengthCalculator` is invoked.
+ * @returns A valid `StepLengthCalculator` with an `ease-in-out-bounce pattern`.
+ */
 export const EASE_IN_OUT_BOUNCE = (duration = 1200, bouncesNumber = 6, callback) => {
   //Check if the bouncesNumber >= 2.
   if (!Number.isFinite(bouncesNumber) || bouncesNumber <= 1) {
