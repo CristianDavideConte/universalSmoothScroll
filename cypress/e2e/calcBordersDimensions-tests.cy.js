@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,11 +7,9 @@ beforeEach(() => {
 })
 
 describe("calcBordersDimensions", function() {
-    let uss;
     it("Tests the calcBordersDimensions method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _maxDim = 10; //See css styles of calcBordersDimensions-tests.html
                 
                 uss._containersData = new Map();
