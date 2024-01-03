@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,7 +7,6 @@ beforeEach(() => {
 })
 
 describe("getWindowWidth", function() {
-    let uss;
     const resolutions = [[640, 480],
                          [1280, 720], 
                          [1920, 1080], 
@@ -16,7 +17,6 @@ describe("getWindowWidth", function() {
             cy.visit("getWindowWidth-tests.html"); 
             cy.window()
               .then((win) => {
-                  uss = win.uss;    
                   expect(uss.getWindowWidth()).to.equal(win.innerWidth); 
               });        
         });

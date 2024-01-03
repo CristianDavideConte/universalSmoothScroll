@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,11 +7,9 @@ beforeEach(() => {
 })
 
 describe("scrollXBy", function() {
-    let uss;
     it("Horizontally scrolls the test element by n pixels", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.testFailingValues(uss.scrollXBy, {
@@ -38,14 +38,12 @@ describe("scrollXBy", function() {
 })
 
 describe("scrollXToBy-StillStart-True", function() {
-    let uss;
     let oldFinalXPosition;
     let finalXPosition;
 
     it("Horizontally scrolls the test element to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.waitForUssCallback(
@@ -68,14 +66,12 @@ describe("scrollXToBy-StillStart-True", function() {
 })
 
 describe("scrollXToBy-StillStart-False", function() {
-    let uss;
     let oldFinalXPosition;
     let finalXPosition;
 
     it("Horizontally scrolls the test element to n1 pixels and then extends that animation by n2 pixels", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.waitForUssCallback(
@@ -98,7 +94,6 @@ describe("scrollXToBy-StillStart-False", function() {
 })
 
 describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
-    let uss;
     let oldFinalXPosition;
     let init = false;
 
@@ -114,7 +109,6 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating", functio
     it("Tests if the scrollXBy method with stillStart=false can extend a scroll-animation from inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 uss.setXStepLengthCalculator(_testCalculator, _testElement, false);
@@ -138,12 +132,10 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating", functio
 })
 
 describe("scrollXBy-containScroll-below-0", function() {
-    let uss;
     let finalXPosition;
     it("Horizontally scrolls the test element by n pixels obtaining a finalXPosition lower than 0", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.testFailingValues(uss.scrollXBy, {
@@ -173,13 +165,11 @@ describe("scrollXBy-containScroll-below-0", function() {
 })
 
 describe("scrollXBy-containScroll-beyond-maxScrollX", function() {
-    let uss;
     let maxScrollX;
     let finalXPosition;
     it("Horizontally scrolls the test element by n pixels obtaining a finalXPosition higher than its maxScrollX", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.testFailingValues(uss.scrollXBy, {

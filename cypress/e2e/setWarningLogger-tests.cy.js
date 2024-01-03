@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,14 +7,12 @@ beforeEach(() => {
 })
 
 describe("setWarningLogger", function() {
-  let uss;
   let validLogger1 = (a,b,c) => console.log(a,b,c);
   let validLogger2 = () => console.log("");
   let validLogger3 = () => {}
   it("Tests the setWarningLogger method", function() {
       cy.window()
         .then((win) => {
-            uss = win.uss;
             const _originalLogger = uss._warningLogger;
 
             cy.testFailingValues(uss.setWarningLogger, {

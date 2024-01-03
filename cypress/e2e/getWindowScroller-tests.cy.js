@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,12 +7,9 @@ beforeEach(() => {
 })
 
 describe("getWindowScroller", function() {
-    let uss;
     it("Tests the getWindowScroller method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
-
                 const _html = win.document.documentElement;
                 const _body = win.document.body;
 

@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 /**
@@ -109,11 +111,9 @@ beforeEach(() => {
 })
 
 describe("scrollIntoView-corners-alignments", function() {
-    let uss;
     it("Tests the scrollIntoView method with the 4 corners alignments", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 uss._reducedMotion = true;
 
                 const _testElement1 = win.document.getElementById("scroller-container-1");
@@ -292,11 +292,9 @@ describe("scrollIntoView-corners-alignments", function() {
 
 
 describe("scrollIntoView-center-alignments", function() {
-    let uss;
     it("Tests the scrollIntoView method with the 5 center alignments", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 uss._reducedMotion = true;
 
                 const _testElement1 = win.document.getElementById("scroller-container-1");
@@ -508,11 +506,9 @@ describe("scrollIntoView-center-alignments", function() {
 
 
 describe("scrollIntoView-nearest-alignments", function() {
-    let uss;
     it("Tests the scrollIntoView method with all the nearest alignments", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 uss._reducedMotion = true;
 
                 const _testElement1 = win.document.getElementById("scroller-container-1");

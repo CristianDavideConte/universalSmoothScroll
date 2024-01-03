@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,12 +7,9 @@ beforeEach(() => {
 })
 
 describe("getXScrollableParent", function() {
-    let uss;
     it("Tests the getXScrollableParent method", function() {
         cy.window()
           .then((win) => {
-              uss = win.uss;
-                            
               cy.testFailingValues(uss.getXScrollableParent, {
                 0: [constants.failingValuesAll, 
                     [true, false]

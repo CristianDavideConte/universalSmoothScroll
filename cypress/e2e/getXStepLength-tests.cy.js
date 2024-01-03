@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,11 +7,9 @@ beforeEach(() => {
 })
 
 describe("getXStepLength", function() {
-    let uss;
     it("Tests the getXStepLength method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 const _expectedFinalPos = 10;
                 

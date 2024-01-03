@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,13 +7,11 @@ beforeEach(() => {
 })
 
 describe("getYStepLengthCalculator", function() {
-    let uss;
     let nonTempTestCalculator = () => 10;
     let tempTestCalculator = r => r / 20 + 1;
     it("Tests the getYStepLengthCalculator method", function() {
       cy.window()
         .then((win) => {
-            uss = win.uss;
             const _testElement = win.document.getElementById("scroller");
                                         
             cy.testFailingValues(uss.getYStepLengthCalculator, {

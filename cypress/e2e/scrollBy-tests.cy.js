@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,11 +7,9 @@ beforeEach(() => {
 })
 
 describe("scrollBy", function() {
-    let uss;
     it("Horizontally and vertically scrolls the test element by (n1,n2) pixels", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.testFailingValues(uss.scrollYBy, {
@@ -47,7 +47,6 @@ describe("scrollToBy-StillStart-True", function() {
     it("Horizontally and vertically scrolls the test element to n1 pixels and then replace that animation with a n2 pixels scroll", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.waitForUssCallback(
@@ -82,7 +81,6 @@ describe("scrollToBy-StillStart-False", function() {
     it("Horizontally and vertically scrolls the test element to (n1a,n1b) pixels and then extends that animation by (n2a,n2b) pixels", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.waitForUssCallback(
@@ -123,7 +121,6 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
     it("Tests if the scrollBy method with stillStart=false can extend a scroll-animation from inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 uss.setStepLengthCalculator(_testCalculator, _testElement, false);
@@ -157,7 +154,6 @@ describe("scrollBy-containScroll-below-0", function() {
     it("Scrolls the test element by (n1,n2) pixels obtaining a finalXPosition and a finalYPosition lower than 0", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.testFailingValues(uss.scrollBy, {
@@ -198,7 +194,6 @@ describe("scrollBy-containScroll-beyond-maxScrollX-and-maxScrollY", function() {
     it("Scrolls the test element by (n1,n2) pixels obtaining a finalXPosition and a finalYPosition higher than its maxScrollX and maxScrollY", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 cy.testFailingValues(uss.scrollBy, {

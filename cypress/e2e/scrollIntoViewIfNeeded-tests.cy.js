@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 /**
@@ -98,11 +100,9 @@ beforeEach(() => {
 })
 
 describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function() {
-    let uss;
     it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 uss._reducedMotion = true;
 
                 const _testElement1 = win.document.getElementById("scroller-container-1");
@@ -309,11 +309,9 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function() {
 })
 
 describe("scrollIntoViewIfNeeded-center-alignments", function() {
-    let uss;
     it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments and alignToCenter = true", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 uss._reducedMotion = true;
 
                 const _testElement1 = win.document.getElementById("scroller-container-1");
@@ -520,11 +518,9 @@ describe("scrollIntoViewIfNeeded-center-alignments", function() {
 })
 
 describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", function() {
-    let uss;
     it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments but with an element's width that is bigger than the one of its parent", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 uss._reducedMotion = true;
 
                 const _testElement3 = win.document.getElementById("scroller-container-3");
@@ -727,11 +723,9 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
 })
 
 describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", function() {
-    let uss;
     it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments but with an element's height that is bigger than the one of its parent", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 uss._reducedMotion = true;
 
                 const _testElement4 = win.document.getElementById("scroller-container-4");

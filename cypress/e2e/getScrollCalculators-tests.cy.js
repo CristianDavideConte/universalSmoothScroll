@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,14 +7,11 @@ beforeEach(() => {
 })
 
 describe("getScrollCalculators", function() {
-    let uss;
     let result = false;
     
     it("Tests the getScrollCalculators method", function() {
       cy.window()
         .then((win) => {
-            uss = win.uss;
-                              
             cy.testFailingValues(uss.getScrollCalculators, {
               0: [constants.failingValuesNoUndefined]
             },

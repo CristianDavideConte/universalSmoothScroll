@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,11 +7,9 @@ beforeEach(() => {
 })
 
 describe("getScrollYDirection", function() {
-    let uss;
     it("Tests the getScrollYDirection method", function() {
       cy.window()
         .then((win) => {
-          uss = win.uss;
           const _testElement = win.document.getElementById("scroller");
           const _initialPos = 10;
           const _expectedFinalPos = 5;

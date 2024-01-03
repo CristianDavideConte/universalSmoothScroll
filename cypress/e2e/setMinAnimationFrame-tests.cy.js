@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,12 +7,9 @@ beforeEach(() => {
 })
 
 describe("setMinAnimationFrame", function() {
-    let uss;
     it("Tests the setMinAnimationFrame method", function() {
         cy.window()
           .then((win) => {
-              uss = win.uss;
-
               uss.setMinAnimationFrame(10);
               expect(uss.getMinAnimationFrame()).to.equal(10);
 

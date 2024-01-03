@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,7 +7,6 @@ beforeEach(() => {
 })
 
 describe("setStepLength", function() {
-    let uss;
     let _testStepInvalidTypeString = "";
     let _testStepInvalidTypeNaN = NaN;
     let _testStepValidType1 = 10;
@@ -13,7 +14,6 @@ describe("setStepLength", function() {
     it("Tests the setStepLength method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
                 
                 const _initialXStepLength = uss.getXStepLength(); 

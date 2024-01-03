@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,12 +7,9 @@ beforeEach(() => {
 })
 
 describe("getFramesTime", function() {
-    let uss;
     it("Tests the getFramesTime method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
-
                 if(document.readyState !== "complete") {
                     expect(uss._framesTimes.length).to.equal(0);
                     expect(uss.getFramesTime()).to.equal(16.6);

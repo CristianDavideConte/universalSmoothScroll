@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,12 +7,10 @@ beforeEach(() => {
 })
 
 describe("getFinalYPosition", function() {
-    let uss;
     let finalYPosition;
     it("Tests the getFinalYPosition method", function() {
       cy.window()
         .then((win) => {
-          uss = win.uss;
           const _testElement = win.document.getElementById("scroller");
           const _expectedFinalPos = 10;                       
 
@@ -40,13 +40,11 @@ describe("getFinalYPosition", function() {
 })
 
 describe("getFinalYPosition-beyond-maxScrollY", function() {
-  let uss;
   let maxScrollY;
   let finalYPosition;
   it("Tests the getFinalYPosition method whenever the containScroll parameter is used to limit to maxScrollY", function() {
     cy.window()
       .then((win) => {
-        uss = win.uss;
         const _testElement = win.document.getElementById("scroller");
                     
         cy.testFailingValues(uss.getFinalYPosition, {
@@ -76,12 +74,10 @@ describe("getFinalYPosition-beyond-maxScrollY", function() {
 })
 
 describe("getFinalYPosition-below-0", function() {
-  let uss;
   let finalYPosition;
   it("Tests the getFinalYPosition method whenever the containScroll parameter is used to limit to 0", function() {
     cy.window()
       .then((win) => {
-        uss = win.uss;
         const _testElement = win.document.getElementById("scroller");
                     
         cy.testFailingValues(uss.getFinalYPosition, {

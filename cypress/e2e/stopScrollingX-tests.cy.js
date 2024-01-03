@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,12 +7,9 @@ beforeEach(() => {
 })
 
 describe("stopScrollingX", function() {
-    let uss;
     it("Tests the stopScrollingX method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
-
                 cy.testFailingValues(uss.stopScrollingX, {
                     0: [constants.failingValuesNoUndefined]
                 }, 
@@ -70,12 +69,9 @@ describe("stopScrollingX", function() {
 
 
 describe("stopScrollingX-immediatelyStopped", function() {
-    let uss;
     it("Initialize a series of scroll-animations on the x-axis of all scrollable containers and immediately stop them", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
-
                 cy.testFailingValues(uss.stopScrollingX, {
                     0: [constants.failingValuesNoUndefined]
                 }, 
@@ -125,12 +121,9 @@ describe("stopScrollingX-immediatelyStopped", function() {
 })
 
 describe("stopScrollingX-containersData-integrity", function() {
-    let uss;
     it("Checks if the stopScrollingX function cleans the uss._containersData's arrays correctly", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
-
                 cy.testFailingValues(uss.stopScrollingX, {
                     0: [constants.failingValuesNoUndefined]
                 }, 
@@ -223,12 +216,9 @@ describe("stopScrollingX-containersData-integrity", function() {
 });
 
 describe("stopScrollingX-containersData-integrity-with-scroll-on-y-axis", function() {
-    let uss;
     it("Checks if the stopScrollingX function cleans the uss._containersData's arrays correctly whenever there's a scroll-animation on the y-axis", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
-
                 cy.testFailingValues(uss.stopScrollingX, {
                     0: [constants.failingValuesNoUndefined]
                 }, 

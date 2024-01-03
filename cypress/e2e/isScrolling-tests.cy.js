@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,11 +7,9 @@ beforeEach(() => {
 })
   
 describe("isScrolling-scrollXAnimation", function() {
-    let uss;
     it("Tests the isScrolling method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
  
                 cy.testFailingValues(uss.isScrolling, {
@@ -41,7 +41,6 @@ describe("isScrolling-scrollYAnimation", function() {
     it("Tests the isScrolling method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.isScrolling, {
@@ -73,7 +72,6 @@ describe("isScrolling-scrollXYAnimation", function() {
     it("Tests the isScrolling method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.isScrolling, {
@@ -117,7 +115,6 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function
     it("Tests the isScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 expect(uss.isScrolling(_testElement)).to.be.false;
@@ -157,7 +154,6 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function
     it("Tests the isScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 expect(uss.isScrolling(_testElement)).to.be.false;
@@ -196,7 +192,6 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function() {
     it("Tests the isScrolling method whenever the scroll-animation on the x-axis is stopped inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 expect(uss.isScrolling(_testElement)).to.be.false;
@@ -235,7 +230,6 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function() {
     it("Tests the isScrolling method whenever the scroll-animation on the y-axis is stopped inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 expect(uss.isScrolling(_testElement)).to.be.false;
@@ -275,7 +269,6 @@ describe("isScrolling-StopBothAxisScrollingWhileAnimating", function() {
     it("Tests the isScrolling method whenever the scroll-animations on both the x-axis and the y-axis are stopped from inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 expect(uss.isScrolling(_testElement)).to.be.false;

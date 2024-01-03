@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,11 +7,9 @@ beforeEach(() => {
 })
 
 describe("stopScrollingAll", function() {
-    let uss;
     it("Tests the stopScrollingAll method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 uss._containersData = new Map();
 
                 cy.testFailingValues(uss.stopScrollingAll, {
@@ -76,11 +76,9 @@ describe("stopScrollingAll", function() {
 })
 
 describe("stopScrollingAll-immediatelyStopped", function() {
-    let uss;
     it("Initialize a series of scroll-animations on both the x-axis and the y-axis of all scrollable containers and immediately stop them", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 uss._containersData = new Map();
 
                 cy.testFailingValues(uss.stopScrollingAll, {
@@ -137,12 +135,9 @@ describe("stopScrollingAll-immediatelyStopped", function() {
 })
 
 describe("stopScrollingAll-containersData-integrity", function() {
-    let uss;
     it("Checks if the stopScrollingAll function cleans the uss._containersData's arrays correctly", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
-
                 cy.testFailingValues(uss.stopScrollingAll, {
                     0: [constants.failingValuesNoUndefined]
                 }, 

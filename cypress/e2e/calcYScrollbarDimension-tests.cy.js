@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,8 +7,6 @@ beforeEach(() => {
 })
 
 describe("calcYScrollbarDimension", function() {
-    let uss;
-
     function _getCurrentScrollPos(el) {
         return [
             uss.getScrollXCalculator(el)(), 
@@ -16,8 +16,6 @@ describe("calcYScrollbarDimension", function() {
     it("Tests the calcYScrollbarDimension method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
-                
                 uss._containersData = new Map();
                 expect(uss._containersData.size).to.equal(0);
 
@@ -95,8 +93,6 @@ describe("calcYScrollbarDimension", function() {
 })
 
 describe("calcYScrollbarDimension-webkit-scrollbar-modifiers", function() {
-    let uss;
-    
     //Source: https://stackoverflow.com/questions/7000190/detect-all-firefox-versions-in-js
     function browserIsFirefox(window) {
         return window.navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
@@ -113,8 +109,6 @@ describe("calcYScrollbarDimension-webkit-scrollbar-modifiers", function() {
             .then((win) => {
                 //Firefox doens't support the ::webkit-scrollbar css modifier
                 if(browserIsFirefox(win)) return;
-                
-                uss = win.uss;
                 
                 cy.testFailingValues(uss.calcYScrollbarDimension, {
                     0: [constants.failingValuesAllNoUndefined,

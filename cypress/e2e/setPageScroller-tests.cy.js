@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,12 +7,9 @@ beforeEach(() => {
 })
 
 describe("setPageScroller", function() {
-    let uss;
     it("Tests the setPageScroller method", function() {
         cy.window()
           .then((win) => {
-              uss = win.uss;
-
               uss.setPageScroller(win);
               expect(uss.getPageScroller(false)).to.equal(win);
                             

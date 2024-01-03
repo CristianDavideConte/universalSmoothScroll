@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,14 +7,12 @@ beforeEach(() => {
 })
 
 describe("setXStepLengthCalculator", function() {
-    let uss;
     let _testCalculatorValidType1 = () => 10;
     let _testCalculatorValidType2 = () => 5;
     let _testCalculatorValidType3 = () => 0.000001; //Valid but takes more than the default testing timeout
     it("Tests the setXStepLengthCalculator method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _noStepLengthCalculator = undefined;
                 const _testElement = win.document.getElementById("scroller");
 

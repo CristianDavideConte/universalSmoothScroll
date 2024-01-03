@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,11 +7,9 @@ beforeEach(() => {
 })
 
 describe("isYScrolling", function() {
-    let uss;
     it("Tests the isYScrolling method", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.isYScrolling, {
@@ -53,7 +53,6 @@ describe("isYScrolling-StoppedScrollingWhileAnimating", function() {
     it("Tests the isYScrolling method whenever a scroll-animation is stopped inside a stepLengthCalculator", function() {
         cy.window()
             .then((win) => {
-                uss = win.uss;
                 const _testElement = win.document.getElementById("scroller");
 
                 expect(uss.isYScrolling(_testElement)).to.be.false;

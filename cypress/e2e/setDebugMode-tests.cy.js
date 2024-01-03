@@ -1,3 +1,5 @@
+import * as uss from "../../src/main/uss.js";
+
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
@@ -5,12 +7,9 @@ beforeEach(() => {
 })
 
 describe("setDebugMode", function() {
-    let uss;
     it("Tests the setDebugMode method", function() {
         cy.window()
           .then((win) => {
-              uss = win.uss;
-              
               cy.testFailingValues(uss.setDebugMode, {
                 0: [constants.failingValuesNoStringNoUndefined]
               }, 
