@@ -10,7 +10,7 @@ describe("stopScrollingAll", function() {
     it("Tests the stopScrollingAll method", function() {
         cy.window()
             .then((win) => {
-                uss._containersData = new Map();
+                uss._containersData.clear();
 
                 cy.testFailingValues(uss.stopScrollingAll, {
                     0: [constants.failingValuesAll]
@@ -79,7 +79,7 @@ describe("stopScrollingAll-immediatelyStopped", function() {
     it("Initialize a series of scroll-animations on both the x-axis and the y-axis of all scrollable containers and immediately stop them", function() {
         cy.window()
             .then((win) => {
-                uss._containersData = new Map();
+                uss._containersData.clear();
 
                 cy.testFailingValues(uss.stopScrollingAll, {
                     0: [constants.failingValuesAll]
@@ -146,7 +146,8 @@ describe("stopScrollingAll-containersData-integrity", function() {
                     expect(uss.isScrolling()).to.be.false;
                 })
                 .then(() => {
-                    uss._containersData = new Map();
+                    uss._containersData.clear();
+                    
                     const _elements = [
                         win,
                         win.document.documentElement, 

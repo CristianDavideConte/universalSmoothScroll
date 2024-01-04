@@ -146,7 +146,7 @@ describe("stopScrolling-containersData-integrity", function() {
                     expect(uss.isScrolling()).to.be.false;
                 })
                 .then(() => {
-                    uss._containersData = new Map();
+                    uss._containersData.clear();
 
                     const _testCallback = () => {};
                     const _testCalculatorFixed = () => 10;

@@ -132,7 +132,7 @@ describe("stopScrollingY-containersData-integrity", function() {
                     expect(uss.isYScrolling()).to.be.false;
                 })
                 .then(() => {
-                    uss._containersData = new Map();
+                    uss._containersData.clear();
 
                     const _testCallback = () => {};
                     const _testCalculatorFixed = () => 10;
@@ -227,7 +227,7 @@ describe("stopScrollingY-containersData-integrity-with-scroll-on-x-axis", functi
                     expect(uss.isXScrolling()).to.be.false;
                 })
                 .then(() => {
-                    uss._containersData = new Map();
+                    uss._containersData.clear();
 
                     const _testCallback = () => {};
                     const _testCalculatorFixed = () => 10;

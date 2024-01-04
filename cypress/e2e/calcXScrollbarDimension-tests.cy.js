@@ -16,7 +16,7 @@ describe("calcXScrollbarDimension", function() {
     it("Tests the calcXScrollbarDimension method", function() {
         cy.window()
             .then((win) => {
-                uss._containersData = new Map();
+                uss._containersData.clear();
                 expect(uss._containersData.size).to.equal(0);
 
                 //Test the window's x-scrollbar. 
