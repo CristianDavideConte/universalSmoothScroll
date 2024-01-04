@@ -965,7 +965,8 @@ export const EASE_ELASTIC_X = (forwardEasing, backwardEasing, elasticPointCalcul
     const _originalCallback = typeof _oldData[10] === "function" ? _oldData[10] : () => {};
     _oldData[10] = () => {
       _debounceTimeout = setTimeout(() => {
-        const _currentPos    = container === window ? window.scrollX : container.scrollLeft;
+        //TODO: use IS_WINDOW()
+        const _currentPos    = container === window ? container.scrollX : container.scrollLeft;
         const _oldDirection  = _oldData[4];
         const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _oldDirection, container);
         
@@ -1022,7 +1023,8 @@ export const EASE_ELASTIC_Y = (forwardEasing, backwardEasing, elasticPointCalcul
     const _originalCallback = typeof _oldData[11] === "function" ? _oldData[11] : () => {};
     _oldData[11] = () => {
       _debounceTimeout = setTimeout(() => {
-        const _currentPos    = container === window ? window.scrollY : container.scrollTop;
+        //TODO: use IS_WINDOW()
+        const _currentPos    = container === window ? container.scrollY : container.scrollTop;
         const _oldDirection  = _oldData[5];
         const _elasticAmount = elasticPointCalculator(originalTimestamp, timestamp, _currentPos, _oldDirection, container);
         

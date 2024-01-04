@@ -18,7 +18,9 @@ import {
     CREATE_LOG_OPTIONS,
     IS_FUNCTION,
     IS_OBJECT,
+    IS_WINDOW,
     NO_VAL,
+    TOP_WINDOW,
     DEFAULT_ERROR_PRIMARY_MSG_1,
     DEFAULT_ERROR_PRIMARY_MSG_3,
     DEFAULT_ERROR_PRIMARY_MSG_4,
@@ -154,7 +156,7 @@ export async function isValidStepLengthCalculator(
     }
 
     //Check if the passed container is valid.
-    if (options.container !== window && !CHECK_INSTANCEOF(options.container)) {
+    if (!IS_WINDOW(options.container) && !CHECK_INSTANCEOF(options.container)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: options.container, idx: 2 }, DEFAULT_LOG_OPTIONS));
         return false;
     }
@@ -204,12 +206,12 @@ export async function isValidStepLengthCalculator(
           return;
         } 
 
-        window.requestAnimationFrame(() => _tester(resolve, reject));       
+        TOP_WINDOW.requestAnimationFrame(() => _tester(resolve, reject));       
     }
 
     try {
         await new Promise((resolve, reject) => {
-            window.requestAnimationFrame(() => _tester(resolve, reject));
+            TOP_WINDOW.requestAnimationFrame(() => _tester(resolve, reject));
         });
     } catch(result) {
         _errorLogger(CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: result, idx: 5 }, DEFAULT_LOG_OPTIONS));

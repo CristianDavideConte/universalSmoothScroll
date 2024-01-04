@@ -199,15 +199,20 @@ export const NO_SP = null;
  */
 export const NO_VAL = undefined;
 
+/**
+ * The topmost `window` in the `window hierarchy`.
+ */
+export const TOP_WINDOW = window.top;
+
 
 
 /**
- * The initial inner `width` of the `window`.
+ * The initial inner `width` of the `window` in which this script has been initialized.
  */
 export const INITIAL_WINDOW_WIDTH = window.innerWidth;
 
 /**
- * The initial inner `height` of the `window`.
+ * The initial inner `height` of the `window` in which this script has been initialized.
  */
 export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
 
@@ -215,6 +220,7 @@ export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
  * The `highest scrollLeft / scrollTop` value that can be used by the API before scroll breaks (2^30px).
  */
 export const HIGHEST_SAFE_SCROLL_POS = 1073741824;
+
 
 
 
@@ -264,7 +270,7 @@ export const REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
  * A string containing part of an error message.
  * It can be used to build the `options` object for the error logger.   
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_1 = " to be an instance of Element or window";
+export const DEFAULT_ERROR_PRIMARY_MSG_1 = " to be an instance of Element or a window";
 
 /**
  * A string containing part of an error message.
@@ -422,6 +428,17 @@ export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, 
 }
 
 /**
+ * Returns the `window` associated with the passed `container`.
+ *  
+ * `Note:` no checks are done on `container`.
+ * @param {*} container An instance of `Element` or a `window`.
+ * @returns Returns the `window` associated with `container`. 
+ */
+export const GET_WINDOW_OF = (container) => {
+    return container.ownerDocument.defaultView;
+}
+
+/**
  * Checks whether `value` is a function.
  * @param {*} value The value to check. 
  * @returns {boolean} `true` if `value` is a function, `false` otherwise.
@@ -439,6 +456,27 @@ export const IS_OBJECT = (value) => {
     return value !== null &&
            typeof value === "object" &&
            !Array.isArray(value);
+}
+
+/**
+ * Checks whether `value` is a window object.
+ * Works with iFrames' windows too.
+ * @param {*} value The value to check.
+ * @returns `true` if `value` is a window object, `false` otherwise.
+ */
+export const IS_WINDOW = (value) => {
+    if (value === window) return true;
+    
+    /**
+     * Inside iFrames the pointer to the window object may be different
+     * from the one used in this module, but a window still exists and 
+     * it can be retrieved by asking for the value.window.
+     */
+    try {
+        return value === value.window;
+    } catch (UnsupportedOperation) {
+        return false;
+    }
 }
 
 /**
@@ -460,7 +498,7 @@ export const TO_STRING = (value) => {
     const _type = typeof value;
 
     if (
-        value === window ||
+        IS_WINDOW(value) ||
         value === null ||
         value === undefined ||
         _type === "boolean" ||

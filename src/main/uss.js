@@ -1,6 +1,9 @@
 //TODO: write missing comments
 //TODO: follow the same spacing styling of common.js
 //TODO: fix cypress tests
+//TODO: there's should be a list of _pageScroller(s) one for each window of the page
+//TODO: there's should be a list of _windowScroller(s) one for each window of the page
+//TODO: fix the fact that iFrame's window object may not be the same as the script's window
 //TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries into a single common list
@@ -55,6 +58,7 @@ import {
     INITIAL_WINDOW_WIDTH,
     INITIAL_WINDOW_HEIGHT,
     HIGHEST_SAFE_SCROLL_POS,
+    TOP_WINDOW,
     REGEX_ALIGNMENT_NEAREST,
     REGEX_LOGGER_DISABLED,
     REGEX_LOGGER_LEGACY,
@@ -67,7 +71,9 @@ import {
     CHECK_INSTANCEOF,
     CLEAR_COMMON_DATA,
     CREATE_LOG_OPTIONS,
+    GET_WINDOW_OF,
     IS_FUNCTION,
+    IS_WINDOW,
     MERGE_OBJECTS,
     DEFAULT_ERROR_PRIMARY_MSG_1,
     DEFAULT_ERROR_PRIMARY_MSG_2,
@@ -159,14 +165,14 @@ const GET_DEFAULT_STEP_LENGTH = GET_LINE_FROM_P1_P2(412, 16, 1920, 23)
 /**
  * Default value for the `_xStepLength` variable.
  * 
- * 16px at 412px of `_windowWidth` and 23px at 1920px of `_windowWidth`.
+ * 16px at 412px of `INITIAL_WINDOW_WIDTH` and 23px at 1920px of `INITIAL_WINDOW_WIDTH`.
  */
 const DEFAULT_XSTEP_LENGTH = GET_DEFAULT_STEP_LENGTH(INITIAL_WINDOW_WIDTH);
 
 /**
  * Default value for the `_yStepLength` variable.
  * 
- * 16px at 412px of `_windowHeight` and 23px at 1920px of `_windowHeight`.
+ * 16px at 412px of `INITIAL_WINDOW_HEIGHT` and 23px at 1920px of `INITIAL_WINDOW_HEIGHT`.
  */
 const DEFAULT_YSTEP_LENGTH = GET_DEFAULT_STEP_LENGTH(INITIAL_WINDOW_HEIGHT);
 
@@ -176,11 +182,11 @@ const DEFAULT_YSTEP_LENGTH = GET_DEFAULT_STEP_LENGTH(INITIAL_WINDOW_HEIGHT);
 const DEFAULT_FRAME_TIME = 16.6;
 
 //TODO: To look more into
-//TODO: const DEFAULT_FRAME_TIME_CALCULATOR = window.requestIdleCallback || window.requestAnimationFrame;
+//TODO: const DEFAULT_FRAME_TIME_CALCULATOR = TOP_WINDOW.requestIdleCallback || TOP_WINDOW.requestAnimationFrame;
 
 /**
  * Default value for the `_minAnimationFrame` variable.
- * 51 frames at 929px of window height.
+ * 51 frames at 929px of `INITIAL_WINDOW_HEIGHT`.
  */
 const DEFAULT_MIN_ANIMATION_FRAMES = INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;
 
@@ -290,7 +296,7 @@ const DEFAULT_MUTATION_OBSERVER = {
 
         //Schedule the execution of DEFAULT_MUTATION_OBSERVER.callback if needed.
         if (DEFAULT_MUTATION_OBSERVER.callbackFrameId === NO_VAL) {
-            DEFAULT_MUTATION_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
+            DEFAULT_MUTATION_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
         }
     }),
     callback: () => {
@@ -304,7 +310,7 @@ const DEFAULT_MUTATION_OBSERVER = {
          */
         if (DEFAULT_MUTATION_OBSERVER.debouncedFrames < DEFAULT_MUTATION_OBSERVER.totalDebounceFrames) {
             DEFAULT_MUTATION_OBSERVER.debouncedFrames++;
-            DEFAULT_MUTATION_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
+            DEFAULT_MUTATION_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
             return;
         }
 
@@ -312,6 +318,16 @@ const DEFAULT_MUTATION_OBSERVER = {
             if (!mutationObject.hasMutated) continue;
 
             const _containerData = _containersData.get(target);
+
+            /**
+             * External modifications can make _containersData and DEFAULT_MUTATION_OBSERVER.entries
+             * inconsistent with each other.
+             */
+            if (!_containerData) {
+                //TODO: whenever this will be supported, add this line.
+                //DEFAULT_MUTATION_OBSERVER.observer.unobserve(target);
+                continue;
+            }
 
             /**
              * Change the element's frangment string if its href attribute has changed. 
@@ -353,7 +369,7 @@ const DEFAULT_MUTATION_OBSERVER = {
                      * to unobserve the removedNode.
                      * Note that: elementX.contains(elementX) === true
                      */
-                    if (container !== window && removedNode.contains(container)) {
+                    if (!IS_WINDOW(container) && removedNode.contains(container)) {
                         DEFAULT_RESIZE_OBSERVER.observer.unobserve(container);
                         DEFAULT_RESIZE_OBSERVER.entries.delete(container);
                         DEFAULT_MUTATION_OBSERVER.entries.delete(container);
@@ -405,7 +421,7 @@ const DEFAULT_RESIZE_OBSERVER = {
 
         //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
         if (DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
-            DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+            DEFAULT_RESIZE_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
         }
     }),
     callback: () => {
@@ -419,7 +435,7 @@ const DEFAULT_RESIZE_OBSERVER = {
          */
         if (DEFAULT_RESIZE_OBSERVER.debouncedFrames < DEFAULT_RESIZE_OBSERVER.totalDebounceFrames) {
             DEFAULT_RESIZE_OBSERVER.debouncedFrames++;
-            DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+            DEFAULT_RESIZE_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
             return;
         }
 
@@ -428,6 +444,15 @@ const DEFAULT_RESIZE_OBSERVER = {
             if (!resizeObject.hasResized) continue;
 
             const _containerData = _containersData.get(target);
+
+            /**
+             * External modifications can make _containersData and DEFAULT_RESIZE_OBSERVER.entries
+             * inconsistent with each other.
+             */
+            if (!_containerData) {
+                DEFAULT_RESIZE_OBSERVER.observer.unobserve(target);
+                continue;
+            }
 
             const _newWidth = resizeObject.width;
             const _newHeight = resizeObject.height;
@@ -532,7 +557,7 @@ const DEFAULT_WARNING_LOGGER = (options) => {
  * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
  * @param {number} currentPos The `scrollLeft`/`scrollX` pixel position of the container.
  * @param {number} finalPos The `scrollLeft`/`scrollX` pixel position the container has to reach.
- * @param {*} container An instance of `Element` or `window`.
+ * @param {*} container An instance of `Element` or a `window`.
  * @returns {number} The amount of pixels to scroll on the x-axis of the container (can be negative, positive or 0px).
  */
 const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
@@ -551,7 +576,7 @@ const DEFAULT_XSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
  * @param {number} total The total amount of pixels the current scroll-animation needed to scroll.
  * @param {number} currentPos The `scrollTop`/`scrollY` pixel position of the container.
  * @param {number} finalPos The `scrollTop`/`scrollY` pixel position the container has to reach.
- * @param {*} container An instance of `Element` or `window`.
+ * @param {*} container An instance of `Element` or a `window`.
  * @returns {number} The amount of pixels to scroll on the y-axis of the container (can be negative, positive or 0px).
  */
 const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp, total, currentPos, finalPos, container) => {
@@ -565,7 +590,7 @@ const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
 
 /**
  * A Map in which:
- * - The keys are an instances of `Element` or the `Window` and they're internally called `containers`.
+ * - The keys are an instances of `Element` or a `window` and they're internally called `containers`.
  * - The values are arrays.
  */
 export let _containersData = new Map(); //TODO: perhaps const?
@@ -589,16 +614,6 @@ export let _yStepLength = DEFAULT_YSTEP_LENGTH;
 export let _minAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES;
 
 /**
- * The current `Window`'s inner width (in px).
- */
-export let _windowWidth = INITIAL_WINDOW_WIDTH;
-
-/**
- * The current `Window`'s inner height (in px).
- */
-export let _windowHeight = INITIAL_WINDOW_HEIGHT;
-
-/**
  * The highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
  */
 export let _scrollbarsMaxDimension = NO_VAL;
@@ -615,8 +630,8 @@ export let _framesTime = DEFAULT_FRAME_TIME;
 export let _framesTimes = []; //TODO: perhaps const?
 
 /**
- * The container that scrolls the `Window` when it's scrolled and 
- * that (viceversa) is scrolled when the `Window` is scrolled.
+ * The container that scrolls the `window` when it's scrolled and 
+ * that (viceversa) is scrolled when the `window` is scrolled.
  */
 export let _windowScroller = NO_VAL;
 
@@ -631,7 +646,7 @@ export let _pageScroller = NO_VAL;
  * Internally used by the API to follow the user's accessibility preferences by 
  * reverting back every scroll-animation to the default jump-to-position behavior.
  */
-export let _reducedMotion = "matchMedia" in window && window.matchMedia("(prefers-reduced-motion)").matches;
+export let _reducedMotion = "matchMedia" in TOP_WINDOW && TOP_WINDOW.matchMedia("(prefers-reduced-motion)").matches;
 
 /**
  * Controls the way the `warning` and `error` messages are logged by the default `warning` and `error` loggers.
@@ -659,7 +674,7 @@ export let _warningLogger = DEFAULT_WARNING_LOGGER;
 
 
 /**
- * Checks whether `container` is either the `window` of an instance of `Element` and if so:
+ * Checks whether `container` is either a `window` of an instance of `Element` and if so:
  * - fills the passed `containerData` with the known informations of `container`
  * - starts to observe the `resize` and `mutation` events of `container` so that the API can react to them
  * @param {*} container The value to check.
@@ -667,55 +682,51 @@ export let _warningLogger = DEFAULT_WARNING_LOGGER;
  * @returns `true` if the initialization was successful, `false` otherwise.
  */
 const INIT_CONTAINER_DATA = (container, containerData = []) => {
-    if (container === window) {
+    if (IS_WINDOW(container)) {
         let _debounceResizeEvent = false;
 
-        window.addEventListener("resize", () => {
-            //Update the internal Window sizes.
-            _windowWidth = window.innerWidth;
-            _windowHeight = window.innerHeight;
-
+        container.addEventListener("resize", () => {
             //Make the resize callback fire only once per frame like the resize observer.
             if (_debounceResizeEvent) return;
 
             _debounceResizeEvent = true;
-            window.requestAnimationFrame(() => _debounceResizeEvent = false);
+            TOP_WINDOW.requestAnimationFrame(() => _debounceResizeEvent = false);
 
             //Emulate what the DEFAULT_RESIZE_OBSERVER does for all the other containers.
             DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
-            const _resizeObject = DEFAULT_RESIZE_OBSERVER.entries.get(window);
+            const _resizeObject = DEFAULT_RESIZE_OBSERVER.entries.get(container);
 
             _resizeObject.hasResized = true;
 
             //Update the target size.
-            _resizeObject.width = _windowWidth;
-            _resizeObject.height = _windowHeight;
+            _resizeObject.width = container.innerWidth;
+            _resizeObject.height = container.innerHeight;
 
             //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
             if (DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
-                DEFAULT_RESIZE_OBSERVER.callbackFrameId = window.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+                DEFAULT_RESIZE_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
             }
         }, { passive: true });
 
         //Set a default resizeObject.
         DEFAULT_RESIZE_OBSERVER.entries.set(
-            window,
+            container,
             {
                 hasResized: false,
-                width: _windowWidth,
-                height: _windowHeight,
+                width: container.innerWidth,
+                height: container.innerHeight,
             }
         );
 
-        //window doesn't have any scrollable parent.
+        //A window doesn't have any scrollable parent.
         containerData[K_SSPX] = NO_SP;
         containerData[K_HSPX] = NO_SP;
         containerData[K_SSPY] = NO_SP;
         containerData[K_HSPY] = NO_SP;
 
-        containerData[K_SCX] = () => window.scrollX; //ScrollXCalculator
-        containerData[K_SCY] = () => window.scrollY; //ScrollYCalculator
+        containerData[K_SCX] = () => container.scrollX; //ScrollXCalculator
+        containerData[K_SCY] = () => container.scrollY; //ScrollYCalculator
         containerData[K_RCBQ] = []; //Resize callback queue
         //containerData[K_MCBQ] = []; //Mutation callback queue
         _containersData.set(container, containerData);
@@ -796,18 +807,6 @@ export const getYStepLength = () => _yStepLength;
 export const getMinAnimationFrame = () => _minAnimationFrame;
 
 /**
- * Returns the value of the `_windowWidth` property. 
- * @returns {number} The current `window`'s inner width.
- */
-export const getWindowWidth = () => _windowWidth;
-
-/**
- * Returns the value of the `_windowHeight` property. 
- * @returns {number} The current `window`'s inner height.
- */
-export const getWindowHeight = () => _windowHeight;
-
-/**
  * Returns the value of the `_reducedMotion` property. 
  * @returns {boolean} `true` if the user has enabled any reduce-motion setting devicewise, `false` otherwise.
  */
@@ -821,7 +820,7 @@ export const getDebugMode = () => _debugMode;
 
 /**
  * Checks whether `container` is being scrolled horizontally.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {boolean} `true` if a scroll-animation on the x-axis of `container` is currently being performed, `false` otherwise.
  */
@@ -837,7 +836,7 @@ export const isXScrolling = (container = _pageScroller, options) => {
 
 /**
  * Checks whether `container` is being scrolled vertically.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {boolean} `true` if a scroll-animation on the y-axis of `container` is currently being performed, `false` otherwise.
  */
@@ -853,7 +852,7 @@ export const isYScrolling = (container = _pageScroller, options) => {
 
 /**
  * Checks whether `container` is being scrolled.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {boolean} `true` if a scroll-animation is currently being performed on `container`, `false` otherwise.
  */
@@ -869,7 +868,7 @@ export const isScrolling = (container = _pageScroller, options) => {
 
 /**
  * Returns the horizontal pixel position `container` has to reach.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The target `scrollLeft`/`scrollX` pixel position of `container`.
  */
@@ -886,7 +885,7 @@ export const getFinalXPosition = (container = _pageScroller, options) => {
 
 /**
  * Returns the vertical pixel position `container` has to reach.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The target `scrollTop`/`scrollY` pixel position of `container`.
  */
@@ -903,7 +902,7 @@ export const getFinalYPosition = (container = _pageScroller, options) => {
 
 /**
  * Returns the direction of the current scroll-animation on the x-axis of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} `1` if the target `scrollLeft`/`scrollX` is higher than the current one, `-1` it's lower, `0` otherwise.
  */
@@ -920,7 +919,7 @@ export const getScrollXDirection = (container = _pageScroller, options) => {
 
 /**
  * Returns the direction of the current scroll-animation on the y-axis of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} `1` if the target `scrollTop`/`scrollY` is higher than the current one, `-1` it's lower, `0` otherwise.
  */
@@ -937,7 +936,7 @@ export const getScrollYDirection = (container = _pageScroller, options) => {
 
 /**
  * Returns a `StepLengthCalculator` set for the x-axis of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the x-axis of `container`, otherwise returns the `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function | undefined} The ease function which currently controls the scroll-animations on the x-axis of `container`.
@@ -954,7 +953,7 @@ export const getXStepLengthCalculator = (container = _pageScroller, getTemporary
 
 /**
  * Returns a `StepLengthCalculator` set for the y-axis of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} getTemporary If `true` returns the `temporary` `StepLengthCalculator` set for the y-axis of `container`, otherwise returns the `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function | undefined} The ease function which currently controls the scroll-animations on the y-axis of `container`.
@@ -1006,6 +1005,7 @@ export const getScrollbarsMaxDimension = (forceCalculation = false) => {
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @returns {*} The element that scrolls `window` when it's scrolled and that (viceversa) is scrolled when `window` is scrolled.
  */
+//TODO: add a new parameter so that GET_WINDOW_OF(container) can be used instead of window
 export const getWindowScroller = (forceCalculation = false) => {
     if (forceCalculation || !_windowScroller) {
         const _oldData = _containersData.get(window);
@@ -1036,7 +1036,7 @@ export const getWindowScroller = (forceCalculation = false) => {
             _elementsIndex++;
         }
 
-        //Neither _html nor _body have the same scrollPosition of Window.
+        //Neither _html nor _body have the same scrollPosition of window.
         if (_elementsIndex === 0) {
             _windowScroller = window;
             return _windowScroller;
@@ -1114,6 +1114,7 @@ export const getWindowScroller = (forceCalculation = false) => {
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The element that scrolls the webpage.
  */
+//TODO: add a new parameter so that GET_WINDOW_OF(container) can be used instead of window
 export const getPageScroller = (forceCalculation = false, options) => {
     //Check if the _pageScroller has already been calculated.
     if (forceCalculation || !_pageScroller) {
@@ -1165,7 +1166,7 @@ export const getFramesTime = (forceCalculation = false, callback, options) => {
 /**
  * Sets (or unsets if specified) the `StepLengthCalculator` for the x-axis of `container`.
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -1197,7 +1198,7 @@ export const setXStepLengthCalculator = (newCalculator, container = _pageScrolle
 /**
  * Sets (or unsets if specified) the `StepLengthCalculator` for the y-axis of `container`.
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -1229,7 +1230,7 @@ export const setYStepLengthCalculator = (newCalculator, container = _pageScrolle
 /**
  * Sets (or unsets if specified) the `StepLengthCalculator` for the both axes of `container`.
  * @param {function} [newCalculator] A `StepLengthCalculator` or `undefined`. 
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} isTemporary If true `newCalculator` will be set as a temporary `StepLengthCalculator` of `container`, otherwise it will be set a `permanent` one.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -1319,7 +1320,7 @@ export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATIO
 
 /**
  * Tells the API which Element scrolls the document (`_pageScroller` property). 
- * @param {*} container An instance of `Element` or `window`.
+ * @param {*} container An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 export const setPageScroller = (container, options) => {
@@ -1333,7 +1334,7 @@ export const setPageScroller = (container, options) => {
 /**
  * Adds a callback function to the resize callback queue of `container`.
  * @param {function} newCallback A function that will be invoked when `container` is resized.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 //TODO: add cypress tests
@@ -1357,7 +1358,7 @@ export const addResizeCallback = (newCallback, container = _pageScroller, option
 /**
  * Adds a callback function to the mutation callback queue of `container`.
  * @param {function} newCallback A function that will be invoked when `container` is mutated.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
 //TODO: add cypress tests
@@ -1370,7 +1371,7 @@ export const addMutationCallback = (newCallback, container = _pageScroller, opti
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
 
-    if (container === window || (!_oldData && !INIT_CONTAINER_DATA(container, _containerData))) {
+    if (IS_WINDOW(container) || (!_oldData && !INIT_CONTAINER_DATA(container, _containerData))) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "addMutationCallback", { secondaryMsg: newCallback, idx: 1 }, DEFAULT_LOG_OPTIONS));
         return;
     }
@@ -1447,14 +1448,14 @@ export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, o
     if (!IS_POSITIVE_OR_0(previousTimestamp)) {
         options.requestPhase = 1;
         _framesTimes[FRM_TMS_PHASE] = 1;
-        window.requestAnimationFrame((timestamp) => calcFramesTimes(timestamp, currentTimestamp, callback, options));
+        TOP_WINDOW.requestAnimationFrame((timestamp) => calcFramesTimes(timestamp, currentTimestamp, callback, options));
         return;
     }
 
     if (!IS_POSITIVE_OR_0(currentTimestamp)) {
         options.requestPhase = 2;
         _framesTimes[FRM_TMS_PHASE] = 2;
-        window.requestAnimationFrame((timestamp) => calcFramesTimes(previousTimestamp, timestamp, callback, options));
+        TOP_WINDOW.requestAnimationFrame((timestamp) => calcFramesTimes(previousTimestamp, timestamp, callback, options));
         return;
     }
 
@@ -1482,7 +1483,7 @@ export const calcFramesTimes = (previousTimestamp, currentTimestamp, callback, o
 
 /**
  * Returns the size of the vertical scrollbar of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The width of the vertical scrollbar of `container`.
@@ -1493,7 +1494,7 @@ export const calcXScrollbarDimension = (container = _pageScroller, forceCalculat
 
 /**
  * Returns the size of the horizontal scrollbar of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The height of the horizontal scrollbar of `container`.
@@ -1504,7 +1505,7 @@ export const calcYScrollbarDimension = (container = _pageScroller, forceCalculat
 
 /**
  * Returns an array containing the size of the 2 scrollbars of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number[]} An array containing: 
@@ -1531,7 +1532,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
     ) {
         const _windowScroller = getWindowScroller();
 
-        if (container === window && window !== _windowScroller) {
+        if (IS_WINDOW(container) && container !== _windowScroller) {
             return calcScrollbarsDimensions(
                 _windowScroller,
                 forceCalculation,
@@ -1547,7 +1548,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
 
             if (container === document.body || container === document.documentElement) {
                 //The properties of _style are automatically updated whenever the style is changed.
-                const _style = window.getComputedStyle(container);
+                const _style = TOP_WINDOW.getComputedStyle(container);
 
                 const _initialWidth = Number.parseInt(_style.width);
                 const _initialHeight = Number.parseInt(_style.height);
@@ -1577,15 +1578,16 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
             //After modifying the styles of the container, the scroll position may change.
             container.scroll(_initialXPosition, _initialYPosition);
 
-            //If the container is the windowScroller, cache the values for window too.
+            //If the container is the windowScroller, cache the values for it's window too.
             if (container === _windowScroller) {
-                const _windowOldData = _containersData.get(window);
+                const _window = GET_WINDOW_OF(container);
+                const _windowOldData = _containersData.get(_window);
                 const _windowData = _windowOldData || [];
 
                 _windowData[K_VSB] = _containerData[K_VSB];
                 _windowData[K_HSB] = _containerData[K_HSB];
 
-                if (!_windowOldData) INIT_CONTAINER_DATA(window, _windowData);
+                if (!_windowOldData) INIT_CONTAINER_DATA(_window, _windowData);
             }
         }
     }
@@ -1598,7 +1600,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
 
 /**
  * Returns an array containing the size of the 4 borders of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number[]} An array containing: 
@@ -1624,9 +1626,9 @@ export const calcBordersDimensions = (container = _pageScroller, forceCalculatio
         _containerData[K_BB] === NO_VAL ||
         _containerData[K_LB] === NO_VAL
     ) {
-        if (container === window) {
+        if (IS_WINDOW(container)) {
             const _windowScroller = getWindowScroller();
-            const _bordersDimensions = _windowScroller === window ?
+            const _bordersDimensions = IS_WINDOW(_windowScroller) ?
                 [0, 0, 0, 0] :
                 calcBordersDimensions(_windowScroller, forceCalculation, options);
 
@@ -1636,14 +1638,14 @@ export const calcBordersDimensions = (container = _pageScroller, forceCalculatio
             _containerData[K_LB] = _bordersDimensions[3];
         } else {
             try {
-                const _style = window.getComputedStyle(container);
+                const _style = TOP_WINDOW.getComputedStyle(container);
 
                 _containerData[K_TB] = Number.parseFloat(_style.borderTopWidth);
                 _containerData[K_RB] = Number.parseFloat(_style.borderRightWidth);
                 _containerData[K_BB] = Number.parseFloat(_style.borderBottomWidth);
                 _containerData[K_LB] = Number.parseFloat(_style.borderLeftWidth);
             } catch (getComputedStyleNotSupported) {
-                //window.getComputedStyle() may not work on the passed container 
+                //TOP_WINDOW.getComputedStyle() may not work on the passed container 
                 _containerData[K_TB] = 0;
                 _containerData[K_RB] = 0;
                 _containerData[K_BB] = 0;
@@ -1662,7 +1664,7 @@ export const calcBordersDimensions = (container = _pageScroller, forceCalculatio
 
 /**
  * Returns the `scrollXCalculator` of `container`.  
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function} A function that when invoked returns the real-time `scrollLeft` / `scrollX` value of `container`.
  */
@@ -1672,7 +1674,7 @@ export const getScrollXCalculator = (container = _pageScroller, options) => {
 
 /**
  * Returns the `scrollYCalculator` of `container`.  
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function} A function that when invoked returns the real-time `scrollTop` / `scrollY` value of `container`.  
  */
@@ -1682,7 +1684,7 @@ export const getScrollYCalculator = (container = _pageScroller, options) => {
 
 /**
  * Returns an array containing the `scrollXCalculator` and the `scrollYCalculator` of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {function[]} An array containing 2 functions that when invoked return respectively: 
  * - The real-time `scrollLeft` / `scrollX` value of `container`
@@ -1702,7 +1704,7 @@ export const getScrollCalculators = (container = _pageScroller, options) => {
 
 /**
  * Returns the `maxScrollX` of `container`.  
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The highest reacheable `scrollLeft` / `scrollX` value of `container`.
@@ -1713,7 +1715,7 @@ export const getMaxScrollX = (container = _pageScroller, forceCalculation = fals
 
 /**
  * Returns the `maxScrollY` of `container`.  
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number} The highest reacheable `scrollTop` / `scrollY` value of `container`.
@@ -1724,7 +1726,7 @@ export const getMaxScrollY = (container = _pageScroller, forceCalculation = fals
 
 /**
  * Returns an array containing the `maxScrollX` and the `maxScrollY` values of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the values are calculated on the fly (expensive operation), otherwise they're returned from cache.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number[]} An array containing: 
@@ -1766,9 +1768,9 @@ export const getMaxScrolls = (container = _pageScroller, forceCalculation = fals
      * container !window | NO_VAL |      NO_VAL     |  window
      *            window | NO_VAL | _windowScroller |    /
      */
-    if (container !== window) {
-        _windowScroller = _windowScroller === container ? window : NO_VAL;    
-    } else if (_windowScroller === window) {
+    if (!IS_WINDOW(container)) {
+        _windowScroller = _windowScroller === container ? GET_WINDOW_OF(container) : NO_VAL;    
+    } else if (_windowScroller(_windowScroller)) {
         _windowScroller = NO_VAL;
     }
     
@@ -1788,7 +1790,7 @@ export const getMaxScrolls = (container = _pageScroller, forceCalculation = fals
 
 /**
  * Returns the `borderBox` of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {number[]} An object containing:
  * - The width of `container` taking into account borders and paddings
@@ -1806,9 +1808,9 @@ export const getBorderBox = (container = _pageScroller, options) => {
     }
 
     if (_containerData[K_BRB] === NO_VAL) {
-        const _containerRect = container !== window ?
+        const _containerRect = !IS_WINDOW(container) ?
             container.getBoundingClientRect() :
-            { width: _windowWidth, height: _windowHeight };
+            { width: container.innerWidth, height: container.innerHeight };
 
         _containerData[K_BRB] = {
             width: _containerRect.width,
@@ -1821,7 +1823,7 @@ export const getBorderBox = (container = _pageScroller, options) => {
 
 /**
  * Returns the closest `scrollableParent` of `container` on the x-axis.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} includeHiddenParents `true` to include ancestors with `overflow:hidden` or `overflow-x:hidden` in the search, `false` otherwise.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the x-axis or `null` if there's none.
@@ -1838,7 +1840,7 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
         return;
     }
 
-    if (container === window) {
+    if (IS_WINDOW(container)) {
         _containerData[K_HSPX] = NO_SP;
         _containerData[K_HSPY] = NO_SP;
         _containerData[K_SSPY] = NO_SP;
@@ -1868,10 +1870,10 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
     const _isScrollableParent = (overflowRegex) => {
         //The x-axis should be tested.
         if (
-            _parent === window ||
-            overflowRegex.test(window.getComputedStyle(_parent).overflowX)
+            IS_WINDOW(_parent) ||
+            overflowRegex.test(TOP_WINDOW.getComputedStyle(_parent).overflowX)
         ) {
-            if (_parent === _windowScroller) _parent = window;
+            if (_parent === _windowScroller) _parent = GET_WINDOW_OF(container);
 
             const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
             const _parentInitialX = _scrollXCalculator();
@@ -1927,8 +1929,8 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
     }
 
     //Test window if necessary.
-    if (_windowScroller === window) {
-        _parent = window;
+    if (IS_WINDOW(_windowScroller)) {
+        _parent = GET_WINDOW_OF(container);
         if (_isScrollableParent()) return _parent;
     }
 
@@ -1938,7 +1940,7 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
 
 /**
  * Returns the closest `scrollableParent` of `container` on the y-axis.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} includeHiddenParents `true` to include ancestors with `overflow:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the y-axis or `null` if there's none.
@@ -1955,7 +1957,7 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
         return;
     }
 
-    if (container === window) {
+    if (IS_WINDOW(container)) {
         _containerData[K_HSPX] = NO_SP;
         _containerData[K_HSPY] = NO_SP;
         _containerData[K_SSPY] = NO_SP;
@@ -1985,10 +1987,10 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
     const _isScrollableParent = (overflowRegex) => {
         //The y-axis should be tested.
         if (
-            _parent === window ||
-            overflowRegex.test(window.getComputedStyle(_parent).overflowY)
+            IS_WINDOW(_parent) ||
+            overflowRegex.test(TOP_WINDOW.getComputedStyle(_parent).overflowY)
         ) {
-            if (_parent === _windowScroller) _parent = window;
+            if (_parent === _windowScroller) _parent = GET_WINDOW_OF(container);
 
             const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
             const _parentInitialX = _scrollXCalculator();
@@ -2043,9 +2045,9 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
         _parent = _parent.parentElement;
     }
 
-    //Test window if necessary.
-    if (_windowScroller === window) {
-        _parent = window;
+    //Test the window of container if necessary.
+    if (IS_WINDOW(_windowScroller)) {
+        _parent = GET_WINDOW_OF(container);
         if (_isScrollableParent()) return _parent;
     }
 
@@ -2055,7 +2057,7 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
 
 /**
  * Returns the closest `scrollableParent` of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} includeHiddenParents `true` to include ancestors with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable or `null` if there's none.
@@ -2098,8 +2100,8 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
          */
         if (_cachedXParent === NO_SP) return _cachedYParent;
         if (_cachedYParent === NO_SP) return _cachedXParent;
-        if (_cachedXParent === window) return _cachedYParent;
-        if (_cachedYParent === window) return _cachedXParent;
+        if (IS_WINDOW(_cachedXParent)) return _cachedYParent;
+        if (IS_WINDOW(_cachedYParent)) return _cachedXParent;
         return _cachedXParent.contains(_cachedYParent) ? _cachedYParent : _cachedXParent;
     }
 
@@ -2108,7 +2110,7 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
         return;
     }
 
-    if (container === window) {
+    if (IS_WINDOW(container)) {
         _containerData[K_HSPX] = NO_SP;
         _containerData[K_HSPY] = NO_SP;
         _containerData[K_SSPY] = NO_SP;
@@ -2140,19 +2142,19 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
     const _isScrollableParent = (overflowRegex) => {
         let _testScrollX, _testScrollY;
 
-        if (_parent === window) {
+        if (IS_WINDOW(_parent)) {
             _testScrollX = true;
             _testScrollY = true;
         } else {
             //Check if the overflow conditions are met.
-            const _style = window.getComputedStyle(_parent);
+            const _style = TOP_WINDOW.getComputedStyle(_parent);
             _testScrollX = overflowRegex.test(_style.overflowX);
             _testScrollY = overflowRegex.test(_style.overflowY);
         }
 
         //At least one axis should be tested.
         if (_testScrollX || _testScrollY) {
-            if (_parent === _windowScroller) _parent = window;
+            if (_parent === _windowScroller) _parent = GET_WINDOW_OF(container);
 
             const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
             const _parentInitialX = _scrollXCalculator();
@@ -2226,9 +2228,9 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
         _parent = _parent.parentElement;
     }
 
-    //Test window if necessary.
-    if (_windowScroller === window) {
-        _parent = window;
+    //Test the window of container if necessary.
+    if (IS_WINDOW(_windowScroller)) {
+        _parent = GET_WINDOW_OF(container);
         if (_isScrollableParent()) return _parent;
     }
 
@@ -2239,7 +2241,7 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
 
 /**
  * Returns every `scrollableParent` of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} includeHiddenParents `true` to include ancestors with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
  * @param {function} [callback] A function that is invoked every time a `scrollableParent` is found. The input of this function is the just-found `scrollableParent`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
@@ -2266,7 +2268,7 @@ export const getAllScrollableParents = (container = _pageScroller, includeHidden
 /**
  * Scrolls the x-axis of `container` to the specified position if possible.
  * @param {number} finalPosition A finite number indicating the `scrollLeft` / `scrollX` that `container` has to reach.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} containScroll `true` to clamp `finalPosition` to [`0`...`maxScrollX`], `false` otherwise.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
@@ -2310,7 +2312,8 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
         stopScrollingX(container, callback);
         return;
     }
-    const _scroll = container !== window ? finalPos => container.scrollLeft = finalPos : finalPos => container.scroll(finalPos, window.scrollY);
+    const _window = GET_WINDOW_OF(container);
+    const _scroll = !IS_WINDOW(container) ? finalPos => container.scrollLeft = finalPos : finalPos => container.scroll(finalPos, _window.scrollY);
 
     //If user prefers reduced motion
     //the API rolls back to the default "jump-to-position" behavior.
@@ -2336,7 +2339,7 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
     if (_containerData[K_IDX]) return;
 
     //No scroll-animation is being performed so a new one is created.
-    _containerData[K_IDX] = window.requestAnimationFrame(_stepX);
+    _containerData[K_IDX] = TOP_WINDOW.requestAnimationFrame(_stepX);
 
     function _stepX(timestamp) {
         const _finalPosition = _containerData[K_FPX];
@@ -2373,7 +2376,7 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
 
         //The current scroll-animation has been altered by the StepLengthCalculator.
         if (_finalPosition !== _containerData[K_FPX]) {
-            _containerData[K_IDX] = window.requestAnimationFrame(_stepX);
+            _containerData[K_IDX] = TOP_WINDOW.requestAnimationFrame(_stepX);
             return;
         }
 
@@ -2412,14 +2415,14 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
             return;
         }
 
-        _containerData[K_IDX] = window.requestAnimationFrame(_stepX);
+        _containerData[K_IDX] = TOP_WINDOW.requestAnimationFrame(_stepX);
     }
 }
 
 /**
  * Scrolls the y-axis of `container` to the specified position if possible.
  * @param {number} finalPosition A finite number indicating the `scrollTop` / `scrollY` that `container` has to reach.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} containScroll `true` to clamp `finalPosition` to [`0`...`maxScrollY`], `false` otherwise.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
@@ -2463,7 +2466,8 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
         stopScrollingY(container, callback);
         return;
     }
-    const _scroll = container !== window ? finalPos => container.scrollTop = finalPos : finalPos => container.scroll(window.scrollX, finalPos);
+    const _window = GET_WINDOW_OF(container);
+    const _scroll = !IS_WINDOW(container) ? finalPos => container.scrollTop = finalPos : finalPos => container.scroll(_window.scrollX, finalPos);
 
     //If user prefers reduced motion
     //the API rolls back to the default "jump-to-position" behavior.
@@ -2489,7 +2493,7 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
     if (_containerData[K_IDY]) return;
 
     //No scroll-animation is being performed so a new one is created.
-    _containerData[K_IDY] = window.requestAnimationFrame(_stepY);
+    _containerData[K_IDY] = TOP_WINDOW.requestAnimationFrame(_stepY);
 
     function _stepY(timestamp) {
         const _finalPosition = _containerData[K_FPY];
@@ -2525,7 +2529,7 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
 
         //The current scroll-animation has been altered by the StepLengthCalculator.
         if (_finalPosition !== _containerData[K_FPY]) {
-            _containerData[K_IDY] = window.requestAnimationFrame(_stepY);
+            _containerData[K_IDY] = TOP_WINDOW.requestAnimationFrame(_stepY);
             return;
         }
 
@@ -2564,14 +2568,14 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
             return;
         }
 
-        _containerData[K_IDY] = window.requestAnimationFrame(_stepY);
+        _containerData[K_IDY] = TOP_WINDOW.requestAnimationFrame(_stepY);
     }
 }
 
 /**
  * Scrolls the x-axis of `container` by the specified amount if possible.
  * @param {number} delta A finite number indicating the amount of pixels that the x-axis of `container` should be scrolled by.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} stillStart `true` if any on-going scroll-animation on the x-axis of `container` must be stopped before starting this scroll-animation.
  *                             `false` if any on-going scroll-animation on the x-axis of `container` should extended by `delta` if possible. 
@@ -2636,7 +2640,7 @@ export const scrollXBy = (delta, container = _pageScroller, callback, stillStart
 /**
  * Scrolls the y-axis of `container` by the specified amount if possible.
  * @param {number} delta A finite number indicating the amount of pixels that the y-axis of `container` should be scrolled by.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} stillStart `true` if any on-going scroll-animation on the y-axis of `container` must be stopped before starting this scroll-animation.
  *                             `false` if any on-going scroll-animation on the y-axis of `container` should extended by `delta` if possible. 
@@ -2702,7 +2706,7 @@ export const scrollYBy = (delta, container = _pageScroller, callback, stillStart
  * Scrolls `container` to the specified positions if possible.
  * @param {number} finalXPosition A finite number indicating the `scrollLeft` / `scrollX` that `container` has to reach.
  * @param {number} finalYPosition A finite number indicating the `scrollTop` / `scrollY` that `container` has to reach.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} containScroll `true` to clamp `finalXPosition` to [`0`...`maxScrollX`] and `finalYPosition` to [`0`...`maxScrollY`], `false` otherwise.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
@@ -2739,7 +2743,7 @@ export const scrollTo = (finalXPosition, finalYPosition, container = _pageScroll
  * Scrolls `container` by the specified amounts if possible.
  * @param {number} deltaX A finite number indicating the amount of pixels that the x-axis of `container` should be scrolled by.
  * @param {number} deltaY A finite number indicating the amount of pixels that the y-axis of `container` should be scrolled by.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {function} [callback] A function that is executed when the scroll-animation has ended.
  * @param {boolean} stillStart `true` if any on-going scroll-animation of `container` must be stopped before starting this scroll-animation.
  *                             `false` if any on-going scroll-animation of `container` should extended by `deltaX` and `deltaY` if possible. 
@@ -2778,7 +2782,7 @@ export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, st
 
 /**
  * Finds and scrolls all the `scrollableParents` of `container` in order to make it visible on the screen with the specified alignments.
- * @param {*} container An instance of `Element` or `window`.
+ * @param {*} container An instance of `Element` or a `window`.
  * @param {boolean} alignToLeft This value indicates the alignment (on the x-axis) of `container` and all its `scrollableParents`:
  * - `true` if the alignment should be to the `left`
  * - `false` if the alignment should be to the `right`
@@ -2843,9 +2847,9 @@ export const scrollIntoView = (container, alignToLeft = true, alignToTop = true,
         const { top, right, bottom, left } = _container.getBoundingClientRect();
         const _containerPos = { top, right, bottom, left };
 
-        if (_parent === window) {
-            _containerPos.right -= _windowWidth;
-            _containerPos.bottom -= _windowHeight;
+        if (IS_WINDOW(_parent)) {
+            _containerPos.right -= _parent.innerWidth;
+            _containerPos.bottom -= _parent.innerHeight;
         } else {
             const _parentPos = _parent.getBoundingClientRect();
 
@@ -2895,7 +2899,7 @@ export const scrollIntoView = (container, alignToLeft = true, alignToTop = true,
 
 /**
  * Finds and scrolls all the `scrollableParents` of `container` in order to make it visible on the screen with the specified alignments only if it's not already visible.
- * @param {*} container An instance of `Element` or `window`.
+ * @param {*} container An instance of `Element` or a `window`.
  * @param {boolean} alignToCenter This value indicates the alignments (on both the x and y axes) of `container`:
  * - `true` if the alignments should be to the `center` of its closest scrollable ancestor
  * - Any other value, if the alignments should to the `closest side`:
@@ -2951,9 +2955,9 @@ export const scrollIntoViewIfNeeded = (container, alignToCenter = true, callback
         const { top, right, bottom, left } = _container.getBoundingClientRect();
         const _containerPos = { top, right, bottom, left };
 
-        if (_parent === window) {
-            _containerPos.right -= _windowWidth;
-            _containerPos.bottom -= _windowHeight;
+        if (IS_WINDOW(_parent)) {
+            _containerPos.right -= _parent.innerWidth;
+            _containerPos.bottom -= _parent.innerHeight;
         } else {
             const _parentPos = _parent.getBoundingClientRect();
 
@@ -3030,7 +3034,7 @@ export const scrollIntoViewIfNeeded = (container, alignToCenter = true, callback
 
 /**
  * Stops the current scroll-animation on the x-axis of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {function} [callback] A function invoked when the scroll-animation on the x-axis of `container` has been stopped.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -3038,7 +3042,7 @@ export const stopScrollingX = (container = _pageScroller, callback, options) => 
     const _containerData = _containersData.get(container);
 
     if (_containerData) {
-        window.cancelAnimationFrame(_containerData[K_IDX]);
+        TOP_WINDOW.cancelAnimationFrame(_containerData[K_IDX]);
 
         //No scroll-animation on the y-axis is being performed.
         if (_containerData[K_IDY] === NO_VAL) {
@@ -3059,7 +3063,7 @@ export const stopScrollingX = (container = _pageScroller, callback, options) => 
 
 /**
  * Stops the current scroll-animation on the y-axis of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {function} [callback] A function invoked when the scroll-animation on the y-axis of `container` has been stopped.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -3067,7 +3071,7 @@ export const stopScrollingY = (container = _pageScroller, callback, options) => 
     const _containerData = _containersData.get(container);
 
     if (_containerData) {
-        window.cancelAnimationFrame(_containerData[K_IDY]);
+        TOP_WINDOW.cancelAnimationFrame(_containerData[K_IDY]);
 
         //No scroll-animation on the x-axis is being performed.
         if (_containerData[K_IDX] === NO_VAL) {
@@ -3088,7 +3092,7 @@ export const stopScrollingY = (container = _pageScroller, callback, options) => 
 
 /**
  * Stops all the current scroll-animations of `container`.
- * @param {*} [container] An instance of `Element` or `window`.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {function} [callback] A function invoked when all the scroll-animations of `container` have been stopped.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
@@ -3096,8 +3100,8 @@ export const stopScrolling = (container = _pageScroller, callback, options) => {
     const _containerData = _containersData.get(container);
 
     if (_containerData) {
-        window.cancelAnimationFrame(_containerData[K_IDX]);
-        window.cancelAnimationFrame(_containerData[K_IDY]);
+        TOP_WINDOW.cancelAnimationFrame(_containerData[K_IDX]);
+        TOP_WINDOW.cancelAnimationFrame(_containerData[K_IDY]);
 
         CLEAR_COMMON_DATA(_containerData);
 
@@ -3117,8 +3121,8 @@ export const stopScrolling = (container = _pageScroller, callback, options) => {
  */
 export const stopScrollingAll = (callback) => {
     for (const [_container, _containerData] of _containersData.entries()) {
-        window.cancelAnimationFrame(_containerData[K_IDX]);
-        window.cancelAnimationFrame(_containerData[K_IDY]);
+        TOP_WINDOW.cancelAnimationFrame(_containerData[K_IDX]);
+        TOP_WINDOW.cancelAnimationFrame(_containerData[K_IDY]);
 
         CLEAR_COMMON_DATA(_containerData);
 
@@ -3311,13 +3315,13 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
 const ussInit = () => {
     //Set the _reducedMotion.
     try { //Chrome, Firefox & Safari >= 14
-        window.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
-            _reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
+        TOP_WINDOW.matchMedia("(prefers-reduced-motion)").addEventListener("change", () => {
+            _reducedMotion = TOP_WINDOW.matchMedia("(prefers-reduced-motion)").matches;
             stopScrollingAll();
         }, { passive: true });
     } catch (addEventListenerNotSupported) { //Safari < 14
-        window.matchMedia("(prefers-reduced-motion)").addListener(() => {
-            _reducedMotion = window.matchMedia("(prefers-reduced-motion)").matches;
+        TOP_WINDOW.matchMedia("(prefers-reduced-motion)").addListener(() => {
+            _reducedMotion = TOP_WINDOW.matchMedia("(prefers-reduced-motion)").matches;
             stopScrollingAll();
         });
     }
