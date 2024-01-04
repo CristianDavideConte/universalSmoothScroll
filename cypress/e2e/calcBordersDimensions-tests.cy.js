@@ -12,7 +12,7 @@ describe("calcBordersDimensions", function() {
             .then((win) => {
                 const _maxDim = 10; //See css styles of calcBordersDimensions-tests.html
                 
-                uss._containersData = new Map();
+                uss._containersData.clear();
                 expect(uss._containersData.size).to.equal(0);
 
                 //Test the window's borders. 
@@ -45,7 +45,6 @@ describe("calcBordersDimensions", function() {
                        ]
                 }, 
                 (res, v1, v2, v3, v4, v5, v6, v7) => {
-                    console.log(res)
                     expect(res).to.throw(constants.defaultUssException);
                 })
                 .then(() => {
@@ -123,7 +122,7 @@ describe("calcBordersDimensions", function() {
                     expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement, true), 
                                           [0,0,0,0])
                     ).to.be.true;
-
+                    
                     //Test if the methods used for stopping one or more scroll-animation/s erase the cached values (they should not).
                     const _dims = uss.calcBordersDimensions(_borderedElement, true);
                     uss.stopScrollingX(_borderedElement);
