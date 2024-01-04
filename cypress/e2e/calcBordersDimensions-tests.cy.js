@@ -129,7 +129,7 @@ describe("calcBordersDimensions", function() {
                     uss.stopScrollingY(_borderedElement);
                     uss.stopScrolling(_borderedElement);
                     uss.stopScrollingAll();
-                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement), _dims)).to.be.true;                
+                    expect(constants.arraysAreEqual(uss.calcBordersDimensions(_borderedElement), _dims)).to.be.true;
                 });
             });        
     });
