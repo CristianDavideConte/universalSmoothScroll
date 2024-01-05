@@ -200,21 +200,24 @@ export const NO_SP = null;
 export const NO_VAL = undefined;
 
 /**
+ * The `window` in which the API has been initialized.
+ */
+export const THIS_WINDOW = window;
+
+/**
  * The topmost `window` in the `window hierarchy`.
  */
 export const TOP_WINDOW = window.top;
 
-
+/**
+ * The initial inner `width` of `THIS_WINDOW`.
+ */
+export const INITIAL_WINDOW_WIDTH = THIS_WINDOW.innerWidth;
 
 /**
- * The initial inner `width` of the `window` in which this script has been initialized.
+ * The initial inner `height` of `THIS_WINDOW`.
  */
-export const INITIAL_WINDOW_WIDTH = window.innerWidth;
-
-/**
- * The initial inner `height` of the `window` in which this script has been initialized.
- */
-export const INITIAL_WINDOW_HEIGHT = window.innerHeight;
+export const INITIAL_WINDOW_HEIGHT = THIS_WINDOW.innerHeight;
 
 /**
  * The `highest scrollLeft / scrollTop` value that can be used by the API before scroll breaks (2^30px).
@@ -352,7 +355,8 @@ export const CHECK_INSTANCEOF = (value, classType = Element) => {
      */
     try {
         //Find the window associated with the passed value.
-        const _window = value.ownerDocument.defaultView;
+        const _window = GET_WINDOW_OF(value);
+        
         //Check if value is instanceof the iFrame/inner classType.
         return value instanceof _window[classType.name];
     } catch (UnsupportedOperation) {
@@ -465,7 +469,7 @@ export const IS_OBJECT = (value) => {
  * @returns `true` if `value` is a window object, `false` otherwise.
  */
 export const IS_WINDOW = (value) => {
-    if (value === window) return true;
+    if (value === THIS_WINDOW) return true;
     
     /**
      * Inside iFrames the pointer to the window object may be different

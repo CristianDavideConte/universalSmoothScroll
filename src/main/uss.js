@@ -1,9 +1,11 @@
+//TODO: there's should be a list of _pageScroller(s) one for each window of the page
+//TODO: there's should be a list of _windowScroller(s) one for each window of the page
+//TODO: fix the fact that iFrame's scrollbarsMaxDimensions may not be the same as the script's ones
+//TODO: fix the fact that iFrame's window object may not be the same as the script's window
+//TODO: fix the fact that iFrame's body/html elements may not be the same as the script's ones (create a GET_BODY_OF and GET_HTML_OF methods)
 //TODO: write missing comments
 //TODO: follow the same spacing styling of common.js
 //TODO: fix cypress tests
-//TODO: there's should be a list of _pageScroller(s) one for each window of the page
-//TODO: there's should be a list of _windowScroller(s) one for each window of the page
-//TODO: fix the fact that iFrame's window object may not be the same as the script's window
 //TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries into a single common list
@@ -58,6 +60,7 @@ import {
     INITIAL_WINDOW_WIDTH,
     INITIAL_WINDOW_HEIGHT,
     HIGHEST_SAFE_SCROLL_POS,
+    THIS_WINDOW,
     TOP_WINDOW,
     REGEX_ALIGNMENT_NEAREST,
     REGEX_LOGGER_DISABLED,
@@ -333,7 +336,7 @@ const DEFAULT_MUTATION_OBSERVER = {
              * Change the element's frangment string if its href attribute has changed. 
              */
             if (mutationObject.hasModifiedAttributes) {
-                const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
+                const _pageURL = THIS_WINDOW.location.href.split("#")[0]; //location.href = optionalURL#fragment
                 const _optionalURL = target.href ? target.href.split("#")[0] : NO_VAL;
                 let _fragment = _optionalURL === _pageURL ? target.hash.slice(1) : NO_FGS;
 
@@ -973,6 +976,7 @@ export const getYStepLengthCalculator = (container = _pageScroller, getTemporary
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @returns {number} The highest number of pixels a (browser) scrollbar can occupy.
  */
+//TODO: there should be a list of scrollbarsMaxDimensions, one for each window
 export const getScrollbarsMaxDimension = (forceCalculation = false) => {
     /**
      * Calculate the maximum sizes of scrollbars on the webpage by:
@@ -1323,6 +1327,7 @@ export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATIO
  * @param {*} container An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
+//TODO: set the page scroller of the right window only
 export const setPageScroller = (container, options) => {
     if (!_containersData.get(container) && !INIT_CONTAINER_DATA(container)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setPageScroller", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
@@ -1512,6 +1517,9 @@ export const calcYScrollbarDimension = (container = _pageScroller, forceCalculat
  * - The width of the vertical scrollbar of `container`
  * - The height of the horizontal scrollbar of `container`
  */
+//TODO: support the list of windowScrollers
+//TODO: support the list of scrollbarsMaxDimensions
+//TODO: don't use document.body and document.documentElement directly, use the getters
 export const calcScrollbarsDimensions = (container = _pageScroller, forceCalculation = false, options) => {
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
@@ -1609,6 +1617,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
  * - Top height of the bottom border of `container`
  * - Top width of the left border of `container`
  */
+//TODO: support the list of windowScrollers
 export const calcBordersDimensions = (container = _pageScroller, forceCalculation = false, options) => {
     //Check if the bordersDimensions of the passed container have already been calculated. 
     const _oldData = _containersData.get(container);
@@ -1733,6 +1742,7 @@ export const getMaxScrollY = (container = _pageScroller, forceCalculation = fals
  * - The highest reacheable `scrollLeft` / `scrollX` value of `container`
  * - The highest reacheable `scrollTop` / `scrollY` value of `container`
  */
+//TODO: support the list of windowScrollers
 export const getMaxScrolls = (container = _pageScroller, forceCalculation = false, options) => {
     //Check if the maxScrollX/maxScrollY values for the passed container have already been calculated. 
     const _oldData = _containersData.get(container) || [];
@@ -1828,6 +1838,8 @@ export const getBorderBox = (container = _pageScroller, options) => {
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the x-axis or `null` if there's none.
  */
+//TODO: support the list of windowScrollers
+//TODO: don't use document.body and document.documentElement directly, use the getters
 export const getXScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
@@ -1945,6 +1957,8 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the y-axis or `null` if there's none.
  */
+//TODO: support the list of windowScrollers
+//TODO: don't use document.body and document.documentElement directly, use the getters
 export const getYScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
@@ -2062,6 +2076,8 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable or `null` if there's none.
  */
+//TODO: support the list of windowScrollers
+//TODO: don't use document.body and document.documentElement directly, use the getters
 export const getScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "getScrollableParent" });
 
@@ -2312,8 +2328,7 @@ export const scrollXTo = (finalPosition, container = _pageScroller, callback, co
         stopScrollingX(container, callback);
         return;
     }
-    const _window = GET_WINDOW_OF(container);
-    const _scroll = !IS_WINDOW(container) ? finalPos => container.scrollLeft = finalPos : finalPos => container.scroll(finalPos, _window.scrollY);
+    const _scroll = !IS_WINDOW(container) ? finalPos => container.scrollLeft = finalPos : finalPos => container.scroll(finalPos, container.scrollY);
 
     //If user prefers reduced motion
     //the API rolls back to the default "jump-to-position" behavior.
@@ -2466,8 +2481,7 @@ export const scrollYTo = (finalPosition, container = _pageScroller, callback, co
         stopScrollingY(container, callback);
         return;
     }
-    const _window = GET_WINDOW_OF(container);
-    const _scroll = !IS_WINDOW(container) ? finalPos => container.scrollTop = finalPos : finalPos => container.scroll(_window.scrollX, finalPos);
+    const _scroll = !IS_WINDOW(container) ? finalPos => container.scrollTop = finalPos : finalPos => container.scroll(container.scrollX, finalPos);
 
     //If user prefers reduced motion
     //the API rolls back to the default "jump-to-position" behavior.
@@ -3171,11 +3185,11 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
     options = MERGE_OBJECTS(options, { subject: "hrefSetup" });
 
     const _init = IS_FUNCTION(init) ? init : (anchor, el, event) => event.stopPropagation();
-    const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
+    const _pageURL = THIS_WINDOW.location.href.split("#")[0]; //location.href = optionalURL#fragment
     const _updateHistory =
         updateHistory &&
-        window.history &&
-        window.history.scrollRestoration; //Check if histoy manipulation is supported
+        THIS_WINDOW.history &&
+        THIS_WINDOW.history.scrollRestoration; //Check if histoy manipulation is supported
 
     const scrollToFragment = (pageLink, fragment, event, updateHistoryIfNeeded) => {
         //Invalid fragment.
@@ -3248,8 +3262,8 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
         //the scroll position before the popstate event (it won't recognize the fragment). 
         const _updateHistoryIfNeeded = _updateHistory ?
             (fragment) => {
-                if (window.history.state !== fragment) {
-                    window.history.pushState(fragment, "", "#" + fragment + ".");
+                if (THIS_WINDOW.history.state !== fragment) {
+                    THIS_WINDOW.history.pushState(fragment, "", "#" + fragment + ".");
                 }
             } : () => { };
 
@@ -3260,7 +3274,7 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
 
             //Check if pageLink points to another page.
             if (_fragment === NO_FGS) {
-                const _pageURL = window.location.href.split("#")[0]; //location.href = optionalURL#fragment
+                const _pageURL = THIS_WINDOW.location.href.split("#")[0]; //location.href = optionalURL#fragment
                 const _optionalURL = pageLink.href.split("#")[0];
                 if (_optionalURL !== _pageURL) return;
             }
@@ -3281,37 +3295,40 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
      * when a user navigates through history.
      */
     if (_updateHistory) {
-        const _oldData = _containersData.get(window);
+        const _oldData = _containersData.get(THIS_WINDOW);
         const _containerData = _oldData || [];
-        if (!_oldData) INIT_CONTAINER_DATA(window, _containerData);
+        if (!_oldData) INIT_CONTAINER_DATA(THIS_WINDOW, _containerData);
 
         //History already managed.
         if (_containerData[K_FGS] !== NO_VAL) return;
 
-        //window's fragment is dynamically calculated every time, 
+        //THIS_WINDOW's fragment is dynamically calculated every time,
         //because it's faster than caching.
         _containerData[K_FGS] = NO_FGS;
 
         const _smoothHistoryNavigation = (event) => scrollToFragment(
             NO_VAL,
-            window.location.hash.slice(1, -1), //Remove the extra "." in the fragment
+            THIS_WINDOW.location.hash.slice(1, -1), //Remove the extra "." in the fragment
             event,
             () => { },
         );
 
-        window.history.scrollRestoration = "manual";
-        window.addEventListener("popstate", _smoothHistoryNavigation, { passive: true });
-        window.addEventListener("unload", (event) => event.preventDefault(), { passive: false, once: true });
+        THIS_WINDOW.history.scrollRestoration = "manual";
+        THIS_WINDOW.addEventListener("popstate", _smoothHistoryNavigation, { passive: true });
+        THIS_WINDOW.addEventListener("unload", (event) => event.preventDefault(), { passive: false, once: true });
 
         //Checks if the page initially have a URL containing
         //a valid fragment and scrolls to it if necessary.
         if (document.readyState === "complete") _smoothHistoryNavigation(new Event("load"));
-        else window.addEventListener("load", _smoothHistoryNavigation, { passive: true, once: true });
+        else THIS_WINDOW.addEventListener("load", _smoothHistoryNavigation, { passive: true, once: true });
     }
 }
 
 
 
+//TODO: support the list of windowScrollers
+//TODO: support the list of pageScrollers
+//TODO: support the list of scrollbarsMaxDimensions
 const ussInit = () => {
     //Set the _reducedMotion.
     try { //Chrome, Firefox & Safari >= 14
@@ -3349,4 +3366,4 @@ const ussInit = () => {
 }
 
 if (document.readyState === "complete") ussInit();
-else window.addEventListener("load", ussInit, { passive: true, once: true });
+else THIS_WINDOW.addEventListener("load", ussInit, { passive: true, once: true });
