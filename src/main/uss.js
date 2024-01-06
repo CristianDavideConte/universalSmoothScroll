@@ -1,6 +1,5 @@
 //TODO: there's should be a list of _pageScroller(s) one for each window of the page
 //TODO: there's should be a list of _windowScroller(s) one for each window of the page
-//TODO: fix the fact that iFrame's scrollbarsMaxDimensions may not be the same as the script's ones
 //TODO: fix the fact that iFrame's window object may not be the same as the script's window
 //TODO: fix the fact that iFrame's body/html elements may not be the same as the script's ones (create a GET_BODY_OF and GET_HTML_OF methods)
 //TODO: write missing comments
@@ -123,8 +122,8 @@ const DEFAULT_LOG_OPTIONS = new Map([
     ["setStepLength", { primaryMsg: "newStepLength" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
 
     ["setMinAnimationFrame", { primaryMsg: "newMinAnimationFrame" + DEFAULT_ERROR_PRIMARY_MSG_4 }],
-    //TODO: rename "the input" to container
-    ["setPageScroller", { primaryMsg: "the input" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+
+    ["setPageScroller", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
     ["addResizeCallback", [
         { primaryMsg: "newCallback" + DEFAULT_ERROR_PRIMARY_MSG_3 },
@@ -617,7 +616,7 @@ export let _yStepLength = DEFAULT_YSTEP_LENGTH;
 export let _minAnimationFrame = DEFAULT_MIN_ANIMATION_FRAMES;
 
 /**
- * The highest number of pixels any scrollbar on the page can occupy (it's browser dependent).
+ * The highest number of pixels that can be occupied by an unmodified scrollbar (it's browser dependent).
  */
 export let _scrollbarsMaxDimension = NO_VAL;
 
@@ -974,31 +973,39 @@ export const getYStepLengthCalculator = (container = _pageScroller, getTemporary
 /**
  * Returns the value of the `_scrollbarsMaxDimension` property. 
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @returns {number} The highest number of pixels a (browser) scrollbar can occupy.
+ * @returns {number} The highest number of pixels an unmodified (browser) scrollbar can occupy.
  */
-//TODO: there should be a list of scrollbarsMaxDimensions, one for each window
+//TODO: perhaps use the `` to avoid going newline?
 export const getScrollbarsMaxDimension = (forceCalculation = false) => {
     /**
-     * Calculate the maximum sizes of scrollbars on the webpage by:
+     * Calculate the biggest possible size of an unmodified scrollbar on the webpage by:
      * - creating a <div> with id = "_uss-scrollbox"
      * - giving that <div> a mini-stylesheet that forces it to show the scrollbars 
      */
     if (forceCalculation || _scrollbarsMaxDimension === NO_VAL) {
-        const _scrollBoxStyle = document.createElement("style");
-        const _scrollBox = document.createElement("div");
+        //Create the scrollable box.
+        const _document = TOP_WINDOW.document;
+        const _scrollBoxStyle = _document.createElement("style");
+        const _scrollBox = _document.createElement("div");
+
+        //Create the scrollable box's style.
         _scrollBox.id = "_uss-scrollbox";
         _scrollBoxStyle.appendChild(
-            //TODO: perhaps use the `` to avoid going newline?
-            document.createTextNode(
+            _document.createTextNode(
                 "#_uss-scrollbox { display:block; width:100px; height:100px; overflow-x:scroll; border:none; padding:0px; scrollbar-height:auto; }" +
                 "#_uss-scrollbox::-webkit-scrollbar { display:block; width:initial; height:initial; }"
             )
         );
-        document.head.appendChild(_scrollBoxStyle);
-        document.body.appendChild(_scrollBox);
+
+        /**
+         * Use the difference between the styled and unstyle scrollable box
+         * in order to calculate _scrollbarsMaxDimension.
+         */
+        _document.head.appendChild(_scrollBoxStyle);
+        _document.body.appendChild(_scrollBox);
         _scrollbarsMaxDimension = _scrollBox.offsetHeight - _scrollBox.clientHeight;
-        document.body.removeChild(_scrollBox);
-        document.head.removeChild(_scrollBoxStyle);
+        _document.body.removeChild(_scrollBox);
+        _document.head.removeChild(_scrollBoxStyle);
     }
 
     return _scrollbarsMaxDimension;
@@ -1518,7 +1525,6 @@ export const calcYScrollbarDimension = (container = _pageScroller, forceCalculat
  * - The height of the horizontal scrollbar of `container`
  */
 //TODO: support the list of windowScrollers
-//TODO: support the list of scrollbarsMaxDimensions
 //TODO: don't use document.body and document.documentElement directly, use the getters
 export const calcScrollbarsDimensions = (container = _pageScroller, forceCalculation = false, options) => {
     const _oldData = _containersData.get(container);
@@ -3328,7 +3334,6 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
 
 //TODO: support the list of windowScrollers
 //TODO: support the list of pageScrollers
-//TODO: support the list of scrollbarsMaxDimensions
 const ussInit = () => {
     //Set the _reducedMotion.
     try { //Chrome, Firefox & Safari >= 14
