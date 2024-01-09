@@ -23,7 +23,7 @@ describe("calcScrollbarsDimensions", function() {
                 const _windowScrollbarsDimensions = uss.calcScrollbarsDimensions(win, true);
                 expect(constants.arraysAreEqual(
                         _windowScrollbarsDimensions,
-                        uss.calcScrollbarsDimensions(uss.getWindowScroller(true))
+                        uss.calcScrollbarsDimensions(uss.getWindowScroller(win, true))
                         )
                 ).to.be.true;
                     
@@ -74,7 +74,7 @@ describe("calcScrollbarsDimensions", function() {
                     expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXAxis), [_maxDim,0])).to.be.true;
                     expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheYAxis), [0,_maxDim])).to.be.true;
                     expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXYAxes), [_maxDim,_maxDim])).to.be.true;
-                    expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(uss.getWindowScroller()), 
+                    expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(uss.getWindowScroller(win)), 
                                           uss.calcScrollbarsDimensions(win))
                     ).to.be.true;
 

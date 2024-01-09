@@ -19,7 +19,7 @@ describe("calcBordersDimensions", function() {
                 const _windowBordersDimensions = uss.calcBordersDimensions(win, true);
                 expect(constants.arraysAreEqual(
                         _windowBordersDimensions,
-                        uss.calcBordersDimensions(uss.getWindowScroller(true))
+                        uss.calcBordersDimensions(uss.getWindowScroller(win, true))
                         )
                 ).to.be.true;
 

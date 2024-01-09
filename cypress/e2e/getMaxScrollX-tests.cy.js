@@ -24,8 +24,8 @@ describe("getMaxScrollX", function() {
                 const _expectedMaxScrollX = 0.5 * _testElement.scrollWidth + uss.getScrollbarsMaxDimension(); 
 
                 //Test the Window
-                expect(uss.getMaxScrollX(win, false)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(), false));
-                expect(uss.getMaxScrollX(win, true)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(), true));
+                expect(uss.getMaxScrollX(win, false)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(win), false));
+                expect(uss.getMaxScrollX(win, true)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(win), true));
 
                 expect(Number.isFinite(uss.getMaxScrollX(_testElement, true))).to.be.true;
                 expect(Number.isFinite(uss.getMaxScrollX(_testElement, false))).to.be.true;
@@ -47,8 +47,8 @@ describe("getMaxScrollX", function() {
                 uss.stopScrolling(_testElement);
                 uss.stopScrollingAll();
                 expect(uss.getMaxScrollX(_testElement, false)).to.be.closeTo(_expectedMaxScrollX, 1);  
-                expect(uss.getMaxScrollX(win, false)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(), false));
-                expect(uss.getMaxScrollX(win, true)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(), true));
+                expect(uss.getMaxScrollX(win, false)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(win), false));
+                expect(uss.getMaxScrollX(win, true)).to.equal(uss.getMaxScrollX(uss.getWindowScroller(win), true));
               });
           });     
     });

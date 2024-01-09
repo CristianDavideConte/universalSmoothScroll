@@ -53,6 +53,7 @@ import {
     K_RCBQ,
     K_MCBQ,
     K_FGS,
+    K_WDS,
     NO_SP,
     NO_FGS,
     NO_VAL,
@@ -103,6 +104,8 @@ const DEFAULT_LOG_OPTIONS = new Map([
 
     ["getXStepLengthCalculator", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
     ["getYStepLengthCalculator", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    
+    ["getWindowScroller", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
     ["setXStepLengthCalculator", [
         { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
@@ -632,12 +635,6 @@ export let _framesTime = DEFAULT_FRAME_TIME;
 export let _framesTimes = []; //TODO: perhaps const?
 
 /**
- * The container that scrolls the `window` when it's scrolled and 
- * that (viceversa) is scrolled when the `window` is scrolled.
- */
-export let _windowScroller = NO_VAL;
-
-/**
  * The container that scrolls the `document`.
  * It's also the value used when an API method requires the `container` input parameter but nothing is passed.
  */
@@ -1012,22 +1009,33 @@ export const getScrollbarsMaxDimension = (forceCalculation = false) => {
 }
 
 /**
- * Returns the value of the `_windowScroller` property. 
+ * Returns the value of the `window scroller` of the passed container. 
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @returns {*} The element that scrolls `window` when it's scrolled and that (viceversa) is scrolled when `window` is scrolled.
+ * @returns {*} The element that scrolls the `window` of `container` when it's scrolled and that (viceversa) is scrolled when that `window` is scrolled.
  */
 //TODO: add a new parameter so that GET_WINDOW_OF(container) can be used instead of window
-export const getWindowScroller = (forceCalculation = false) => {
-    if (forceCalculation || !_windowScroller) {
-        const _oldData = _containersData.get(window);
-        const _containerData = _oldData || [];
-        if (!_oldData) INIT_CONTAINER_DATA(window, _containerData);
+export const getWindowScroller = (container = _pageScroller, forceCalculation = false) => {
+    let _oldData = _containersData.get(container);
+    let _containerData = _oldData || [];
 
-        const _body = document.body;
-        const _html = document.documentElement;
+    if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+        _errorLogger(CREATE_LOG_OPTIONS(options, "getWindowScroller", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
+        return;
+    }
 
-        const _windowInitialX = window.scrollX;
-        const _windowInitialY = window.scrollY;
+    const _window = IS_WINDOW(container) ? container : GET_WINDOW_OF(container);
+    _oldData = _containersData.get(_window);
+    _containerData = _oldData || [];
+
+    if (forceCalculation || _containerData[K_WDS] == NO_VAL) {
+        if (!_oldData) INIT_CONTAINER_DATA(_window, _containerData);
+
+        const _body = _window.document.body;
+        const _html = _window.document.documentElement;
+
+        const _windowInitialX = _window.scrollX;
+        const _windowInitialY = _window.scrollY;
         const _elementsToTest = [];
         let _elementsIndex = 0;
 
@@ -1047,10 +1055,10 @@ export const getWindowScroller = (forceCalculation = false) => {
             _elementsIndex++;
         }
 
-        //Neither _html nor _body have the same scrollPosition of window.
+        //Neither _html nor _body have the same scrollPosition of _window.
         if (_elementsIndex === 0) {
-            _windowScroller = window;
-            return _windowScroller;
+            _containerData[K_WDS] = _window;
+            return _window;
         }
 
         let _maxScrollX = _containerData[K_MSX] !== NO_VAL ? _containerData[K_MSX] : HIGHEST_SAFE_SCROLL_POS;
@@ -1060,34 +1068,34 @@ export const getWindowScroller = (forceCalculation = false) => {
             (_maxScrollX > 0 && _windowInitialX !== _maxScrollX) ||
             (_maxScrollY > 0 && _windowInitialY !== _maxScrollY)
         ) {
-            //Try scrolling the body/html by scrolling window.
-            window.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
+            //Try scrolling the body/html by scrolling _window.
+            _window.scroll(HIGHEST_SAFE_SCROLL_POS, HIGHEST_SAFE_SCROLL_POS);
 
-            _maxScrollX = window.scrollX;
-            _maxScrollY = window.scrollY;
+            _maxScrollX = _window.scrollX;
+            _maxScrollY = _window.scrollY;
 
             //Cache the maxScrollX/maxScrollY.
             _containerData[K_MSX] = _maxScrollX;
             _containerData[K_MSY] = _maxScrollY;
         }
 
-        //window cannot scroll.
+        //_window cannot scroll.
         if (_maxScrollX === 0 && _maxScrollY === 0) {
-            _windowScroller = window;
-            return _windowScroller;
+            _containerData[K_WDS] = _window;
+            return _window;
         }
 
-        //window was already at its maxScrollX/maxScrollY.
+        //_window was already at its maxScrollX/maxScrollY.
         if (_windowInitialX === _maxScrollX && _windowInitialY === _maxScrollY) {
-            //Try scrolling the body/html by scrolling window.
-            window.scroll(0, 0);
+            //Try scrolling the body/html by scrolling _window.
+            _window.scroll(0, 0);
         }
 
         let _windowScrollerFound = false;
         for (const element of _elementsToTest) {
             if (
-                window.scrollX === element.scrollLeft &&
-                window.scrollY === element.scrollTop
+                _window.scrollX === element.scrollLeft &&
+                _window.scrollY === element.scrollTop
             ) {
                 //Cache the maxScrollX/maxScrollY.
                 const _elementOldData = _containersData.get(element);
@@ -1097,26 +1105,26 @@ export const getWindowScroller = (forceCalculation = false) => {
 
                 if (!_elementOldData) INIT_CONTAINER_DATA(element, _elementData);
 
-                _windowScroller = element;
+                _containerData[K_WDS] = element;
                 _windowScrollerFound = true;
                 break;
             }
         }
 
         /**
-         * Scroll window back to its initial position.
-         * Note that if window scrolls any other element, 
+         * Scroll _window back to its initial position.
+         * Note that if _window scrolls any other element, 
          * the latter will be scrolled back into place too.
          * Otherwise it was already in the correct scroll position 
          * because the tests didn't affect it. 
          */
-        window.scroll(_windowInitialX, _windowInitialY);
+        _window.scroll(_windowInitialX, _windowInitialY);
 
-        //Fallback to window.
-        if (!_windowScrollerFound) _windowScroller = window;
+        //Fallback to _window.
+        if (!_windowScrollerFound) _containerData[K_WDS] = _window;
     }
 
-    return _windowScroller;
+    return _containerData[K_WDS];
 }
 
 /**
@@ -1544,7 +1552,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
         _containerData[K_VSB] === NO_VAL ||
         _containerData[K_HSB] === NO_VAL
     ) {
-        const _windowScroller = getWindowScroller();
+        const _windowScroller = getWindowScroller(container);
 
         if (IS_WINDOW(container) && container !== _windowScroller) {
             return calcScrollbarsDimensions(
@@ -1642,7 +1650,7 @@ export const calcBordersDimensions = (container = _pageScroller, forceCalculatio
         _containerData[K_LB] === NO_VAL
     ) {
         if (IS_WINDOW(container)) {
-            const _windowScroller = getWindowScroller();
+            const _windowScroller = getWindowScroller(container);
             const _bordersDimensions = IS_WINDOW(_windowScroller) ?
                 [0, 0, 0, 0] :
                 calcBordersDimensions(_windowScroller, forceCalculation, options);
@@ -1775,7 +1783,7 @@ export const getMaxScrolls = (container = _pageScroller, forceCalculation = fals
     //Scroll the container back to its initial position.
     container.scroll(_initialXPosition, _initialYPosition);
 
-    let _windowScroller = getWindowScroller();
+    let _windowScroller = getWindowScroller(container);
     
     /**
      * This is a summary table of the output:
@@ -1882,7 +1890,7 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
     }
 
     const _containerInitialX = container.getBoundingClientRect().left;
-    const _windowScroller = getWindowScroller();
+    const _windowScroller = getWindowScroller(container);
     let _parent = container.parentElement;
 
     const _isScrollableParent = (overflowRegex) => {
@@ -2001,7 +2009,7 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
     }
 
     const _containerInitialY = container.getBoundingClientRect().top;
-    const _windowScroller = getWindowScroller();
+    const _windowScroller = getWindowScroller(container);
     let _parent = container.parentElement;
 
     const _isScrollableParent = (overflowRegex) => {
@@ -2158,7 +2166,7 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
     const _containerInitialPos = container.getBoundingClientRect();
     const _containerInitialX = _containerInitialPos.left;
     const _containerInitialY = _containerInitialPos.top;
-    const _windowScroller = getWindowScroller();
+    const _windowScroller = getWindowScroller(container);
     let _parent = container.parentElement;
 
     const _isScrollableParent = (overflowRegex) => {
@@ -3351,8 +3359,8 @@ const ussInit = () => {
     //Calculate the _scrollbarsMaxDimension.
     getScrollbarsMaxDimension();
 
-    //Calculate the _windowScroller.
-    getWindowScroller();
+    //Calculate the window scroller of THIS_WINDOW.
+    getWindowScroller(THIS_WINDOW);
 
     //Calculate the _pageScroller.
     getPageScroller();

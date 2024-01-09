@@ -25,11 +25,11 @@ describe("getWindowScroller", function() {
                 win.scroll(100, 100);
 
                 if(_htmlResetCorrectly && _hasSameCoordinatesAsWindow(_html)) {
-                    expect(uss.getWindowScroller()).to.equal(_html);
+                    expect(uss.getWindowScroller(win)).to.equal(_html);
                 } else if(_bodyResetCorrectly && _hasSameCoordinatesAsWindow(_body)) {
-                    expect(uss.getWindowScroller()).to.equal(_body);
+                    expect(uss.getWindowScroller(win)).to.equal(_body);
                 } else {
-                    expect(uss.getWindowScroller()).to.equal(win);
+                    expect(uss.getWindowScroller(win)).to.equal(win);
                 }
             });        
     });

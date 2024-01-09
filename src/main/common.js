@@ -182,6 +182,12 @@ export const K_MCBQ = 32;
  */
 export const K_FGS = 33;
 
+/**
+ * Key to get the element that scrolls a window (its window scroller).
+ */
+export const K_WDS = 34;
+
+
 
 
 /**

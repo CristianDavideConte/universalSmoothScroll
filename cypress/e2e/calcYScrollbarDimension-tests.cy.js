@@ -21,7 +21,7 @@ describe("calcYScrollbarDimension", function() {
 
                 //Test the window's y-scrollbar. 
                 const _windowYScrollbarDimension = uss.calcYScrollbarDimension(win, true);
-                expect(_windowYScrollbarDimension).to.equal(uss.calcYScrollbarDimension(uss.getWindowScroller(true)));
+                expect(_windowYScrollbarDimension).to.equal(uss.calcYScrollbarDimension(uss.getWindowScroller(win, true)));
 
                 const _windowYScrollbarCachedDimension = uss._containersData.get(win)[constants.K_HSB];
                 expect(_windowYScrollbarDimension).to.equal(_windowYScrollbarCachedDimension);
@@ -63,7 +63,7 @@ describe("calcYScrollbarDimension", function() {
                     expect(uss.calcYScrollbarDimension(_elementWithScrollbarOnTheXAxis)).to.equal(0);
                     expect(uss.calcYScrollbarDimension(_elementWithScrollbarOnTheYAxis)).to.equal(_maxDim);
                     expect(uss.calcYScrollbarDimension(_elementWithScrollbarOnTheXYAxes)).to.equal(_maxDim);
-                    expect(uss.calcYScrollbarDimension(uss.getWindowScroller())).to.equal(uss.calcYScrollbarDimension(win));
+                    expect(uss.calcYScrollbarDimension(uss.getWindowScroller(win))).to.equal(uss.calcYScrollbarDimension(win));
 
                     //Test if the scroll positions have changed due to the measuring (they should not).
                     expect(constants.arraysAreEqual(_getCurrentScrollPos(win), _windowOriginalPos)).to.be.true;

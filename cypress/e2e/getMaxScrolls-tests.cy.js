@@ -25,10 +25,10 @@ describe("getMaxScrolls", function() {
                 const _expectedMaxScrollY = 0.5 * _testElement.scrollHeight + uss.getScrollbarsMaxDimension(); 
 
                 //Test the Window
-                expect(uss.getMaxScrolls(win, false)[0]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(), false)[0]);
-                expect(uss.getMaxScrolls(win, false)[1]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(), false)[1]);
-                expect(uss.getMaxScrolls(win, true)[0]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(), true)[0]);
-                expect(uss.getMaxScrolls(win, true)[1]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(), true)[1]);
+                expect(uss.getMaxScrolls(win, false)[0]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(win), false)[0]);
+                expect(uss.getMaxScrolls(win, false)[1]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(win), false)[1]);
+                expect(uss.getMaxScrolls(win, true)[0]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(win), true)[0]);
+                expect(uss.getMaxScrolls(win, true)[1]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(win), true)[1]);
 
                 expect(Number.isFinite(uss.getMaxScrolls(_testElement, true)[0])).to.be.true;
                 expect(Number.isFinite(uss.getMaxScrolls(_testElement, true)[1])).to.be.true;
@@ -63,10 +63,10 @@ describe("getMaxScrolls", function() {
                 uss.stopScrollingAll();
                 expect(uss.getMaxScrolls(_testElement, false)[0]).to.be.closeTo(_expectedMaxScrollX, 1);  
                 expect(uss.getMaxScrolls(_testElement, false)[1]).to.be.closeTo(_expectedMaxScrollY, 1);  
-                expect(uss.getMaxScrolls(win, false)[0]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(), false)[0]);
-                expect(uss.getMaxScrolls(win, false)[1]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(), false)[1]);
-                expect(uss.getMaxScrolls(win, true)[0]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(), true)[0]);
-                expect(uss.getMaxScrolls(win, true)[1]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(), true)[1]);
+                expect(uss.getMaxScrolls(win, false)[0]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(win), false)[0]);
+                expect(uss.getMaxScrolls(win, false)[1]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(win), false)[1]);
+                expect(uss.getMaxScrolls(win, true)[0]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(win), true)[0]);
+                expect(uss.getMaxScrolls(win, true)[1]).to.equal(uss.getMaxScrolls(uss.getWindowScroller(win), true)[1]);
               });
           });     
     });
