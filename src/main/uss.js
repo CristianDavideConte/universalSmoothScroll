@@ -1385,7 +1385,7 @@ export const setPageScroller = (container, options) => {
     //Get the container's window.
     const _window = IS_WINDOW(container) ? container : GET_WINDOW_OF(container);
     const _oldData = _containersData.get(_window);
-    _containerData = _containerData || [];
+    _containerData = _oldData || [];
 
     //Initialize the container's window if necessary.
     if (!_oldData) INIT_CONTAINER_DATA(_window, _containerData);

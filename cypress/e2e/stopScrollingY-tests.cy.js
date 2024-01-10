@@ -137,31 +137,31 @@ describe("stopScrollingY-containersData-integrity", function() {
                     const _testCallback = () => {};
                     const _testCalculatorFixed = () => 10;
                     const _testCalculatorTemporary = () => 20;
-                    const _maxScrollX = uss.getMaxScrollX(uss.getPageScroller());
-                    const _maxScrollY = uss.getMaxScrollY(uss.getPageScroller());
-                    const _xScrollbarSize = uss.calcXScrollbarDimension(uss.getPageScroller());
-                    const _yScrollbarSize = uss.calcYScrollbarDimension(uss.getPageScroller());
-                    const _bordersSizes = uss.calcBordersDimensions(uss.getPageScroller());
-                    const _scrollableParentXNotHidden = uss.getXScrollableParent(uss.getPageScroller(), false);
-                    const _scrollableParentXHidden = uss.getXScrollableParent(uss.getPageScroller(), true);
-                    const _scrollableParentYNotHidden = uss.getYScrollableParent(uss.getPageScroller(), false);
-                    const _scrollableParentYHidden = uss.getYScrollableParent(uss.getPageScroller(), true);
-                    const _scrollXCalculator = uss.getScrollXCalculator(uss.getPageScroller());
-                    const _scrollYCalculator = uss.getScrollYCalculator(uss.getPageScroller());
+                    const _maxScrollX = uss.getMaxScrollX(uss.getPageScroller(win));
+                    const _maxScrollY = uss.getMaxScrollY(uss.getPageScroller(win));
+                    const _xScrollbarSize = uss.calcXScrollbarDimension(uss.getPageScroller(win));
+                    const _yScrollbarSize = uss.calcYScrollbarDimension(uss.getPageScroller(win));
+                    const _bordersSizes = uss.calcBordersDimensions(uss.getPageScroller(win));
+                    const _scrollableParentXNotHidden = uss.getXScrollableParent(uss.getPageScroller(win), false);
+                    const _scrollableParentXHidden = uss.getXScrollableParent(uss.getPageScroller(win), true);
+                    const _scrollableParentYNotHidden = uss.getYScrollableParent(uss.getPageScroller(win), false);
+                    const _scrollableParentYHidden = uss.getYScrollableParent(uss.getPageScroller(win), true);
+                    const _scrollXCalculator = uss.getScrollXCalculator(uss.getPageScroller(win));
+                    const _scrollYCalculator = uss.getScrollYCalculator(uss.getPageScroller(win));
                     const _resizeCallbacksQueue = [_testCallback];
                     const _mutationCallbacksQueue = [_testCallback];
 
-                    uss.setXStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(), false);
-                    uss.setXStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
-                    uss.setYStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(), false);
-                    uss.setYStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
+                    uss.setXStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(win), false);
+                    uss.setXStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(win), true);
+                    uss.setYStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(win), false);
+                    uss.setYStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(win), true);
 
-                    uss.addResizeCallback(_testCallback, uss.getPageScroller());
-                    uss.addMutationCallback(_testCallback, uss.getPageScroller());
+                    uss.addResizeCallback(_testCallback, uss.getPageScroller(win));
+                    uss.addMutationCallback(_testCallback, uss.getPageScroller(win));
 
-                    uss.stopScrollingY(uss.getPageScroller());
+                    uss.stopScrollingY(uss.getPageScroller(win));
 
-                    const _containerData = uss._containersData.get(uss.getPageScroller());
+                    const _containerData = uss._containersData.get(uss.getPageScroller(win));
                     const _noValKeys = [
                         constants.K_IDX,
                         constants.K_IDY,
@@ -232,32 +232,32 @@ describe("stopScrollingY-containersData-integrity-with-scroll-on-x-axis", functi
                     const _testCallback = () => {};
                     const _testCalculatorFixed = () => 10;
                     const _testCalculatorTemporary = () => 20;
-                    const _maxScrollX = uss.getMaxScrollX(uss.getPageScroller());
-                    const _maxScrollY = uss.getMaxScrollY(uss.getPageScroller());
-                    const _xScrollbarSize = uss.calcXScrollbarDimension(uss.getPageScroller());
-                    const _yScrollbarSize = uss.calcYScrollbarDimension(uss.getPageScroller());
-                    const _bordersSizes = uss.calcBordersDimensions(uss.getPageScroller());
-                    const _scrollableParentXNotHidden = uss.getXScrollableParent(uss.getPageScroller(), false);
-                    const _scrollableParentXHidden = uss.getXScrollableParent(uss.getPageScroller(), true);
-                    const _scrollableParentYNotHidden = uss.getYScrollableParent(uss.getPageScroller(), false);
-                    const _scrollableParentYHidden = uss.getYScrollableParent(uss.getPageScroller(), true);
-                    const _scrollXCalculator = uss.getScrollXCalculator(uss.getPageScroller());
-                    const _scrollYCalculator = uss.getScrollYCalculator(uss.getPageScroller());
+                    const _maxScrollX = uss.getMaxScrollX(uss.getPageScroller(win));
+                    const _maxScrollY = uss.getMaxScrollY(uss.getPageScroller(win));
+                    const _xScrollbarSize = uss.calcXScrollbarDimension(uss.getPageScroller(win));
+                    const _yScrollbarSize = uss.calcYScrollbarDimension(uss.getPageScroller(win));
+                    const _bordersSizes = uss.calcBordersDimensions(uss.getPageScroller(win));
+                    const _scrollableParentXNotHidden = uss.getXScrollableParent(uss.getPageScroller(win), false);
+                    const _scrollableParentXHidden = uss.getXScrollableParent(uss.getPageScroller(win), true);
+                    const _scrollableParentYNotHidden = uss.getYScrollableParent(uss.getPageScroller(win), false);
+                    const _scrollableParentYHidden = uss.getYScrollableParent(uss.getPageScroller(win), true);
+                    const _scrollXCalculator = uss.getScrollXCalculator(uss.getPageScroller(win));
+                    const _scrollYCalculator = uss.getScrollYCalculator(uss.getPageScroller(win));
                     const _resizeCallbacksQueue = [_testCallback];
                     const _mutationCallbacksQueue = [_testCallback];
 
-                    uss.setXStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(), false);
-                    uss.setXStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
-                    uss.setYStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(), false);
-                    uss.setYStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(), true);
+                    uss.setXStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(win), false);
+                    uss.setXStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(win), true);
+                    uss.setYStepLengthCalculator(_testCalculatorFixed, uss.getPageScroller(win), false);
+                    uss.setYStepLengthCalculator(_testCalculatorTemporary, uss.getPageScroller(win), true);
 
-                    uss.addResizeCallback(_testCallback, uss.getPageScroller());
-                    uss.addMutationCallback(_testCallback, uss.getPageScroller());
+                    uss.addResizeCallback(_testCallback, uss.getPageScroller(win));
+                    uss.addMutationCallback(_testCallback, uss.getPageScroller(win));
 
-                    uss.scrollXBy(10, uss.getPageScroller(), _testCallback);
-                    uss.stopScrollingY(uss.getPageScroller());
+                    uss.scrollXBy(10, uss.getPageScroller(win), _testCallback);
+                    uss.stopScrollingY(uss.getPageScroller(win));
 
-                    const _containerData = uss._containersData.get(uss.getPageScroller());
+                    const _containerData = uss._containersData.get(uss.getPageScroller(win));
                     const _withValKeys = [
                         constants.K_IDX,
                         constants.K_FPX,

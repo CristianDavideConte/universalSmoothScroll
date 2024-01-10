@@ -69,7 +69,7 @@ describe("calcScrollbarsDimensions", function() {
                     Array.from(_head.children).forEach(el => expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(el), [0,0])).to.be.true);
 
                     //Test the scrollbars' dimensions.
-                    expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(uss.getPageScroller()), [_maxDim,0])).to.be.true;
+                    expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(uss.getPageScroller(win)), [_maxDim,0])).to.be.true;
                     expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(_noScrollbarElement), [0,0])).to.be.true;
                     expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheXAxis), [_maxDim,0])).to.be.true;
                     expect(constants.arraysAreEqual(uss.calcScrollbarsDimensions(_elementWithScrollbarOnTheYAxis), [0,_maxDim])).to.be.true;

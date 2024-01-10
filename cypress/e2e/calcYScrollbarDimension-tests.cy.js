@@ -58,7 +58,7 @@ describe("calcYScrollbarDimension", function() {
                     Array.from(_head.children).forEach(el => expect(uss.calcYScrollbarDimension(el)).to.equal(0));
 
                     //Test the y-scrollbar's dimension.
-                    expect(uss.calcYScrollbarDimension(uss.getPageScroller())).to.equal(0);
+                    expect(uss.calcYScrollbarDimension(uss.getPageScroller(win))).to.equal(0);
                     expect(uss.calcYScrollbarDimension(_noScrollbarElement)).to.equal(0);
                     expect(uss.calcYScrollbarDimension(_elementWithScrollbarOnTheXAxis)).to.equal(0);
                     expect(uss.calcYScrollbarDimension(_elementWithScrollbarOnTheYAxis)).to.equal(_maxDim);

@@ -30,8 +30,8 @@ describe("setXStepLengthCalculator", function() {
                     expect(res).to.throw(constants.defaultUssException);
                     expect(uss.getXStepLengthCalculator(_testElement, true)).to.be.undefined;
                     expect(uss.getXStepLengthCalculator(_testElement, false)).to.be.undefined;
-                    expect(uss.getXStepLengthCalculator(uss.getPageScroller(), true)).to.be.undefined;
-                    expect(uss.getXStepLengthCalculator(uss.getPageScroller(), false)).to.be.undefined;
+                    expect(uss.getXStepLengthCalculator(uss.getPageScroller(win), true)).to.be.undefined;
+                    expect(uss.getXStepLengthCalculator(uss.getPageScroller(win), false)).to.be.undefined;
                 })
                 .then(() => {
                     //test valid stepLengthCalculators
