@@ -73,6 +73,8 @@ import {
     CLEAR_COMMON_DATA,
     CREATE_LOG_OPTIONS,
     GET_WINDOW_OF,
+    GET_HTML_OF,
+    GET_BODY_OF,
     IS_FUNCTION,
     IS_WINDOW,
     MERGE_OBJECTS,
@@ -1578,7 +1580,6 @@ export const calcYScrollbarDimension = (container = _pageScroller, forceCalculat
  * - The width of the vertical scrollbar of `container`
  * - The height of the horizontal scrollbar of `container`
  */
-//TODO: don't use document.body and document.documentElement directly, use the getters
 export const calcScrollbarsDimensions = (container = _pageScroller, forceCalculation = false, options) => {
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
@@ -1613,7 +1614,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
             const _initialXPosition = container.scrollLeft;
             const _initialYPosition = container.scrollTop;
 
-            if (container === document.body || container === document.documentElement) {
+            if (container === GET_BODY_OF(container) || container === GET_HTML_OF(container)) {
                 //The properties of _style are automatically updated whenever the style is changed.
                 const _style = TOP_WINDOW.getComputedStyle(container);
 
@@ -1894,7 +1895,6 @@ export const getBorderBox = (container = _pageScroller, options) => {
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the x-axis or `null` if there's none.
  */
-//TODO: don't use document.body and document.documentElement directly, use the getters
 export const getXScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
@@ -1983,8 +1983,8 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
         return false;
     }
 
-    const _body = document.body;
-    const _html = document.documentElement;
+    const _body = GET_BODY_OF(container);
+    const _html = GET_HTML_OF(container);
     
     //Test if any container's parent is scrollable on the x-axis.
     while (_parent) {
@@ -2012,7 +2012,6 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the y-axis or `null` if there's none.
  */
-//TODO: don't use document.body and document.documentElement directly, use the getters
 export const getYScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
@@ -2101,8 +2100,8 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
         return false;
     }
 
-    const _body = document.body;
-    const _html = document.documentElement;
+    const _body = GET_BODY_OF(container);
+    const _html = GET_HTML_OF(container);
 
     //Test if any container's parent is scrollable on the y-axis.
     while (_parent) {
@@ -2130,7 +2129,6 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable or `null` if there's none.
  */
-//TODO: don't use document.body and document.documentElement directly, use the getters
 export const getScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "getScrollableParent" });
 
@@ -2285,8 +2283,8 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
         return false;
     }
 
-    const _body = document.body;
-    const _html = document.documentElement;
+    const _body = GET_BODY_OF(container);
+    const _html = GET_HTML_OF(container);
 
     //Test if any container's parent is scrollable.
     while (_parent) {

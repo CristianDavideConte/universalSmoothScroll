@@ -448,11 +448,33 @@ export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, 
  * Returns the `window` associated with the passed `container`.
  *  
  * `Note:` no checks are done on `container`.
- * @param {*} container An instance of `Element` or a `window`.
+ * @param {*} container An instance of `Element`.
  * @returns Returns the `window` associated with `container`. 
  */
 export const GET_WINDOW_OF = (container) => {
     return container.ownerDocument.defaultView;
+}
+
+/**
+ * Returns the `documentElement` associated with the passed `container`.
+ *  
+ * `Note:` no checks are done on `container`.
+ * @param {*} container An instance of `Element`.
+ * @returns Returns the `documentElement` associated with `container`. 
+ */
+export const GET_HTML_OF = (container) => {
+    return container.ownerDocument.documentElement;
+}
+
+/**
+ * Returns the `body` associated with the passed `container`.
+ *  
+ * `Note:` no checks are done on `container`.
+ * @param {*} container An instance of `Element`.
+ * @returns Returns the `body` associated with `container`. 
+ */
+export const GET_BODY_OF = (container) => {
+    return container.ownerDocument.body;
 }
 
 /**
