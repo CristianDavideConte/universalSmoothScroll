@@ -1,3 +1,5 @@
+//TODO: perhaps shift K_WDS and K_PGS to 0 and 1
+//TODO: import these keys in the cypress tests constants
 //TODO: @ts-check //Use to check for type errors
 /**
  * CODE STYLING NOTE:
@@ -186,6 +188,11 @@ export const K_FGS = 33;
  * Key to get the element that scrolls a window (its window scroller).
  */
 export const K_WDS = 34;
+
+/**
+ * Key to get the element that scrolls the container's window document (its page scroller).
+ */
+export const K_PGS = 35;
 
 
 
@@ -403,10 +410,10 @@ export const CLEAR_COMMON_DATA = (containerData) => {
 /**
  * Creates a valid `options` object that can be used as the input of the default loggers.
  * This method should be called inside a function, which is referred to as `calling function`. 
- * @param {Object} staticOptions The `options` object passed to the calling function.
+ * @param {Object} staticOptions The `options` object passed to the calling function (`highest priority` during merge). 
  * @param {String} functionName The calling function's name.
- * @param {Object} runtimeOptions Logging options that are known at runtime only.
- * @param {number} [runtimeOptions.idx] The index of the message inside `defaultLogOptionsMap[functionName]` to use.
+ * @param {Object} runtimeOptions Logging `options` that are known at runtime only (`lowest priority` during merge).
+ * @param {number} [runtimeOptions.idx] The index of the message to use (`logOptionsMap.get(functionName)[runtimeOptions.idx]`).
  * @param {Map<String, object>} logOptionsMap A map containing function names and a partial `options` objects.
  * @returns {Object} A valid logging `options` object that can be used with the uss loggers.
  */

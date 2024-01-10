@@ -1,10 +1,7 @@
-//TODO: there's should be a list of _pageScroller(s) one for each window of the page
-//TODO: there's should be a list of _windowScroller(s) one for each window of the page
-//TODO: fix the fact that iFrame's window object may not be the same as the script's window
+//TODO: fix cypress tests
 //TODO: fix the fact that iFrame's body/html elements may not be the same as the script's ones (create a GET_BODY_OF and GET_HTML_OF methods)
 //TODO: write missing comments
 //TODO: follow the same spacing styling of common.js
-//TODO: fix cypress tests
 //TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries into a single common list
@@ -54,6 +51,7 @@ import {
     K_MCBQ,
     K_FGS,
     K_WDS,
+    K_PGS,
     NO_SP,
     NO_FGS,
     NO_VAL,
@@ -106,6 +104,7 @@ const DEFAULT_LOG_OPTIONS = new Map([
     ["getYStepLengthCalculator", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
     
     ["getWindowScroller", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
+    ["getPageScroller", { primaryMsg: "container" + DEFAULT_ERROR_PRIMARY_MSG_1 }],
 
     ["setXStepLengthCalculator", [
         { primaryMsg: "newCalculator" + DEFAULT_ERROR_PRIMARY_MSG_3 },
@@ -1009,28 +1008,33 @@ export const getScrollbarsMaxDimension = (forceCalculation = false) => {
 }
 
 /**
- * Returns the value of the `window scroller` of the passed container. 
+ * Returns the `window scroller` relative to the passed container. 
  * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
- * @returns {*} The element that scrolls the `window` of `container` when it's scrolled and that (viceversa) is scrolled when that `window` is scrolled.
+ * @param {Object} [options] `[Private]` The input object used by the uss loggers.
+ * @returns {*} The element that scrolls the `container`'s `window` when it's scrolled and that (viceversa) is scrolled when that `window` is scrolled.
  */
-//TODO: add a new parameter so that GET_WINDOW_OF(container) can be used instead of window
-export const getWindowScroller = (container = _pageScroller, forceCalculation = false) => {
+//TODO: verify that getWindowScroller is passed the options object if needed
+export const getWindowScroller = (container = _pageScroller, forceCalculation = false, options) => {
     let _oldData = _containersData.get(container);
     let _containerData = _oldData || [];
 
+    //Initialize the container if necessary.
     if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "getWindowScroller", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
 
+    //Get the container's window.
     const _window = IS_WINDOW(container) ? container : GET_WINDOW_OF(container);
     _oldData = _containersData.get(_window);
     _containerData = _oldData || [];
 
-    if (forceCalculation || _containerData[K_WDS] == NO_VAL) {
-        if (!_oldData) INIT_CONTAINER_DATA(_window, _containerData);
+    //Initialize container's window if necessary.
+    if (!_oldData) INIT_CONTAINER_DATA(_window, _containerData);
 
+    //Calculate the container's window scroller if necessary.
+    if (forceCalculation || _containerData[K_WDS] == NO_VAL) {
         const _body = _window.document.body;
         const _html = _window.document.documentElement;
 
@@ -1128,19 +1132,41 @@ export const getWindowScroller = (container = _pageScroller, forceCalculation = 
 }
 
 /**
- * Returns the value of the `_pageScroller` property.
+ * Returns the `page scroller` relative to the passed container.
+ * @param {*} [container] An instance of `Element` or a `window`.
  * @param {boolean} forceCalculation If `true` the value is calculated on the fly (expensive operation), otherwise it's returned from cache.  
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
- * @returns {*} The element that scrolls the webpage.
+ * @returns {*} The element that also scrolls the `container`'s `window` document.
  */
-//TODO: add a new parameter so that GET_WINDOW_OF(container) can be used instead of window
-export const getPageScroller = (forceCalculation = false, options) => {
-    //Check if the _pageScroller has already been calculated.
-    if (forceCalculation || !_pageScroller) {
-        const _body = document.body;
-        const _html = document.documentElement;
+export const getPageScroller = (container = _pageScroller, forceCalculation = false, options) => {
+    let _oldData = _containersData.get(container);
+    let _containerData = _oldData || [];
 
-        options = MERGE_OBJECTS(options, { subject: "getPageScroller" })
+    options = CREATE_LOG_OPTIONS(
+        options,
+        "getPageScroller",
+        { secondaryMsg: container },
+        DEFAULT_LOG_OPTIONS
+    );
+
+    //Initialize the container if necessary.
+    if (!_oldData && !INIT_CONTAINER_DATA(container, _containerData)) {
+        _errorLogger(options);
+        return;
+    }
+
+    //Get the container's window.
+    const _window = IS_WINDOW(container) ? container : GET_WINDOW_OF(container);
+    _oldData = _containersData.get(_window);
+    _containerData = _oldData || [];
+
+    //Initialize container's window if necessary.
+    if (!_oldData) INIT_CONTAINER_DATA(_window, _containerData);
+
+    //Calculate the container's page scroller if necessary.
+    if (forceCalculation || _containerData[K_PGS] == NO_VAL) {
+        const _body = _window.document.body;
+        const _html = _window.document.documentElement;
 
         const [_htmlMaxScrollX, _htmlMaxScrollY] = getMaxScrolls(_html, forceCalculation, options);
         const [_bodyMaxScrollX, _bodyMaxScrollY] = getMaxScrolls(_body, forceCalculation, options);
@@ -1153,18 +1179,23 @@ export const getPageScroller = (forceCalculation = false, options) => {
             (_htmlMaxScrollX > _bodyMaxScrollX && _htmlMaxScrollY >= _bodyMaxScrollY) ||
             (_htmlMaxScrollX >= _bodyMaxScrollX && _htmlMaxScrollY > _bodyMaxScrollY)
         ) {
-            _pageScroller = _html;
+            _containerData[K_PGS] = _html;
         } else if (
             (_bodyMaxScrollX > _htmlMaxScrollX && _bodyMaxScrollY >= _htmlMaxScrollY) ||
             (_bodyMaxScrollX >= _htmlMaxScrollX && _bodyMaxScrollY > _htmlMaxScrollY)
         ) {
-            _pageScroller = _body;
+            _containerData[K_PGS] = _body;
         } else {
-            _pageScroller = window;
+            _containerData[K_PGS] = window;
+        }
+        
+        //Save the page scroller of THIS_WINDOW for quicker use later on.
+        if (_window == THIS_WINDOW) {
+            _pageScroller = _containerData[K_PGS];
         }
     }
 
-    return _pageScroller;
+    return _containerData[K_PGS];
 }
 
 /**
@@ -1338,17 +1369,32 @@ export const setMinAnimationFrame = (newMinAnimationFrame = DEFAULT_MIN_ANIMATIO
 }
 
 /**
- * Tells the API which Element scrolls the document (`_pageScroller` property). 
+ * Tells the API which `Element` scrolls the `container`'s document (i.e. its `pageScroller`). 
  * @param {*} container An instance of `Element` or a `window`.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
-//TODO: set the page scroller of the right window only
 export const setPageScroller = (container, options) => {
-    if (!_containersData.get(container) && !INIT_CONTAINER_DATA(container)) {
+    let _containerData = _containersData.get(container);
+
+    //Initialize the container if necessary.
+    if (!_containerData && !INIT_CONTAINER_DATA(container)) {
         _errorLogger(CREATE_LOG_OPTIONS(options, "setPageScroller", { secondaryMsg: container }, DEFAULT_LOG_OPTIONS));
         return;
     }
-    _pageScroller = container;
+    
+    //Get the container's window.
+    const _window = IS_WINDOW(container) ? container : GET_WINDOW_OF(container);
+    const _oldData = _containersData.get(_window);
+    _containerData = _containerData || [];
+
+    //Initialize the container's window if necessary.
+    if (!_oldData) INIT_CONTAINER_DATA(_window, _containerData);
+    
+    _containerData[K_PGS] = container;
+
+    if (_window == THIS_WINDOW) {
+        _pageScroller = container;        
+    }
 }
 
 /**
@@ -1532,7 +1578,6 @@ export const calcYScrollbarDimension = (container = _pageScroller, forceCalculat
  * - The width of the vertical scrollbar of `container`
  * - The height of the horizontal scrollbar of `container`
  */
-//TODO: support the list of windowScrollers
 //TODO: don't use document.body and document.documentElement directly, use the getters
 export const calcScrollbarsDimensions = (container = _pageScroller, forceCalculation = false, options) => {
     const _oldData = _containersData.get(container);
@@ -1631,9 +1676,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
  * - Top height of the bottom border of `container`
  * - Top width of the left border of `container`
  */
-//TODO: support the list of windowScrollers
 export const calcBordersDimensions = (container = _pageScroller, forceCalculation = false, options) => {
-    //Check if the bordersDimensions of the passed container have already been calculated. 
     const _oldData = _containersData.get(container);
     const _containerData = _oldData || [];
 
@@ -1756,7 +1799,6 @@ export const getMaxScrollY = (container = _pageScroller, forceCalculation = fals
  * - The highest reacheable `scrollLeft` / `scrollX` value of `container`
  * - The highest reacheable `scrollTop` / `scrollY` value of `container`
  */
-//TODO: support the list of windowScrollers
 export const getMaxScrolls = (container = _pageScroller, forceCalculation = false, options) => {
     //Check if the maxScrollX/maxScrollY values for the passed container have already been calculated. 
     const _oldData = _containersData.get(container) || [];
@@ -1852,7 +1894,6 @@ export const getBorderBox = (container = _pageScroller, options) => {
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the x-axis or `null` if there's none.
  */
-//TODO: support the list of windowScrollers
 //TODO: don't use document.body and document.documentElement directly, use the getters
 export const getXScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
     const _oldData = _containersData.get(container);
@@ -1971,7 +2012,6 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable on the y-axis or `null` if there's none.
  */
-//TODO: support the list of windowScrollers
 //TODO: don't use document.body and document.documentElement directly, use the getters
 export const getYScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
     const _oldData = _containersData.get(container);
@@ -2090,7 +2130,6 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The closest ancestor of `container` which is scrollable or `null` if there's none.
  */
-//TODO: support the list of windowScrollers
 //TODO: don't use document.body and document.documentElement directly, use the getters
 export const getScrollableParent = (container = _pageScroller, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "getScrollableParent" });
@@ -3340,8 +3379,6 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
 
 
 
-//TODO: support the list of windowScrollers
-//TODO: support the list of pageScrollers
 const ussInit = () => {
     //Set the _reducedMotion.
     try { //Chrome, Firefox & Safari >= 14
@@ -3359,11 +3396,11 @@ const ussInit = () => {
     //Calculate the _scrollbarsMaxDimension.
     getScrollbarsMaxDimension();
 
-    //Calculate the window scroller of THIS_WINDOW.
+    //Calculate the window scroller relative to THIS_WINDOW.
     getWindowScroller(THIS_WINDOW);
 
-    //Calculate the _pageScroller.
-    getPageScroller();
+    //Calculate the page scroller relative to THIS_WINDOW.
+    getPageScroller(THIS_WINDOW);
 
     //Calculate the average frames' time of the user's screen. 
     let _currentMeasurementsLeft = 60; //Do 60 measurements to establish the initial value
