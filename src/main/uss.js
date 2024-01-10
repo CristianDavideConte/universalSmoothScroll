@@ -1836,7 +1836,7 @@ export const getMaxScrolls = (container = _pageScroller, forceCalculation = fals
      */
     if (!IS_WINDOW(container)) {
         _windowScroller = _windowScroller === container ? GET_WINDOW_OF(container) : NO_VAL;    
-    } else if (_windowScroller(_windowScroller)) {
+    } else if (IS_WINDOW(_windowScroller)) {
         _windowScroller = NO_VAL;
     }
     
