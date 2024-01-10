@@ -35,7 +35,7 @@ describe("scrollYBy", function() {
                 });
             });         
     });
-})
+});
 
 describe("scrollYToBy-StillStart-True", function() {
     let oldFinalYPosition;
@@ -63,7 +63,7 @@ describe("scrollYToBy-StillStart-True", function() {
                 );
             });        
     });
-})
+});
 
 describe("scrollYToBy-StillStart-False", function() {
     let oldFinalYPosition;
@@ -91,7 +91,7 @@ describe("scrollYToBy-StillStart-False", function() {
                 );
             });        
     });
-})
+});
 
 describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating", function() {
     let oldFinalYPosition;
@@ -129,7 +129,7 @@ describe("scrollYToBy-StillStart-False-ExtendedScrollingWhileAnimating", functio
                 );
             });         
     });
-})
+});
 
 describe("scrollYBy-containScroll-below-0", function() {
     let finalYPosition;
@@ -162,7 +162,7 @@ describe("scrollYBy-containScroll-below-0", function() {
                 });
             });        
     });
-})
+});
 
 describe("scrollYBy-containScroll-beyond-maxScrollY", function() {
     let maxScrollY;
@@ -197,4 +197,4 @@ describe("scrollYBy-containScroll-beyond-maxScrollY", function() {
                 });
             });        
     });
-})
+});

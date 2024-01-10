@@ -6,41 +6,41 @@ beforeEach(() => {
   cy.visit("getXStepLengthCalculator-tests.html"); 
 })
 
-describe("getXStepLengthCalculator", function() {
-    let nonTempTestCalculator = () => 10;
-    let tempTestCalculator = r => r / 20 + 1;
-    it("Tests the getXStepLengthCalculator method", function() {
-      cy.window()
-        .then((win) => {
-            const _testElement = win.document.getElementById("scroller");
+describe("getXStepLengthCalculator", function () {
+  let nonTempTestCalculator = () => 10;
+  let tempTestCalculator = r => r / 20 + 1;
+  it("Tests the getXStepLengthCalculator method", function () {
+    cy.window()
+      .then((win) => {
+        const _testElement = win.document.getElementById("scroller");
                                         
-            cy.testFailingValues(uss.getXStepLengthCalculator, {
-              0: [constants.failingValuesNoUndefined, 
-                  [true, false]
-                  ]
-            }, 
-            (res, v1, v2, v3, v4, v5, v6, v7) => {
-              expect(res).to.throw(constants.defaultUssException);
-            })
-            .then(() => {
-              uss.setXStepLengthCalculator(nonTempTestCalculator, _testElement, false);
-              expect(uss.getXStepLengthCalculator(_testElement)).to.equal(nonTempTestCalculator);  
+        cy.testFailingValues(uss.getXStepLengthCalculator, {
+          0: [constants.failingValuesNoUndefined,
+          [true, false]
+          ]
+        },
+          (res, v1, v2, v3, v4, v5, v6, v7) => {
+            expect(res).to.throw(constants.defaultUssException);
+          })
+          .then(() => {
+            uss.setXStepLengthCalculator(nonTempTestCalculator, _testElement, false);
+            expect(uss.getXStepLengthCalculator(_testElement)).to.equal(nonTempTestCalculator);
 
-              uss.setXStepLengthCalculator(tempTestCalculator, _testElement, true);
-              expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(tempTestCalculator);
+            uss.setXStepLengthCalculator(tempTestCalculator, _testElement, true);
+            expect(uss.getXStepLengthCalculator(_testElement, true)).to.equal(tempTestCalculator);
             
-              cy.waitForUssCallback(
-                (resolve) => {
-                  uss._reducedMotion = true;
-                  uss.scrollXTo(100, _testElement, resolve);
-                }
-              ).then(
-                () => {
-                    expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(nonTempTestCalculator);
-                    expect(uss.getXStepLengthCalculator(_testElement, true)).to.be.undefined;
-                }
-              );
-            });
-        });        
-    });
-})
+            cy.waitForUssCallback(
+              (resolve) => {
+                uss._reducedMotion = true;
+                uss.scrollXTo(100, _testElement, resolve);
+              }
+            ).then(
+              () => {
+                expect(uss.getXStepLengthCalculator(_testElement, false)).to.equal(nonTempTestCalculator);
+                expect(uss.getXStepLengthCalculator(_testElement, true)).to.be.undefined;
+              }
+            );
+          });
+      });
+  });
+});

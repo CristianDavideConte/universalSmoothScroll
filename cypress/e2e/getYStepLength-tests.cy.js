@@ -6,15 +6,15 @@ beforeEach(() => {
     cy.visit("getYStepLength-tests.html"); 
 })
   
-describe("getYStepLength", function() {
-    it("Tests the getYStepLength method", function() {
+describe("getYStepLength", function () {
+    it("Tests the getYStepLength method", function () {
         cy.window()
             .then((win) => {
                 const _testElement = win.document.getElementById("scroller");
                 const _expectedFinalPos = 10;
                 
                 expect(Number.isFinite(uss.getYStepLength())).to.be.true;
-                expect(uss.getYStepLength() > 0).to.be.true;    
+                expect(uss.getYStepLength() > 0).to.be.true;
                 uss.setYStepLength(10);
                 expect(uss.getYStepLength()).to.equal(10);
 
@@ -27,6 +27,6 @@ describe("getYStepLength", function() {
                         expect(uss.getYStepLength()).to.equal(10);
                     }
                 );
-            });        
+            });
     });
-})
+});

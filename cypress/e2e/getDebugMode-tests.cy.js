@@ -6,11 +6,11 @@ beforeEach(() => {
     cy.visit("getDebugMode-tests.html"); 
 })
 
-describe("getDebugMode", function() {
-    it.only("Tests the getDebugMode method", function() {
+describe("getDebugMode", function () {
+    it.only("Tests the getDebugMode method", function () {
         cy.window()
             .then((win) => {
-                expect(uss.getDebugMode()).to.equal(""); 
+                expect(uss.getDebugMode()).to.equal("");
 
                 uss.setDebugMode("legacy");
                 expect(uss.getDebugMode()).to.equal("legacy");
@@ -23,6 +23,6 @@ describe("getDebugMode", function() {
                 
                 uss.setDebugMode(10);
                 expect(uss.getDebugMode()).to.equal("disabled");
-            });        
+            });
     });
-})
+});

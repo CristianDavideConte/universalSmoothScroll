@@ -3,36 +3,35 @@ import * as uss from "../../src/main/uss.js";
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
-  cy.visit("setErrorLogger-tests.html"); 
+  cy.visit("setErrorLogger-tests.html");
 })
 
-describe("setErrorLogger", function() {
-    let validLogger1 = (a,b,c) => console.log(a,b,c);
-    let validLogger2 = () => console.log("");
-    let validLogger3 = () => {}
-    it("Tests the setErrorLogger method", function() {
-        cy.window()
-          .then((win) => {
-              const _originalLogger = uss._errorLogger;
-  
-              cy.testFailingValues(uss.setErrorLogger, {
-                0: [constants.failingValuesAllNoUnsupportedNoUndefined]
-              }, 
-              (res, v1, v2, v3, v4, v5, v6, v7) => {
-                expect(res).to.throw(constants.defaultUssException);
-                expect(uss._errorLogger).to.equal(_originalLogger);
-              })
-              .then(() => {
-                uss.setErrorLogger(validLogger1);
-                expect(uss._errorLogger).to.equal(validLogger1);
-  
-                uss.setErrorLogger(validLogger2);
-                expect(uss._errorLogger).to.equal(validLogger2);
-  
-                uss.setErrorLogger(validLogger3);
-                expect(uss._errorLogger).to.equal(validLogger3);
-              });      
-          });        
-    })
+describe("setErrorLogger", function () {
+  let validLogger1 = (a, b, c) => console.log(a, b, c);
+  let validLogger2 = () => console.log("");
+  let validLogger3 = () => { }
+  it("Tests the setErrorLogger method", function () {
+    cy.window()
+      .then((win) => {
+        const _originalLogger = uss._errorLogger;
+
+        cy.testFailingValues(uss.setErrorLogger, {
+          0: [constants.failingValuesAllNoUnsupportedNoUndefined]
+        },
+          (res, v1, v2, v3, v4, v5, v6, v7) => {
+            expect(res).to.throw(constants.defaultUssException);
+            expect(uss._errorLogger).to.equal(_originalLogger);
+          })
+          .then(() => {
+            uss.setErrorLogger(validLogger1);
+            expect(uss._errorLogger).to.equal(validLogger1);
+
+            uss.setErrorLogger(validLogger2);
+            expect(uss._errorLogger).to.equal(validLogger2);
+
+            uss.setErrorLogger(validLogger3);
+            expect(uss._errorLogger).to.equal(validLogger3);
+          });
+      });
   })
-  
+});
