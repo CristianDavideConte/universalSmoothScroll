@@ -1,4 +1,6 @@
 import * as uss from "../../src/main/uss.js";
+import * as common from "../../src/main/common.js";
+import * as math from "../../src/main/math.js";
 
 const { constants } = require("../support/constants");
 
@@ -10,11 +12,12 @@ describe("getMinAnimationFrame", function () {
     it("Tests the getMinAnimationFrame method", function () {
         cy.window()
             .then((win) => {
-                //DEFAULT_YSTEP_LENGTH
-                const _defaultWinHeight = win.innerHeight;
-                const _defaultYStepLegth = Math.max(1, Math.abs(38 - 20 / 140 * (_defaultWinHeight - 789)));
-                const _defaultValue = _defaultWinHeight / _defaultYStepLegth;
-                expect(uss.getMinAnimationFrame()).to.equal(_defaultValue);
+                //Same definition found in uss.js
+                const GET_DEFAULT_STEP_LENGTH = math.GET_LINE_FROM_P1_P2(412, 16, 1920, 23);
+                const DEFAULT_YSTEP_LENGTH = GET_DEFAULT_STEP_LENGTH(common.INITIAL_WINDOW_HEIGHT);
+                const DEFAULT_MIN_ANIMATION_FRAMES = common.INITIAL_WINDOW_HEIGHT / DEFAULT_YSTEP_LENGTH;
+
+                expect(uss.getMinAnimationFrame()).to.equal(DEFAULT_MIN_ANIMATION_FRAMES);
 
                 uss.setMinAnimationFrame(10);
                 expect(uss.getMinAnimationFrame()).to.equal(10);

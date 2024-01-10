@@ -166,7 +166,7 @@ const DEFAULT_LOG_OPTIONS = new Map([
 /**
  * Default function used to calculate `DEFAULT_XSTEP_LENGTH` and `DEFAULT_YSTEP_LENGTH`.
  */
-const GET_DEFAULT_STEP_LENGTH = GET_LINE_FROM_P1_P2(412, 16, 1920, 23)
+const GET_DEFAULT_STEP_LENGTH = GET_LINE_FROM_P1_P2(412, 16, 1920, 23);
 
 /**
  * Default value for the `_xStepLength` variable.
