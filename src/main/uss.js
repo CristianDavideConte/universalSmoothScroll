@@ -1,5 +1,4 @@
 //TODO: fix cypress tests
-//TODO: fix the fact that iFrame's body/html elements may not be the same as the script's ones (create a GET_BODY_OF and GET_HTML_OF methods)
 //TODO: write missing comments
 //TODO: follow the same spacing styling of common.js
 //TODO: understand how to specify the default values of functions' parameters (bugged now)
