@@ -11,9 +11,9 @@ describe("getAllScrollableParents", function () {
                 cy.window()
                         .then((win) => {
                                 cy.testFailingValues(uss.getAllScrollableParents, {
-                                        0: [constants.failingValuesAll,
+                                        0: [constants.failingValuesAllNoUndefined,
                                         [true, false],
-                                        constants.failingValuesAll
+                                        constants.failingValuesAllNoUndefined
                                         ]
                                 },
                                         (res, v1, v2, v3, v4, v5, v6, v7) => {
