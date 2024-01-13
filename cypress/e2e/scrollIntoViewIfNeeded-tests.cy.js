@@ -62,7 +62,6 @@ function getDeltas(uss, win, element, parent) {
  * ]
  */
 function _scrollIntoViewIfNeededTester(
-    uss,
     resolve,
     elements = [],
     i = 0,
@@ -82,7 +81,7 @@ function _scrollIntoViewIfNeededTester(
             }
 
             i++;
-            _scrollIntoViewIfNeededTester(uss, resolve, elements, i);
+            _scrollIntoViewIfNeededTester(resolve, elements, i);
         },
         elements[i].includeHiddenParents
     );
@@ -139,7 +138,6 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
 
                                 _scrollIntoViewIfNeededTester(
-                                    uss,
                                     resolve,
                                     [
                                         {
@@ -348,7 +346,6 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
 
                                 _scrollIntoViewIfNeededTester(
-                                    uss,
                                     resolve,
                                     [
                                         {
@@ -553,7 +550,6 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
 
                                 _scrollIntoViewIfNeededTester(
-                                    uss,
                                     resolve,
                                     [
                                         {
@@ -758,7 +754,6 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                 uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
 
                                 _scrollIntoViewIfNeededTester(
-                                    uss,
                                     resolve,
                                     [
                                         {

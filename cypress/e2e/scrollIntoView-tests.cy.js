@@ -72,7 +72,6 @@ function getDeltas(uss, win, element, parent) {
  * ]
  */
 function _scrollIntoViewTester(
-    uss,
     resolve,
     elements = [],
     i = 0,
@@ -93,7 +92,7 @@ function _scrollIntoViewTester(
             }
 
             i++;
-            _scrollIntoViewTester(uss, resolve, elements, i);
+            _scrollIntoViewTester(resolve, elements, i);
         },
         elements[i].includeHiddenParents
     );
@@ -144,7 +143,6 @@ describe("scrollIntoView-corners-alignments", function () {
                         cy.waitForUssCallback(
                             (resolve) => {
                                 _scrollIntoViewTester(
-                                    uss,
                                     resolve,
                                     [
                                         {
@@ -325,7 +323,6 @@ describe("scrollIntoView-center-alignments", function () {
                         cy.waitForUssCallback(
                             (resolve) => {
                                 _scrollIntoViewTester(
-                                    uss,
                                     resolve,
                                     [
                                         {
@@ -542,7 +539,6 @@ describe("scrollIntoView-nearest-alignments", function () {
                                 uss.scrollTo(0, uss.getMaxScrollY());
 
                                 _scrollIntoViewTester(
-                                    uss,
                                     resolve,
                                     [
                                         {
