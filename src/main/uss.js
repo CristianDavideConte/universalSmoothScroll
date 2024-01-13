@@ -71,6 +71,7 @@ import {
     CHECK_INSTANCEOF,
     CLEAR_COMMON_DATA,
     CREATE_LOG_OPTIONS,
+    GET_DOCUMENT_OF,
     GET_WINDOW_OF,
     GET_HTML_OF,
     GET_BODY_OF,
@@ -243,25 +244,23 @@ const DEFAULT_ERROR_LOGGER = (options) => {
         throw "USS fatal error (execution stopped)";
     }
 
-    {
-        console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
-        console.log("%cUSS ERROR", "font-family:system-ui; font-weight:800; font-size:40px; background:#eb445a; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
-        console.log("%c" + functionName + "%cwas expecting " + expectedValue,
-            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#2dd36f; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
-            "font-family:system-ui; font-weight:600; font-size:17px; background:#2dd36f; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
-        );
-        console.log("%cBut received%c" + receivedValue,
-            "font-family:system-ui; font-weight:600; font-size:17px; background:#eb445a; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
-            "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#eb445a; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
-        );
+    console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
+    console.log("%cUSS ERROR", "font-family:system-ui; font-weight:800; font-size:40px; background:#eb445a; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
+    console.log("%c" + functionName + "%cwas expecting " + expectedValue,
+        "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#2dd36f; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+        "font-family:system-ui; font-weight:600; font-size:17px; background:#2dd36f; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
+    );
+    console.log("%cBut received%c" + receivedValue,
+        "font-family:system-ui; font-weight:600; font-size:17px; background:#eb445a; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
+        "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#eb445a; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
+    );
 
-        {
-            console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
-            console.trace("");
-            console.groupEnd();
-        }
+    {
+        console.groupCollapsed("%cStack Trace", "font-family:system-ui; font-weight:500; font-size:17px; background:#3171e0; color:#f5f6f9; border-radius:5px; padding:0.3vh 0.5vw; margin-left:13px");
+        console.trace("");
         console.groupEnd();
     }
+    console.groupEnd();
 
     throw "USS fatal error (execution stopped)";
 }
@@ -285,7 +284,7 @@ const DEFAULT_MUTATION_OBSERVER = {
         for (const entry of entries) {
             //Update the record for the current entry.type.
             const _mutationObject = DEFAULT_MUTATION_OBSERVER.entries.get(entry.target);
-
+            
             _mutationObject.hasMutated = true;
 
             //Update the attributes flag.
@@ -395,6 +394,13 @@ const DEFAULT_MUTATION_OBSERVER = {
         }
 
         DEFAULT_MUTATION_OBSERVER.callbackFrameId = NO_VAL;
+    },
+    reset: () => {
+        TOP_WINDOW.cancelAnimationFrame(DEFAULT_MUTATION_OBSERVER.callbackFrameId);
+        DEFAULT_MUTATION_OBSERVER.callbackFrameId = NO_VAL;
+        DEFAULT_MUTATION_OBSERVER.debouncedFrames = 0;
+        DEFAULT_MUTATION_OBSERVER.entries.clear();
+        DEFAULT_MUTATION_OBSERVER.observer.disconnect();
     }
 }
 
@@ -501,6 +507,13 @@ const DEFAULT_RESIZE_OBSERVER = {
         }
 
         DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
+    },
+    reset: () => {
+        TOP_WINDOW.cancelAnimationFrame(DEFAULT_RESIZE_OBSERVER.callbackFrameId);
+        DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
+        DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
+        DEFAULT_RESIZE_OBSERVER.entries.clear();
+        DEFAULT_RESIZE_OBSERVER.observer.disconnect();
     }
 }
 
@@ -684,7 +697,27 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
     if (IS_WINDOW(container)) {
         let _debounceResizeEvent = false;
 
-        container.addEventListener("resize", () => {
+        const onError = (event) => {
+            //This event listener is for managing the ResizeObserver errors only.
+            if (!event.message.includes("ResizeObserver")) return;
+
+            //TODO: when the mutation observer will support the unobserve method, improve this
+            for (const [_container, _containerData] of _containersData.entries()) {
+                /**
+                 * The _container's window has been removed or _container has been removed, 
+                 * but it's window is still accessible.
+                 */
+                if (!_container || !GET_DOCUMENT_OF(_container) || !GET_DOCUMENT_OF(_container).contains(_container)) {
+                    _containersData.clear();
+                    DEFAULT_RESIZE_OBSERVER.reset();
+                    DEFAULT_MUTATION_OBSERVER.reset();
+                    container.removeEventListener("resize", onResize, { passive: true });
+                    return;
+                }
+            }
+        };
+
+        const onResize = () => {
             //Make the resize callback fire only once per frame like the resize observer.
             if (_debounceResizeEvent) return;
 
@@ -695,7 +728,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
             DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
             const _resizeObject = DEFAULT_RESIZE_OBSERVER.entries.get(container);
-
+            
             _resizeObject.hasResized = true;
 
             //Update the target size.
@@ -706,7 +739,18 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
             if (DEFAULT_RESIZE_OBSERVER.callbackFrameId === NO_VAL) {
                 DEFAULT_RESIZE_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
             }
-        }, { passive: true });
+        };
+
+        /**
+         * Any previous error would make INIT_CONTAINER_DATA trigger again
+         * without removing the onError eventListener.
+         * This is because ResizeObserver errors are async there could be many of them that
+         * should still be managed.
+         * The removal of onResize callback is managed by the onError function. 
+         */
+        container.removeEventListener("error", onError);
+        container.addEventListener("error", onError);
+        container.addEventListener("resize", onResize, { passive: true });
 
         //Set a default resizeObject.
         DEFAULT_RESIZE_OBSERVER.entries.set(

@@ -445,6 +445,17 @@ export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, 
 }
 
 /**
+ * Returns the `document` associated with the passed `container`.
+ *  
+ * `Note:` no checks are done on `container`.
+ * @param {*} container An instance of `Element`.
+ * @returns Returns the `document` associated with `container`. 
+ */
+export const GET_DOCUMENT_OF = (container) => {
+    return container.ownerDocument;
+}
+
+/**
  * Returns the `window` associated with the passed `container`.
  *  
  * `Note:` no checks are done on `container`.
@@ -452,7 +463,7 @@ export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, 
  * @returns Returns the `window` associated with `container`. 
  */
 export const GET_WINDOW_OF = (container) => {
-    return container.ownerDocument.defaultView;
+    return GET_DOCUMENT_OF(container).defaultView;
 }
 
 /**
@@ -463,7 +474,7 @@ export const GET_WINDOW_OF = (container) => {
  * @returns Returns the `documentElement` associated with `container`. 
  */
 export const GET_HTML_OF = (container) => {
-    return container.ownerDocument.documentElement;
+    return GET_DOCUMENT_OF(container).documentElement;
 }
 
 /**
@@ -474,7 +485,7 @@ export const GET_HTML_OF = (container) => {
  * @returns Returns the `body` associated with `container`. 
  */
 export const GET_BODY_OF = (container) => {
-    return container.ownerDocument.body;
+    return GET_DOCUMENT_OF(container).body;
 }
 
 /**
