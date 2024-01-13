@@ -37,7 +37,6 @@ describe("isScrolling-scrollXAnimation", function () {
 });
 
 describe("isScrolling-scrollYAnimation", function () {
-    let uss;
     it("Tests the isScrolling method", function () {
         cy.window()
             .then((win) => {
@@ -68,7 +67,6 @@ describe("isScrolling-scrollYAnimation", function () {
 });
 
 describe("isScrolling-scrollXYAnimation", function () {
-    let uss;
     it("Tests the isScrolling method", function () {
         cy.window()
             .then((win) => {
@@ -99,7 +97,6 @@ describe("isScrolling-scrollXYAnimation", function () {
 });
 
 describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function () {
-    let uss;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -138,7 +135,6 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollXAnimation", function
 });
 
 describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function () {
-    let uss;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -177,7 +173,6 @@ describe("isScrolling-StoppedScrollingWhileAnimating-scrollYAnimation", function
 });
 
 describe("isScrolling-StopXAxisScrollingWhileAnimating", function () {
-    let uss;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -215,7 +210,6 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function () {
 });
 
 describe("isScrolling-StopYAxisScrollingWhileAnimating", function () {
-    let uss;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
@@ -253,7 +247,6 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function () {
 });
 
 describe("isScrolling-StopBothAxisScrollingWhileAnimating", function () {
-    let uss;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {

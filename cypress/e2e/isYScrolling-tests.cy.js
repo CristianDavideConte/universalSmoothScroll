@@ -37,7 +37,6 @@ describe("isYScrolling", function () {
 });
 
 describe("isYScrolling-StoppedScrollingWhileAnimating", function () {
-    let uss;
     let _resolve;
     const _testCalculator = (i = 0) => {
         return (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {

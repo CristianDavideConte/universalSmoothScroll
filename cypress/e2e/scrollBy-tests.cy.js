@@ -40,7 +40,6 @@ describe("scrollBy", function () {
 });
 
 describe("scrollToBy-StillStart-True", function () {
-    let uss;
     let oldFinalXPosition, oldFinalYPosition;
     let finalXPosition, finalYPosition;
 
@@ -74,7 +73,6 @@ describe("scrollToBy-StillStart-True", function () {
 });
 
 describe("scrollToBy-StillStart-False", function () {
-    let uss;
     let oldFinalXPosition, oldFinalYPosition;
     let finalXPosition, finalYPosition;
 
@@ -104,7 +102,6 @@ describe("scrollToBy-StillStart-False", function () {
 });
 
 describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function () {
-    let uss;
     let oldFinalXPosition;
     let oldFinalYPosition;
     let init = false;
@@ -148,7 +145,6 @@ describe("scrollToBy-StillStart-False-ExtendedScrollingWhileAnimating", function
 });
 
 describe("scrollBy-containScroll-below-0", function () {
-    let uss;
     let finalXPosition;
     let finalYPosition;
     it("Scrolls the test element by (n1,n2) pixels obtaining a finalXPosition and a finalYPosition lower than 0", function () {
@@ -186,7 +182,6 @@ describe("scrollBy-containScroll-below-0", function () {
 });
 
 describe("scrollBy-containScroll-beyond-maxScrollX-and-maxScrollY", function () {
-    let uss;
     let maxScrollX;
     let maxScrollY;
     let finalXPosition;

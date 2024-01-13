@@ -21,6 +21,7 @@ const getChildrenRecursively = (element) => {
 const unsupportedElement = () => {};
 Object.setPrototypeOf(unsupportedElement, Element.prototype);
 
+//TODO: find a way to import the common.js keys instead of creating them from scratch
 export const constants = {
     K_IDX:0,   //Key to get the scroll id on the x-axis
     K_IDY:1,   //Key to get the scroll id on the y-axis
