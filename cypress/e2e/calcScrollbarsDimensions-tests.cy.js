@@ -16,8 +16,8 @@ describe("calcScrollbarsDimensions", function () {
     it("Tests the calcScrollbarsDimensions method", function () {
         cy.window()
             .then((win) => {
-                uss._containersData.clear();
-                expect(uss._containersData.size).to.equal(0);
+                //uss._containersData.clear(); //TODO: The observers should be detached
+                //expect(uss._containersData.size).to.equal(0);
 
                 //Test the window's scrollbars. 
                 const _windowScrollbarsDimensions = uss.calcScrollbarsDimensions(win, true);

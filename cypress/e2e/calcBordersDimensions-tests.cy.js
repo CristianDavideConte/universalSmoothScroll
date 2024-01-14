@@ -12,8 +12,8 @@ describe("calcBordersDimensions", function () {
             .then((win) => {
                 const _maxDim = 10; //See css styles of calcBordersDimensions-tests.html
                 
-                uss._containersData.clear();
-                expect(uss._containersData.size).to.equal(0);
+                //uss._containersData.clear(); //TODO: The observers should be detached
+                //expect(uss._containersData.size).to.equal(0);
 
                 //Test the window's borders. 
                 const _windowBordersDimensions = uss.calcBordersDimensions(win, true);

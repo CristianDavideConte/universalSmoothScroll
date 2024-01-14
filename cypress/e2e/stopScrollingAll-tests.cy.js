@@ -10,7 +10,8 @@ describe("stopScrollingAll", function () {
     it("Tests the stopScrollingAll method", function () {
         cy.window()
             .then((win) => {
-                uss._containersData.clear();
+                //uss._containersData.clear(); //TODO: The observers should be detached
+                //expect(uss._containersData.size).to.equal(0);
 
                 cy.testFailingValues(uss.stopScrollingAll, {
                     0: [constants.failingValuesAll]
@@ -79,7 +80,8 @@ describe("stopScrollingAll-immediatelyStopped", function () {
     it("Initialize a series of scroll-animations on both the x-axis and the y-axis of all scrollable containers and immediately stop them", function () {
         cy.window()
             .then((win) => {
-                uss._containersData.clear();
+                //uss._containersData.clear(); //TODO: The observers should be detached
+                //expect(uss._containersData.size).to.equal(0);
 
                 cy.testFailingValues(uss.stopScrollingAll, {
                     0: [constants.failingValuesAll]
@@ -146,7 +148,8 @@ describe("stopScrollingAll-containersData-integrity", function () {
                         expect(uss.isScrolling()).to.be.false;
                     })
                     .then(() => {
-                        uss._containersData.clear();
+                        //uss._containersData.clear(); //TODO: The observers should be detached
+                        //expect(uss._containersData.size).to.equal(0)
 
                         const _elements = [
                             win,

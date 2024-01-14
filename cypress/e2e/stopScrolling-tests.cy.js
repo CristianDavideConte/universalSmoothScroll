@@ -146,7 +146,8 @@ describe("stopScrolling-containersData-integrity", function () {
                         expect(uss.isScrolling()).to.be.false;
                     })
                     .then(() => {
-                        uss._containersData.clear();
+                        //uss._containersData.clear(); //TODO: The observers should be detached
+                        //expect(uss._containersData.size).to.equal(0);
 
                         const _testCallback = () => { };
                         const _testCalculatorFixed = () => 10;
