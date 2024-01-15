@@ -266,6 +266,48 @@ const DEFAULT_ERROR_LOGGER = (options) => {
 }
 
 /**
+ * Checks if `container` is valid pointer to an `Element` or a `window`. 
+ * @param {*} container The value to check.
+ * @returns `true` if `container` exists somewhere in the DOM, `false` otherwise.
+ */
+const IS_REACHABLE_CONTAINER = (container) => {
+    //container is null/undefined.
+    if (!container) return false;
+
+    //Test if container is a valid window.
+    if (IS_WINDOW(container)) return true;
+
+    //Check if the container's document exists and if it contains the container.
+    const _containerDocument = GET_DOCUMENT_OF(container);
+    return _containerDocument && _containerDocument.contains(container);
+}
+
+/**
+ * `Removes` and `unobserve` all non-reachable containers in `_containersData`.
+ */
+const CLEAR_INVALID_CONTAINERS_DATA = () => {
+    let _new_containersData = new Map();
+    let _new_MutationObserver_entries = new Map();
+    let _new_ResizeObserver_entries = new Map();
+
+    //Retrieve valid containers from _containersData.
+    for (const [_container, _containerData] of _containersData.entries()) {
+        //_container is not reachable anymore.
+        if (!IS_REACHABLE_CONTAINER(_container)) continue;
+
+        //_container is still reachable, save the known informations for later.
+        _new_containersData.set(_container, _containersData.get(_container));
+        _new_MutationObserver_entries.set(_container, DEFAULT_MUTATION_OBSERVER.entries.get(_container));
+        _new_ResizeObserver_entries.set(_container, DEFAULT_RESIZE_OBSERVER.entries.get(_container));
+    }
+
+    //Update valid containers' datas.
+    _containersData = _new_containersData;
+    DEFAULT_MUTATION_OBSERVER.reset(_new_MutationObserver_entries);
+    DEFAULT_RESIZE_OBSERVER.reset(_new_ResizeObserver_entries);
+}
+
+/**
  * TODO: write comment
  */
 const DEFAULT_MUTATION_OBSERVER = {
@@ -274,7 +316,7 @@ const DEFAULT_MUTATION_OBSERVER = {
     totalDebounceFrames: 16,
     entries: new Map(), //<entry.target, MutationsObject> 
     observer: new MutationObserver((entries, observer) => {
-        /** 
+        /**
          * Each time a mutation event is observed on one of the entries
          * the number of debouced frames is reset.
          */
@@ -284,17 +326,12 @@ const DEFAULT_MUTATION_OBSERVER = {
         for (const entry of entries) {
             //Update the record for the current entry.type.
             const _mutationObject = DEFAULT_MUTATION_OBSERVER.entries.get(entry.target);
-            
+
             _mutationObject.hasMutated = true;
 
             //Update the attributes flag.
             if (!_mutationObject.hasModifiedAttributes) {
                 _mutationObject.hasModifiedAttributes = entry.type === "attributes";
-            }
-
-            //Update the removed nodes.
-            for (const removedNode of entry.removedNodes) {
-                _mutationObject.removedNodes.push(removedNode)
             }
         }
 
@@ -319,19 +356,19 @@ const DEFAULT_MUTATION_OBSERVER = {
         }
 
         for (const [target, mutationObject] of DEFAULT_MUTATION_OBSERVER.entries) {
+            /**
+             * External modifications can invalidate containers.
+             * Remove and unobserve invalid containers and reschedule this callback.
+             */
+            if (!IS_REACHABLE_CONTAINER(target)) {
+                CLEAR_INVALID_CONTAINERS_DATA();
+                DEFAULT_MUTATION_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
+                return;
+            }
+
             if (!mutationObject.hasMutated) continue;
 
             const _containerData = _containersData.get(target);
-
-            /**
-             * External modifications can make _containersData and DEFAULT_MUTATION_OBSERVER.entries
-             * inconsistent with each other.
-             */
-            if (!_containerData) {
-                //TODO: whenever this will be supported, add this line.
-                //DEFAULT_MUTATION_OBSERVER.observer.unobserve(target);
-                continue;
-            }
 
             /**
              * Change the element's frangment string if its href attribute has changed. 
@@ -362,32 +399,12 @@ const DEFAULT_MUTATION_OBSERVER = {
                 _containerData[K_FGS] = _fragment;
             }
 
-            /**
-             * Unobserve and remove the containerData 
-             * of the nodes that have been removed from the document.
-             */
-            for (const removedNode of mutationObject.removedNodes) {
-                for (const container of _containersData.keys()) {
-                    /**
-                     * Currently there's no mutation observer method 
-                     * to unobserve the removedNode.
-                     * Note that: elementX.contains(elementX) === true
-                     */
-                    if (!IS_WINDOW(container) && removedNode.contains(container)) {
-                        DEFAULT_RESIZE_OBSERVER.observer.unobserve(container);
-                        DEFAULT_RESIZE_OBSERVER.entries.delete(container);
-                        DEFAULT_MUTATION_OBSERVER.entries.delete(container);
-                        _containersData.delete(container);
-                    }
-                }
-            }
-
             //Clear the mutationObject so that it can be reused.
             mutationObject.hasMutated = false;
-            mutationObject.removedNodes.length = 0;
             mutationObject.hasModifiedAttributes = false;
 
             //TODO: decide what to pass as the input of callback: perhaps the container?
+            //TODO: in order to avoid loops, callback shouldn't be called in the same frame as this callback
 
             //Execute the mutation callbacks
             for (const callback of _containerData[K_MCBQ]) callback();
@@ -395,12 +412,27 @@ const DEFAULT_MUTATION_OBSERVER = {
 
         DEFAULT_MUTATION_OBSERVER.callbackFrameId = NO_VAL;
     },
-    reset: () => {
+    reset: (newEntries = new Map()) => {
         TOP_WINDOW.cancelAnimationFrame(DEFAULT_MUTATION_OBSERVER.callbackFrameId);
         DEFAULT_MUTATION_OBSERVER.callbackFrameId = NO_VAL;
         DEFAULT_MUTATION_OBSERVER.debouncedFrames = 0;
-        DEFAULT_MUTATION_OBSERVER.entries.clear();
+        DEFAULT_MUTATION_OBSERVER.entries = newEntries;
         DEFAULT_MUTATION_OBSERVER.observer.disconnect();
+
+        for (const _entry of DEFAULT_MUTATION_OBSERVER.entries.keys()) {
+            //windows are managed by event listeners.
+            if (IS_WINDOW(_entry)) continue;
+
+            //TODO: if a new API ever allow to watch for a computedStyle change,
+            //TODO: use it for invalidating scrollable parents caches
+            DEFAULT_MUTATION_OBSERVER.observer.observe(
+                _entry,
+                {
+                    attributes: true,
+                    attributeFilter: ["href"],
+                }
+            );
+        }
     }
 }
 
@@ -452,19 +484,19 @@ const DEFAULT_RESIZE_OBSERVER = {
 
         //TODO: does it make sense to clear the cache for the scrollable parents on resize?
         for (const [target, resizeObject] of DEFAULT_RESIZE_OBSERVER.entries) {
+            /**
+             * External modifications can invalidate containers.
+             * Remove and unobserve invalid containers and reschedule this callback.
+             */
+            if (!IS_REACHABLE_CONTAINER(target)) {
+                CLEAR_INVALID_CONTAINERS_DATA();
+                DEFAULT_RESIZE_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
+                return;
+            }
+
             if (!resizeObject.hasResized) continue;
 
             const _containerData = _containersData.get(target);
-
-            /**
-             * External modifications can make _containersData and DEFAULT_RESIZE_OBSERVER.entries
-             * inconsistent with each other.
-             */
-            if (!_containerData) {
-                DEFAULT_RESIZE_OBSERVER.observer.unobserve(target);
-                continue;
-            }
-
             const _newWidth = resizeObject.width;
             const _newHeight = resizeObject.height;
 
@@ -501,6 +533,7 @@ const DEFAULT_RESIZE_OBSERVER = {
             resizeObject.hasResized = false;
 
             //TODO: decide what to pass as the input of callback: perhaps the container?
+            //TODO: in order to avoid loops, callback shouldn't be called in the same frame as this callback
 
             //Execute the resize callbacks
             for (const callback of _containerData[K_RCBQ]) callback();
@@ -508,12 +541,19 @@ const DEFAULT_RESIZE_OBSERVER = {
 
         DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
     },
-    reset: () => {
+    reset: (newEntries = new Map()) => {
         TOP_WINDOW.cancelAnimationFrame(DEFAULT_RESIZE_OBSERVER.callbackFrameId);
         DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
         DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
-        DEFAULT_RESIZE_OBSERVER.entries.clear();
+        DEFAULT_RESIZE_OBSERVER.entries = newEntries;
         DEFAULT_RESIZE_OBSERVER.observer.disconnect();
+
+        for (const _entry of DEFAULT_RESIZE_OBSERVER.entries.keys()) {
+            //windows are managed by event listeners.
+            if (IS_WINDOW(_entry)) continue;
+            
+            DEFAULT_RESIZE_OBSERVER.observer.observe(_entry, { box: "border-box" });
+        }
     }
 }
 
@@ -697,27 +737,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
     if (IS_WINDOW(container)) {
         let _debounceResizeEvent = false;
 
-        const onError = (event) => {
-            //This event listener is for managing the ResizeObserver errors only.
-            if (!event.message.includes("ResizeObserver")) return;
-
-            //TODO: when the mutation observer will support the unobserve method, improve this
-            for (const [_container, _containerData] of _containersData.entries()) {
-                /**
-                 * The _container's window has been removed or _container has been removed, 
-                 * but it's window is still accessible.
-                 */
-                if (!_container || !GET_DOCUMENT_OF(_container) || !GET_DOCUMENT_OF(_container).contains(_container)) {
-                    _containersData.clear();
-                    DEFAULT_RESIZE_OBSERVER.reset();
-                    DEFAULT_MUTATION_OBSERVER.reset();
-                    container.removeEventListener("resize", onResize, { passive: true });
-                    return;
-                }
-            }
-        };
-
-        const onResize = () => {
+        const _onResize = () => {
             //Make the resize callback fire only once per frame like the resize observer.
             if (_debounceResizeEvent) return;
 
@@ -740,17 +760,20 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
                 DEFAULT_RESIZE_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
             }
         };
+        
+        const _onUnload = () => {
+            const _document = container.document;
 
-        /**
-         * Any previous error would make INIT_CONTAINER_DATA trigger again
-         * without removing the onError eventListener.
-         * This is because ResizeObserver errors are async there could be many of them that
-         * should still be managed.
-         * The removal of onResize callback is managed by the onError function. 
-         */
-        container.removeEventListener("error", onError);
-        container.addEventListener("error", onError);
-        container.addEventListener("resize", onResize, { passive: true });
+            //Remove all the containers inside this window from _containersData.
+            for (const _container of _containersData.keys()) {
+                if (!IS_WINDOW(_container) && _document.contains(_container)) {
+                    _containersData.delete(_container);
+                }
+            }
+
+            _containersData.delete(container);
+            CLEAR_INVALID_CONTAINERS_DATA();
+        };
 
         //Set a default resizeObject.
         DEFAULT_RESIZE_OBSERVER.entries.set(
@@ -761,6 +784,14 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
                 height: container.innerHeight,
             }
         );
+
+        /**
+         * _onUnload ensures that when THIS_WINDOW contains an iFrame 
+         * which gets unloaded, the API doesn't keep any reference to 
+         * the unreachable containers (that would cause a memory leak).
+         */
+        container.addEventListener("beforeunload", _onUnload, { passive: true });
+        container.addEventListener("resize", _onResize, { passive: true });
 
         //A window doesn't have any scrollable parent.
         containerData[K_SSPX] = NO_SP;
@@ -777,10 +808,22 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
         return true;
     }
 
+    //TODO: if a container supports the resize observer but not the mutation one, 
+    //TODO: it still is observed by the resize observer -> this is not wanted behavior
     if (CHECK_INSTANCEOF(container)) {
         try {
             DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" });
-
+ 
+            //TODO: if a new API ever allow to watch for a computedStyle change, 
+            //TODO: use it for invalidating scrollable parents caches
+            DEFAULT_MUTATION_OBSERVER.observer.observe(
+                container,
+                {
+                    attributes: true,
+                    attributeFilter: ["href"],
+                }
+            );
+            
             //Set a default resizeObject.
             DEFAULT_RESIZE_OBSERVER.entries.set(
                 container,
@@ -791,25 +834,11 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
                 }
             );
 
-            //TODO: if a new API ever allow to watch for a computedStyle change, 
-            //TODO: use it for invalidating scrollable parents caches
-            DEFAULT_MUTATION_OBSERVER.observer.observe(
-                container,
-                {
-                    attributes: true,
-                    attributeFilter: ["href"],
-
-                    //Only the direct children of container are observed.
-                    childList: true,
-                }
-            );
-
             //Set a default mutationObject.
             DEFAULT_MUTATION_OBSERVER.entries.set(
                 container,
                 {
                     hasMutated: false,
-                    removedNodes: [],
                     hasModifiedAttributes: false,
                 }
             );
@@ -1149,10 +1178,11 @@ export const getWindowScroller = (container = _pageScroller, forceCalculation = 
                 //Cache the maxScrollX/maxScrollY.
                 const _elementOldData = _containersData.get(element);
                 const _elementData = _elementOldData || [];
-                _elementData[K_MSX] = _maxScrollX;
-                _elementData[K_MSY] = _maxScrollY;
 
                 if (!_elementOldData) INIT_CONTAINER_DATA(element, _elementData);
+
+                _elementData[K_MSX] = _maxScrollX;
+                _elementData[K_MSY] = _maxScrollY;
 
                 _containerData[K_WDS] = element;
                 _windowScrollerFound = true;
@@ -2907,7 +2937,7 @@ export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, st
  * @param {boolean} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
-export const scrollIntoView = (container, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options) => {
+export const scrollIntoView = (container = _pageScroller, alignToLeft = true, alignToTop = true, callback, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollIntoView" });
 
     let _parentIdx = -1;
@@ -3018,7 +3048,7 @@ export const scrollIntoView = (container, alignToLeft = true, alignToTop = true,
  * @param {boolean} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  */
-export const scrollIntoViewIfNeeded = (container, alignToCenter = true, callback, includeHiddenParents = false, options) => {
+export const scrollIntoViewIfNeeded = (container = _pageScroller, alignToCenter = true, callback, includeHiddenParents = false, options) => {
     options = MERGE_OBJECTS(options, { subject: "scrollIntoViewIfNeeded" });
 
     let _parentIdx = -1;
@@ -3417,7 +3447,6 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
         else THIS_WINDOW.addEventListener("load", _smoothHistoryNavigation, { passive: true, once: true });
     }
 }
-
 
 
 const ussInit = () => {
