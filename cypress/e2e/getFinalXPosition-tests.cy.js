@@ -46,7 +46,7 @@ describe("getFinalXPosition-beyond-maxScrollX", function () {
     cy.window()
       .then((win) => {
         const _testElement = win.document.getElementById("scroller");
-                    
+
         cy.testFailingValues(uss.getFinalXPosition, {
           0: [constants.failingValuesNoUndefined]
         },

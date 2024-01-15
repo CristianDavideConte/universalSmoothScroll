@@ -5,7 +5,8 @@
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries into a single common list
 //TODO: rename "forceCalculation" to "flushCache"
-//TODO: add styling comment
+//TODO: use the new naming scheme for variables
+//TODO: add common.js styling comment
 //TODO: @ts-check //Use to check for type errors
 
 import {
