@@ -1,16 +1,19 @@
 import * as uss from "../../src/main/uss.js";
+import * as common from "../../src/main/common.js";
 
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
     cy.visit("stopScrolling-tests.html");
+
+    //Speeds up the tests, there's no need to wait for the scroll-animations.
+    //uss.setStepLength(Math.max(common.HIGHEST_SAFE_SCROLL_POS, common.HIGHEST_SAFE_SCROLL_POS)); //breaks tests
 })
 
 describe("stopScrolling", function () {
     it("Tests the stopScrolling method", function () {
         cy.window()
             .then((win) => {
-
                 cy.testFailingValues(uss.stopScrolling, {
                     0: [constants.failingValuesNoUndefined]
                 },

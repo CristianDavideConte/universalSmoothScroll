@@ -1,4 +1,5 @@
 import * as uss from "../../src/main/uss.js";
+import * as common from "../../src/main/common.js";
 
 const { constants } = require("../support/constants");
 
@@ -107,14 +108,15 @@ beforeEach(() => {
     //This trick doens't affect the test results.
     cy.viewport(100, 200);
     cy.visit("scrollIntoView-tests.html");
+
+    //Speeds up the tests, there's no need to wait for the scroll-animations.
+    uss.setStepLength(Math.max(common.HIGHEST_SAFE_SCROLL_POS, common.HIGHEST_SAFE_SCROLL_POS));
 })
 
 describe("scrollIntoView-corners-alignments", function () {
     it("Tests the scrollIntoView method with the 4 corners alignments", function () {
         cy.window()
             .then((win) => {
-                uss._reducedMotion = true;
-
                 const _testElement1 = win.document.getElementById("scroller-container-1");
 
                 const _testElement111 = win.document.getElementById("scroller-content-111");
@@ -293,8 +295,6 @@ describe("scrollIntoView-center-alignments", function () {
     it("Tests the scrollIntoView method with the 5 center alignments", function () {
         cy.window()
             .then((win) => {
-                uss._reducedMotion = true;
-
                 const _testElement1 = win.document.getElementById("scroller-container-1");
 
                 const _testElement111 = win.document.getElementById("scroller-content-111");
@@ -506,8 +506,6 @@ describe("scrollIntoView-nearest-alignments", function () {
     it("Tests the scrollIntoView method with all the nearest alignments", function () {
         cy.window()
             .then((win) => {
-                uss._reducedMotion = true;
-
                 const _testElement1 = win.document.getElementById("scroller-container-1");
 
                 const _testElement111 = win.document.getElementById("scroller-content-111");

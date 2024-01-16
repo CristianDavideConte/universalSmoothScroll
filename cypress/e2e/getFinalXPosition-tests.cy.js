@@ -1,9 +1,13 @@
 import * as uss from "../../src/main/uss.js";
+import * as common from "../../src/main/common.js";
 
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
   cy.visit("getFinalXPosition-tests.html");
+
+  //Speeds up the tests, there's no need to wait for the scroll-animations.
+  uss.setStepLength(Math.max(common.HIGHEST_SAFE_SCROLL_POS, common.HIGHEST_SAFE_SCROLL_POS));
 })
 
 describe("getFinalXPosition", function () {
@@ -11,6 +15,7 @@ describe("getFinalXPosition", function () {
   it("Tests the getFinalXPosition method", function () {
     cy.window()
       .then((win) => {
+
         const _testElement = win.document.getElementById("scroller");
         const _expectedFinalPos = 10;
                       

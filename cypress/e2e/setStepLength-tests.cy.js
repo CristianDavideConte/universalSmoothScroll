@@ -1,9 +1,13 @@
 import * as uss from "../../src/main/uss.js";
+import * as common from "../../src/main/common.js";
 
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
     cy.visit("setStepLength-tests.html");
+
+    //Speeds up the tests, there's no need to wait for the scroll-animations.
+    uss.setStepLength(Math.max(common.HIGHEST_SAFE_SCROLL_POS, common.HIGHEST_SAFE_SCROLL_POS));
 })
 
 describe("setStepLength", function () {
@@ -13,7 +17,7 @@ describe("setStepLength", function () {
     let _testStepValidType2 = 5;
     it("Tests the setStepLength method", function () {
         cy.window()
-            .then((win) => {
+            .then((win) => {                
                 const _testElement = win.document.getElementById("scroller");
 
                 const _initialXStepLength = uss.getXStepLength();
@@ -50,7 +54,6 @@ describe("setStepLength", function () {
 
                         cy.waitForUssCallback(
                             (resolve) => {
-                                uss._reducedMotion = true;
                                 uss.scrollTo(150, 70, _testElement, resolve);
                             }
                         ).then(

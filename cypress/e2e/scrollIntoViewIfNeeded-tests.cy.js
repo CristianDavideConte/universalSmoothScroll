@@ -1,4 +1,5 @@
 import * as uss from "../../src/main/uss.js";
+import * as common from "../../src/main/common.js";
 
 const { constants } = require("../support/constants");
 
@@ -96,14 +97,15 @@ beforeEach(() => {
     //This trick doens't affect the test results.
     cy.viewport(100, 200);
     cy.visit("scrollIntoViewIfNeeded-tests.html");
+
+    //Speeds up the tests, there's no need to wait for the scroll-animations.
+    uss.setStepLength(Math.max(common.HIGHEST_SAFE_SCROLL_POS, common.HIGHEST_SAFE_SCROLL_POS));
 })
 
 describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
     it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments", function () {
         cy.window()
             .then((win) => {
-                uss._reducedMotion = true;
-
                 const _testElement1 = win.document.getElementById("scroller-container-1");
 
                 const _testElement111 = win.document.getElementById("scroller-content-111");
@@ -310,8 +312,6 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
     it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments and alignToCenter = true", function () {
         cy.window()
             .then((win) => {
-                uss._reducedMotion = true;
-
                 const _testElement1 = win.document.getElementById("scroller-container-1");
 
                 const _testElement111 = win.document.getElementById("scroller-content-111");
@@ -518,8 +518,6 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
     it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments but with an element's width that is bigger than the one of its parent", function () {
         cy.window()
             .then((win) => {
-                uss._reducedMotion = true;
-
                 const _testElement3 = win.document.getElementById("scroller-container-3");
                 const _testElement131 = win.document.getElementById("scroller-content-131");
 
@@ -722,8 +720,6 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
     it("Tests the scrollIntoViewIfNeeded method with all the corners/nearest alignments but with an element's height that is bigger than the one of its parent", function () {
         cy.window()
             .then((win) => {
-                uss._reducedMotion = true;
-
                 const _testElement4 = win.document.getElementById("scroller-container-4");
                 const _testElement141 = win.document.getElementById("scroller-content-141");
 

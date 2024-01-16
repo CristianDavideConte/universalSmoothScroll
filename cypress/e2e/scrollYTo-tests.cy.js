@@ -1,9 +1,13 @@
 import * as uss from "../../src/main/uss.js";
+import * as common from "../../src/main/common.js";
 
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
     cy.visit("scrollYTo-tests.html");
+
+    //Speeds up the tests, there's no need to wait for the scroll-animations.
+    uss.setStepLength(Math.max(common.HIGHEST_SAFE_SCROLL_POS, common.HIGHEST_SAFE_SCROLL_POS));
 })
 
 describe("scrollYTo", function () {
@@ -24,7 +28,6 @@ describe("scrollYTo", function () {
                     .then(() => {
                         cy.waitForUssCallback(
                             (resolve) => {
-                                uss._reducedMotion = true;
                                 uss.scrollYTo(10, _testElement, resolve);
                             }
                         ).then(

@@ -1,15 +1,19 @@
 import * as uss from "../../src/main/uss.js";
+import * as common from "../../src/main/common.js";
 
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
     cy.visit("scrollXTo-tests.html");
+
+    //Speeds up the tests, there's no need to wait for the scroll-animations.
+    uss.setStepLength(Math.max(common.HIGHEST_SAFE_SCROLL_POS, common.HIGHEST_SAFE_SCROLL_POS));
 })
 
 describe("scrollXTo", function () {
     it("Horizontally scrolls the test element to n pixels", function () {
         cy.window()
-            .then((win) => {
+            .then((win) => {                
                 const _testElement = win.document.getElementById("scroller");
 
                 cy.testFailingValues(uss.scrollXTo, {
@@ -24,7 +28,6 @@ describe("scrollXTo", function () {
                     .then(() => {
                         cy.waitForUssCallback(
                             (resolve) => {
-                                uss._reducedMotion = true;
                                 uss.scrollXTo(10, _testElement, resolve);
                             }
                         ).then(

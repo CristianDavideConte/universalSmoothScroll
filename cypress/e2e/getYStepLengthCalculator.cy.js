@@ -1,9 +1,13 @@
 import * as uss from "../../src/main/uss.js";
+import * as common from "../../src/main/common.js";
 
 const { constants } = require("../support/constants");
 
 beforeEach(() => {
-  cy.visit("getYStepLengthCalculator-tests.html"); 
+  cy.visit("getYStepLengthCalculator-tests.html");
+
+  //Speeds up the tests, there's no need to wait for the scroll-animations.
+  uss.setStepLength(Math.max(common.HIGHEST_SAFE_SCROLL_POS, common.HIGHEST_SAFE_SCROLL_POS));
 })
 
 describe("getYStepLengthCalculator", function () {
@@ -11,7 +15,7 @@ describe("getYStepLengthCalculator", function () {
   let tempTestCalculator = r => r / 20 + 1;
   it("Tests the getYStepLengthCalculator method", function () {
     cy.window()
-      .then((win) => {
+      .then((win) => {        
         const _testElement = win.document.getElementById("scroller");
                                         
         cy.testFailingValues(uss.getYStepLengthCalculator, {
@@ -31,7 +35,6 @@ describe("getYStepLengthCalculator", function () {
             
             cy.waitForUssCallback(
               (resolve) => {
-                uss._reducedMotion = true;
                 uss.scrollYTo(100, _testElement, resolve);
               }
             ).then(
