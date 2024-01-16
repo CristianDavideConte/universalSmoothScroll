@@ -7,13 +7,13 @@ const { constants } = require("../support/constants");
  * The position is expressed as an object containing the absolute values of distances
  * between the sides of the element and the ones of the parent.
  */
-function getDeltas(uss, win, element, parent) {
+function getDeltas(win, element, parent) {
     const _bordersDimensions = uss.calcBordersDimensions(parent);
     const _scrollbarsDimensions = uss.calcScrollbarsDimensions(parent);
 
     const _elPos = element.getBoundingClientRect();
     const _containerPos = parent !== win ? parent.getBoundingClientRect() :
-        { top: 0, right: uss.getWindowWidth(), bottom: uss.getWindowHeight(), left: 0 };
+        { top: 0, right: win.innerWidth, bottom: win.innerHeight, left: 0 };
 
     const _topDelta = _elPos.top - _containerPos.top - _bordersDimensions[0];
     const _rightDelta = _elPos.right - _containerPos.right + _bordersDimensions[1] + _scrollbarsDimensions[0];
@@ -116,7 +116,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
 
                 cy.testFailingValues(uss.scrollIntoViewIfNeeded, {
                     0: [
-                        constants.failingValuesAll,
+                        constants.failingValuesAllNoUndefined,
                         [true, false],
                         [undefined],
                         [true, false],
@@ -147,7 +147,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -156,7 +156,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -165,7 +165,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -188,7 +188,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -197,7 +197,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -206,7 +206,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -229,7 +229,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -238,7 +238,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -247,7 +247,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -270,7 +270,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -279,7 +279,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -288,7 +288,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments", function () {
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -324,7 +324,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
 
                 cy.testFailingValues(uss.scrollIntoViewIfNeeded, {
                     0: [
-                        constants.failingValuesAll,
+                        constants.failingValuesAllNoUndefined,
                         [true, false],
                         [undefined],
                         [true, false],
@@ -355,7 +355,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                     expect(topDelta).to.be.closeTo(bottomDelta, 1);
@@ -364,7 +364,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -373,7 +373,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -396,7 +396,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                     expect(topDelta).to.be.closeTo(bottomDelta, 1);
@@ -405,7 +405,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -414,7 +414,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -437,7 +437,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                     expect(topDelta).to.be.closeTo(bottomDelta, 1);
@@ -446,7 +446,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -455,7 +455,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -478,7 +478,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(rightDelta, 1);
                                                     expect(topDelta).to.be.closeTo(bottomDelta, 1);
@@ -487,7 +487,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -496,7 +496,7 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -528,7 +528,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
 
                 cy.testFailingValues(uss.scrollIntoViewIfNeeded, {
                     0: [
-                        constants.failingValuesAll,
+                        constants.failingValuesAllNoUndefined,
                         [true, false],
                         [undefined],
                         [true, false],
@@ -559,7 +559,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(topDelta).to.be.closeTo(0, 1);
                                                     expect(_container.scrollLeft).to.equal(uss.getMaxScrollX(_container)); //Didn't move since the last forced position
@@ -568,7 +568,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -577,7 +577,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -600,7 +600,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(topDelta).to.be.closeTo(0, 1);
                                                     expect(_container.scrollLeft).to.equal(0); //Didn't move since the last forced position
@@ -609,7 +609,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -618,7 +618,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -641,7 +641,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
                                                     expect(_container.scrollLeft).to.equal(uss.getMaxScrollX(_container)); //Didn't move since the last forced position
@@ -650,7 +650,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -659,7 +659,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -682,7 +682,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
                                                     expect(_container.scrollLeft).to.equal(0); //Didn't move since the last forced position
@@ -691,7 +691,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -700,7 +700,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -732,7 +732,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
 
                 cy.testFailingValues(uss.scrollIntoViewIfNeeded, {
                     0: [
-                        constants.failingValuesAll,
+                        constants.failingValuesAllNoUndefined,
                         [true, false],
                         [undefined],
                         [true, false],
@@ -763,7 +763,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(_container.scrollTop).to.equal(uss.getMaxScrollY(_container)); //Didn't move since the last forced position
@@ -772,7 +772,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -781,7 +781,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -804,7 +804,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(_container.scrollTop).to.equal(uss.getMaxScrollY(_container)); //Didn't move since the last forced position
@@ -813,7 +813,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -822,7 +822,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(topDelta).to.be.closeTo(0, 1);
@@ -845,7 +845,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(_container.scrollTop).to.equal(0); //Didn't move since the last forced position
@@ -854,7 +854,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -863,7 +863,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(leftDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -886,7 +886,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                             tests: [
                                                 (el) => { //Tests the element position
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(_container.scrollTop).to.equal(0); //Didn't move since the last forced position
@@ -895,7 +895,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                                     el = el.parentElement;
 
                                                     const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
@@ -904,7 +904,7 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
                                                     el = el.parentElement.parentElement;
 
                                                     const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(uss, win, el, _container);
+                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(win, el, _container);
 
                                                     expect(rightDelta).to.be.closeTo(0, 1);
                                                     expect(bottomDelta).to.be.closeTo(0, 1);
