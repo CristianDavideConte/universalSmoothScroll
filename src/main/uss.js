@@ -2988,7 +2988,11 @@ export const scrollIntoView = (container = _pageScroller, alignToLeft = true, al
         //_bordersDimensions[3] = left border size
         const _bordersDimensions = calcBordersDimensions(_parent, false, options);
 
-        //Current container position relative to the current parent.
+        /**
+         * Current container position relative to the current parent.
+         * The riassignment trick is used because the returned object
+         * of getBoundingClientRect is immutable.
+         */
         const { top, right, bottom, left } = _container.getBoundingClientRect();
         const _containerPos = { top, right, bottom, left };
 
@@ -3096,7 +3100,11 @@ export const scrollIntoViewIfNeeded = (container = _pageScroller, alignToCenter 
         //_bordersDimensions[3] = left border size
         const _bordersDimensions = calcBordersDimensions(_parent, false, options);
 
-        //Current container position relative to the current parent.
+        /**
+         * Current container position relative to the current parent.
+         * The riassignment trick is used because the returned object
+         * of getBoundingClientRect is immutable.
+         */
         const { top, right, bottom, left } = _container.getBoundingClientRect();
         const _containerPos = { top, right, bottom, left };
 
