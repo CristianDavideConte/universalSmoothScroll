@@ -2300,7 +2300,7 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
         //At least one axis should be tested.
         if (_testScrollX || _testScrollY) {
             if (_parent === _windowScroller) {
-                _parent = GET_WINDOW_OF(_parent);
+                _parent = GET_WINDOW_OF(container);
             }
 
             const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
