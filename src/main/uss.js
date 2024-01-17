@@ -2014,7 +2014,9 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
             IS_WINDOW(_parent) ||
             overflowRegex.test(TOP_WINDOW.getComputedStyle(_parent).overflowX)
         ) {
-            if (_parent === _windowScroller) _parent = GET_WINDOW_OF(container);
+            if (_parent === _windowScroller) {
+                _parent = GET_WINDOW_OF(container);
+            }
 
             const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
             const _parentInitialX = _scrollXCalculator();
@@ -2131,7 +2133,9 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
             IS_WINDOW(_parent) ||
             overflowRegex.test(TOP_WINDOW.getComputedStyle(_parent).overflowY)
         ) {
-            if (_parent === _windowScroller) _parent = GET_WINDOW_OF(container);
+            if (_parent === _windowScroller) {
+                _parent = GET_WINDOW_OF(container);
+            }
 
             const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
             const _parentInitialX = _scrollXCalculator();
@@ -2295,7 +2299,9 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
 
         //At least one axis should be tested.
         if (_testScrollX || _testScrollY) {
-            if (_parent === _windowScroller) _parent = GET_WINDOW_OF(container);
+            if (_parent === _windowScroller) {
+                _parent = GET_WINDOW_OF(_parent);
+            }
 
             const [_scrollXCalculator, _scrollYCalculator] = getScrollCalculators(_parent, options);
             const _parentInitialX = _scrollXCalculator();
@@ -2922,16 +2928,16 @@ export const scrollBy = (deltaX, deltaY, container = _pageScroller, callback, st
 /**
  * Finds and scrolls all the `scrollableParents` of `container` in order to make it visible on the screen with the specified alignments.
  * @param {*} container An instance of `Element` or a `window`.
- * @param {boolean} alignToLeft This value indicates the alignment (on the x-axis) of `container` and all its `scrollableParents`:
+ * @param {boolean | string} alignToLeft This value indicates the alignment (on the x-axis) of `container` and all its `scrollableParents`:
  * - `true` if the alignment should be to the `left`
  * - `false` if the alignment should be to the `right`
- * - `nearest` **(case insensitive)** if the alignment should be to the `closest side`:
+ * - `"nearest"` **(case insensitive)** if the alignment should be to the `closest side`:
  *    the alignment of each container is decided by measuring its position (on the x-axis) relative to its closest scrollable ancestor
  * - Any other value, if the alignment should be to the `center`
- * @param {boolean} alignToTop This value indicates the alignment (on the y-axis) of `container` and all its `scrollableParents`:
+ * @param {boolean | string} alignToTop This value indicates the alignment (on the y-axis) of `container` and all its `scrollableParents`:
  * - `true` if the alignment should be to the `top`
  * - `false` if the alignment should be to the `bottom`
- * - `nearest` **(case insensitive)** if the alignment should be to the `closest side`:
+ * - `"nearest"` **(case insensitive)** if the alignment should be to the `closest side`:
  *    the alignment of each container is decided by measuring its position (on the y-axis) relative to its closest scrollable ancestor
  * - Any other value, if the alignment should be to the `center`
  * @param {function} [callback] A function invoked when `container` is scrolled into view.
@@ -3039,7 +3045,7 @@ export const scrollIntoView = (container = _pageScroller, alignToLeft = true, al
 /**
  * Finds and scrolls all the `scrollableParents` of `container` in order to make it visible on the screen with the specified alignments only if it's not already visible.
  * @param {*} container An instance of `Element` or a `window`.
- * @param {boolean} alignToCenter This value indicates the alignments (on both the x and y axes) of `container`:
+ * @param {boolean | *} alignToCenter This value indicates the alignments (on both the x and y axes) of `container`:
  * - `true` if the alignments should be to the `center` of its closest scrollable ancestor
  * - Any other value, if the alignments should to the `closest side`:
  *   the alignments are decided by measuring `container`'s position relative to its closest scrollable ancestor
