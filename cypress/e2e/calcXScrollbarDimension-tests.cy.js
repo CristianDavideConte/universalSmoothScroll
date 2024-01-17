@@ -55,8 +55,6 @@ describe("calcXScrollbarDimension", function () {
                         const _elementWithScrollbarOnTheYAxisOriginalScrollPos = _getCurrentScrollPos(_elementWithScrollbarOnTheYAxis);
                         const _elementWithScrollbarOnTheXYAxesOriginalScrollPos = _getCurrentScrollPos(_elementWithScrollbarOnTheXYAxes);
 
-                        uss.setPageScroller(_pageScroller);
-
                         //Test the x-scrollbar's dimension of document.head's elements.
                         expect(uss.calcXScrollbarDimension(_head)).to.equal(0);
                         Array.from(_head.children).forEach(el => expect(uss.calcXScrollbarDimension(el)).to.equal(0));
