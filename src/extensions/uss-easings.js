@@ -350,14 +350,15 @@ export const CUSTOM_CUBIC_HERMITE_SPLINE = (xs, ys, tension = 0, duration = 500,
         t = (x - xs[k]) / (xs[k + 1] - xs[k]); //t of the given x
         break;
       }
+
       if (xs[k] > x) {
         _binaryMax = k;
-        k = Math.floor((_binaryMin + k) / 2);
       } else {
         _binaryMin = k;
-        k = Math.floor((_binaryMax + k) / 2);
       }
-    } while (_binaryMin !== _binaryMax);
+      
+      k = Math.floor((_binaryMin + _binaryMax) / 2);
+    } while (_binaryMin < _binaryMax);
 
     const t_2 = t * t;
     const t_3 = t_2 * t;
