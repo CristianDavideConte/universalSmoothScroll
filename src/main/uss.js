@@ -814,7 +814,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
     if (CHECK_INSTANCEOF(container)) {
         try {
             DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" });
- 
+
             //TODO: if a new API ever allow to watch for a computedStyle change, 
             //TODO: use it for invalidating scrollable parents caches
             DEFAULT_MUTATION_OBSERVER.observer.observe(
@@ -824,7 +824,7 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
                     attributeFilter: ["href"],
                 }
             );
-            
+
             //Set a default resizeObject.
             DEFAULT_RESIZE_OBSERVER.entries.set(
                 container,

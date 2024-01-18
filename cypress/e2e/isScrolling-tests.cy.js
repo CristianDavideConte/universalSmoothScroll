@@ -184,7 +184,7 @@ describe("isScrolling-StopXAxisScrollingWhileAnimating", function () {
             if (i < 10) return total / 10;
 
             uss.stopScrollingX(container);
-            _resolve();
+            if (!uss.isYScrolling(container)) _resolve();
             return remaning;
         }
     }
@@ -221,7 +221,7 @@ describe("isScrolling-StopYAxisScrollingWhileAnimating", function () {
             if (i < 10) return total / 10;
 
             uss.stopScrollingY(container);
-            _resolve();
+            if (!uss.isXScrolling(container)) _resolve();
             return remaning;
         }
     }
