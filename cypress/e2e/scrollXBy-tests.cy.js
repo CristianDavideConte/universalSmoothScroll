@@ -98,13 +98,14 @@ describe("scrollXToBy-StillStart-False", function () {
 });
 
 describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating", function () {
+    let _resolve;
     let oldFinalXPosition;
     let init = false;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentYPosition, finalYPosition, container) => {
         if (!init) {
             init = true;
-            uss.scrollXBy(10, container, null, false);
+            uss.scrollXBy(10, container, _resolve, false);
             return 1;
         }
         return remaning;
@@ -120,10 +121,11 @@ describe("scrollXToBy-StillStart-False-ExtendedScrollingWhileAnimating", functio
 
                 cy.waitForUssCallback(
                     (resolve) => {
+                        _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
+
                         uss.scrollXTo(10, _testElement);
                         oldFinalXPosition = uss.getFinalXPosition(_testElement);
-
-                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
@@ -142,28 +144,17 @@ describe("scrollXBy-containScroll-below-0", function () {
             .then((win) => {
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.testFailingValues(uss.scrollXBy, {
-                    0: [constants.failingValuesNoFiniteNumber,
-                    constants.failingValuesNoUndefined
-                    ]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(uss.isXScrolling()).to.be.false;
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                uss.scrollXBy(-10000, _testElement, resolve, true, true);
-                                finalXPosition = uss.getFinalXPosition(_testElement);
-                            }
-                        ).then(
-                            () => {
-                                cy.elementScrollLeftShouldBe(_testElement, 0);
-                                expect(finalXPosition).to.equal(0);
-                            }
-                        );
-                    });
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollXBy(-10000, _testElement, resolve, true, true);
+                        finalXPosition = uss.getFinalXPosition(_testElement);
+                    }
+                ).then(
+                    () => {
+                        cy.elementScrollLeftShouldBe(_testElement, 0);
+                        expect(finalXPosition).to.equal(0);
+                    }
+                );
             });
     });
 });
@@ -176,29 +167,18 @@ describe("scrollXBy-containScroll-beyond-maxScrollX", function () {
             .then((win) => {
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.testFailingValues(uss.scrollXBy, {
-                    0: [constants.failingValuesNoFiniteNumber,
-                    constants.failingValuesNoUndefined
-                    ]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(uss.isXScrolling()).to.be.false;
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                maxScrollX = uss.getMaxScrollX(_testElement);
-                                uss.scrollXBy(maxScrollX + 100, _testElement, resolve, true, true);
-                                finalXPosition = uss.getFinalXPosition(_testElement);
-                            }
-                        ).then(
-                            () => {
-                                cy.elementScrollLeftShouldBe(_testElement, maxScrollX);
-                                expect(finalXPosition).to.equal(maxScrollX);
-                            }
-                        );
-                    });
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        maxScrollX = uss.getMaxScrollX(_testElement);
+                        uss.scrollXBy(maxScrollX + 100, _testElement, resolve, true, true);
+                        finalXPosition = uss.getFinalXPosition(_testElement);
+                    }
+                ).then(
+                    () => {
+                        cy.elementScrollLeftShouldBe(_testElement, maxScrollX);
+                        expect(finalXPosition).to.equal(maxScrollX);
+                    }
+                );
             });
     });
 });

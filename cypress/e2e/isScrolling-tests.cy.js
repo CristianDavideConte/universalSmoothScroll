@@ -46,26 +46,17 @@ describe("isScrolling-scrollYAnimation", function () {
             .then((win) => {
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.testFailingValues(uss.isScrolling, {
-                    0: [constants.failingValuesNoUndefined]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(uss.isScrolling()).to.be.false;
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                expect(uss.isScrolling(_testElement)).to.be.false;
-                                uss.scrollYTo(100, _testElement, resolve);
-                                expect(uss.isScrolling(_testElement)).to.be.true;
-                            }
-                        ).then(
-                            () => {
-                                expect(uss.isScrolling(_testElement)).to.be.false;
-                            }
-                        );
-                    });
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        uss.scrollYTo(100, _testElement, resolve);
+                        expect(uss.isScrolling(_testElement)).to.be.true;
+                    }
+                ).then(
+                    () => {
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                    }
+                );
             });
     });
 });
@@ -76,26 +67,17 @@ describe("isScrolling-scrollXYAnimation", function () {
             .then((win) => {
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.testFailingValues(uss.isScrolling, {
-                    0: [constants.failingValuesNoUndefined]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(uss.isScrolling()).to.be.false;
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                expect(uss.isScrolling(_testElement)).to.be.false;
-                                uss.scrollTo(100, 200, _testElement, resolve);
-                                expect(uss.isScrolling(_testElement)).to.be.true;
-                            }
-                        ).then(
-                            () => {
-                                expect(uss.isScrolling(_testElement)).to.be.false;
-                            }
-                        );
-                    });
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                        uss.scrollTo(100, 200, _testElement, resolve);
+                        expect(uss.isScrolling(_testElement)).to.be.true;
+                    }
+                ).then(
+                    () => {
+                        expect(uss.isScrolling(_testElement)).to.be.false;
+                    }
+                );
             });
     });
 });

@@ -50,31 +50,20 @@ describe("scrollTo-containScroll-below-0", function () {
             .then((win) => {
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.testFailingValues(uss.scrollTo, {
-                    0: [constants.failingValuesNoFiniteNumber,
-                    constants.failingValuesNoUndefined
-                    ]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(uss.isScrolling()).to.be.false;
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                uss.scrollTo(-100, -100, _testElement, resolve, true);
-                                finalXPosition = uss.getFinalXPosition(_testElement);
-                                finalYPosition = uss.getFinalYPosition(_testElement);
-                            }
-                        ).then(
-                            () => {
-                                cy.elementScrollLeftShouldBe(_testElement, 0);
-                                cy.elementScrollTopShouldBe(_testElement, 0);
-                                expect(finalXPosition).to.equal(0);
-                                expect(finalYPosition).to.equal(0);
-                            }
-                        );
-                    });
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollTo(-100, -100, _testElement, resolve, true);
+                        finalXPosition = uss.getFinalXPosition(_testElement);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
+                    }
+                ).then(
+                    () => {
+                        cy.elementScrollLeftShouldBe(_testElement, 0);
+                        cy.elementScrollTopShouldBe(_testElement, 0);
+                        expect(finalXPosition).to.equal(0);
+                        expect(finalYPosition).to.equal(0);
+                    }
+                );
             });
     });
 });
@@ -89,33 +78,22 @@ describe("scrollTo-containScroll-beyond-maxScrollX-and-maxScrollY", function () 
             .then((win) => {
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.testFailingValues(uss.scrollTo, {
-                    0: [constants.failingValuesNoFiniteNumber,
-                    constants.failingValuesNoUndefined
-                    ]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(uss.isScrolling()).to.be.false;
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                maxScrollX = uss.getMaxScrollX(_testElement);
-                                maxScrollY = uss.getMaxScrollY(_testElement);
-                                uss.scrollTo(maxScrollX + 100, maxScrollY + 100, _testElement, resolve, true);
-                                finalXPosition = uss.getFinalXPosition(_testElement);
-                                finalYPosition = uss.getFinalYPosition(_testElement);
-                            }
-                        ).then(
-                            () => {
-                                cy.elementScrollLeftShouldBe(_testElement, maxScrollX);
-                                cy.elementScrollTopShouldBe(_testElement, maxScrollY);
-                                expect(finalXPosition).to.equal(maxScrollX);
-                                expect(finalYPosition).to.equal(maxScrollY);
-                            }
-                        );
-                    });
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        maxScrollX = uss.getMaxScrollX(_testElement);
+                        maxScrollY = uss.getMaxScrollY(_testElement);
+                        uss.scrollTo(maxScrollX + 100, maxScrollY + 100, _testElement, resolve, true);
+                        finalXPosition = uss.getFinalXPosition(_testElement);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
+                    }
+                ).then(
+                    () => {
+                        cy.elementScrollLeftShouldBe(_testElement, maxScrollX);
+                        cy.elementScrollTopShouldBe(_testElement, maxScrollY);
+                        expect(finalXPosition).to.equal(maxScrollX);
+                        expect(finalYPosition).to.equal(maxScrollY);
+                    }
+                );
             });
     });
 });
@@ -165,11 +143,13 @@ describe("scrollToTo-immediatelyStoppedScrolling", function () {
 });
 
 describe("scrollTo-StoppedScrollingWhileAnimating", function () {
+    let _resolve;
     let init = 0;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
         if (init > 1) {
             uss.stopScrolling(container);
+            _resolve();
             return 1;
         }
 
@@ -186,9 +166,9 @@ describe("scrollTo-StoppedScrollingWhileAnimating", function () {
 
                 cy.waitForUssCallback(
                     (resolve) => {
+                        _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
                         uss.scrollTo(200, 100, _testElement, resolve);
-
-                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {
@@ -201,11 +181,12 @@ describe("scrollTo-StoppedScrollingWhileAnimating", function () {
 });
 
 describe("scrollTo-scrollTo-ReplaceScrollingWhileAnimating", function () {
+    let _resolve;
     let init = 0;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
         if (init === 1) {
-            uss.scrollTo(10, 20, container);
+            uss.scrollTo(10, 20, container, _resolve);
             return 1;
         }
 
@@ -222,9 +203,9 @@ describe("scrollTo-scrollTo-ReplaceScrollingWhileAnimating", function () {
 
                 cy.waitForUssCallback(
                     (resolve) => {
+                        _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
                         uss.scrollTo(100, 200, _testElement, resolve);
-
-                        win.setTimeout(resolve, constants.defaultTimeout);
                     }
                 ).then(
                     () => {

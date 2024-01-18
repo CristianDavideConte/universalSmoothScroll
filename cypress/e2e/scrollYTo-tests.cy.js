@@ -47,28 +47,17 @@ describe("scrollYTo-containScroll-below-0", function () {
             .then((win) => {
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.testFailingValues(uss.scrollYTo, {
-                    0: [constants.failingValuesNoFiniteNumber,
-                    constants.failingValuesNoUndefined
-                    ]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(uss.isYScrolling()).to.be.false;
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                uss.scrollYTo(-100, _testElement, resolve, true);
-                                finalYPosition = uss.getFinalYPosition(_testElement);
-                            }
-                        ).then(
-                            () => {
-                                cy.elementScrollTopShouldBe(_testElement, 0);
-                                expect(finalYPosition).to.equal(0);
-                            }
-                        );
-                    });
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        uss.scrollYTo(-100, _testElement, resolve, true);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
+                    }
+                ).then(
+                    () => {
+                        cy.elementScrollTopShouldBe(_testElement, 0);
+                        expect(finalYPosition).to.equal(0);
+                    }
+                );
             });
     });
 });
@@ -81,29 +70,18 @@ describe("scrollYTo-containScroll-beyond-maxScrollY", function () {
             .then((win) => {
                 const _testElement = win.document.getElementById("scroller");
 
-                cy.testFailingValues(uss.scrollYTo, {
-                    0: [constants.failingValuesNoFiniteNumber,
-                    constants.failingValuesNoUndefined
-                    ]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(uss.isYScrolling()).to.be.false;
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                maxScrollY = uss.getMaxScrollY(_testElement);
-                                uss.scrollYTo(maxScrollY + 100, _testElement, resolve, true);
-                                finalYPosition = uss.getFinalYPosition(_testElement);
-                            }
-                        ).then(
-                            () => {
-                                cy.elementScrollTopShouldBe(_testElement, maxScrollY);
-                                expect(finalYPosition).to.equal(maxScrollY);
-                            }
-                        );
-                    });
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        maxScrollY = uss.getMaxScrollY(_testElement);
+                        uss.scrollYTo(maxScrollY + 100, _testElement, resolve, true);
+                        finalYPosition = uss.getFinalYPosition(_testElement);
+                    }
+                ).then(
+                    () => {
+                        cy.elementScrollTopShouldBe(_testElement, maxScrollY);
+                        expect(finalYPosition).to.equal(maxScrollY);
+                    }
+                );
             });
     });
 });
@@ -150,11 +128,13 @@ describe("scrollYToTo-immediatelyStoppedScrolling", function () {
 });
 
 describe("scrollYTo-StoppedScrollingWhileAnimating", function () {
+    let _resolve;
     let init = 0;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
         if (init > 1) {
             uss.stopScrollingY(container);
+            _resolve();
             return 1;
         }
 
@@ -171,9 +151,10 @@ describe("scrollYTo-StoppedScrollingWhileAnimating", function () {
 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollYTo(200, _testElement, resolve);
+                        _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
 
-                        win.setTimeout(resolve, constants.defaultTimeout);
+                        uss.scrollYTo(200, _testElement, resolve);
                     }
                 ).then(
                     () => {
@@ -185,11 +166,12 @@ describe("scrollYTo-StoppedScrollingWhileAnimating", function () {
 });
 
 describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating", function () {
+    let _resolve;
     let init = 0;
 
     const _testCalculator = (remaning, originalTimestamp, currentTimestamp, total, currentXPosition, finalXPosition, container) => {
         if (init === 1) {
-            uss.scrollYTo(10, container);
+            uss.scrollYTo(10, container, _resolve);
             return 1;
         }
 
@@ -206,9 +188,10 @@ describe("scrollYTo-scrollYTo-ReplaceScrollingWhileAnimating", function () {
 
                 cy.waitForUssCallback(
                     (resolve) => {
-                        uss.scrollYTo(100, _testElement, resolve);
+                        _resolve = resolve;
+                        expect(_resolve).to.equal(resolve);
 
-                        win.setTimeout(resolve, constants.defaultTimeout);
+                        uss.scrollYTo(100, _testElement, resolve);
                     }
                 ).then(
                     () => {

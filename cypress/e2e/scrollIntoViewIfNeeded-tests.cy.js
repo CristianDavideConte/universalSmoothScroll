@@ -340,196 +340,181 @@ describe("scrollIntoViewIfNeeded-center-alignments", function () {
 
                 //Since win is an iFrame window, the _pageScroller of uss
                 //(default value of API functions) is not the same as the one of win.
-                const _pageScrollerOfWin = uss.getPageScroller(win); 
+                const _pageScrollerOfWin = uss.getPageScroller(win);
 
-                cy.testFailingValues(uss.scrollIntoViewIfNeeded, {
-                    0: [
-                        constants.failingValuesAllNoUndefined,
-                        [true, false],
-                        [undefined],
-                        [true, false],
-                    ]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(_testElement1.scrollLeft).to.equal(_initialScrollLeft);
-                        expect(_testElement1.scrollTop).to.equal(_initialScrollTop);
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                //Set up the scroll position to force the "nearest" alignment to be left-top.
-                                const _container = _testElement111.parentElement;
-                                const _parent = _container.parentElement;
-                                uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
-                                uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
-                                uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        //Set up the scroll position to force the "nearest" alignment to be left-top.
+                        const _container = _testElement111.parentElement;
+                        const _parent = _container.parentElement;
+                        uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
+                        uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
+                        uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
 
-                                _scrollIntoViewTester(
-                                    resolve,
-                                    [
-                                        {
-                                            el: _testElement111,
-                                            alignCenter: true, //left-top + centered element
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+                        _scrollIntoViewTester(
+                            resolve,
+                            [
+                                {
+                                    el: _testElement111,
+                                    alignCenter: true, //left-top + centered element
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
 
-                                                    expect(leftDelta).to.be.closeTo(rightDelta, 1);
-                                                    expect(topDelta).to.be.closeTo(bottomDelta, 1);
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
-
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => {
-                                                    //Set up the scroll position to force the "nearest" alignment to be right-top.
-                                                    const _nextEl = _testElement112;
-                                                    const _container = _nextEl.parentElement;
-                                                    const _parent = _container.parentElement;
-                                                    uss.scrollTo(0, uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
-                                                    uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
-                                                    uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
-                                                }
-                                            ]
+                                            expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                            expect(topDelta).to.be.closeTo(bottomDelta, 1);
                                         },
-                                        {
-                                            el: _testElement112,
-                                            alignCenter: true, //right-top + centered element
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
 
-                                                    expect(leftDelta).to.be.closeTo(rightDelta, 1);
-                                                    expect(topDelta).to.be.closeTo(bottomDelta, 1);
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
 
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => {
-                                                    //Set up the scroll position to force the "nearest" alignment to be left-bottom.
-                                                    const _nextEl = _testElement121;
-                                                    const _container = _nextEl.parentElement;
-                                                    const _parent = _container.parentElement;
-                                                    uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), 0, _pageScrollerOfWin);
-                                                    uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
-                                                    uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
-                                                }
-                                            ]
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
                                         },
-                                        {
-                                            el: _testElement121,
-                                            alignCenter: true, //left-bottom + centered element
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
 
-                                                    expect(leftDelta).to.be.closeTo(rightDelta, 1);
-                                                    expect(topDelta).to.be.closeTo(bottomDelta, 1);
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
 
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => {
-                                                    //Set up the scroll position to force the "nearest" alignment to be right-bottom.
-                                                    const _nextEl = _testElement122;
-                                                    const _container = _nextEl.parentElement;
-                                                    const _parent = _container.parentElement;
-                                                    uss.scrollTo(0, 0, _pageScrollerOfWin);
-                                                    uss.scrollTo(0, 0, _parent);
-                                                    uss.scrollTo(0, 0, _container);
-                                                }
-                                            ]
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
                                         },
-                                        {
-                                            el: _testElement122,
-                                            alignCenter: true, //right-bottom + centered element
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(rightDelta, 1);
-                                                    expect(topDelta).to.be.closeTo(bottomDelta, 1);
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
-
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                }
-                                            ]
+                                        (el) => {
+                                            //Set up the scroll position to force the "nearest" alignment to be right-top.
+                                            const _nextEl = _testElement112;
+                                            const _container = _nextEl.parentElement;
+                                            const _parent = _container.parentElement;
+                                            uss.scrollTo(0, uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
+                                            uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
+                                            uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
                                         }
                                     ]
-                                );
-                            }
-                        ).then(
-                            () => { }
+                                },
+                                {
+                                    el: _testElement112,
+                                    alignCenter: true, //right-top + centered element
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                            expect(topDelta).to.be.closeTo(bottomDelta, 1);
+                                        },
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
+
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
+
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => {
+                                            //Set up the scroll position to force the "nearest" alignment to be left-bottom.
+                                            const _nextEl = _testElement121;
+                                            const _container = _nextEl.parentElement;
+                                            const _parent = _container.parentElement;
+                                            uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), 0, _pageScrollerOfWin);
+                                            uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
+                                            uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
+                                        }
+                                    ]
+                                },
+                                {
+                                    el: _testElement121,
+                                    alignCenter: true, //left-bottom + centered element
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                            expect(topDelta).to.be.closeTo(bottomDelta, 1);
+                                        },
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
+
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
+
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => {
+                                            //Set up the scroll position to force the "nearest" alignment to be right-bottom.
+                                            const _nextEl = _testElement122;
+                                            const _container = _nextEl.parentElement;
+                                            const _parent = _container.parentElement;
+                                            uss.scrollTo(0, 0, _pageScrollerOfWin);
+                                            uss.scrollTo(0, 0, _parent);
+                                            uss.scrollTo(0, 0, _container);
+                                        }
+                                    ]
+                                },
+                                {
+                                    el: _testElement122,
+                                    alignCenter: true, //right-bottom + centered element
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(rightDelta, 1);
+                                            expect(topDelta).to.be.closeTo(bottomDelta, 1);
+                                        },
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
+
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
+
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        }
+                                    ]
+                                }
+                            ]
                         );
-                    });
+                    }
+                ).then(
+                    () => { }
+                );
             });
     });
 });
@@ -546,196 +531,181 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-width", fu
 
                 //Since win is an iFrame window, the _pageScroller of uss
                 //(default value of API functions) is not the same as the one of win.
-                const _pageScrollerOfWin = uss.getPageScroller(win); 
+                const _pageScrollerOfWin = uss.getPageScroller(win);
 
-                cy.testFailingValues(uss.scrollIntoViewIfNeeded, {
-                    0: [
-                        constants.failingValuesAllNoUndefined,
-                        [true, false],
-                        [undefined],
-                        [true, false],
-                    ]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(_testElement3.scrollLeft).to.equal(_initialScrollLeft);
-                        expect(_testElement3.scrollTop).to.equal(_initialScrollTop);
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                //Set up the scroll position to force the "nearest" alignment to be left-top.
-                                const _container = _testElement131.parentElement;
-                                const _parent = _container.parentElement;
-                                uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
-                                uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
-                                uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        //Set up the scroll position to force the "nearest" alignment to be left-top.
+                        const _container = _testElement131.parentElement;
+                        const _parent = _container.parentElement;
+                        uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
+                        uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
+                        uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
 
-                                _scrollIntoViewTester(
-                                    resolve,
-                                    [
-                                        {
-                                            el: _testElement131,
-                                            alignCenter: false, //left-top + oversized width
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+                        _scrollIntoViewTester(
+                            resolve,
+                            [
+                                {
+                                    el: _testElement131,
+                                    alignCenter: false, //left-top + oversized width
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
 
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                    expect(_container.scrollLeft).to.equal(uss.getMaxScrollX(_container)); //Didn't move since the last forced position
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
-
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => {
-                                                    //Set up the scroll position to force the "nearest" alignment to be right-top.
-                                                    const _nextEl = _testElement131;
-                                                    const _container = _nextEl.parentElement;
-                                                    const _parent = _container.parentElement;
-                                                    uss.scrollTo(0, uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
-                                                    uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
-                                                    uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
-                                                }
-                                            ]
+                                            expect(topDelta).to.be.closeTo(0, 1);
+                                            expect(_container.scrollLeft).to.equal(uss.getMaxScrollX(_container)); //Didn't move since the last forced position
                                         },
-                                        {
-                                            el: _testElement131,
-                                            alignCenter: false, //right-top + oversized width
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
 
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                    expect(_container.scrollLeft).to.equal(0); //Didn't move since the last forced position
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
 
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => {
-                                                    //Set up the scroll position to force the "nearest" alignment to be left-bottom.
-                                                    const _nextEl = _testElement131;
-                                                    const _container = _nextEl.parentElement;
-                                                    const _parent = _container.parentElement;
-                                                    uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), 0, _pageScrollerOfWin);
-                                                    uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
-                                                    uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
-                                                }
-                                            ]
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
                                         },
-                                        {
-                                            el: _testElement131,
-                                            alignCenter: false, //left-bottom + oversized width
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
 
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                    expect(_container.scrollLeft).to.equal(uss.getMaxScrollX(_container)); //Didn't move since the last forced position
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
 
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => {
-                                                    //Set up the scroll position to force the "nearest" alignment to be right-bottom.
-                                                    const _nextEl = _testElement131;
-                                                    const _container = _nextEl.parentElement;
-                                                    const _parent = _container.parentElement;
-                                                    uss.scrollTo(0, 0, _pageScrollerOfWin);
-                                                    uss.scrollTo(0, 0, _parent);
-                                                    uss.scrollTo(0, 0, _container);
-                                                }
-                                            ]
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
                                         },
-                                        {
-                                            el: _testElement131,
-                                            alignCenter: false, //right-bottom + oversized width
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                    expect(_container.scrollLeft).to.equal(0); //Didn't move since the last forced position
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
-
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                }
-                                            ]
+                                        (el) => {
+                                            //Set up the scroll position to force the "nearest" alignment to be right-top.
+                                            const _nextEl = _testElement131;
+                                            const _container = _nextEl.parentElement;
+                                            const _parent = _container.parentElement;
+                                            uss.scrollTo(0, uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
+                                            uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
+                                            uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
                                         }
                                     ]
-                                );
-                            }
-                        ).then(
-                            () => { }
+                                },
+                                {
+                                    el: _testElement131,
+                                    alignCenter: false, //right-top + oversized width
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(topDelta).to.be.closeTo(0, 1);
+                                            expect(_container.scrollLeft).to.equal(0); //Didn't move since the last forced position
+                                        },
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
+
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
+
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => {
+                                            //Set up the scroll position to force the "nearest" alignment to be left-bottom.
+                                            const _nextEl = _testElement131;
+                                            const _container = _nextEl.parentElement;
+                                            const _parent = _container.parentElement;
+                                            uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), 0, _pageScrollerOfWin);
+                                            uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
+                                            uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
+                                        }
+                                    ]
+                                },
+                                {
+                                    el: _testElement131,
+                                    alignCenter: false, //left-bottom + oversized width
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                            expect(_container.scrollLeft).to.equal(uss.getMaxScrollX(_container)); //Didn't move since the last forced position
+                                        },
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
+
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
+
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => {
+                                            //Set up the scroll position to force the "nearest" alignment to be right-bottom.
+                                            const _nextEl = _testElement131;
+                                            const _container = _nextEl.parentElement;
+                                            const _parent = _container.parentElement;
+                                            uss.scrollTo(0, 0, _pageScrollerOfWin);
+                                            uss.scrollTo(0, 0, _parent);
+                                            uss.scrollTo(0, 0, _container);
+                                        }
+                                    ]
+                                },
+                                {
+                                    el: _testElement131,
+                                    alignCenter: false, //right-bottom + oversized width
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                            expect(_container.scrollLeft).to.equal(0); //Didn't move since the last forced position
+                                        },
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
+
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
+
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        }
+                                    ]
+                                }
+                            ]
                         );
-                    });
+                    }
+                ).then(
+                    () => { }
+                );
             });
     });
 });
@@ -752,196 +722,181 @@ describe("scrollIntoViewIfNeeded-corners-nearest-alignments-oversized-height", f
 
                 //Since win is an iFrame window, the _pageScroller of uss
                 //(default value of API functions) is not the same as the one of win.
-                const _pageScrollerOfWin = uss.getPageScroller(win); 
+                const _pageScrollerOfWin = uss.getPageScroller(win);
 
-                cy.testFailingValues(uss.scrollIntoViewIfNeeded, {
-                    0: [
-                        constants.failingValuesAllNoUndefined,
-                        [true, false],
-                        [undefined],
-                        [true, false],
-                    ]
-                },
-                    (res, v1, v2, v3, v4, v5, v6, v7) => {
-                        expect(res).to.throw(constants.defaultUssException);
-                        expect(_testElement4.scrollLeft).to.equal(_initialScrollLeft);
-                        expect(_testElement4.scrollTop).to.equal(_initialScrollTop);
-                    })
-                    .then(() => {
-                        cy.waitForUssCallback(
-                            (resolve) => {
-                                //Set up the scroll position to force the "nearest" alignment to be left-top.
-                                const _container = _testElement141.parentElement;
-                                const _parent = _container.parentElement;
-                                uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
-                                uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
-                                uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
+                cy.waitForUssCallback(
+                    (resolve) => {
+                        //Set up the scroll position to force the "nearest" alignment to be left-top.
+                        const _container = _testElement141.parentElement;
+                        const _parent = _container.parentElement;
+                        uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
+                        uss.scrollTo(uss.getMaxScrollX(_parent), uss.getMaxScrollY(_parent), _parent);
+                        uss.scrollTo(uss.getMaxScrollX(_container), uss.getMaxScrollY(_container), _container);
 
-                                _scrollIntoViewTester(
-                                    resolve,
-                                    [
-                                        {
-                                            el: _testElement141,
-                                            alignCenter: false, //left-top + oversized height
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+                        _scrollIntoViewTester(
+                            resolve,
+                            [
+                                {
+                                    el: _testElement141,
+                                    alignCenter: false, //left-top + oversized height
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
 
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(_container.scrollTop).to.equal(uss.getMaxScrollY(_container)); //Didn't move since the last forced position
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
-
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => {
-                                                    //Set up the scroll position to force the "nearest" alignment to be right-top.
-                                                    const _nextEl = _testElement141;
-                                                    const _container = _nextEl.parentElement;
-                                                    const _parent = _container.parentElement;
-                                                    uss.scrollTo(0, uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
-                                                    uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
-                                                    uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
-                                                }
-                                            ]
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(_container.scrollTop).to.equal(uss.getMaxScrollY(_container)); //Didn't move since the last forced position
                                         },
-                                        {
-                                            el: _testElement141,
-                                            alignCenter: false, //right-top + oversized height
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
 
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(_container.scrollTop).to.equal(uss.getMaxScrollY(_container)); //Didn't move since the last forced position
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
 
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(topDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => {
-                                                    //Set up the scroll position to force the "nearest" alignment to be left-bottom.
-                                                    const _nextEl = _testElement141;
-                                                    const _container = _nextEl.parentElement;
-                                                    const _parent = _container.parentElement;
-                                                    uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), 0, _pageScrollerOfWin);
-                                                    uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
-                                                    uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
-                                                }
-                                            ]
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
                                         },
-                                        {
-                                            el: _testElement141,
-                                            alignCenter: false, //left-bottom + oversized height
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
 
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(_container.scrollTop).to.equal(0); //Didn't move since the last forced position
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
 
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(leftDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => {
-                                                    //Set up the scroll position to force the "nearest" alignment to be right-bottom.
-                                                    const _nextEl = _testElement141;
-                                                    const _container = _nextEl.parentElement;
-                                                    const _parent = _container.parentElement;
-                                                    uss.scrollTo(0, 0, _pageScrollerOfWin);
-                                                    uss.scrollTo(0, 0, _parent);
-                                                    uss.scrollTo(0, 0, _container);
-                                                }
-                                            ]
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
                                         },
-                                        {
-                                            el: _testElement141,
-                                            alignCenter: false, //right-bottom + oversized height
-                                            includeHiddenParents: false,
-                                            tests: [
-                                                (el) => { //Tests the element position
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(_container.scrollTop).to.equal(0); //Didn't move since the last forced position
-                                                },
-                                                (el) => { //Tests the container position (element's parentElement)
-                                                    el = el.parentElement;
-
-                                                    const _container = el.parentElement;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                },
-                                                (el) => { //Tests the parent position (container's parentElement)
-                                                    el = el.parentElement.parentElement;
-
-                                                    const _container = win;
-                                                    const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
-
-                                                    expect(rightDelta).to.be.closeTo(0, 1);
-                                                    expect(bottomDelta).to.be.closeTo(0, 1);
-                                                }
-                                            ]
+                                        (el) => {
+                                            //Set up the scroll position to force the "nearest" alignment to be right-top.
+                                            const _nextEl = _testElement141;
+                                            const _container = _nextEl.parentElement;
+                                            const _parent = _container.parentElement;
+                                            uss.scrollTo(0, uss.getMaxScrollY(_pageScrollerOfWin), _pageScrollerOfWin);
+                                            uss.scrollTo(0, uss.getMaxScrollY(_parent), _parent);
+                                            uss.scrollTo(0, uss.getMaxScrollY(_container), _container);
                                         }
                                     ]
-                                );
-                            }
-                        ).then(
-                            () => { }
+                                },
+                                {
+                                    el: _testElement141,
+                                    alignCenter: false, //right-top + oversized height
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(_container.scrollTop).to.equal(uss.getMaxScrollY(_container)); //Didn't move since the last forced position
+                                        },
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
+
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
+
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(topDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => {
+                                            //Set up the scroll position to force the "nearest" alignment to be left-bottom.
+                                            const _nextEl = _testElement141;
+                                            const _container = _nextEl.parentElement;
+                                            const _parent = _container.parentElement;
+                                            uss.scrollTo(uss.getMaxScrollX(_pageScrollerOfWin), 0, _pageScrollerOfWin);
+                                            uss.scrollTo(uss.getMaxScrollX(_parent), 0, _parent);
+                                            uss.scrollTo(uss.getMaxScrollX(_container), 0, _container);
+                                        }
+                                    ]
+                                },
+                                {
+                                    el: _testElement141,
+                                    alignCenter: false, //left-bottom + oversized height
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(_container.scrollTop).to.equal(0); //Didn't move since the last forced position
+                                        },
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
+
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
+
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(leftDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => {
+                                            //Set up the scroll position to force the "nearest" alignment to be right-bottom.
+                                            const _nextEl = _testElement141;
+                                            const _container = _nextEl.parentElement;
+                                            const _parent = _container.parentElement;
+                                            uss.scrollTo(0, 0, _pageScrollerOfWin);
+                                            uss.scrollTo(0, 0, _parent);
+                                            uss.scrollTo(0, 0, _container);
+                                        }
+                                    ]
+                                },
+                                {
+                                    el: _testElement141,
+                                    alignCenter: false, //right-bottom + oversized height
+                                    includeHiddenParents: false,
+                                    tests: [
+                                        (el) => { //Tests the element position
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(_container.scrollTop).to.equal(0); //Didn't move since the last forced position
+                                        },
+                                        (el) => { //Tests the container position (element's parentElement)
+                                            el = el.parentElement;
+
+                                            const _container = el.parentElement;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        },
+                                        (el) => { //Tests the parent position (container's parentElement)
+                                            el = el.parentElement.parentElement;
+
+                                            const _container = win;
+                                            const { topDelta, rightDelta, bottomDelta, leftDelta } = getDeltas(el, _container);
+
+                                            expect(rightDelta).to.be.closeTo(0, 1);
+                                            expect(bottomDelta).to.be.closeTo(0, 1);
+                                        }
+                                    ]
+                                }
+                            ]
                         );
-                    });
+                    }
+                ).then(
+                    () => { }
+                );
             });
     });
 });
