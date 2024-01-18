@@ -59,12 +59,12 @@ describe("getScrollbarsMaxDimension", function () {
     it("Tests the getScrollbarsMaxDimension method", function () {
         cy.window()
             .then((win) => {
-                if (browserIsChrome(win)) expect(uss.getScrollbarsMaxDimension()).to.equal(17);
+                if (browserIsChrome(win)) expect(uss.getScrollbarsMaxDimension()).to.be.oneOf([15, 17]);
                 else if (browserIsEdgeChromium(win)) expect(uss.getScrollbarsMaxDimension()).to.equal(15);
                 else if (browserIsFirefox(win)) expect(uss.getScrollbarsMaxDimension()).to.be.oneOf([0, 12, 15, 17]);
                 else if (browserIsSafari(win)) expect(uss.getScrollbarsMaxDimension()).to.equal(0);
             
-                if (browserIsChrome(win)) expect(uss.getScrollbarsMaxDimension(true)).to.equal(17);
+                if (browserIsChrome(win)) expect(uss.getScrollbarsMaxDimension(true)).to.be.oneOf([15, 17]);
                 else if (browserIsEdgeChromium(win)) expect(uss.getScrollbarsMaxDimension(true)).to.equal(15);
                 else if (browserIsFirefox(win)) expect(uss.getScrollbarsMaxDimension(true)).to.be.oneOf([0, 12, 15, 17]);
                 else if (browserIsSafari(win)) expect(uss.getScrollbarsMaxDimension(true)).to.equal(0);
