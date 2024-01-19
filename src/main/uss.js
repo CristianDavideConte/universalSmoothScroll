@@ -1,10 +1,8 @@
-//TODO: fix cypress tests
 //TODO: write missing comments
 //TODO: follow the same spacing styling of common.js
 //TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: order the functions in alphabetical order
 //TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries into a single common list
-//TODO: rename "forceCalculation" to "flushCache"
 //TODO: use the new naming scheme for variables
 //TODO: add common.js styling comment
 //TODO: @ts-check //Use to check for type errors
@@ -222,36 +220,36 @@ const MAX_MSG_LEN = 40;
  * @param {String} options.secondaryMsg The received value.
  */
 const DEFAULT_ERROR_LOGGER = (options) => {
-    const functionName = options.subject;
-    const expectedValue = options.primaryMsg;
-    let receivedValue = options.secondaryMsg;
+    const _functionName = options.subject;
+    const _expectedValue = options.primaryMsg;
+    let _receivedValue = options.secondaryMsg;
 
     if (REGEX_LOGGER_DISABLED.test(_debugMode)) return;
 
-    const _isString = typeof receivedValue === "string";
-    if (!_isString) receivedValue = TO_STRING(receivedValue);
+    const _isString = typeof _receivedValue === "string";
+    if (!_isString) _receivedValue = TO_STRING(_receivedValue);
 
     //Trim the received value if needed.
-    if (receivedValue.length > MAX_MSG_LEN) {
-        receivedValue = receivedValue.slice(0, MAX_MSG_LEN) + " ...";
+    if (_receivedValue.length > MAX_MSG_LEN) {
+        _receivedValue = _receivedValue.slice(0, MAX_MSG_LEN) + " ...";
     }
 
     //Insert leading and trailing quotes if needed.
-    if (_isString) receivedValue = "\"" + receivedValue + "\"";
+    if (_isString) _receivedValue = "\"" + _receivedValue + "\"";
 
     if (REGEX_LOGGER_LEGACY.test(_debugMode)) {
         console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
-        console.error("USS ERROR\n", functionName, "was expecting", expectedValue + ", but received", receivedValue + ".");
+        console.error("USS ERROR\n", _functionName, "was expecting", _expectedValue + ", but received", _receivedValue + ".");
         throw "USS fatal error (execution stopped)";
     }
 
     console.group("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
     console.log("%cUSS ERROR", "font-family:system-ui; font-weight:800; font-size:40px; background:#eb445a; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
-    console.log("%c" + functionName + "%cwas expecting " + expectedValue,
+    console.log("%c" + _functionName + "%cwas expecting " + _expectedValue,
         "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#2dd36f; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
         "font-family:system-ui; font-weight:600; font-size:17px; background:#2dd36f; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
     );
-    console.log("%cBut received%c" + receivedValue,
+    console.log("%cBut received%c" + _receivedValue,
         "font-family:system-ui; font-weight:600; font-size:17px; background:#eb445a; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
         "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#eb445a; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
     );
@@ -287,9 +285,9 @@ const IS_REACHABLE_CONTAINER = (container) => {
  * `Removes` and `unobserve` all non-reachable containers in `_containersData`.
  */
 const CLEAR_INVALID_CONTAINERS_DATA = () => {
-    let _new_containersData = new Map();
-    let _new_MutationObserver_entries = new Map();
-    let _new_ResizeObserver_entries = new Map();
+    let _newContainersData = new Map();
+    let _newMutationObserverEntries = new Map();
+    let _newResizeObserverEntries = new Map();
 
     //Retrieve valid containers from _containersData.
     for (const [_container, _containerData] of _containersData.entries()) {
@@ -297,15 +295,15 @@ const CLEAR_INVALID_CONTAINERS_DATA = () => {
         if (!IS_REACHABLE_CONTAINER(_container)) continue;
 
         //_container is still reachable, save the known informations for later.
-        _new_containersData.set(_container, _containersData.get(_container));
-        _new_MutationObserver_entries.set(_container, DEFAULT_MUTATION_OBSERVER.entries.get(_container));
-        _new_ResizeObserver_entries.set(_container, DEFAULT_RESIZE_OBSERVER.entries.get(_container));
+        _newContainersData.set(_container, _containersData.get(_container));
+        _newMutationObserverEntries.set(_container, DEFAULT_MUTATION_OBSERVER.entries.get(_container));
+        _newResizeObserverEntries.set(_container, DEFAULT_RESIZE_OBSERVER.entries.get(_container));
     }
 
     //Update valid containers' datas.
-    _containersData = _new_containersData;
-    DEFAULT_MUTATION_OBSERVER.reset(_new_MutationObserver_entries);
-    DEFAULT_RESIZE_OBSERVER.reset(_new_ResizeObserver_entries);
+    _containersData = _newContainersData;
+    DEFAULT_MUTATION_OBSERVER.reset(_newMutationObserverEntries);
+    DEFAULT_RESIZE_OBSERVER.reset(_newResizeObserverEntries);
 }
 
 /**
@@ -324,15 +322,15 @@ const DEFAULT_MUTATION_OBSERVER = {
         DEFAULT_MUTATION_OBSERVER.debouncedFrames = 0;
 
         //Keep only the most up-to-date entry for each target
-        for (const entry of entries) {
+        for (const _entry of entries) {
             //Update the record for the current entry.type.
-            const _mutationObject = DEFAULT_MUTATION_OBSERVER.entries.get(entry.target);
+            const _mutationObject = DEFAULT_MUTATION_OBSERVER.entries.get(_entry.target);
 
             _mutationObject.hasMutated = true;
 
             //Update the attributes flag.
             if (!_mutationObject.hasModifiedAttributes) {
-                _mutationObject.hasModifiedAttributes = entry.type === "attributes";
+                _mutationObject.hasModifiedAttributes = _entry.type === "attributes";
             }
         }
 
@@ -356,28 +354,28 @@ const DEFAULT_MUTATION_OBSERVER = {
             return;
         }
 
-        for (const [target, mutationObject] of DEFAULT_MUTATION_OBSERVER.entries) {
+        for (const [_target, _mutationObject] of DEFAULT_MUTATION_OBSERVER.entries) {
             /**
              * External modifications can invalidate containers.
              * Remove and unobserve invalid containers and reschedule this callback.
              */
-            if (!IS_REACHABLE_CONTAINER(target)) {
+            if (!IS_REACHABLE_CONTAINER(_target)) {
                 CLEAR_INVALID_CONTAINERS_DATA();
                 DEFAULT_MUTATION_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_MUTATION_OBSERVER.callback);
                 return;
             }
 
-            if (!mutationObject.hasMutated) continue;
+            if (!_mutationObject.hasMutated) continue;
 
-            const _containerData = _containersData.get(target);
+            const _containerData = _containersData.get(_target);
 
             /**
              * Change the element's frangment string if its href attribute has changed. 
              */
-            if (mutationObject.hasModifiedAttributes) {
+            if (_mutationObject.hasModifiedAttributes) {
                 const _pageURL = THIS_WINDOW.location.href.split("#")[0]; //location.href = optionalURL#fragment
-                const _optionalURL = target.href ? target.href.split("#")[0] : NO_VAL;
-                let _fragment = _optionalURL === _pageURL ? target.hash.slice(1) : NO_FGS;
+                const _optionalURL = _target.href ? _target.href.split("#")[0] : NO_VAL;
+                let _fragment = _optionalURL === _pageURL ? _target.hash.slice(1) : NO_FGS;
 
                 if (_fragment !== "" && _fragment !== NO_FGS) {
                     //Look for elements with the corresponding id or "name" attribute.
@@ -401,14 +399,14 @@ const DEFAULT_MUTATION_OBSERVER = {
             }
 
             //Clear the mutationObject so that it can be reused.
-            mutationObject.hasMutated = false;
-            mutationObject.hasModifiedAttributes = false;
+            _mutationObject.hasMutated = false;
+            _mutationObject.hasModifiedAttributes = false;
 
             //TODO: decide what to pass as the input of callback: perhaps the container?
             //TODO: in order to avoid loops, callback shouldn't be called in the same frame as this callback
 
             //Execute the mutation callbacks
-            for (const callback of _containerData[K_MCBQ]) callback();
+            for (const _callback of _containerData[K_MCBQ]) _callback();
         }
 
         DEFAULT_MUTATION_OBSERVER.callbackFrameId = NO_VAL;
@@ -453,14 +451,14 @@ const DEFAULT_RESIZE_OBSERVER = {
         DEFAULT_RESIZE_OBSERVER.debouncedFrames = 0;
 
         //Keep only the most up-to-date resized-entry for each target.
-        for (const entry of entries) {
-            const _resizeObject = DEFAULT_RESIZE_OBSERVER.entries.get(entry.target);
+        for (const _entry of entries) {
+            const _resizeObject = DEFAULT_RESIZE_OBSERVER.entries.get(_entry.target);
 
             _resizeObject.hasResized = true;
 
             //Update the target size.
-            _resizeObject.width = entry.borderBoxSize[0].inlineSize;
-            _resizeObject.height = entry.borderBoxSize[0].blockSize;
+            _resizeObject.width = _entry.borderBoxSize[0].inlineSize;
+            _resizeObject.height = _entry.borderBoxSize[0].blockSize;
         }
 
         //Schedule the execution of DEFAULT_RESIZE_OBSERVER.callback if needed.
@@ -484,22 +482,22 @@ const DEFAULT_RESIZE_OBSERVER = {
         }
 
         //TODO: does it make sense to clear the cache for the scrollable parents on resize?
-        for (const [target, resizeObject] of DEFAULT_RESIZE_OBSERVER.entries) {
+        for (const [_target, _resizeObject] of DEFAULT_RESIZE_OBSERVER.entries) {
             /**
              * External modifications can invalidate containers.
              * Remove and unobserve invalid containers and reschedule this callback.
              */
-            if (!IS_REACHABLE_CONTAINER(target)) {
+            if (!IS_REACHABLE_CONTAINER(_target)) {
                 CLEAR_INVALID_CONTAINERS_DATA();
                 DEFAULT_RESIZE_OBSERVER.callbackFrameId = TOP_WINDOW.requestAnimationFrame(DEFAULT_RESIZE_OBSERVER.callback);
                 return;
             }
 
-            if (!resizeObject.hasResized) continue;
+            if (!_resizeObject.hasResized) continue;
 
-            const _containerData = _containersData.get(target);
-            const _newWidth = resizeObject.width;
-            const _newHeight = resizeObject.height;
+            const _containerData = _containersData.get(_target);
+            const _newWidth = _resizeObject.width;
+            const _newHeight = _resizeObject.height;
 
             /**
              * Clear the caches.
@@ -531,13 +529,13 @@ const DEFAULT_RESIZE_OBSERVER = {
             }
 
             //Clear the resizeObject so that it can be reused.
-            resizeObject.hasResized = false;
+            _resizeObject.hasResized = false;
 
             //TODO: decide what to pass as the input of callback: perhaps the container?
             //TODO: in order to avoid loops, callback shouldn't be called in the same frame as this callback
 
             //Execute the resize callbacks
-            for (const callback of _containerData[K_RCBQ]) callback();
+            for (const _callback of _containerData[K_RCBQ]) _callback();
         }
 
         DEFAULT_RESIZE_OBSERVER.callbackFrameId = NO_VAL;
@@ -567,26 +565,26 @@ const DEFAULT_RESIZE_OBSERVER = {
  * @param {boolean} options.useSubjectQuotes `true` if `subject` should be represented as a quoted string, `false` otherwise.
  */
 const DEFAULT_WARNING_LOGGER = (options) => {
-    let subject = options.subject;
-    const message = options.primaryMsg;
-    const useSubjectQuotes = options.useSubjectQuotes;
+    let _subject = options.subject;
+    const _message = options.primaryMsg;
+    const _useSubjectQuotes = options.useSubjectQuotes;
 
     if (REGEX_LOGGER_DISABLED.test(_debugMode)) return;
 
-    const _isString = typeof subject === "string";
-    if (!_isString) subject = TO_STRING(subject);
+    const _isString = typeof _subject === "string";
+    if (!_isString) _subject = TO_STRING(_subject);
 
     //Trim the subject if needed.
-    if (subject.length > MAX_MSG_LEN) {
-        subject = subject.slice(0, MAX_MSG_LEN) + " ...";
+    if (_subject.length > MAX_MSG_LEN) {
+        _subject = _subject.slice(0, MAX_MSG_LEN) + " ...";
     }
 
     //Insert leading and trailing quotes if needed.
-    if (_isString && useSubjectQuotes) subject = "\"" + subject + "\"";
+    if (_isString && _useSubjectQuotes) _subject = "\"" + _subject + "\"";
 
     if (REGEX_LOGGER_LEGACY.test(_debugMode)) {
         console.log("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)\n");
-        console.warn("USS WARNING\n", subject, message + ".");
+        console.warn("USS WARNING\n", _subject, _message + ".");
         return;
     }
 
@@ -594,7 +592,7 @@ const DEFAULT_WARNING_LOGGER = (options) => {
         console.groupCollapsed("UniversalSmoothScroll API (documentation at: https://github.com/CristianDavideConte/universalSmoothScroll)");
 
         console.log("%cUSS WARNING", "font-family:system-ui; font-weight:800; font-size:40px; background:#fcca03; color:black; border-radius:5px; padding:0.4vh 0.5vw; margin:1vh 0");
-        console.log("%c" + subject + "%c" + message,
+        console.log("%c" + _subject + "%c" + _message,
             "font-style:italic; font-family:system-ui; font-weight:700; font-size:17px; background:#fcca03; color:black; border-radius:5px 0px 0px 5px; padding:0.4vh 0.5vw; margin-left:13px",
             "font-family:system-ui; font-weight:600; font-size:17px; background:#fcca03; color:black; border-radius:0px 5px 5px 0px; padding:0.4vh 0.5vw"
         );
@@ -1171,21 +1169,21 @@ export const getWindowScroller = (container = _pageScroller, forceCalculation = 
         }
 
         let _windowScrollerFound = false;
-        for (const element of _elementsToTest) {
+        for (const _element of _elementsToTest) {
             if (
-                _window.scrollX === element.scrollLeft &&
-                _window.scrollY === element.scrollTop
+                _window.scrollX === _element.scrollLeft &&
+                _window.scrollY === _element.scrollTop
             ) {
                 //Cache the maxScrollX/maxScrollY.
-                const _elementOldData = _containersData.get(element);
+                const _elementOldData = _containersData.get(_element);
                 const _elementData = _elementOldData || [];
 
-                if (!_elementOldData) INIT_CONTAINER_DATA(element, _elementData);
+                if (!_elementOldData) INIT_CONTAINER_DATA(_element, _elementData);
 
                 _elementData[K_MSX] = _maxScrollX;
                 _elementData[K_MSY] = _maxScrollY;
 
-                _containerData[K_WDS] = element;
+                _containerData[K_WDS] = _element;
                 _windowScrollerFound = true;
                 break;
             }
@@ -3330,7 +3328,7 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
         THIS_WINDOW.history &&
         THIS_WINDOW.history.scrollRestoration; //Check if histoy manipulation is supported
 
-    const scrollToFragment = (pageLink, fragment, event, updateHistoryIfNeeded) => {
+    const _scrollToFragment = (pageLink, fragment, event, updateHistoryIfNeeded) => {
         //Invalid fragment.
         if (fragment === NO_FGS) return;
 
@@ -3360,13 +3358,13 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
      * pageLink.href = optionalURL#fragment
      * pageLink.hash = #fragment
      */
-    for (const pageLink of document.links) {
-        const _optionalURL = pageLink.href.split("#")[0];
+    for (const _pageLink of document.links) {
+        const _optionalURL = _pageLink.href.split("#")[0];
 
         //The url points to another website.
         if (_optionalURL !== _pageURL) continue;
 
-        const _fragment = pageLink.hash.slice(1);
+        const _fragment = _pageLink.hash.slice(1);
 
         //href is "optionalURL#fragment".
         if (_fragment !== "") {
@@ -3385,11 +3383,11 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
             }
         }
 
-        const _oldData = _containersData.get(pageLink);
+        const _oldData = _containersData.get(_pageLink);
         const _containerData = _oldData || [];
 
         //pageLink not supported.
-        if (!_oldData && !INIT_CONTAINER_DATA(pageLink, _containerData)) continue;
+        if (!_oldData && !INIT_CONTAINER_DATA(_pageLink, _containerData)) continue;
 
         //pageLink already managed.
         if (_containerData[K_FGS] !== NO_VAL) continue;
@@ -3407,21 +3405,21 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
             } : () => { };
 
         //href="#fragment" scrolls the element associated with the fragment into view.
-        pageLink.addEventListener("click", event => {
-            const _containerData = _containersData.get(pageLink);
+        _pageLink.addEventListener("click", event => {
+            const _containerData = _containersData.get(_pageLink);
             const _fragment = _containerData[K_FGS];
 
             //Check if pageLink points to another page.
             if (_fragment === NO_FGS) {
                 const _pageURL = THIS_WINDOW.location.href.split("#")[0]; //location.href = optionalURL#fragment
-                const _optionalURL = pageLink.href.split("#")[0];
+                const _optionalURL = _pageLink.href.split("#")[0];
                 if (_optionalURL !== _pageURL) return;
             }
 
             event.preventDefault();
 
-            scrollToFragment(
-                pageLink,
+            _scrollToFragment(
+                _pageLink,
                 _fragment,
                 event,
                 _updateHistoryIfNeeded,
@@ -3445,7 +3443,7 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
         //because it's faster than caching.
         _containerData[K_FGS] = NO_FGS;
 
-        const _smoothHistoryNavigation = (event) => scrollToFragment(
+        const _smoothHistoryNavigation = (event) => _scrollToFragment(
             NO_VAL,
             THIS_WINDOW.location.hash.slice(1, -1), //Remove the extra "." in the fragment
             event,
