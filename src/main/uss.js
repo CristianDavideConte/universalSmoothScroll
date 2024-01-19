@@ -3432,7 +3432,7 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
                 _fragment,
                 event,
                 _updateHistoryIfNeeded,
-            )
+            );
         }, { passive: false });
     }
 
@@ -3461,7 +3461,9 @@ export const hrefSetup = (alignToLeft = true, alignToTop = true, init, callback,
 
         THIS_WINDOW.history.scrollRestoration = "manual";
         THIS_WINDOW.addEventListener("popstate", _smoothHistoryNavigation, { passive: true });
-        THIS_WINDOW.addEventListener("unload", (event) => event.preventDefault(), { passive: false, once: true });
+        
+        //TODO: this event is deprecated, move to beforeunload and verify if this is still necessary
+        THIS_WINDOW.addEventListener("unload", (event) => event.preventDefault(), { passive: false });  
 
         //Checks if the page initially have a URL containing
         //a valid fragment and scrolls to it if necessary.
