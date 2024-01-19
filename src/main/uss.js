@@ -1,9 +1,8 @@
 //TODO: write missing comments
-//TODO: follow the same spacing styling of common.js
-//TODO: understand how to specify the default values of functions' parameters (bugged now)
-//TODO: order the functions in alphabetical order
-//TODO: perhaps unify the MUTATION_OBSERVER.entries and the RESIZE_OBSERVER.entries into a single common list
 //TODO: use the new naming scheme for variables
+//TODO: follow the same spacing styling of common.js
+//TODO: order the functions in alphabetical order
+//TODO: understand how to specify the default values of functions' parameters (bugged now)
 //TODO: add common.js styling comment
 //TODO: @ts-check //Use to check for type errors
 
@@ -650,7 +649,7 @@ const DEFAULT_YSTEP_LENGTH_CALCULATOR = (remaning, originalTimestamp, timestamp,
  * - The keys are an instances of `Element` or a `window` and they're internally called `containers`.
  * - The values are arrays.
  */
-export let _containersData = new Map(); //TODO: perhaps const?
+export let _containersData = new Map();
 
 /**
  * If there's no `StepLengthCalculator` set for a container,
@@ -807,11 +806,13 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
         return true;
     }
 
-    //TODO: if a container supports the resize observer but not the mutation one, 
-    //TODO: it still is observed by the resize observer -> this is not wanted behavior
     if (CHECK_INSTANCEOF(container)) {
+        let _isSupportedByResizeObserver = false;
+
         try {
             DEFAULT_RESIZE_OBSERVER.observer.observe(container, { box: "border-box" });
+            
+            _isSupportedByResizeObserver = true;
 
             //TODO: if a new API ever allow to watch for a computedStyle change, 
             //TODO: use it for invalidating scrollable parents caches
@@ -841,7 +842,16 @@ const INIT_CONTAINER_DATA = (container, containerData = []) => {
                     hasModifiedAttributes: false,
                 }
             );
-        } catch (unsupportedByResizeObserver) {
+        } catch (unsupportedObservers) {
+            /**
+             * If a container is supported by resizeObserver but it's not
+             * supported by the mutationObserver (or viceversa), it should be ignored.
+             * Any registration done in the try-block, should be undone.
+             */
+            if (_isSupportedByResizeObserver) {
+                DEFAULT_RESIZE_OBSERVER.observer.unobserve(container);
+            }
+
             return false;
         }
 
