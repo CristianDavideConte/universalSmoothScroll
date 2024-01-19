@@ -1097,7 +1097,6 @@ export const getScrollbarsMaxDimension = (forceCalculation = false) => {
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
  * @returns {*} The element that scrolls the `container`'s `window` when it's scrolled and that (viceversa) is scrolled when that `window` is scrolled.
  */
-//TODO: verify that getWindowScroller is passed the options object if needed
 export const getWindowScroller = (container = _pageScroller, forceCalculation = false, options) => {
     let _oldData = _containersData.get(container);
     let _containerData = _oldData || [];
@@ -1680,7 +1679,7 @@ export const calcScrollbarsDimensions = (container = _pageScroller, forceCalcula
         _containerData[K_VSB] === NO_VAL ||
         _containerData[K_HSB] === NO_VAL
     ) {
-        const _windowScroller = getWindowScroller(container);
+        const _windowScroller = getWindowScroller(container, false, options);
 
         if (IS_WINDOW(container) && container !== _windowScroller) {
             return calcScrollbarsDimensions(
@@ -1776,7 +1775,7 @@ export const calcBordersDimensions = (container = _pageScroller, forceCalculatio
         _containerData[K_LB] === NO_VAL
     ) {
         if (IS_WINDOW(container)) {
-            const _windowScroller = getWindowScroller(container);
+            const _windowScroller = getWindowScroller(container, false, options);
             const _bordersDimensions = IS_WINDOW(_windowScroller) ?
                 [0, 0, 0, 0] :
                 calcBordersDimensions(_windowScroller, forceCalculation, options);
@@ -1908,7 +1907,7 @@ export const getMaxScrolls = (container = _pageScroller, forceCalculation = fals
     //Scroll the container back to its initial position.
     container.scroll(_initialXPosition, _initialYPosition);
 
-    let _windowScroller = getWindowScroller(container);
+    let _windowScroller = getWindowScroller(container, false, options);
     
     /**
      * This is a summary table of the output:
@@ -2013,7 +2012,7 @@ export const getXScrollableParent = (container = _pageScroller, includeHiddenPar
     }
 
     const _containerInitialX = container.getBoundingClientRect().left;
-    const _windowScroller = getWindowScroller(container);
+    const _windowScroller = getWindowScroller(container, false, options);
     let _parent = container.parentElement;
 
     const _isScrollableParent = (overflowRegex) => {
@@ -2132,7 +2131,7 @@ export const getYScrollableParent = (container = _pageScroller, includeHiddenPar
     }
 
     const _containerInitialY = container.getBoundingClientRect().top;
-    const _windowScroller = getWindowScroller(container);
+    const _windowScroller = getWindowScroller(container, false, options);
     let _parent = container.parentElement;
 
     const _isScrollableParent = (overflowRegex) => {
@@ -2289,7 +2288,7 @@ export const getScrollableParent = (container = _pageScroller, includeHiddenPare
     const _containerInitialPos = container.getBoundingClientRect();
     const _containerInitialX = _containerInitialPos.left;
     const _containerInitialY = _containerInitialPos.top;
-    const _windowScroller = getWindowScroller(container);
+    const _windowScroller = getWindowScroller(container, false, options);
     let _parent = container.parentElement;
 
     const _isScrollableParent = (overflowRegex) => {
