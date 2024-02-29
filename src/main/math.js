@@ -31,8 +31,9 @@ const _factorials = new Array(170);
  */
 export const FACTORIAL = (value) => {
     if (_factorials[value]) return _factorials[value];
-    if (value > 170) return Infinity;
     if (value == 0) return 1;
+
+    if (value > 170) return Infinity;
 
     let _fact = 1;
     for (let i = 1; i <= value; i++) {
@@ -42,7 +43,7 @@ export const FACTORIAL = (value) => {
     return _fact;
 }
 FACTORIAL(170); //Forcefully cache the factorials
-Object.seal(_factorials);
+Object.freeze(_factorials); //Make _factorials immutable
 
 /**
  * Checks whether `value` is a positive number (i.e. > 0).
