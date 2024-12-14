@@ -1,7 +1,9 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
+
 <br/>
 
 # Download
+
 In order to use this API you first have to download the needed scripts. <br/>
 There are 3 available:
 
@@ -66,21 +68,24 @@ Each one of the download options below will give you full access to all scripts,
 ---
 
 ## npm
+
 [`npm i universalsmoothscroll@latest`](https://www.npmjs.com/package/universalsmoothscroll) <br/>
 
 All the scripts will be downloaded inside your `node_module` folder.
 <br/>
 
---- 
+---
 
 ## jsDelivr
+
 Visit [`jsDelivr`](https://www.jsdelivr.com/package/npm/universalsmoothscroll) and click the download button. <br/>
-The files will be saved as a `.tgz archive`: extract them and you're good to go. 
+The files will be saved as a `.tgz archive`: extract them and you're good to go.
 <br/>
 
 ---
 
 ## Github releases
+
 In the [`Releases`](https://github.com/CristianDavideConte/universalSmoothScroll/releases) section you can find all the API versions and the above mentioned scripts available for download (`Assets` below each changelog).
 
 <br/>

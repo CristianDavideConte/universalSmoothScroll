@@ -1,33 +1,38 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
+
 <br/>
 
 # Available Functions
+
 ## Import
-Once imported the `universalsmoothscroll-min.js` script will declare and initialize the `uss` object ***as a public property of [`Window`](https://developer.mozilla.org/en-US/docs/Web/API/Window)***. <br/>
-This object has the below listed properties and they are the core functionalities of the Universal Smooth Scroll API. 
+
+Once imported the `universalsmoothscroll-min.js` script will declare and initialize the `uss` object **_as a public property of [`Window`](https://developer.mozilla.org/en-US/docs/Web/API/Window)_**. <br/>
+This object has the below listed properties and they are the core functionalities of the Universal Smooth Scroll API.
 
 ## Usage
+
 Each one of the `uss` functions can be invoked in this way: `uss.nameOfTheFunction(param1, param2, ...)`. <br/>
 
 For instance:
+
 ```javascript
 /**
  * In this example:
  * - an ease-out stepLengthCalculator is first set to control
  *   the scroll-animations on the y-axis of myContainer.
- * - the API is requested to scroll the y-axis of myContainer to 500px and 
+ * - the API is requested to scroll the y-axis of myContainer to 500px and
  *   log "dOnE" when finished.
- * - the API is requested to extend the scroll-animation by 50px and 
+ * - the API is requested to extend the scroll-animation by 50px and
  *   log "Done" instead of "dOnE" when finished.
  */
-uss.setYStepLengthCalculator(r => r / 20 + 1, myContainer);
-uss.scrollYTo(500, myContainer, () => console.log("dOnE"));             
-uss.scrollYBy(50,  myContainer, () => console.log("Done"), false);      
+uss.setYStepLengthCalculator((r) => r / 20 + 1, myContainer);
+uss.scrollYTo(500, myContainer, () => console.log('dOnE'));
+uss.scrollYBy(50, myContainer, () => console.log('Done'), false);
 ```
 
 ---
 
-<strong>Note:</strong> </br> 
+<strong>Note:</strong> </br>
 A **bold** input parameter's name means that it's a mandatory input _(its default value is always <code><strong>✗</strong></code>)_. <br/>
 An _italic_ input parameter's name means that it's an optional parameter. <br/>
 
@@ -269,7 +274,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_minAnimationFrame"><code>_minAnimationFrame</code></a> property.
    </td>
-  </tr> 
+  </tr>
 
   <tr id = "getWindowWidthFun">
    <td rowspan = "1" align = "center">
@@ -284,7 +289,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_windowWidth"><code>_windowWidth</code></a> property.
    </td>
-  </tr> 
+  </tr>
 
   <tr id = "getWindowHeightFun">
    <td rowspan = "1" align = "center">
@@ -360,7 +365,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_windowScroller"><code>_windowScroller</code></a> property.
    </td>
-  </tr> 
+  </tr>
 
   <tr id = "getPageScrollerFun">
    <td rowspan = "1" align = "center">
@@ -407,7 +412,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "left">
     Returns the value of the <a href = "./VariablesAbout.md#_onResizeEndCallbacks"><code>_onResizeEndCallbacks</code></a> property.
    </td>
-  </tr> 
+  </tr>
 
   <tr id = "getDebugModeFun">
    <td rowspan = "1" align = "center">
@@ -618,7 +623,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_pageScroller"><code>_pageScroller</code></a> property to the passed value if compatible.
    </td>
-  </tr> 
+  </tr>
 
   <tr id = "addOnResizeEndCallbackFun">
    <td rowspan = "1" align = "center">
@@ -652,7 +657,7 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
    <td rowspan = "1" align = "left">
     Sets the <a href = "./VariablesAbout.md#_debugMode"><code>_debugMode</code></a> property to the passed value if compatible.
    </td>
-  </tr> 
+  </tr>
 
   <tr id = "setErrorLoggerFun">
    <td rowspan = "1" align = "center">
@@ -1667,9 +1672,11 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
 </table>
 
 ---
+
 <br/>
 
 # Input parameters details
+
 The following table describes every entry of the `Input Parameters` column of the table above.
 <br/>
 <br/>
@@ -2043,7 +2050,7 @@ The following table describes every entry of the `Input Parameters` column of th
     Setting a temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> will only overwrite the previous temporary one. <br/>
     Setting a non-temporary <a href = "./FAQ.md#q-what-is-a-steplengthcalculator-"><code>stepLengthCalculator</code></a> will overwrite the previous non-temporary one and discard any temporary one. <br/>
   </td>
-  </tr> 
+  </tr>
 
   <tr id = "setXStepLength">
   <td rowspan = "1" align = "center">

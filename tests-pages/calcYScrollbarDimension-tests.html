@@ -1,19 +1,19 @@
 <html>
     <head>
-        <base href = ".."/>
+        <base href=".." />
         <style>
             .scroller {
                 display: block;
                 width: 200px;
                 height: 200px;
-            } 
+            }
             .scroller-content {
                 width: 400px;
                 height: 400px;
-            } 
+            }
             #no-scroller {
                 overflow: hidden;
-            }             
+            }
             #x-scroller {
                 overflow-x: scroll;
                 overflow-y: hidden;
@@ -25,39 +25,35 @@
             #xy-scroller {
                 overflow: scroll;
             }
-            #xy-scroller.no-webkit-scrollbars::-webkit-scrollbar { 
-                display:none; 
+            #xy-scroller.no-webkit-scrollbars::-webkit-scrollbar {
+                display: none;
             }
-            #xy-scroller.width-0-scrollbars::-webkit-scrollbar { 
-                width:0; 
-                height:initial;
+            #xy-scroller.width-0-scrollbars::-webkit-scrollbar {
+                width: 0;
+                height: initial;
             }
-            #xy-scroller.height-0-scrollbars::-webkit-scrollbar { 
-                width:initial;
-                height:0; 
+            #xy-scroller.height-0-scrollbars::-webkit-scrollbar {
+                width: initial;
+                height: 0;
             }
-            #xy-scroller.width-0-height-0-scrollbars::-webkit-scrollbar { 
-                width:0;
-                height:0; 
+            #xy-scroller.width-0-height-0-scrollbars::-webkit-scrollbar {
+                width: 0;
+                height: 0;
             }
         </style>
     </head>
     <body>
-        <div class = "scroller" id = "x-scroller">
-            <div class = "scroller-content">
-            </div>
+        <div class="scroller" id="x-scroller">
+            <div class="scroller-content"></div>
         </div>
-        <div class = "scroller" id = "y-scroller">
-            <div class = "scroller-content">
-            </div>
+        <div class="scroller" id="y-scroller">
+            <div class="scroller-content"></div>
         </div>
-        <div class = "scroller" id = "xy-scroller">
-            <div class = "scroller-content">
-            </div>
+        <div class="scroller" id="xy-scroller">
+            <div class="scroller-content"></div>
         </div>
-        <div class = "scroller" id = "no-scroller">
-            <div class = "scroller-content">
-            </div>
+        <div class="scroller" id="no-scroller">
+            <div class="scroller-content"></div>
         </div>
     </body>
 </html>

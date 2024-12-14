@@ -1,7 +1,9 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
+
 <br/>
 
 # Internal Constants
+
 In this section you will find all the internal constants used by this API: they are private and they're declared with the keywork [`const`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/const) therefore they can't be overwritten. <br/>
 They are used by the [`uss`](./HowItWorks.md) object for initialization and reset purposes, but they are also mentioned in other sections of the documentation so may find this helpful.
 

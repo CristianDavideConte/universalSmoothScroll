@@ -25,15 +25,11 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 Cypress.Commands.addAll({
-    elementScrollLeftShouldBe(element = "body", value) {
-        cy.get(element)
-            .should("have.prop", "scrollLeft")
-            .and("eq", value);
+    elementScrollLeftShouldBe(element = 'body', value) {
+        cy.get(element).should('have.prop', 'scrollLeft').and('eq', value);
     },
-    elementScrollTopShouldBe(element = "body", value) {
-        cy.get(element)
-            .should("have.prop", "scrollTop")
-            .and("eq", value);
+    elementScrollTopShouldBe(element = 'body', value) {
+        cy.get(element).should('have.prop', 'scrollTop').and('eq', value);
     },
     /**
      * The passed fun parameter should resolve the promise.
@@ -41,14 +37,12 @@ Cypress.Commands.addAll({
      */
     waitForUssCallback(fun = (resolve, reject) => setTimeout(resolve, 1000)) {
         cy.wrap(null).then(async () => {
-            await new Cypress.Promise(
-                (resolve, reject) => {
-                    fun(resolve, reject);
-                }
-            );
+            await new Cypress.Promise((resolve, reject) => {
+                fun(resolve, reject);
+            });
         });
     },
-    /** 
+    /**
      * Input parameters structure:
      *  command = uss.nameOfMethod
      *  failingValues = {
@@ -58,34 +52,39 @@ Cypress.Commands.addAll({
      *  }
      *  actionAftertest = (res, v1, v2, v3, v4, v5, v6, v7) => {expect(...).to...}
      */
-     testFailingValues(command, failingValues = {}, actionAfterTest = (res) => expect(res).to.be.undefined) {  
+    testFailingValues(command, failingValues = {}, actionAfterTest = (res) => expect(res).to.be.undefined) {
         function loopThroughFailingValuesArr(failingValueArr, outerIndex = 0, currentFailingValues = []) {
-            if(failingValueArr.length === outerIndex) {
+            if (failingValueArr.length === outerIndex) {
                 const [v1, v2, v3, v4, v5, v6, v7] = currentFailingValues;
                 try {
-                    actionAfterTest(
-                        command(v1, v2, v3, v4, v5, v6, v7),
-                        v1, v2, v3, v4, v5, v6, v7
-                    );
-                } catch(error) { 
+                    actionAfterTest(command(v1, v2, v3, v4, v5, v6, v7), v1, v2, v3, v4, v5, v6, v7);
+                } catch (error) {
                     //Never throw directly, always wrap the error inside a function
-                    //so that it can be later analyzed. 
+                    //so that it can be later analyzed.
                     actionAfterTest(
-                        () => {throw error},
-                        v1, v2, v3, v4, v5, v6, v7
+                        () => {
+                            throw error;
+                        },
+                        v1,
+                        v2,
+                        v3,
+                        v4,
+                        v5,
+                        v6,
+                        v7
                     );
                 }
                 return;
             }
 
-            for(let i = 0; i < failingValueArr[outerIndex].length; i++) {
+            for (let i = 0; i < failingValueArr[outerIndex].length; i++) {
                 const newFailingValues = currentFailingValues.slice();
                 newFailingValues.push(failingValueArr[outerIndex][i]);
                 loopThroughFailingValuesArr(failingValueArr, outerIndex + 1, newFailingValues);
             }
         }
 
-        for(let [key, failingValueArr] of Object.entries(failingValues)) {
+        for (let [key, failingValueArr] of Object.entries(failingValues)) {
             loopThroughFailingValuesArr(failingValueArr);
         }
     },

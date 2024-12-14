@@ -1,12 +1,16 @@
 #### <a href = "https://github.com/CristianDavideConte/universalSmoothScroll#table-of-contents"><code>&#8678; Back to Table of Contents</code></a>
+
 <br/>
 
 # Dev-Helpers <sup><code>library</code></sup>
+
 ## Import
+
 This library cannot be used without having imported the [`universalsmoothscroll-min.js`](./Installation.md) script in your project first. <br/>
 This library is also a [`module`]("https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Modules") so each function you see below must be imported before you can use it.
 
 For example:
+
 ```javascript
   //The name of these and more other functions is in the table below.
   import {
@@ -20,36 +24,36 @@ For example:
 ---
 
 ## Usage
+
 This library contains functions that should help you with the more challenging aspect of the Universal Smooth Scroll API (e.g. how to create a correct [`stepLengthCalculator`](./FAQ.md#q-what-is-a-steplengthcalculator)). <br/>
 This library is meant to be used during the development phase of your website only and it's not internally used by the API, so it should be removed from the project before the deployment phase (nothing will happens if you forgot to, don't worry).
 
 In this library each function has this structure: `functionName(mandatoryParam1, ... , mandatoryParamN, options)`. <br/>
-The `options` parameter must either be completely omitted or fully specified. <br/> 
+The `options` parameter must either be completely omitted or fully specified. <br/>
 
-For instance: 
+For instance:
+
 ```javascript
 //Here we fully specify the "options" parameter.
-let result1 = await isValidStepLengthCalculator(
-  myFunction1,
-  { //This is the "options" parameter
+let result1 = await isValidStepLengthCalculator(myFunction1, {
+    //This is the "options" parameter
     container: myContainer,
     totalScrollAmount: 500,
-    timeout: 1000
-  }
-);
+    timeout: 1000,
+});
 
 //Omitting the options parameter is also valid.
 let result2 = await isValidStepLengthCalculator(myFunction1);
 
-if(!result1 || !result2) {
-  //Throw error...
-  //Fix myFunction1...
+if (!result1 || !result2) {
+    //Throw error...
+    //Fix myFunction1...
 }
 ```
 
 ---
 
-<strong>Note:</strong> </br> 
+<strong>Note:</strong> </br>
 A **bold** input parameter's name means that it's a mandatory input. <br/>
 An _italic_ input parameter's name means that it's an optional parameter. <br/>
 
@@ -147,9 +151,11 @@ An _italic_ input parameter's name means that it's an optional parameter. <br/>
 </table>
 
 ---
+
 <br/>
 
 # Input parameters details
+
 The following table describes every entry of the `Input Parameters` column of the table above.
 <br/>
 <br/>
@@ -215,7 +221,6 @@ The following table describes every entry of the `Input Parameters` column of th
   </td>
   </tr>
 
-  
  </tbody>
 <table>
 

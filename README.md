@@ -21,25 +21,29 @@
  </p>
 
 <br/><p align="center">
-    <a href="https://github.com/CristianDavideConte/universalSmoothScroll">
-        <img src="./docs/images/logo.png" height="140">
-    </a>
+<a href="https://github.com/CristianDavideConte/universalSmoothScroll">
+<img src="./docs/images/logo.png" height="140">
+</a>
+
 </p>
 <h1 align="center">Universal Smooth Scroll</h1>
 
-A ***lightweight*** and ***very fast*** javascript library that provides enriched versions of the browsers' scrolling APIs with support for ***smooth-scrolling***, ***callbacks*** and many other features. <br/>
-***Multiple scroll-animations*** on one or more containers can be played at the same time with full controll over them. <br/>
-***Every scroll-animation*** triggered by the API ***can be interrupted*** at any time and supports user-defined ***custom ease*** functions. <br/>
-This API is also fully compatible with ***Typescript, React.js, Next.js*** and many other javascript frameworks. <br/>
+A **_lightweight_** and **_very fast_** javascript library that provides enriched versions of the browsers' scrolling APIs with support for **_smooth-scrolling_**, **_callbacks_** and many other features. <br/>
+**_Multiple scroll-animations_** on one or more containers can be played at the same time with full controll over them. <br/>
+**_Every scroll-animation_** triggered by the API **_can be interrupted_** at any time and supports user-defined **_custom ease_** functions. <br/>
+This API is also fully compatible with **_Typescript, React.js, Next.js_** and many other javascript frameworks. <br/>
 
-You can try most of the features on: 
-* [`The Official Playground`](https://cristiandavideconte.github.io/universalSmoothScroll/)
-* [`My Website`](https://cristiandavideconte.github.io/myPersonalWebPage/)
+You can try most of the features on:
+
+-   [`The Official Playground`](https://cristiandavideconte.github.io/universalSmoothScroll/)
+-   [`My Website`](https://cristiandavideconte.github.io/myPersonalWebPage/)
 
 ---
+
 <br/>
 
 # Table of Contents
+
 <table>
  <thead>
     <th>Main Sections</th>
@@ -93,7 +97,6 @@ You can try most of the features on:
    </td>
   </tr>
 
-
   <tr>
    <th align = "center">
     Advanced Sections 
@@ -115,42 +118,48 @@ You can try most of the features on:
 </table>
 
 ---
+
 <br/>
 
 # Browser Compatibility
-Browser | Support 
-:-----: | :-----: 
-IE | ❌ 
-Edge | ✔️ 
-Firefox | ✔️ 
-Chrome | ✔️ 
-Safari | ✔️ 
-Opera | ✔️ 
-Safari for iOS | ✔️ 
-Opera mini | ✔️
-Android browser | ✔️
-Opera mobile | ✔️
-Chrome for Android | ✔️
-Firefox for Android | ✔️
-UC Browser for Android | ✔️
-Samsung Internet | ✔️
-Baidu Browser | ✔️
-QQ Browser | ❔ 
-KaiOS Browser | ❔
+
+|        Browser         | Support |
+| :--------------------: | :-----: |
+|           IE           |   ❌    |
+|          Edge          |   ✔️    |
+|        Firefox         |   ✔️    |
+|         Chrome         |   ✔️    |
+|         Safari         |   ✔️    |
+|         Opera          |   ✔️    |
+|     Safari for iOS     |   ✔️    |
+|       Opera mini       |   ✔️    |
+|    Android browser     |   ✔️    |
+|      Opera mobile      |   ✔️    |
+|   Chrome for Android   |   ✔️    |
+|  Firefox for Android   |   ✔️    |
+| UC Browser for Android |   ✔️    |
+|    Samsung Internet    |   ✔️    |
+|     Baidu Browser      |   ✔️    |
+|       QQ Browser       |   ❔    |
+|     KaiOS Browser      |   ❔    |
 
 ---
+
 <br/>
 
 # Support Me
-If you want to support my work you can simply ***⭐ the project***. <br/> 
 
-If you want to [`offer me a cappuccino`](https://en.wikipedia.org/wiki/Cappuccino) *(don't like plain coffe, sorry)* you can make a donation by either using the PayPal [`donate button`](https://www.paypal.com/donate/?hosted_button_id=9ZH3MVR56C7M8) above or the GitHub [`sponsor button`](https://github.com/sponsors/CristianDavideConte). <br/>
+If you want to support my work you can simply **_⭐ the project_**. <br/>
+
+If you want to [`offer me a cappuccino`](https://en.wikipedia.org/wiki/Cappuccino) _(don't like plain coffe, sorry)_ you can make a donation by either using the PayPal [`donate button`](https://www.paypal.com/donate/?hosted_button_id=9ZH3MVR56C7M8) above or the GitHub [`sponsor button`](https://github.com/sponsors/CristianDavideConte). <br/>
 
 Support is highly appreciated but it's not compulsory in any way in order to use any of my work.
 
 ---
+
 <br/>
 
 # Contact Me
+
 If you find a bug, have a suggestion, a feature request, or if you simply want to contact me, use [`my website`](https://cristiandavideconte.github.io/myPersonalWebPage). <br/>
 Feel free to reach out!
