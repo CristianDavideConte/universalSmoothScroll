@@ -1,18 +1,18 @@
 //TODO: perhaps shift K_WDS and K_PGS to 0 and 1
 //TODO: import these keys in the cypress tests constants
-//TODO: @ts-check //Use to check for type errors
+// TODO: @ts-check //Use to check for type errors
 /**
  * CODE STYLING NOTE:
  * Constans, variables and functions are logically grouped in this file: this helps
  * with organizing code and understanding which variables should be initialized first.
  * The groups are separed by new lines.
- * 
+ *
  * New line rules:
  * - 1 newline for entities in the same logical group
  * - 3 newlines between a logical group and another
  */
 
-
+import { THIS_WINDOW, IS_OBJECT, IS_WINDOW } from './types.js';
 
 /**
  * Key to get the scroll id on the x-axis.
@@ -21,13 +21,13 @@ export const K_IDX = 0;
 
 /**
  * Key to get the scroll id on the y-axis.
- */  
+ */
 export const K_IDY = 1;
 
 /**
  * Key to get the final x position of a container.
  */
-export const K_FPX = 2; 
+export const K_FPX = 2;
 
 /**
  * Key to get the final y position of a container.
@@ -110,7 +110,7 @@ export const K_MSY = 17;
 export const K_VSB = 18;
 
 /**
- * Key to get the horizontal scrollbar's height of a container. 
+ * Key to get the horizontal scrollbar's height of a container.
  */
 export const K_HSB = 19;
 
@@ -194,9 +194,6 @@ export const K_WDS = 34;
  */
 export const K_PGS = 35;
 
-
-
-
 /**
  * A constant for indicating that `no valid fragment string` is associated with a container.
  */
@@ -215,7 +212,7 @@ export const NO_VAL = undefined;
 /**
  * The `window` in which the API has been initialized.
  */
-export const THIS_WINDOW = window;
+export { THIS_WINDOW } from './types.js';
 
 /**
  * The topmost `window` in the `window hierarchy`.
@@ -237,12 +234,9 @@ export const INITIAL_WINDOW_HEIGHT = THIS_WINDOW.innerHeight;
  */
 export const HIGHEST_SAFE_SCROLL_POS = 1073741824;
 
-
-
-
 /**
- * The regex used by the `scrollIntoView` and `scrollIntoViewIfNeeded` functions 
- * to test if the passed alignments are set to `nearest` mode. 
+ * The regex used by the `scrollIntoView` and `scrollIntoViewIfNeeded` functions
+ * to test if the passed alignments are set to `nearest` mode.
  */
 export const REGEX_ALIGNMENT_NEAREST = /nearest/i;
 
@@ -258,91 +252,87 @@ export const REGEX_LOGGER_LEGACY = /legacy/i;
 
 /**
  * The regex used to test if the `overflow` property of an element
- * is set to either `auto` or `scroll`. 
+ * is set to either `auto` or `scroll`.
  */
 export const REGEX_OVERFLOW = /(auto|scroll)/;
 
 /**
  * The regex used to test if the `overflow` property of an element
- * is set to either `auto`, `scroll` or `hidden`. 
+ * is set to either `auto`, `scroll` or `hidden`.
  */
 export const REGEX_OVERFLOW_HIDDEN = /(auto|scroll|hidden)/;
 
 /**
  * The regex used to test if the `overflow` property of an element
- * is set to either `auto`, `scroll`, `hidden` or `visible`. 
+ * is set to either `auto`, `scroll`, `hidden` or `visible`.
  */
 export const REGEX_OVERFLOW_HIDDEN_WITH_VISIBLE = /(auto|scroll|hidden|visible)/;
 
 /**
  * The regex used to test if the `overflow` property of an element
- * is set to either `auto`, `scroll` or `visible`. 
+ * is set to either `auto`, `scroll` or `visible`.
  */
 export const REGEX_OVERFLOW_WITH_VISIBLE = /(auto|scroll|visible)/;
 
-
+/**
+ * A string containing part of an error message.
+ * It can be used to build the `options` object for the error logger.
+ */
+export const DEFAULT_ERROR_PRIMARY_MSG_1 = ' to be an instance of Element or a window';
 
 /**
  * A string containing part of an error message.
- * It can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_1 = " to be an instance of Element or a window";
+export const DEFAULT_ERROR_PRIMARY_MSG_2 = ' to be an instance of Element';
 
 /**
  * A string containing part of an error message.
- * It can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_2 = " to be an instance of Element";
+export const DEFAULT_ERROR_PRIMARY_MSG_3 = ' to be a function';
 
 /**
  * A string containing part of an error message.
- * It can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_3 = " to be a function";
+export const DEFAULT_ERROR_PRIMARY_MSG_4 = ' to be a positive number';
 
 /**
  * A string containing part of an error message.
- * It can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_4 = " to be a positive number";
+export const DEFAULT_ERROR_PRIMARY_MSG_5 = ' to be a number';
 
 /**
  * A string containing part of an error message.
- * It can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_5 = " to be a number";
+export const DEFAULT_ERROR_PRIMARY_MSG_6 = ' to be an object';
 
 /**
  * A string containing part of an error message.
- * It can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_6 = " to be an object";
+export const DEFAULT_ERROR_PRIMARY_MSG_7 = ' to be an array of numbers';
 
 /**
  * A string containing part of an error message.
- * It can be used to build the `options` object for the error logger.   
+ * It can be used to build the `options` object for the error logger.
  */
-export const DEFAULT_ERROR_PRIMARY_MSG_7 = " to be an array of numbers";
-
-/**
- * A string containing part of an error message.
- * It can be used to build the `options` object for the error logger.   
- */
-export const DEFAULT_ERROR_PRIMARY_MSG_8 = " to be a number in [0..1]";
+export const DEFAULT_ERROR_PRIMARY_MSG_8 = ' to be a number in [0..1]';
 
 /**
  * A string containing part of a warning message.
- * It can be used to build the `options` object for the warning logger.   
+ * It can be used to build the `options` object for the warning logger.
  */
 export const DEFAULT_WARNING_PRIMARY_MSG_1 = "is not a valid anchor's destination";
 
 /**
  * A string containing part of a warning message.
- * It can be used to build the `options` object for the warning logger.   
+ * It can be used to build the `options` object for the warning logger.
  */
-export const DEFAULT_WARNING_PRIMARY_MSG_2 = "is not a valid step length";
-
-
+export const DEFAULT_WARNING_PRIMARY_MSG_2 = 'is not a valid step length';
 
 /**
  * Checks whether `value` is instance of the specified class type.
@@ -358,24 +348,24 @@ export const CHECK_INSTANCEOF = (value, classType = Element) => {
      * At this point we're either in an iFrame or value is not instanceof classType.
      * Instances of iFrames' classes are different from the outer window's ones.
      * The instance check is therefore done between the value and the iFrame's classes.
-     *  
-     * e.g. 
+     *
+     * e.g.
      * window.classType = window.Element
      * window.classType.name = "Element"
-     * iFrameWindow[window.classType.name] = iFrameWindow.Element 
-     * 
-     * window.Element !== iFrameWindow.Element 
+     * iFrameWindow[window.classType.name] = iFrameWindow.Element
+     *
+     * window.Element !== iFrameWindow.Element
      */
     try {
         //Find the window associated with the passed value.
         const _window = GET_WINDOW_OF(value);
-        
+
         //Check if value is instanceof the iFrame/inner classType.
         return value instanceof _window[classType.name];
     } catch (UnsupportedOperation) {
         return false;
     }
-}
+};
 
 /**
  * Invalidates the temporary values of the passed `containerData`.
@@ -405,12 +395,12 @@ export const CLEAR_COMMON_DATA = (containerData) => {
     //Scroll callbacks.
     containerData[K_CBX] = NO_VAL;
     containerData[K_CBY] = NO_VAL;
-}
+};
 
 /**
  * Creates a valid `options` object that can be used as the input of the default loggers.
- * This method should be called inside a function, which is referred to as `calling function`. 
- * @param {Object} staticOptions The `options` object passed to the calling function (`highest priority` during merge). 
+ * This method should be called inside a function, which is referred to as `calling function`.
+ * @param {Object} staticOptions The `options` object passed to the calling function (`highest priority` during merge).
  * @param {String} functionName The calling function's name.
  * @param {Object} runtimeOptions Logging `options` that are known at runtime only (`lowest priority` during merge).
  * @param {number} [runtimeOptions.idx] The index of the message to use (`logOptionsMap.get(functionName)[runtimeOptions.idx]`).
@@ -422,112 +412,68 @@ export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, 
 
     /**
      * Multiple log options can be associated with a single function,
-     * choose one specified by the otherDefaultOptions argument. 
+     * choose one specified by the otherDefaultOptions argument.
      */
     if (Array.isArray(defaultOptions)) {
-        defaultOptions = defaultOptions[runtimeOptions.idx]
+        defaultOptions = defaultOptions[runtimeOptions.idx];
     }
 
     /**
      * Retrieve the function's default static-logging options and
      * merge them with the non-static ones.
      */
-    defaultOptions = MERGE_OBJECTS(
-        defaultOptions,
-        runtimeOptions
-    );
+    defaultOptions = MERGE_OBJECTS(defaultOptions, runtimeOptions);
 
     if (defaultOptions.subject == NO_VAL) {
         defaultOptions.subject = functionName;
     }
 
     return MERGE_OBJECTS(staticOptions, defaultOptions);
-}
+};
 
 /**
  * Returns the `document` associated with the passed `container`.
- *  
+ *
  * `Note:` no checks are done on `container`.
  * @param {*} container An instance of `Element`.
- * @returns Returns the `document` associated with `container`. 
+ * @returns Returns the `document` associated with `container`.
  */
 export const GET_DOCUMENT_OF = (container) => {
     return container.ownerDocument;
-}
+};
 
 /**
  * Returns the `window` associated with the passed `container`.
- *  
+ *
  * `Note:` no checks are done on `container`.
  * @param {*} container An instance of `Element`.
- * @returns Returns the `window` associated with `container`. 
+ * @returns Returns the `window` associated with `container`.
  */
 export const GET_WINDOW_OF = (container) => {
     return GET_DOCUMENT_OF(container).defaultView;
-}
+};
 
 /**
  * Returns the `documentElement` associated with the passed `container`.
- *  
+ *
  * `Note:` no checks are done on `container`.
  * @param {*} container An instance of `Element`.
- * @returns Returns the `documentElement` associated with `container`. 
+ * @returns Returns the `documentElement` associated with `container`.
  */
 export const GET_HTML_OF = (container) => {
     return GET_DOCUMENT_OF(container).documentElement;
-}
+};
 
 /**
  * Returns the `body` associated with the passed `container`.
- *  
+ *
  * `Note:` no checks are done on `container`.
  * @param {*} container An instance of `Element`.
- * @returns Returns the `body` associated with `container`. 
+ * @returns Returns the `body` associated with `container`.
  */
 export const GET_BODY_OF = (container) => {
     return GET_DOCUMENT_OF(container).body;
-}
-
-/**
- * Checks whether `value` is a function.
- * @param {*} value The value to check. 
- * @returns {boolean} `true` if `value` is a function, `false` otherwise.
- */
-export const IS_FUNCTION = (value) => {
-    return typeof value === "function"; 
-}
-
-/**
- * Checks whether `value` is an object.
- * @param {*} value The value to check. 
- * @returns {boolean} `true` if `value` is an object, `false` otherwise.
- */
-export const IS_OBJECT = (value) => {
-    return value !== null &&
-           typeof value === "object" &&
-           !Array.isArray(value);
-}
-
-/**
- * Checks whether `value` is a window object.
- * Works with iFrames' windows too.
- * @param {*} value The value to check.
- * @returns `true` if `value` is a window object, `false` otherwise.
- */
-export const IS_WINDOW = (value) => {
-    if (value === THIS_WINDOW) return true;
-    
-    /**
-     * Inside iFrames the pointer to the window object may be different
-     * from the one used in this module, but a window still exists and 
-     * it can be retrieved by asking for the value.window.
-     */
-    try {
-        return value === value.window;
-    } catch (UnsupportedOperation) {
-        return false;
-    }
-}
+};
 
 /**
  * Merges two objects into one.
@@ -537,7 +483,7 @@ export const IS_WINDOW = (value) => {
  */
 export const MERGE_OBJECTS = (obj1, obj2) => {
     return IS_OBJECT(obj1) ? Object.assign({}, obj2, obj1) : obj2;
-}
+};
 
 /**
  * Creates a uss-styled string representation of `value`.
@@ -551,37 +497,37 @@ export const TO_STRING = (value) => {
         IS_WINDOW(value) ||
         value === null ||
         value === undefined ||
-        _type === "boolean" ||
-        _type === "number" ||
-        _type === "bigint" ||
-        _type === "string" ||
-        _type === "symbol"
+        _type === 'boolean' ||
+        _type === 'number' ||
+        _type === 'bigint' ||
+        _type === 'string' ||
+        _type === 'symbol'
     ) {
         return String(value);
     }
 
-    if (_type === "function") {
+    if (_type === 'function') {
         const _name = value.name || value;
-        return String(_name).replace(new RegExp("\n", "g"), "");
+        return String(_name).replace(new RegExp('\n', 'g'), '');
     }
 
     if (Array.isArray(value)) {
-        return "[" + value.toString() + "]";
+        return '[' + value.toString() + ']';
     }
 
     //Test if element has a tag, a class or an id.
     try {
-        const _id = value.id ? "#" + value.id : "";
-        const _className = value.className ? "." + value.className : "";
+        const _id = value.id ? '#' + value.id : '';
+        const _className = value.className ? '.' + value.className : '';
         return value.tagName.toLowerCase() + _id + _className; //e.g. div#myId.myClass
-    } catch (IllegalInvocation) { }
+    } catch (IllegalInvocation) {}
 
     //Test if element is just some html code.
     try {
-        if ("outerHTML" in value) {
-            return value.outerHTML.toString().replace(new RegExp("\n", "g"), "");
+        if ('outerHTML' in value) {
+            return value.outerHTML.toString().replace(new RegExp('\n', 'g'), '');
         }
-    } catch (TypeError) { }
+    } catch (TypeError) {}
 
     return String(value);
-}
+};

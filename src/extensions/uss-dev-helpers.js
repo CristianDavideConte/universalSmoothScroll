@@ -4,21 +4,17 @@
  * Constans, variables and functions are logically grouped in this file: this helps
  * with organizing code and understanding which variables should be initialized first.
  * The groups are separed by new lines.
- * 
+ *
  * New line rules:
  * - 1 newline for entities in the same logical group
  * - 3 newlines between a logical group and another
  */
-import {
-    IS_POSITIVE,
-} from "../main/math.js"
+
+import { IS_POSITIVE, IS_FUNCTION, IS_OBJECT, IS_WINDOW } from '../main/types.js';
 
 import {
     CHECK_INSTANCEOF,
     CREATE_LOG_OPTIONS,
-    IS_FUNCTION,
-    IS_OBJECT,
-    IS_WINDOW,
     NO_VAL,
     TOP_WINDOW,
     DEFAULT_ERROR_PRIMARY_MSG_1,
@@ -27,7 +23,7 @@ import {
     DEFAULT_ERROR_PRIMARY_MSG_5,
     DEFAULT_ERROR_PRIMARY_MSG_6,
     DEFAULT_ERROR_PRIMARY_MSG_7,
-} from "../main/common.js";
+} from '../main/common.js';
 
 import {
     _pageScroller,
@@ -36,35 +32,34 @@ import {
     _warningLogger,
     calcFramesTimes,
     getFramesTime,
-} from "../main/uss.js";
-
-
+} from '../main/uss.js';
 
 /**
- * A map containing function names and a partial `options` objects that, 
+ * A map containing function names and a partial `options` objects that,
  * can be used with the uss loggers.
- * Note that these objects (the map entries) are partial and need 
- * to be completed (they only contain known/static log informations). 
+ * Note that these objects (the map entries) are partial and need
+ * to be completed (they only contain known/static log informations).
  */
 const DEFAULT_LOG_OPTIONS = new Map([
-    ["getBrowserRefreshRate", [
-        { primaryMsg: "_framesTimes" + DEFAULT_ERROR_PRIMARY_MSG_7 },
-        { primaryMsg: "to not throw any exception" },
-    ]],
-    ["isValidStepLengthCalculator", [
-        { primaryMsg: "options" + DEFAULT_ERROR_PRIMARY_MSG_6 },
-        { primaryMsg: "fun" + DEFAULT_ERROR_PRIMARY_MSG_3 },
-        { primaryMsg: "options.container" + DEFAULT_ERROR_PRIMARY_MSG_1 },
-        { primaryMsg: "options.totalScrollAmount" + DEFAULT_ERROR_PRIMARY_MSG_4 },
-        { primaryMsg: "options.timeout" + DEFAULT_ERROR_PRIMARY_MSG_4 },
-        { primaryMsg: "the return value of fun" + DEFAULT_ERROR_PRIMARY_MSG_5 }
-    ]],
+    [
+        'getBrowserRefreshRate',
+        [{ primaryMsg: '_framesTimes' + DEFAULT_ERROR_PRIMARY_MSG_7 }, { primaryMsg: 'to not throw any exception' }],
+    ],
+    [
+        'isValidStepLengthCalculator',
+        [
+            { primaryMsg: 'options' + DEFAULT_ERROR_PRIMARY_MSG_6 },
+            { primaryMsg: 'fun' + DEFAULT_ERROR_PRIMARY_MSG_3 },
+            { primaryMsg: 'options.container' + DEFAULT_ERROR_PRIMARY_MSG_1 },
+            { primaryMsg: 'options.totalScrollAmount' + DEFAULT_ERROR_PRIMARY_MSG_4 },
+            { primaryMsg: 'options.timeout' + DEFAULT_ERROR_PRIMARY_MSG_4 },
+            { primaryMsg: 'the return value of fun' + DEFAULT_ERROR_PRIMARY_MSG_5 },
+        ],
+    ],
 ]);
 
-
-
 /**
- * This functions tests if both the `_framesTime` and the `_framesTimes` variable 
+ * This functions tests if both the `_framesTime` and the `_framesTimes` variable
  * have not been altered and if then calculates the browser's refresh rate.
  * More specifically, it returns the highest number of times that `requestAnimationFrame` can be called per second.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
@@ -73,7 +68,14 @@ const DEFAULT_LOG_OPTIONS = new Map([
 export async function getBrowserRefreshRate(options) {
     //Check if the _framesTimes variable has been altered.
     if (!Array.isArray(_framesTimes)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getBrowserRefreshRate", { secondaryMsg: _framesTimes, idx: 0 }, DEFAULT_LOG_OPTIONS));
+        _errorLogger(
+            CREATE_LOG_OPTIONS(
+                options,
+                'getBrowserRefreshRate',
+                { secondaryMsg: _framesTimes, idx: 0 },
+                DEFAULT_LOG_OPTIONS
+            )
+        );
         return NaN;
     }
 
@@ -85,12 +87,10 @@ export async function getBrowserRefreshRate(options) {
     let _currentMeasurementsLeft = 60; //Do 60 measurements to establish the initial value
 
     try {
-        _warningLogger(
-            {
-                subject: "_framesTime",
-                primaryMsg: "hasn't been calculated yet at the time of invocation"
-            },
-        );
+        _warningLogger({
+            subject: '_framesTime',
+            primaryMsg: "hasn't been calculated yet at the time of invocation",
+        });
 
         await new Promise((resolve, reject) => {
             const _startMeasuring = () => {
@@ -101,7 +101,7 @@ export async function getBrowserRefreshRate(options) {
                     return;
                 }
 
-                //Calculate the average frames' time of the user's screen. 
+                //Calculate the average frames' time of the user's screen.
                 const _measureFramesTime = () => {
                     if (_currentMeasurementsLeft > 0) {
                         _currentMeasurementsLeft--;
@@ -109,13 +109,15 @@ export async function getBrowserRefreshRate(options) {
                     } else {
                         resolve(NO_VAL);
                     }
-                }
+                };
                 _measureFramesTime();
-            }
+            };
             _startMeasuring();
         });
     } catch (result) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, "getBrowserRefreshRate", { secondaryMsg: result, idx: 1 }, DEFAULT_LOG_OPTIONS));
+        _errorLogger(
+            CREATE_LOG_OPTIONS(options, 'getBrowserRefreshRate', { secondaryMsg: result, idx: 1 }, DEFAULT_LOG_OPTIONS)
+        );
         return NaN;
     }
 
@@ -128,9 +130,9 @@ export async function getBrowserRefreshRate(options) {
  * This function is non-blocking/asynchronous.
  * @param {Function} fun The function to test.
  * @param {Object} options An object which contains the testing preferences listed below.
- * @param {*} [options.container=_pageScroller] The container againist which fun should be tested. 
- * @param {Number} [options.totalScrollAmount=100] The total amount of pixels againist which fun should be tested. 
- * @param {Number} [options.timeout=5000] The amount of milliseconds after which the test forcefully returns a result. 
+ * @param {*} [options.container=_pageScroller] The container againist which fun should be tested.
+ * @param {Number} [options.totalScrollAmount=100] The total amount of pixels againist which fun should be tested.
+ * @param {Number} [options.timeout=5000] The amount of milliseconds after which the test forcefully returns a result.
  * @returns `true` if `fun` is a valid stepLengthCalculator, `false` otherwise.
  */
 export async function isValidStepLengthCalculator(
@@ -141,11 +143,13 @@ export async function isValidStepLengthCalculator(
         timeout: 5000,
     }
 ) {
-    const _functionName = "isValidStepLengthCalculator"
+    const _functionName = 'isValidStepLengthCalculator';
 
     //Check if the options parameter is a valid object.
     if (!IS_OBJECT(options)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: options, idx: 0 }, DEFAULT_LOG_OPTIONS));
+        _errorLogger(
+            CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: options, idx: 0 }, DEFAULT_LOG_OPTIONS)
+        );
         return false;
     }
 
@@ -157,26 +161,37 @@ export async function isValidStepLengthCalculator(
 
     //Check if the passed container is valid.
     if (!IS_WINDOW(options.container) && !CHECK_INSTANCEOF(options.container)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: options.container, idx: 2 }, DEFAULT_LOG_OPTIONS));
+        _errorLogger(
+            CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: options.container, idx: 2 }, DEFAULT_LOG_OPTIONS)
+        );
         return false;
     }
 
     //Check if the passed totalScrollAmount is valid.
     if (!IS_POSITIVE(options.totalScrollAmount)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: options.totalScrollAmount, idx: 3 }, DEFAULT_LOG_OPTIONS));
+        _errorLogger(
+            CREATE_LOG_OPTIONS(
+                options,
+                _functionName,
+                { secondaryMsg: options.totalScrollAmount, idx: 3 },
+                DEFAULT_LOG_OPTIONS
+            )
+        );
         return false;
     }
 
     //Check if the passed timeout is valid.
     if (!IS_POSITIVE(options.timeout)) {
-        _errorLogger(CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: options.timeout, idx: 4 }, DEFAULT_LOG_OPTIONS));
+        _errorLogger(
+            CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: options.timeout, idx: 4 }, DEFAULT_LOG_OPTIONS)
+        );
         return false;
     }
-    
+
     const _originalTimestamp = performance.now();
     const _totalScrollAmount = options.totalScrollAmount;
     const _timeout = options.timeout;
-    
+
     let _remaningScrollAmount = _totalScrollAmount;
     let _exeededTimeLimit = false;
     let _currentTimestamp;
@@ -184,50 +199,48 @@ export async function isValidStepLengthCalculator(
     const _tester = (resolve, reject) => {
         _currentTimestamp = performance.now();
         const _testResult = fun(
-                                 _remaningScrollAmount,                      //remaningScrollAmount
-                                 _originalTimestamp,                         //originalTimestamp
-                                 _currentTimestamp,                          //currentTimestamp
-                                 _totalScrollAmount,                         //totalScrollAmount
-                                 _totalScrollAmount - _remaningScrollAmount, //currentXPosition
-                                 _totalScrollAmount,                         //finalXPosition
-                                 options.container                           //container
-                             );
-                            
-        if(!Number.isFinite(_testResult)) {
+            _remaningScrollAmount, //remaningScrollAmount
+            _originalTimestamp, //originalTimestamp
+            _currentTimestamp, //currentTimestamp
+            _totalScrollAmount, //totalScrollAmount
+            _totalScrollAmount - _remaningScrollAmount, //currentXPosition
+            _totalScrollAmount, //finalXPosition
+            options.container //container
+        );
+
+        if (!Number.isFinite(_testResult)) {
             reject(_testResult);
             return;
         }
 
-        _remaningScrollAmount -= _testResult;  
+        _remaningScrollAmount -= _testResult;
         _exeededTimeLimit = _currentTimestamp - _originalTimestamp > _timeout;
-        
-        if(_remaningScrollAmount <= 0 || _exeededTimeLimit) {
-          resolve();
-          return;
-        } 
 
-        TOP_WINDOW.requestAnimationFrame(() => _tester(resolve, reject));       
-    }
+        if (_remaningScrollAmount <= 0 || _exeededTimeLimit) {
+            resolve();
+            return;
+        }
+
+        TOP_WINDOW.requestAnimationFrame(() => _tester(resolve, reject));
+    };
 
     try {
         await new Promise((resolve, reject) => {
             TOP_WINDOW.requestAnimationFrame(() => _tester(resolve, reject));
         });
-    } catch(result) {
+    } catch (result) {
         _errorLogger(CREATE_LOG_OPTIONS(options, _functionName, { secondaryMsg: result, idx: 5 }, DEFAULT_LOG_OPTIONS));
         return false;
     }
 
     //The passed stepLengthCalculator may have entered a loop.
     if (_exeededTimeLimit) {
-        _warningLogger(
-            {
-                subject: fun.name || "the passed function",
-                primaryMsg: "didn't complete the test scroll-animation within " + _timeout + "ms",
-            }
-        )
+        _warningLogger({
+            subject: fun.name || 'the passed function',
+            primaryMsg: "didn't complete the test scroll-animation within " + _timeout + 'ms',
+        });
         return false;
     }
-    
+
     return true;
 }
