@@ -31,7 +31,7 @@ const _factorials = new Array(170);
  */
 export const FACTORIAL = (value) => {
     if (_factorials[value]) return _factorials[value];
-    if (value == 0) return 1;
+    if (value === 0) return 1;
 
     if (value > 170) return Infinity;
 

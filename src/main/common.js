@@ -424,7 +424,7 @@ export const CREATE_LOG_OPTIONS = (staticOptions, functionName, runtimeOptions, 
      */
     defaultOptions = MERGE_OBJECTS(defaultOptions, runtimeOptions);
 
-    if (defaultOptions.subject == NO_VAL) {
+    if (defaultOptions.subject === NO_VAL) {
         defaultOptions.subject = functionName;
     }
 

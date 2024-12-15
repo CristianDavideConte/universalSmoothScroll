@@ -1165,7 +1165,7 @@ export const getWindowScroller = (container = _pageScroller, forceCalculation = 
     if (!_oldData) INIT_CONTAINER_DATA(_window, _containerData);
 
     //Calculate the container's window scroller if necessary.
-    if (forceCalculation || _containerData[K_WDS] == NO_VAL) {
+    if (forceCalculation || _containerData[K_WDS] === NO_VAL) {
         const _body = _window.document.body;
         const _html = _window.document.documentElement;
 
@@ -1282,7 +1282,7 @@ export const getPageScroller = (container = _pageScroller, forceCalculation = fa
     if (!_oldData) INIT_CONTAINER_DATA(_window, _containerData);
 
     //Calculate the container's page scroller if necessary.
-    if (forceCalculation || _containerData[K_PGS] == NO_VAL) {
+    if (forceCalculation || _containerData[K_PGS] === NO_VAL) {
         const _body = _window.document.body;
         const _html = _window.document.documentElement;
 
@@ -1308,7 +1308,7 @@ export const getPageScroller = (container = _pageScroller, forceCalculation = fa
         }
 
         //Save the page scroller of THIS_WINDOW for quicker use later on.
-        if (_window == THIS_WINDOW) {
+        if (_window === THIS_WINDOW) {
             _pageScroller = _containerData[K_PGS];
         }
     }
@@ -1564,7 +1564,7 @@ export const setPageScroller = (container, options) => {
 
     _containerData[K_PGS] = container;
 
-    if (_window == THIS_WINDOW) {
+    if (_window === THIS_WINDOW) {
         _pageScroller = container;
     }
 };
