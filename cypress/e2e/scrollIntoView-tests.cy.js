@@ -1,4 +1,5 @@
 import * as uss from '../../src/main/uss.js';
+import * as types from '../../src/main/types.js';
 import * as common from '../../src/main/common.js';
 
 const { constants } = require('../support/constants');
@@ -13,7 +14,7 @@ function getDeltas(element, parent) {
     const _scrollbarsDimensions = uss.calcScrollbarsDimensions(parent);
 
     const _elPos = element.getBoundingClientRect();
-    const _containerPos = !common.IS_WINDOW(parent)
+    const _containerPos = !types.IS_WINDOW(parent)
         ? parent.getBoundingClientRect()
         : { top: 0, right: parent.innerWidth, bottom: parent.innerHeight, left: 0 };
 
