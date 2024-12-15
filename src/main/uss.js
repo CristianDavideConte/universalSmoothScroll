@@ -3469,13 +3469,13 @@ export const stopScrollingAll = (callback) => {
 
 /**
  * Enables smooth-scrolling for valid anchor links (`<a>` and `<area>` elements) and their `scrollableParents`.
- * @param {boolean} alignToLeft This value indicates the alignment (on the x-axis) of the anchors and their `scrollableParents`:
+ * @param {boolean} [alignToLeft] This value indicates the alignment (on the x-axis) of the anchors and their `scrollableParents`:
  * - `true` if the alignment should be to the `left`
  * - `false` if the alignment should be to the `right`
  * - `nearest` **(case insensitive)** if the alignment should to the `closest side`:
  *    the alignment of each container is decided by measuring its position (on the x-axis) relative to its closest scrollable ancestor
  * - Any other value, if the alignment should be to the `center`
- * @param {boolean} alignToTop This value indicates the alignment (on the y-axis) of the anchors and their `scrollableParents`:
+ * @param {boolean} [alignToTop] This value indicates the alignment (on the y-axis) of the anchors and their `scrollableParents`:
  * - `true` if the alignment should be to the `top`
  * - `false` if the alignment should be to the `bottom`
  * - `nearest` **(case insensitive)** if the alignment should to the `closest side`:
@@ -3496,9 +3496,10 @@ export const stopScrollingAll = (callback) => {
  *
  * If `init` returns `false`, no scroll-animation will be executed.
  * @param {function} [callback] A function which is invoked when any valid anchor element is successfully scrolled into view.
- * @param {boolean} includeHiddenParents `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
- * @param {boolean} updateHistory `true` to let the scroll-animations (triggered by the anchor links) update the browser history, `false` otherwise.
+ * @param {boolean} [includeHiddenParents] `true` to include `scrollableParents` with `overflow:hidden`, `overflow-x:hidden` or `overflow-y:hidden` in the search, `false` otherwise.
+ * @param {boolean} [updateHistory] `true` to let the scroll-animations (triggered by the anchor links) update the browser history, `false` otherwise.
  * @param {Object} [options] `[Private]` The input object used by the uss loggers.
+ * @returns {Object[]} The array of newly managed page links.
  */
 //TODO: add a cypress test for hrefSetup using the concepts of scrollIntoView/IfNeeded tests
 export const hrefSetup = (
@@ -3514,7 +3515,8 @@ export const hrefSetup = (
 
     const _init = IS_FUNCTION(init) ? init : (anchor, el, event) => event.stopPropagation();
     const _pageURL = THIS_WINDOW.location.href.split('#')[0]; //location.href = optionalURL#fragment
-    const _updateHistory = updateHistory && THIS_WINDOW.history && THIS_WINDOW.history.scrollRestoration; //Check if histoy manipulation is supported
+    const _shouldUpdateHistory = updateHistory && THIS_WINDOW.history && THIS_WINDOW.history.scrollRestoration;
+    const _managedPageLinks = [];
 
     const _scrollToFragment = (pageLink, fragment, event, updateHistoryIfNeeded) => {
         //Invalid fragment.
@@ -3544,7 +3546,7 @@ export const hrefSetup = (
     /**
      * Note that:
      * pageLink.href = optionalURL#fragment
-     * pageLink.hash = #fragment
+     * pageLink.hash = #fragmentes
      */
     for (const _pageLink of document.links) {
         const _optionalURL = _pageLink.href.split('#')[0];
@@ -3583,7 +3585,7 @@ export const hrefSetup = (
 
         //The extra "." at the end of the fragment is used to prevent Safari from restoring
         //the scroll position before the popstate event (it won't recognize the fragment).
-        const _updateHistoryIfNeeded = _updateHistory
+        const _updateHistoryIfNeeded = _shouldUpdateHistory
             ? (fragment) => {
                   if (THIS_WINDOW.history.state !== fragment) {
                       THIS_WINDOW.history.pushState(fragment, '', '#' + fragment + '.');
@@ -3611,13 +3613,15 @@ export const hrefSetup = (
             },
             { passive: false }
         );
+
+        _managedPageLinks.push(_pageLink);
     }
 
     /**
      * Prevents the browser to jump-to-position,
      * when a user navigates through history.
      */
-    if (_updateHistory) {
+    if (_shouldUpdateHistory) {
         const _oldData = _containersData.get(THIS_WINDOW);
         const _containerData = _oldData || [];
         if (!_oldData) INIT_CONTAINER_DATA(THIS_WINDOW, _containerData);
@@ -3648,6 +3652,8 @@ export const hrefSetup = (
         if (document.readyState === 'complete') _smoothHistoryNavigation(new Event('load'));
         else THIS_WINDOW.addEventListener('load', _smoothHistoryNavigation, { passive: true, once: true });
     }
+
+    return _managedPageLinks;
 };
 
 const ussInit = () => {
